@@ -46,3 +46,6 @@ scriptcs relies on Rosyln for loading loose C# script files. It will automatical
 
 # License 
 Apache 2
+
+# Credits
+Special thanks to @filip_woj for being the inspiration behind this with this Roslyn Web API posts.
