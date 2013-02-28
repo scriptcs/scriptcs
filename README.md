@@ -48,4 +48,4 @@ scriptcs relies on Rosyln for loading loose C# script files. It will automatical
 Apache 2
 
 # Credits
-Special thanks to @filip_woj for being the inspiration behind this with this Roslyn Web API posts.
+Special thanks to @filip_woj for being the inspiration behind this with his Roslyn Web API posts as well as the Roslyn team who helped point me in the right direction.
