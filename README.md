@@ -42,7 +42,7 @@ This will launch a web api host.
 scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
 
 # What's next
-* Adding support for recipes which automatically import pre-baked sets of pacakages as well as default using statements.
+* Adding support for pluggable recipe "packs" for different frameworks.
 
 # License 
 Apache 2
