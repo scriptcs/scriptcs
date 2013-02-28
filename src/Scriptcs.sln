@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriptcs.Contracts", "Scrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriptcs", "Scriptcs\Scriptcs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriptcs.Tests", "Scriptcs.Tests\Scriptcs.Tests.csproj", "{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriptcs.Tests", "../test/Scriptcs.Tests\Scriptcs.Tests.csproj", "{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2A511B15-662D-4F12-B63C-7D62BE01487B}"
 	ProjectSection(SolutionItems) = preProject
