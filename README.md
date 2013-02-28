@@ -15,7 +15,7 @@ Write .net apps with a text editor, nuget and the power of Rosyln!
 * Open a cmd prompt as admin
 * Create a directory "c:\scriptcs_hello" and change to it.
 * run "nuget install Microsoft.AspNet.WebApi.SelfHost"
-* create a server.csx with your favorite editor. Paste the text below:
+* create a server.csx with your favorite editor. Paste the text below into the file and save.
 
 ```csharp
 using System;
@@ -35,6 +35,7 @@ server.OpenAsync().Wait();
 Console.WriteLine("Listening...");
 Console.ReadKey();
 ```
+* run "scriptcs server.csx"
 
 This will launch a web api host.
 
