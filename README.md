@@ -9,7 +9,6 @@ Write .net apps with a text editor, nuget and the power of Rosyln!
 * Install the [Rosyln CTP] (http://msdn.microsoft.com/en-us/vstudio/roslyn.aspx)
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
 * Build the project and put scriptcs.exe in your path.
-* 
 
 # Quick start
 * Open a cmd prompt as admin
