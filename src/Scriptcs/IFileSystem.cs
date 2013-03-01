@@ -16,5 +16,6 @@ namespace Scriptcs
         void CreateDirectory(string path);
         string ReadFile(string path);
         string CurrentDirectory { get; }
+        DateTime GetLastWriteTime(string file);
     }
 }

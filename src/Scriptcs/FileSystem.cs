@@ -38,5 +38,10 @@ namespace Scriptcs
         {
             get { return Environment.CurrentDirectory; }
         }
+
+        public DateTime GetLastWriteTime(string file)
+        {
+            return File.GetLastWriteTime(file);
+        }
     }
 }
