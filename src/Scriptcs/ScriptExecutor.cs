@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Roslyn.Scripting.CSharp;
@@ -23,7 +24,10 @@ namespace Scriptcs
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
         {
             var engine = new ScriptEngine();
+
             engine.AddReference("System");
+            engine.AddReference("System.Core");
+
             var bin = _fileSystem.CurrentDirectory + @"\bin";
             engine.BaseDirectory = bin;
 
