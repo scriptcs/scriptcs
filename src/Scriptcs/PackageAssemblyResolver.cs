@@ -25,7 +25,7 @@ namespace Scriptcs
             var files = new List<string>();
             foreach (var file in Directory.EnumerateFiles(packageDir, @"*.dll", SearchOption.AllDirectories))
             {
-                if (file.IndexOf(@"\net40") > -1)
+                if (file.IndexOf(@"\net35") > -1 || file.IndexOf(@"\net40") > -1)
                 {
                     var path = Path.GetDirectoryName(file);
                     files.Add(file);
