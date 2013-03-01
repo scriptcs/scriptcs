@@ -16,7 +16,7 @@ namespace Scriptcs
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage:\r\n\r\nscriptcs [file] [receipe1] [receipe2] ...\r\n");
+                Console.WriteLine("Usage:\r\n\r\nscriptcs [file] [recipe1] [recipe2] ...\r\n");
                 return;
             }
 
