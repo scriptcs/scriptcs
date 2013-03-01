@@ -24,6 +24,7 @@ namespace Scriptcs
         {
             var engine = new ScriptEngine();
             engine.AddReference("System");
+            engine.AddReference("System.Core");
             var bin = _fileSystem.CurrentDirectory + @"\bin";
             engine.BaseDirectory = bin;
             
@@ -36,7 +37,7 @@ namespace Scriptcs
                 var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
                 var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
-                    _fileSystem.Copy(file, destFile);
+                    _fileSystem.Copy(file, destFile,true);
     
                 engine.AddReference(destFile);
             }
