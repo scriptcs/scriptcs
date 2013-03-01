@@ -24,7 +24,6 @@ namespace Scriptcs
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
         {
             var engine = new ScriptEngine();
-
             engine.AddReference("System");
             engine.AddReference("System.Core");
 
@@ -32,14 +31,17 @@ namespace Scriptcs
             engine.BaseDirectory = bin;
 
             if (!_fileSystem.DirectoryExists(bin))
-            {
                 _fileSystem.CreateDirectory(bin);
-                foreach (var file in paths)
-                {
-                    var destFile = bin + @"\" + Path.GetFileName(file);
-                    _fileSystem.Copy(file, destFile);
-                    engine.AddReference(destFile);
-                }
+
+            foreach (var file in paths)
+            {
+                var destFile = bin + @"\" + Path.GetFileName(file);
+                var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
+                var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
+                if (sourceFileLastWriteTime != destFileLastWriteTime)
+                    _fileSystem.Copy(file, destFile, true);
+
+                engine.AddReference(destFile);
             }
 
             var session = engine.CreateSession();

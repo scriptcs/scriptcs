@@ -11,10 +11,11 @@ namespace Scriptcs
     public interface IFileSystem
     {
         IEnumerable<string> EnumerateFiles(string dir, string search);
-        void Copy(string source, string dest);
+        void Copy(string source, string dest, bool overwrite);
         bool DirectoryExists(string path);
         void CreateDirectory(string path);
         string ReadFile(string path);
         string CurrentDirectory { get; }
+        DateTime GetLastWriteTime(string file);
     }
 }

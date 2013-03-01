@@ -14,9 +14,9 @@ namespace Scriptcs
             return Directory.EnumerateFiles(dir, searchPattern, SearchOption.AllDirectories);
         }
 
-        public void Copy(string source, string dest)
+        public void Copy(string source, string dest, bool overwrite)
         {
-            File.Copy(source, dest);
+            File.Copy(source, dest, overwrite);
         }
 
         public bool DirectoryExists(string path)
@@ -37,6 +37,11 @@ namespace Scriptcs
         public string CurrentDirectory
         {
             get { return Environment.CurrentDirectory; }
+        }
+
+        public DateTime GetLastWriteTime(string file)
+        {
+            return File.GetLastWriteTime(file);
         }
     }
 }
