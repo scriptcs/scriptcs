@@ -46,6 +46,11 @@ namespace Scriptcs
         {
             var catalog = new AggregateCatalog();
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(Program).Assembly));
+
+            var recipesFolder = AppDomain.CurrentDomain.BaseDirectory + @"\Recipes";
+            if (!Directory.Exists(recipesFolder))
+                Directory.CreateDirectory(recipesFolder);
+
             catalog.Catalogs.Add(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory + @"\Recipes"));
             return new CompositionContainer(catalog);
         }
