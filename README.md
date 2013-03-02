@@ -14,7 +14,7 @@ More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28
 # Quick start
 * Open a cmd prompt as admin
 * Create a directory "c:\scriptcs_hello" and change to it.
-* run "nuget install Microsoft.AspNet.WebApi.SelfHost"
+* run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
 * create a server.csx with your favorite editor. Paste the text below into the file and save.
 
 ```csharp
