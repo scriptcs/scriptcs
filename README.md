@@ -4,16 +4,10 @@ scriptcs
 # Why should you care?
 Write .net apps with a text editor, nuget and the power of Rosyln!
 
-<<<<<<< HEAD
 * More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 * Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
-=======
-More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 
-Check out our goals and roadmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
->>>>>>> 9b207d880d59e8879fdfb11690ceb14dcc873e91
 # Pre-reqs
-
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
 * Build the project and put scriptcs.exe in your path.
 
