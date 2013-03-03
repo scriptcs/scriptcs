@@ -45,7 +45,7 @@ namespace Scriptcs
 
                 if (IsLoadLine(line))
                 {
-                    var filepath = line.Replace(LoadString, "").Replace("\"", "");
+                    var filepath = line.Trim(' ').Replace(LoadString, "").Replace("\"", "").Replace(";","");
                     var filecontent = _fileSystem.IsPathRooted(filepath)
                                               ? _fileSystem.ReadFileLines(filepath)
                                               : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
@@ -67,12 +67,12 @@ namespace Scriptcs
 
         private static bool IsUsingLine(string line)
         {
-            return line.StartsWith(UsingString) && !line.Contains("{") && line.Contains(";");
+            return line.TrimStart(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";");
         }
 
         private static bool IsLoadLine(string line)
         {
-            return line.StartsWith(LoadString);
+            return line.TrimStart(' ').StartsWith(LoadString);
         }
     }
 }
