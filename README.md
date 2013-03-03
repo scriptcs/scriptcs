@@ -4,6 +4,8 @@ scriptcs
 # Why should you care?
 Write .net apps with a text editor, nuget and the power of Rosyln!
 
+More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
+
 # Pre-reqs
 
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
@@ -12,7 +14,7 @@ Write .net apps with a text editor, nuget and the power of Rosyln!
 # Quick start
 * Open a cmd prompt as admin
 * Create a directory "c:\scriptcs_hello" and change to it.
-* run "nuget install Microsoft.AspNet.WebApi.SelfHost"
+* run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
 * create a server.csx with your favorite editor. Paste the text below into the file and save.
 
 ```csharp

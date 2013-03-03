@@ -37,7 +37,7 @@ namespace Scriptcs
                 var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
                 var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
-                    _fileSystem.Copy(file, destFile, true);
+                    _fileSystem.Copy(file, destFile,true);
     
                 engine.AddReference(destFile);
             }
