@@ -34,6 +34,16 @@ namespace Scriptcs
             return File.ReadAllText(path);
         }
 
+        public string[] ReadFileLines(string path)
+        {
+            return File.ReadAllLines(path);
+        }
+
+        public bool IsPathRooted(string path)
+        {
+            return Path.IsPathRooted(path);
+        }
+
         public string CurrentDirectory
         {
             get { return Environment.CurrentDirectory; }

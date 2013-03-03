@@ -32,6 +32,7 @@ namespace Scriptcs
             }
 
             var container = ConfigureMef();
+            var filePreProcessor = container.GetExportedValue<IFilePreProcessor>();
             var fileSystem = container.GetExportedValue<IFileSystem>();
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
             var paths = resolver.GetAssemblyNames();

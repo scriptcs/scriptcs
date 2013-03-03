@@ -23,16 +23,20 @@ namespace Scriptcs
             var packageDir = _fileSystem.CurrentDirectory + @"\" + "packages";
             var folders = new List<string>();
             var files = new List<string>();
-            foreach (var file in Directory.EnumerateFiles(packageDir, @"*.dll", SearchOption.AllDirectories))
+
+            if (Directory.Exists(packageDir))
             {
-                if (file.IndexOf(@"\net35") > -1 || file.IndexOf(@"\net40") > -1)
+                foreach (var file in Directory.EnumerateFiles(packageDir, @"*.dll", SearchOption.AllDirectories))
                 {
-                    var path = Path.GetDirectoryName(file);
-                    files.Add(file);
-                    if (!folders.Contains(path))
+                    if (file.IndexOf(@"\net35") > -1 || file.IndexOf(@"\net40") > -1)
                     {
-                        folders.Add(path);
-                        Console.WriteLine("Found package reference: " + path);
+                        var path = Path.GetDirectoryName(file);
+                        files.Add(file);
+                        if (!folders.Contains(path))
+                        {
+                            folders.Add(path);
+                            Console.WriteLine("Found package reference: " + path);
+                        }
                     }
                 }
             }
