@@ -20,12 +20,12 @@ namespace Scriptcs
         {
             var packageDir = _fileSystem.CurrentDirectory + @"\" + "packages";
 
-            if (!Directory.Exists(packageDir))
+            if (!_fileSystem.DirectoryExists(packageDir))
                 return Enumerable.Empty<string>();
 
             var folders = new List<string>();
             var files = new List<string>();
-            foreach (var file in Directory.EnumerateFiles(packageDir, @"*.dll", SearchOption.AllDirectories))
+            foreach (var file in _fileSystem.EnumerateFiles(packageDir, @"*.dll"))
             {
                 if (file.IndexOf(@"\net35") > -1 || file.IndexOf(@"\net40") > -1)
                 {
