@@ -27,8 +27,6 @@ namespace Scriptcs
             var result = string.Join(Environment.NewLine, parsed.Item1);
             result += Environment.NewLine + parsed.Item2;
 
-            Debug.WriteLine(result);
-
             return result;
         }
 
