@@ -6,7 +6,7 @@ Write .net apps with a text editor, nuget and the power of Rosyln!
 
 More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 
-Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals---roadmap)
+Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
 # Pre-reqs
 
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
