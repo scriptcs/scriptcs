@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ScriptCS by scriptcs</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>ScriptCS</h1>
+        <p>Write .Net apps with a text editor, NuGet, and the power of Rosyln!</p>
+
+        <p class="view"><a href="https://github.com/scriptcs/scriptcs">View the Project on GitHub <small>scriptcs/scriptcs</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/scriptcs/scriptcs/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/scriptcs/scriptcs/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/scriptcs/scriptcs">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>ScriptCS</h1>
+
+<h1></h1>
+
+<h2>Why should you care?</h2>
+
+<p>Write .NET apps with your favorite text editor, NuGet and the power of Rosyln!</p>
+
+<ul>
+<li>More on why I developed this <a href="http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/">here</a>
+</li>
+<li>Check out our goals and roadmap <a href="https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap">here</a>
+</li>
+</ul><h2>Pre-requisites</h2>
+
+<ul>
+<li>Install the <a href="http://nuget.codeplex.com/releases/view/58939">nuget cmdline bootstrapper</a>
+</li>
+<li>Build the project and put scriptcs.exe in your path.</li>
+</ul><h2>Quick start</h2>
+
+<ul>
+<li>Open a command prompt</li>
+<li>Create a directory "c:\scriptcs_hello" and change to it.</li>
+<li>Run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"</li>
+<li>Create a server.csx with your favorite editor. Paste the text below into the file and save.</li>
+</ul><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.IO</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Web.Http</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Web.Http.SelfHost</span><span class="p">;</span>
+
+<span class="kt">var</span> <span class="n">address</span> <span class="p">=</span> <span class="s">"http://localhost:8080"</span><span class="p">;</span>
+<span class="kt">var</span> <span class="n">conf</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpSelfHostConfiguration</span><span class="p">(</span><span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="n">address</span><span class="p">));</span>
+<span class="n">conf</span><span class="p">.</span><span class="n">Routes</span><span class="p">.</span><span class="n">MapHttpRoute</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="s">"DefaultApi"</span><span class="p">,</span>
+   <span class="n">routeTemplate</span><span class="p">:</span> <span class="s">"api/{controller}/{id}"</span><span class="p">,</span>
+   <span class="n">defaults</span><span class="p">:</span> <span class="k">new</span> <span class="p">{</span> <span class="n">id</span> <span class="p">=</span> <span class="n">RouteParameter</span><span class="p">.</span><span class="n">Optional</span> <span class="p">}</span>
+<span class="p">);</span>
+
+<span class="kt">var</span> <span class="n">server</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpSelfHostServer</span><span class="p">(</span><span class="n">conf</span><span class="p">);</span>
+<span class="n">server</span><span class="p">.</span><span class="n">OpenAsync</span><span class="p">().</span><span class="n">Wait</span><span class="p">();</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Listening..."</span><span class="p">);</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+</pre></div>
+
+<ul>
+<li>Run the command <code>scriptcs server.csx</code>. This will launch a Web API host.</li>
+</ul><h2>How it works</h2>
+
+<p>ScriptCS relies on Rosyln for loading loose C# script files. It will automatically discover NuGet packages local to the app and load the binaries.</p>
+
+<h2>What's next</h2>
+
+<ul>
+<li>Adding support for pluggable script "packs" for different frameworks.</li>
+</ul><h2>License</h2>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a></p>
+
+<h2>Credits</h2>
+
+<ul>
+<li>Special thanks to <a href="https://twitter.com/filip_woj">@filip_woj</a> for being the inspiration behind this with his Roslyn Web API posts.</li>
+<li>Thanks to the Roslyn team who helped point me in the right direction.</li>
+</ul><h2>Coordinators</h2>
+
+<ul>
+<li>Glenn Block <a href="https://twitter.com/gblock">@gblock</a>
+</li>
+<li>Justin Rusbatch <a href="https://twitter.com/jrusbatch">@jrusbatch</a>
+</li>
+<li>Filip Wojcieszyn <a href="https://twitter.com/filip_woj">@filip_woj</a>
+</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/scriptcs">scriptcs</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-38995388-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
