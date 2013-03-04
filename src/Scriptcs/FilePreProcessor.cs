@@ -24,8 +24,8 @@ namespace Scriptcs
             var entryFile = _fileSystem.ReadFileLines(path);
             var parsed = ParseFile(entryFile);
 
-            var result = string.Join(Environment.NewLine, parsed.Item1);
-            result += Environment.NewLine + parsed.Item2;
+            var result = string.Join(_fileSystem.NewLine, parsed.Item1);
+            result += _fileSystem.NewLine + parsed.Item2;
 
             return result;
         }
@@ -59,7 +59,7 @@ namespace Scriptcs
                 }
             }
 
-            var result = string.Join(Environment.NewLine, fileList.Where(line => !IsUsingLine(line)));
+            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line)));
             var tuple = new Tuple<List<string>, string>(usings.Distinct().ToList(), result);
 
             return tuple;

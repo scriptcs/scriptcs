@@ -16,8 +16,10 @@ namespace Scriptcs
         void CreateDirectory(string path);
         string ReadFile(string path);
         string[] ReadFileLines(string path);
-        string CurrentDirectory { get; }
         DateTime GetLastWriteTime(string file);
         bool IsPathRooted(string path);
+
+        string CurrentDirectory { get; }
+        string NewLine { get; }
     }
 }
