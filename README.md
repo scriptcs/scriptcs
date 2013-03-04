@@ -4,10 +4,10 @@ scriptcs
 # Why should you care?
 Write .net apps with a text editor, nuget and the power of Rosyln!
 
-More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
+* More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
+* Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
 
 # Pre-reqs
-
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
 * Build the project and put scriptcs.exe in your path.
 
@@ -49,5 +49,10 @@ scriptcs relies on Rosyln for loading loose C# script files. It will automatical
 Apache 2
 
 # Credits
-* Special thanks to @filip_woj for being the inspiration behind this with his Roslyn Web API posts.
+* Special thanks to [@filip_woj] (http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.
 * Thanks to the Roslyn team who helped point me in the right direction.
+
+# Coordinators
+* Glenn Block [@gblock] (http://twitter.com/gblock)
+* Justin Rusbatch [@jrusbatch] (http://twitter.com/jrusbatch)
+* Filip Wojcieszyn [@filip_woj] (http://twitter.com/filip_woj)
