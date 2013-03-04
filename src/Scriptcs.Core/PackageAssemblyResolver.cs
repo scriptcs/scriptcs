@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 
 namespace Scriptcs
 {
@@ -18,6 +19,10 @@ namespace Scriptcs
         public IEnumerable<string> GetAssemblyNames()
         {
             var packageDir = _fileSystem.CurrentDirectory + @"\" + "packages";
+
+            if (!Directory.Exists(packageDir))
+                return Enumerable.Empty<string>();
+
             var folders = new List<string>();
             var files = new List<string>();
             foreach (var file in Directory.EnumerateFiles(packageDir, @"*.dll", SearchOption.AllDirectories))
