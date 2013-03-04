@@ -13,11 +13,13 @@ namespace Scriptcs
     public class ScriptExecutor : IScriptExecutor
     {
         private readonly IFileSystem _fileSystem;
+        private readonly IFilePreProcessor _filePreProcessor;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor)
         {
             _fileSystem = fileSystem;
+            _filePreProcessor = filePreProcessor;
         }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
@@ -41,9 +43,10 @@ namespace Scriptcs
     
                 engine.AddReference(destFile);
             }
- 
+
             var session = engine.CreateSession();
-            var csx = _fileSystem.ReadFile(_fileSystem.CurrentDirectory + @"\" + script);
+            var path = _fileSystem.CurrentDirectory + @"\" + script;
+            var csx = _filePreProcessor.ProcessFile(path);
             session.Execute(csx);
             
         }
