@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Text;
-using Roslyn.Compilers;
-using Roslyn.Scripting;
-using Roslyn.Scripting.CSharp;
 using System.IO;
 
 namespace Scriptcs
