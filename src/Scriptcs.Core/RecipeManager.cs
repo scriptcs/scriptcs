@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scriptcs
 {
@@ -17,17 +15,19 @@ namespace Scriptcs
             _container = container;
         }
 
-        public IEnumerable<Contracts.IScriptcsRecipe> GetReceipes(IEnumerable<string> recipeNames)
+        public IEnumerable<IScriptcsRecipe> GetReceipes(IEnumerable<string> recipeNames)
         {
-            List<IScriptcsRecipe> recipes = new List<IScriptcsRecipe>();
+            var recipes = new List<IScriptcsRecipe>();
+
             foreach (var recipeName in recipeNames)
             {
-                var recipeExports =
-                    _container.GetExportedValues<Lazy<IScriptcsRecipe, IScriptcsRecipeMetadata>>()
-                        .Where(l => recipeName == l.Metadata.Name);
+                var name = recipeName;
+                var recipeExports = _container.GetExportedValues<Lazy<IScriptcsRecipe, IScriptcsRecipeMetadata>>()
+                                              .Where(l => name == l.Metadata.Name);
 
-                recipes.AddRange(recipeExports.Select(re=>re.Value));
+                recipes.AddRange(recipeExports.Select(re => re.Value));
             }
+
             return recipes;
         }
     }

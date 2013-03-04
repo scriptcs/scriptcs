@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Roslyn.Scripting.CSharp;
+using Scriptcs.Contracts;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Roslyn.Scripting.CSharp;
-using Scriptcs.Contracts;
 
 namespace Scriptcs
 {
@@ -29,7 +25,7 @@ namespace Scriptcs
             engine.AddReference("System.Core");
             var bin = _fileSystem.CurrentDirectory + @"\bin";
             engine.BaseDirectory = bin;
-            
+
             if (!_fileSystem.DirectoryExists(bin))
                 _fileSystem.CreateDirectory(bin);
 
@@ -39,8 +35,8 @@ namespace Scriptcs
                 var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
                 var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
-                    _fileSystem.Copy(file, destFile,true);
-    
+                    _fileSystem.Copy(file, destFile, true);
+
                 engine.AddReference(destFile);
             }
 
@@ -48,8 +44,6 @@ namespace Scriptcs
             var path = _fileSystem.CurrentDirectory + @"\" + script;
             var csx = _filePreProcessor.ProcessFile(path);
             session.Execute(csx);
-            
         }
-
     }
 }

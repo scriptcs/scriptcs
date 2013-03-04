@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Scriptcs.Contracts;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Scriptcs.Contracts;
 
 namespace Scriptcs
 {
