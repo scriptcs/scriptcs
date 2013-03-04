@@ -48,14 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FilePreProcessor.cs" />
-    <Compile Include="FileSystem.cs" />
-    <Compile Include="IFilePreProcessor.cs" />
-    <Compile Include="IFileSystem.cs" />
-    <Compile Include="IPackageAssemblyResolver.cs" />
-    <Compile Include="IRecipeManager.cs" />
-    <Compile Include="IScriptExecutor.cs" />
-    <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
