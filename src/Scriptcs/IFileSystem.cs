@@ -15,7 +15,11 @@ namespace Scriptcs
         bool DirectoryExists(string path);
         void CreateDirectory(string path);
         string ReadFile(string path);
-        string CurrentDirectory { get; }
+        string[] ReadFileLines(string path);
         DateTime GetLastWriteTime(string file);
+        bool IsPathRooted(string path);
+
+        string CurrentDirectory { get; }
+        string NewLine { get; }
     }
 }
