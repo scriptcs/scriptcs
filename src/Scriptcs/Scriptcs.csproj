@@ -59,6 +59,7 @@
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IFilePreProcessor.cs" />
+    <Compile Include="FileSystem.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IRecipeManager.cs" />
