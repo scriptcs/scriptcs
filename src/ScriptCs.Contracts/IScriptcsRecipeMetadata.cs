@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scriptcs.Contracts
+namespace ScriptCs.Contracts
 {
-    public interface IScriptcsRecipeMetadata
+    public interface IScriptCsRecipeMetadata
     {
         string Name { get; }
     }

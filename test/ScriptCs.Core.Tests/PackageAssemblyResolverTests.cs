@@ -5,7 +5,7 @@ using System.Text;
 using Xunit;
 using Moq;
 
-namespace Scriptcs.Tests
+namespace ScriptCs.Tests
 {
     public class PackageAssemblyResolverTests
     {

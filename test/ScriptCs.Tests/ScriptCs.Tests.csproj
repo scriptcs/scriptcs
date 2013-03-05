@@ -7,8 +7,8 @@
     <ProjectGuid>{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Scriptcs.Tests</RootNamespace>
-    <AssemblyName>Scriptcs.Tests</AssemblyName>
+    <RootNamespace>ScriptCs.Tests</RootNamespace>
+    <AssemblyName>ScriptCs.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>

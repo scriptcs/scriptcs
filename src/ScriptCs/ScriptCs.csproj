@@ -7,8 +7,8 @@
     <ProjectGuid>{25080671-1A80-4041-B9C7-260578FF4849}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Scriptcs</RootNamespace>
-    <AssemblyName>Scriptcs</AssemblyName>
+    <RootNamespace>ScriptCs</RootNamespace>
+    <AssemblyName>scriptcs</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

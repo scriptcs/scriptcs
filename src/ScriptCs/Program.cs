@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 
-namespace Scriptcs
+namespace ScriptCs
 {
     internal class Program
     {

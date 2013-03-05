@@ -1,10 +1,10 @@
 ﻿using Roslyn.Scripting.CSharp;
-using Scriptcs.Contracts;
+using ScriptCs.Contracts;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 
-namespace Scriptcs
+namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
@@ -18,7 +18,7 @@ namespace Scriptcs
             _filePreProcessor = filePreProcessor;
         }
 
-        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
+        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptCsRecipe> recipes)
         {
             var engine = new ScriptEngine();
             engine.AddReference("System");

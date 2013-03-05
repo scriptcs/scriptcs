@@ -7,8 +7,8 @@
     <ProjectGuid>{E590E710-E159-48E6-A3E6-1A83D3FE732C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Scriptcs</RootNamespace>
-    <AssemblyName>Scriptcs.Core</AssemblyName>
+    <RootNamespace>ScriptCs</RootNamespace>
+    <AssemblyName>ScriptCs.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>

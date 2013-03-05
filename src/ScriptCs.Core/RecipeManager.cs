@@ -1,10 +1,10 @@
-﻿using Scriptcs.Contracts;
+﻿using ScriptCs.Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 
-namespace Scriptcs
+namespace ScriptCs
 {
     public class RecipeManager : IRecipeManager
     {
@@ -15,14 +15,14 @@ namespace Scriptcs
             _container = container;
         }
 
-        public IEnumerable<IScriptcsRecipe> GetReceipes(IEnumerable<string> recipeNames)
+        public IEnumerable<IScriptCsRecipe> GetReceipes(IEnumerable<string> recipeNames)
         {
-            var recipes = new List<IScriptcsRecipe>();
+            var recipes = new List<IScriptCsRecipe>();
 
             foreach (var recipeName in recipeNames)
             {
                 var name = recipeName;
-                var recipeExports = _container.GetExportedValues<Lazy<IScriptcsRecipe, IScriptcsRecipeMetadata>>()
+                var recipeExports = _container.GetExportedValues<Lazy<IScriptCsRecipe, IScriptCsRecipeMetadata>>()
                                               .Where(l => name == l.Metadata.Name);
 
                 recipes.AddRange(recipeExports.Select(re => re.Value));

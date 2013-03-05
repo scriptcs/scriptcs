@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
-namespace Scriptcs
+namespace ScriptCs
 {
     [InheritedExport]
     public interface IFileSystem

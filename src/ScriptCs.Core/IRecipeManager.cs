@@ -1,10 +1,10 @@
-﻿using Scriptcs.Contracts;
+﻿using ScriptCs.Contracts;
 using System.Collections.Generic;
 
-namespace Scriptcs
+namespace ScriptCs
 {
     public interface IRecipeManager
     {
-        IEnumerable<IScriptcsRecipe> GetReceipes(IEnumerable<string> recipeNames);
+        IEnumerable<IScriptCsRecipe> GetReceipes(IEnumerable<string> recipeNames);
     }
 }

@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scriptcs.Contracts
+namespace ScriptCs.Contracts
 {
-    [Export(typeof (IScriptcsRecipe))]
+    [Export(typeof (IScriptCsRecipe))]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     [MetadataAttribute]
-    public class ScriptcsRecipe : ExportAttribute, IScriptcsRecipeMetadata
+    public class ScriptCsRecipe : ExportAttribute, IScriptCsRecipeMetadata
     {
-        public ScriptcsRecipe(string name)
+        public ScriptCsRecipe(string name)
         {
             Name = name;
         }

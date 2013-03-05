@@ -5,7 +5,7 @@ using System.Text;
 using Moq;
 using Xunit;
 
-namespace Scriptcs.Tests
+namespace ScriptCs.Tests
 {
     public class FileProcessorTests
     {

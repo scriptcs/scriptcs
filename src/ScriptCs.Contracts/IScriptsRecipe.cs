@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Roslyn.Scripting.CSharp;
 
-namespace Scriptcs.Contracts
+namespace ScriptCs.Contracts
 {
-    public interface IScriptcsRecipe
+    public interface IScriptCsRecipe
     {
         void ConfigureEngine(ScriptEngine engine);
     }

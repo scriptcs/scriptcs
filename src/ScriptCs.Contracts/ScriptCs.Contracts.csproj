@@ -7,8 +7,8 @@
     <ProjectGuid>{6049E205-8B5F-4080-B023-70600E51FD64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Scriptcs.Contracts</RootNamespace>
-    <AssemblyName>Scriptcs.Contracts</AssemblyName>
+    <RootNamespace>ScriptCs.Contracts</RootNamespace>
+    <AssemblyName>ScriptCs.Contracts</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
