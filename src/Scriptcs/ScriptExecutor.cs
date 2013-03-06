@@ -13,16 +13,18 @@ namespace Scriptcs
     public class ScriptExecutor : IScriptExecutor
     {
         private readonly IFileSystem _fileSystem;
+        private readonly ExportFactory<IScriptEngine> _scriptEngineFactory;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem)
+        public ScriptExecutor(IFileSystem fileSystem, ExportFactory<IScriptEngine> scriptEngineFactory)
         {
             _fileSystem = fileSystem;
+            _scriptEngineFactory = scriptEngineFactory;
         }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
         {
-            var engine = new ScriptEngine();
+            var engine = _scriptEngineFactory.CreateExport().Value;
             engine.AddReference("System");
             engine.AddReference("System.Core");
             var bin = _fileSystem.CurrentDirectory + @"\bin";
