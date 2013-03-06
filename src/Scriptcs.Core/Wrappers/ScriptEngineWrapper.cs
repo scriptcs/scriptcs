@@ -34,5 +34,15 @@
         {
             return new SessionWrapper(this.scriptEngine.CreateSession());
         }
+
+        public ISession CreateSession<THostObject>(THostObject hostObject) where THostObject : class
+        {
+            return new SessionWrapper(this.scriptEngine.CreateSession(hostObject));
+        }
+
+        public ISession CreateSession(object hostObject, System.Type hostObjectType = null)
+        {
+            return new SessionWrapper(this.scriptEngine.CreateSession(hostObject, hostObjectType));
+        }
     }
 }
