@@ -1,4 +1,5 @@
 ﻿using System;
+using Roslyn.Compilers;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using System.Collections.Generic;
@@ -44,7 +45,15 @@ namespace ScriptCs
             var session = engine.CreateSession();
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var csx = _filePreProcessor.ProcessFile(path);
-            session.Execute(csx);
+
+            try
+            {
+                session.Execute(csx);
+            }
+            catch (CompilationErrorException ex)
+            {                
+                throw new CompilationException(Path.GetFileName(path), ex);
+            }            
         }
     }
 }
