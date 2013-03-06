@@ -10,17 +10,19 @@ namespace Scriptcs
     {
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly ExportFactory<IScriptEngine> _scriptEngineFactory;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, ExportFactory<IScriptEngine> scriptEngineFactory)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;
+            _scriptEngineFactory = scriptEngineFactory;
         }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptcsRecipe> recipes)
         {
-            var engine = new ScriptEngine();
+            var engine = _scriptEngineFactory.CreateExport().Value;
             engine.AddReference("System");
             engine.AddReference("System.Core");
             var bin = _fileSystem.CurrentDirectory + @"\bin";
