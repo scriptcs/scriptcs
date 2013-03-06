@@ -1,4 +1,4 @@
-﻿namespace Scriptcs
+﻿namespace Scriptcs.Core
 {
     public interface ISession
     {

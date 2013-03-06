@@ -1,4 +1,4 @@
-﻿namespace Scriptcs
+﻿namespace Scriptcs.Core
 {
     using System.ComponentModel.Composition;
 

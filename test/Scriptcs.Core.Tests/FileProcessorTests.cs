@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Moq;
 using Xunit;
+using Scriptcs.Core;
 
 namespace Scriptcs.Tests
 {

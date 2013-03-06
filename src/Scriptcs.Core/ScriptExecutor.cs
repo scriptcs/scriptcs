@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 
-namespace Scriptcs
+namespace Scriptcs.Core
 {
     public class ScriptExecutor : IScriptExecutor
     {

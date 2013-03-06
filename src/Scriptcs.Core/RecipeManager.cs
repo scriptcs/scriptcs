@@ -1,10 +1,11 @@
 ﻿using Scriptcs.Contracts;
+using Scriptcs.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 
-namespace Scriptcs
+namespace Scriptcs.Core
 {
     public class RecipeManager : IRecipeManager
     {

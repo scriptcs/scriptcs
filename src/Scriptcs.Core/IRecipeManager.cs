@@ -1,7 +1,7 @@
 ﻿using Scriptcs.Contracts;
 using System.Collections.Generic;
 
-namespace Scriptcs
+namespace Scriptcs.Core
 {
     public interface IRecipeManager
     {

@@ -11,6 +11,7 @@
     using Should;
     
     using Xunit;
+    using Scriptcs.Core;
 
     public class ScriptExecutorTests
     {
@@ -19,6 +20,7 @@
         {
             // arrange
             var fileSystem = new Mock<IFileSystem>();
+            var preProcessor = new Mock<IFilePreProcessor>();
             var scriptEngine = new Mock<IScriptEngine>();
             var session = new Mock<ISession>();
 
@@ -31,6 +33,7 @@
 
             var scriptExecutor = this.CreateScriptExecutor(
                 fileSystem.Object,
+                preProcessor.Object,
                 new ExportFactory<IScriptEngine>(
                     () => new Tuple<IScriptEngine, Action>(scriptEngine.Object, null)));
 
@@ -51,6 +54,7 @@
         {
             // arrange
             var scriptEngine = new Mock<IScriptEngine>();
+            var preProcessor = new Mock<IFilePreProcessor>();
             var fileSystem = new Mock<IFileSystem>();
             var session = new Mock<ISession>();
             scriptEngine.Setup(e => e.CreateSession()).Returns(session.Object);
@@ -62,6 +66,7 @@
 
             var scriptExecutor = this.CreateScriptExecutor(
                 fileSystem.Object,
+                preProcessor.Object,
                 new ExportFactory<IScriptEngine>(
                     () => new Tuple<IScriptEngine, Action>(scriptEngine.Object, null)));
 
@@ -82,6 +87,7 @@
         {
             // arrange
             var scriptEngine = new Mock<IScriptEngine>();
+            var preProcessor = new Mock<IFilePreProcessor>();
             var fileSystem = new Mock<IFileSystem>();
             var session = new Mock<ISession>();
 
@@ -97,6 +103,7 @@
 
             var scriptExecutor = this.CreateScriptExecutor(
                 fileSystem.Object,
+                preProcessor.Object,
                 new ExportFactory<IScriptEngine>(
                     () => new Tuple<IScriptEngine, Action>(scriptEngine.Object, null)));
 
@@ -113,10 +120,11 @@
         }
 
         [Fact]
-        public void ShouldExecuteScriptReadFromFileInSession()
+        public void ShouldExecuteScriptReturnedFromFileProcessorInSessionWhenExecuteIsInvoked()
         {
             // arrange
             var scriptEngine = new Mock<IScriptEngine>();
+            var preProcessor = new Mock<IFilePreProcessor>();
             var fileSystem = new Mock<IFileSystem>();
             var session = new Mock<ISession>();
 
@@ -131,6 +139,7 @@
 
             var scriptExecutor = this.CreateScriptExecutor(
                 fileSystem.Object,
+                preProcessor.Object,
                 new ExportFactory<IScriptEngine>(
                     () => new Tuple<IScriptEngine, Action>(scriptEngine.Object, null)));
 
@@ -138,19 +147,22 @@
             var paths = new string[0];
             IEnumerable<IScriptcsRecipe> recipes = null;
 
-            fileSystem.Setup(fs => fs.ReadFile(currentDirectory + @"\" + scriptName)).Returns(code).Verifiable();
+            preProcessor.Setup(fs => fs.ProcessFile(currentDirectory + @"\" + scriptName)).Returns(code).Verifiable();
 
             // act
             scriptExecutor.Execute(scriptName, paths, recipes);
 
             // assert
-            fileSystem.Verify(fs => fs.ReadFile(currentDirectory + @"\" + scriptName), Times.Once());
+            preProcessor.Verify(fs => fs.ProcessFile(currentDirectory + @"\" + scriptName), Times.Once());
             session.Verify(s => s.Execute(code), Times.Once());
         }
 
-        private ScriptExecutor CreateScriptExecutor(IFileSystem fileSystem, ExportFactory<IScriptEngine> scriptEngineFactory) 
+        private ScriptExecutor CreateScriptExecutor(
+            IFileSystem fileSystem, 
+            IFilePreProcessor preProcessor,
+            ExportFactory<IScriptEngine> scriptEngineFactory) 
         {
-            return new ScriptExecutor(fileSystem, scriptEngineFactory);
+            return new ScriptExecutor(fileSystem, preProcessor, scriptEngineFactory);
         }
     }
 }

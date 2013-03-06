@@ -1,4 +1,4 @@
-﻿namespace Scriptcs.Wrappers
+﻿namespace Scriptcs.Core.Wrappers
 {
     using Roslyn.Scripting;
 

@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 
-namespace Scriptcs
+namespace Scriptcs.Core
 {
     public class PackageAssemblyResolver : IPackageAssemblyResolver
     {
