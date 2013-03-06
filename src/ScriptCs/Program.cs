@@ -7,6 +7,10 @@ namespace ScriptCs
 {
     internal class Program
     {
+        private const int OK = 0;
+        private const int CompilationError = 1;
+        private const int RuntimeError = 2;
+
         private static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -16,7 +20,7 @@ namespace ScriptCs
             }
 
             var script = args[0];
-
+            
             var recipes = new List<string>();
             if (args.Length > 1)
             {
@@ -34,7 +38,21 @@ namespace ScriptCs
             var executor = container.GetExportedValue<IScriptExecutor>();
             var recipeManager = new RecipeManager(container);
 
-            executor.Execute(script, paths, recipeManager.GetReceipes(recipes));
+            try
+            {
+                executor.Execute(script, paths, recipeManager.GetReceipes(recipes));
+                Environment.ExitCode = OK;
+            }
+            catch (CompilationException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Environment.ExitCode = CompilationError;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("{0}: {1}", ex.GetType().Name, ex.Message);
+                Environment.ExitCode = RuntimeError;
+            }
         }
 
         private static CompositionContainer ConfigureMef()

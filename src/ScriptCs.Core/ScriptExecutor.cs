@@ -1,4 +1,6 @@
-﻿using Roslyn.Scripting.CSharp;
+﻿using System;
+using Roslyn.Compilers;
+using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -23,7 +25,7 @@ namespace ScriptCs
             var engine = new ScriptEngine();
             engine.AddReference("System");
             engine.AddReference("System.Core");
-            var bin = _fileSystem.CurrentDirectory + @"\bin";
+            var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
             engine.BaseDirectory = bin;
 
             if (!_fileSystem.DirectoryExists(bin))
@@ -31,7 +33,7 @@ namespace ScriptCs
 
             foreach (var file in paths)
             {
-                var destFile = bin + @"\" + Path.GetFileName(file);
+                var destFile = Path.Combine(bin, Path.GetFileName(file));
                 var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
                 var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
@@ -41,9 +43,17 @@ namespace ScriptCs
             }
 
             var session = engine.CreateSession();
-            var path = _fileSystem.CurrentDirectory + @"\" + script;
+            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var csx = _filePreProcessor.ProcessFile(path);
-            session.Execute(csx);
+
+            try
+            {
+                session.Execute(csx);
+            }
+            catch (CompilationErrorException ex)
+            {                
+                throw new CompilationException(Path.GetFileName(path), ex);
+            }            
         }
     }
 }
