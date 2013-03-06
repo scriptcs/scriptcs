@@ -16,7 +16,7 @@ namespace ScriptCs
             }
 
             var script = args[0];
-
+            
             var recipes = new List<string>();
             if (args.Length > 1)
             {
