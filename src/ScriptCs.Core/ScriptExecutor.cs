@@ -28,6 +28,18 @@ namespace ScriptCs
             var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
             _scriptEngine.BaseDirectory = bin;
 
+            var files = PrepareBinFolder(paths, bin);
+            var session = _scriptEngine.CreateSession();
+            AddReferences(files, session);
+            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            var csx = _filePreProcessor.ProcessFile(path);
+            session.Execute(csx);
+        }
+
+        private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
+        {
+            var files = new List<string>();
+
             if (!_fileSystem.DirectoryExists(bin))
                 _fileSystem.CreateDirectory(bin);
 
@@ -38,14 +50,18 @@ namespace ScriptCs
                 var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
                     _fileSystem.Copy(file, destFile, true);
-
-                _scriptEngine.AddReference(destFile);
+                files.Add(destFile);
             }
-
-            var session = _scriptEngine.CreateSession();
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var csx = _filePreProcessor.ProcessFile(path);
-            session.Execute(csx);
+ 
+            return files;
         }
+
+        private void AddReferences(IEnumerable<string> files, ISession session)
+        {
+            foreach (var file in files)
+            {
+                session.AddReference(file);
+            }
+        } 
     }
 }
