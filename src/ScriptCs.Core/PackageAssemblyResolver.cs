@@ -2,10 +2,8 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using ScriptCs;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
-using Constants = ScriptCs.Package.Constants;
 
 namespace ScriptCs
 {

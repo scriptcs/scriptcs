@@ -1,4 +1,4 @@
-namespace ScriptCs.Package
+namespace ScriptCs
 {
     public static class Constants
     {

@@ -65,7 +65,7 @@
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
-    <Compile Include="Package\Constants.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Package\IPackageContainer.cs" />
     <Compile Include="Package\IPackageObject.cs" />
     <Compile Include="Package\IPackageReference.cs" />
