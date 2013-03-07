@@ -187,6 +187,118 @@ namespace ScriptCs.Tests
                 preProcessor.Verify(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName)), Times.Once());
                 session.Verify(s => s.Execute(code), Times.Once());
             }
+
+            [Fact]
+            public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin() 
+            {
+                // arrange
+                var fileSystem = new Mock<IFileSystem>();
+
+                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem);
+
+                var currentDirectory = @"C:\";
+                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
+                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
+
+                var scriptName = "script.csx";
+                var paths = new string[]{ sourceFilePath };
+                IEnumerable<IScriptCsRecipe> recipes = null;
+
+                var sourceWriteTime = new DateTime(2013, 3, 7);
+                var destinatioWriteTime = new DateTime(2013, 3, 8);
+
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
+                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
+                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
+
+                // act
+                scriptExecutor.Execute(scriptName, paths, recipes);
+
+                // assert
+                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Once());
+                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
+                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldNotCopyFilesInPathIfLastWriteTimeEqualsLastWriteTimeOfFileInBin()
+            {
+                // arrange
+                var fileSystem = new Mock<IFileSystem>();
+
+                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem);
+
+                var currentDirectory = @"C:\";
+                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
+                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
+
+                var scriptName = "script.csx";
+                var paths = new string[] { sourceFilePath };
+                IEnumerable<IScriptCsRecipe> recipes = null;
+
+                var sourceWriteTime = new DateTime(2013, 3, 7);
+                var destinatioWriteTime = sourceWriteTime;
+
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
+                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
+                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
+
+                // act
+                scriptExecutor.Execute(scriptName, paths, recipes);
+
+                // assert
+                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Never());
+                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
+                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldAddReferenceToEachDestinationFile()
+            {
+                // arrange
+                var fileSystem = new Mock<IFileSystem>();
+                var scriptEngine = new Mock<IScriptEngine>();
+                var session = new Mock<ISession>();
+
+                scriptEngine.Setup(e => e.CreateSession()).Returns(session.Object);
+
+                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem, scriptEngine: scriptEngine);
+
+                var currentDirectory = @"C:\";
+                var sourceFilePath1 = Path.Combine(@"C:\fileDir", "fileName1.cs");
+                var sourceFilePath2 = Path.Combine(@"C:\fileDir", "fileName2.cs");
+                var sourceFilePath3 = Path.Combine(@"C:\fileDir", "fileName3.cs");
+                var sourceFilePath4 = Path.Combine(@"C:\fileDir", "fileName4.cs");
+                var destinationFilePath1 = Path.Combine(currentDirectory, @"bin\fileName1.cs");
+                var destinationFilePath2 = Path.Combine(currentDirectory, @"bin\fileName2.cs");
+                var destinationFilePath3 = Path.Combine(currentDirectory, @"bin\fileName3.cs");
+                var destinationFilePath4 = Path.Combine(currentDirectory, @"bin\fileName4.cs");
+
+                var scriptName = "script.csx";
+                var paths = new string[] { sourceFilePath1, sourceFilePath2, sourceFilePath3, sourceFilePath4 };
+                IEnumerable<IScriptCsRecipe> recipes = null;
+
+                var sourceWriteTime = new DateTime(2013, 3, 7);
+                var destinatioWriteTime = sourceWriteTime;
+
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+
+                scriptEngine.Setup(e => e.AddReference(destinationFilePath1)).Verifiable();
+                scriptEngine.Setup(e => e.AddReference(destinationFilePath2)).Verifiable();
+                scriptEngine.Setup(e => e.AddReference(destinationFilePath3)).Verifiable();
+                scriptEngine.Setup(e => e.AddReference(destinationFilePath4)).Verifiable();
+
+                // act
+                scriptExecutor.Execute(scriptName, paths, recipes);
+
+                // assert
+                scriptEngine.Verify(e => e.AddReference(destinationFilePath1), Times.Once());
+                scriptEngine.Verify(e => e.AddReference(destinationFilePath2), Times.Once());
+                scriptEngine.Verify(e => e.AddReference(destinationFilePath3), Times.Once());
+                scriptEngine.Verify(e => e.AddReference(destinationFilePath4), Times.Once());
+            }
         }
     }
 }
