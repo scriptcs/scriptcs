@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using Moq;
-
 using ScriptCs.Contracts;
-
 using Should;
-
 using Xunit;
 
 namespace ScriptCs.Tests
