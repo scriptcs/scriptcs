@@ -11,21 +11,22 @@ namespace ScriptCs
     {
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly IScriptEngine _scriptEngine;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;
+            _scriptEngine = scriptEngine;
         }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptCsRecipe> recipes)
         {
-            var engine = new ScriptEngine();
-            engine.AddReference("System");
-            engine.AddReference("System.Core");
+            _scriptEngine.AddReference("System");
+            _scriptEngine.AddReference("System.Core");
             var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
-            engine.BaseDirectory = bin;
+            _scriptEngine.BaseDirectory = bin;
 
             if (!_fileSystem.DirectoryExists(bin))
                 _fileSystem.CreateDirectory(bin);
@@ -38,10 +39,10 @@ namespace ScriptCs
                 if (sourceFileLastWriteTime != destFileLastWriteTime)
                     _fileSystem.Copy(file, destFile, true);
 
-                engine.AddReference(destFile);
+                _scriptEngine.AddReference(destFile);
             }
 
-            var session = engine.CreateSession();
+            var session = _scriptEngine.CreateSession();
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var csx = _filePreProcessor.ProcessFile(path);
             session.Execute(csx);
