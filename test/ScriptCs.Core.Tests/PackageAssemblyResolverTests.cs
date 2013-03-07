@@ -9,7 +9,7 @@ using Xunit;
 using Moq;
 using PackageReference = ScriptCs.Package.PackageReference;
 
-namespace ScriptCs.Core.Tests
+namespace ScriptCs.Tests
 {
     public class PackageAssemblyResolverTests
     {
