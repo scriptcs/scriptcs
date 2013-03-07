@@ -208,9 +208,9 @@ namespace ScriptCs.Tests
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
                 var scriptPack1 = new Mock<IScriptPack>();
-                scriptPack1.Setup(p => p.Initialize(It.IsAny<ISession>())).Returns((IScriptPackContext)null);
+                scriptPack1.Setup(p => p.Initialize(It.IsAny<ISession>()));
                 var scriptPack2 = new Mock<IScriptPack>();
-                scriptPack2.Setup(p => p.Initialize(It.IsAny<ISession>())).Returns((IScriptPackContext)null);
+                scriptPack2.Setup(p => p.Initialize(It.IsAny<ISession>()));
 
                 executor.Execute("script.csx", Enumerable.Empty<string>(), new List<IScriptPack>{scriptPack1.Object, scriptPack2.Object});
                 scriptPack1.Verify(p => p.Initialize(It.IsAny<ISession>()));
@@ -234,11 +234,29 @@ namespace ScriptCs.Tests
                 var scriptPack = new Mock<IScriptPack>();
                 var context = new Mock<IScriptPackContext>().Object;
 
-                scriptPack.Setup(p => p.Initialize(It.IsAny<ISession>())).Returns(context);
+                scriptPack.Setup(p => p.GetContext()).Returns(context);
 
                 executor.Execute("script.csx", Enumerable.Empty<string>(), new List<IScriptPack> { scriptPack.Object });
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IEnumerable<IScriptPackContext>>()));
             }
+
+            [Fact]
+            public void ShouldCreateSessionWithScriptHost()
+            {
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+
+                var engine = new Mock<IScriptEngine>();
+                var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor, scriptEngine: engine);
+
+                engine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(new Mock<ISession>().Object);
+                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                engine.Verify(e=>e.CreateSession(It.IsAny<ScriptHost>()));
+            } 
+
         }
     }
 }
