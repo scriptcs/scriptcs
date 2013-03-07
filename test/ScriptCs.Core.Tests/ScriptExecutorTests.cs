@@ -14,6 +14,7 @@ namespace ScriptCs.Tests
         {
             _fileSystem = new Mock<IFileSystem>();
             _fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+            _fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
 
             _preProcessor = new Mock<IFilePreProcessor>();
             _preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");

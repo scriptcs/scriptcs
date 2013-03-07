@@ -24,7 +24,7 @@ namespace ScriptCs
             var engine = new ScriptEngine();
             engine.AddReference("System");
             engine.AddReference("System.Core");
-            var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
+            var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
             engine.BaseDirectory = bin;
 
             if (!_fileSystem.DirectoryExists(bin))
