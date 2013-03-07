@@ -55,12 +55,12 @@
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
-    <Compile Include="IScriptPackManager.cs" />
+    <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptPackManager.cs" />
+    <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="Wrappers\ScriptEngineWrapper.cs" />
     <Compile Include="Wrappers\SessionWrapper.cs" />

@@ -23,7 +23,7 @@ namespace ScriptCs
             var paths = resolver.GetAssemblyNames();
 
             var executor = container.GetExportedValue<IScriptExecutor>();
-            var scriptPackManager = new ScriptPackManager(container);
+            var scriptPackManager = new ScriptPackResolver(container);
 
             executor.Execute(script, paths, scriptPackManager.GetPacks());
         }

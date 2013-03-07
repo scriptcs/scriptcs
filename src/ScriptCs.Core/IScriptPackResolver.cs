@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ScriptCs
 {
-    public interface IScriptPackManager
+    public interface IScriptPackResolver
     {
         IEnumerable<IScriptPack> GetPacks();
     }
