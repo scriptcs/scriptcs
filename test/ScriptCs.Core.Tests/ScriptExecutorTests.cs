@@ -43,7 +43,7 @@ namespace ScriptCs.Tests
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptCsRecipe>());
+                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
 
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
-                executor.Execute(@"c:\my_script\script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptCsRecipe>());
+                executor.Execute(@"c:\my_script\script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
@@ -81,7 +81,7 @@ namespace ScriptCs.Tests
 
                 var scriptName = "script.csx";
                 var paths = new string[0];
-                IEnumerable<IScriptCsRecipe> recipes = null;
+                IEnumerable<IScriptPack> recipes = null;
 
                 // act
                 scriptExecutor.Execute(scriptName, paths, recipes);
@@ -109,7 +109,7 @@ namespace ScriptCs.Tests
 
                 var scriptName = "script.csx";
                 var paths = new string[0];
-                IEnumerable<IScriptCsRecipe> recipes = null;
+                IEnumerable<IScriptPack> recipes = null;
 
                 // act
                 scriptExecutor.Execute(scriptName, paths, recipes);
@@ -141,7 +141,7 @@ namespace ScriptCs.Tests
 
                 var scriptName = "script.csx";
                 var paths = new string[0];
-                IEnumerable<IScriptCsRecipe> recipes = null;
+                IEnumerable<IScriptPack> recipes = null;
 
                 // act
                 scriptExecutor.Execute(scriptName, paths, recipes);
@@ -176,7 +176,7 @@ namespace ScriptCs.Tests
 
                 var scriptName = "script.csx";
                 var paths = new string[0];
-                IEnumerable<IScriptCsRecipe> recipes = null;
+                IEnumerable<IScriptPack> recipes = null;
 
                 preProcessor.Setup(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName))).Returns(code).Verifiable();
 

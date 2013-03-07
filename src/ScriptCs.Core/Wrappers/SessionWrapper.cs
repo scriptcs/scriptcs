@@ -1,4 +1,5 @@
 ﻿using Roslyn.Scripting;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Wrappers
 {

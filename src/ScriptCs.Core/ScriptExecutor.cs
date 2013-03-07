@@ -21,7 +21,7 @@ namespace ScriptCs
             _scriptEngine = scriptEngine;
         }
 
-        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptCsRecipe> recipes)
+        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> recipes)
         {
             _scriptEngine.AddReference("System");
             _scriptEngine.AddReference("System.Core");
