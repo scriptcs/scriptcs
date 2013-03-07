@@ -21,7 +21,7 @@ namespace ScriptCs
             _scriptEngine = scriptEngine;
         }
 
-        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> recipes)
+        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
             _scriptEngine.AddReference("System");
             _scriptEngine.AddReference("System.Core");
@@ -31,6 +31,7 @@ namespace ScriptCs
             var files = PrepareBinFolder(paths, bin);
             var session = _scriptEngine.CreateSession();
             AddReferences(files, session);
+            InitializeScriptPacks(scriptPacks, session);
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var csx = _filePreProcessor.ProcessFile(path);
             session.Execute(csx);
@@ -62,6 +63,15 @@ namespace ScriptCs
             {
                 session.AddReference(file);
             }
-        } 
+        }
+
+        private void InitializeScriptPacks(IEnumerable<IScriptPack> scriptPacks, ISession session)
+        {
+            foreach (var pack in scriptPacks)
+            {
+                pack.Initialize(session);
+            }
+        }
+
     }
 }

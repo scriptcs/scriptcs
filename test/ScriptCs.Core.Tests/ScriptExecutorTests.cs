@@ -9,7 +9,7 @@ using Xunit;
 
 namespace ScriptCs.Tests
 {
-    // had to update this class as unit tests did not follow approach requested in contrib (phil hack like tests)
+    // had to update this class as unit tests did not follow approach requested in contrib (phil hack lipowerke tests)
     public class ScriptExecutorTests
     {
         private static ScriptExecutor CreateScriptExecutor(
@@ -186,6 +186,25 @@ namespace ScriptCs.Tests
                 // assert
                 preProcessor.Verify(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName)), Times.Once());
                 session.Verify(s => s.Execute(code), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldInitializeScriptPacks()
+            {
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+
+                var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
+
+                var scriptPack1 = new Mock<IScriptPack>();
+                var scriptPack2 = new Mock<IScriptPack>();
+
+                executor.Execute("script.csx", Enumerable.Empty<string>(), new List<IScriptPack>{scriptPack1.Object, scriptPack2.Object});
+                scriptPack1.Verify(p=>p.Initialize(It.IsAny<ISession>()));
+                scriptPack1.Verify(p => p.Initialize(It.IsAny<ISession>()));
             }
         }
     }
