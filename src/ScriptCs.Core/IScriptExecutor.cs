@@ -7,6 +7,6 @@ namespace ScriptCs
     [InheritedExport]
     public interface IScriptExecutor
     {
-        void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptCsRecipe> recipes);
+        void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> recipes);
     }
 }

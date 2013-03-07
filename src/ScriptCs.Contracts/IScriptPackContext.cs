@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptCs.Contracts
 {
-    public interface IScriptCsRecipeMetadata
+    public interface IScriptPackContext
     {
-        string Name { get; }
     }
 }
