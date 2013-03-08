@@ -26,7 +26,6 @@ namespace ScriptCs
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
 
             var executor = container.GetExportedValue<IScriptExecutor>();
-
             var scriptPackManager = new ScriptPackResolver(container);
 
             try
