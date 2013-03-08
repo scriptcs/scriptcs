@@ -10,7 +10,7 @@ DebugSymbols [.csx file]
 Findings
 ========
 To compile SyntaxTree is being used, could not find a way to build from ScriptEngine. Generating a .pdb file with the current settings seems simple. The following figure shows a debugging session with mdbg (still need to figure out how to get mdbg to recognize the source file).
-![alt text](image source url "Debugging session")
+![debugSession](https://f.cloud.github.com/assets/3376731/235457/97f6f1bc-87a7-11e2-97aa-1d3b9a3cadaf.png)
 
 Source needs to be a valid "compilation unit". In the case of a console app, that means having an entry point (main method) and inside a class. For example, this code:
 ```
@@ -24,22 +24,22 @@ Console.WriteLine(c);
 Console.ReadLine();
 ```
 Throws the following:
-    (4,9): error CS0116: A namespace does not directly contain members such as fields or methods
-    (5,9): error CS0116: A namespace does not directly contain members such as fields or methods
-    (4,18): error CS1022: Type or namespace definition, or end-of-file expected
-    (5,17): error CS1022: Type or namespace definition, or end-of-file expected
-    (11,9): error CS0116: A namespace does not directly contain members such as fields or methods
-    (11,18): error CS1022: Type or namespace definition, or end-of-file expected
-    (11,19): error CS0116: A namespace does not directly contain members such as fields or methods
-    (11,20): error CS1022: Type or namespace definition, or end-of-file expected
-    (12,9): error CS0116: A namespace does not directly contain members such as fields or methods
-    (12,17): error CS1022: Type or namespace definition, or end-of-file expected
-    (7,5): error CS0116: A namespace does not directly contain members such as fields or methods
-    (8,5): error CS0116: A namespace does not directly contain members such as fields or methods
-    (10,5): error CS0116: A namespace does not directly contain members such as fields or methods
-    (10,9): error CS0103: The name 'a' does not exist in the current context
-    (10,13): error CS0103: The name 'b' does not exist in the current context
-    error CS5001: Program does not contain a static 'Main' method suitable for an     entry point
+* (4,9): error CS0116: A namespace does not directly contain members such as fields or methods
+* (5,9): error CS0116: A namespace does not directly contain members such as fields or methods
+* (4,18): error CS1022: Type or namespace definition, or end-of-file expected
+* (5,17): error CS1022: Type or namespace definition, or end-of-file expected
+* (11,9): error CS0116: A namespace does not directly contain members such as fields or methods
+* (11,18): error CS1022: Type or namespace definition, or end-of-file expected
+* (11,19): error CS0116: A namespace does not directly contain members such as fields or methods
+* (11,20): error CS1022: Type or namespace definition, or end-of-file expected
+* (12,9): error CS0116: A namespace does not directly contain members such as fields or methods
+* (12,17): error CS1022: Type or namespace definition, or end-of-file expected
+* (7,5): error CS0116: A namespace does not directly contain members such as fields or methods
+* (8,5): error CS0116: A namespace does not directly contain members such as fields or methods
+* (10,5): error CS0116: A namespace does not directly contain members such as fields or methods
+* (10,9): error CS0103: The name 'a' does not exist in the current context
+* (10,13): error CS0103: The name 'b' does not exist in the current context
+* error CS5001: Program does not contain a static 'Main' method suitable for an     entry point
     
 But this other fragment does work:
 ```
