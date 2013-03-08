@@ -64,6 +64,7 @@
     <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptExecutor.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Package\IPackageContainer.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
+    <Compile Include="ScriptPackSession.cs" />
     <Compile Include="Wrappers\ScriptEngineWrapper.cs" />
     <Compile Include="Wrappers\SessionWrapper.cs" />
   </ItemGroup>

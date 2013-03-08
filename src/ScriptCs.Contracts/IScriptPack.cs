@@ -10,7 +10,7 @@ namespace ScriptCs.Contracts
     [InheritedExport]
     public interface IScriptPack
     {
-        void Initialize(ISession session);
+        void Initialize(IScriptPackSession session);
         IScriptPackContext GetContext(); 
         void Terminate();
     }

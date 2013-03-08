@@ -1,5 +1,4 @@
 ﻿using Roslyn.Scripting;
-using ScriptCs.Contracts;
 
 namespace ScriptCs.Wrappers
 {
@@ -20,6 +19,11 @@ namespace ScriptCs.Wrappers
         public void AddReference(string assemblyDisplayNameOrPath)
         {
             this._session.AddReference(assemblyDisplayNameOrPath);
+        }
+
+        public void ImportNamespace(string @namespace)
+        {
+            this._session.ImportNamespace(@namespace);
         }
     }
 }
