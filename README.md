@@ -48,6 +48,9 @@ scriptcs relies on Rosyln for loading loose C# script files. It will automatical
 # What's next
 * Adding support for pluggable recipe "packs" for different frameworks.
 
+# Contributing
+Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
+
 # License 
 Apache 2
 
