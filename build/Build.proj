@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+
+    <Root>$([System.IO.Path]::GetFullPath( '$(MSBuildThisFileDirectory)..\' ))</Root>
+    <BaseArtifactsPath>$([System.IO.Path]::Combine( $(Root), 'artifacts\' ))</BaseArtifactsPath>
+    <ArtifactsPath>$([System.IO.Path]::Combine( $(BaseArtifactsPath), $(Configuration) ))\</ArtifactsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Solution Include="$(Root)*.sln">
+      <AdditionalProperties>
+        Configuration=$(Configuration);
+        ArtifactsPath=$(ArtifactsPath)
+      </AdditionalProperties>
+    </Solution>
+  </ItemGroup>
+
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test"></Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(ArtifactsPath)" Condition="Exists('$(ArtifactsPath)')"/>
+    <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
+  </Target>
+
+  <Target Name="Build">
+    <MSBuild Projects="@(Solution)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="GatherTestAssemblies">
+    <xunit Assemblies="@(TestAssemblies)" Xml="%(TestAssemblies.Identity).xunit.xml" />
+  </Target>
+
+  <Target Name="GatherTestAssemblies" DependsOnTargets="Build">
+    <ItemGroup>
+      <TestAssemblies Include="%(ProjectAssemblies.Identity)" Condition=" Exists('%(RootDir)%(Directory)xunit.dll') " />
+    </ItemGroup>
+  </Target>
+</Project>

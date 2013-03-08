@@ -20,6 +20,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core", "src\Script
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
+	ProjectSection(SolutionItems) = preProject
+		build\Build.proj = build\Build.proj
+		build\Build.tasks = build\Build.tasks
+		build\ScriptCs.Common.props = build\ScriptCs.Common.props
+		build\ScriptCs.Version.props = build\ScriptCs.Version.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
