@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
+using ScriptCs.Exceptions;
+using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -19,13 +22,26 @@ namespace ScriptCs
             
             var container = ConfigureMef();
             var fileSystem = container.GetExportedValue<IFileSystem>();
+            var packageContainer = container.GetExportedValue<IPackageContainer>();
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
-            var paths = resolver.GetAssemblyNames();
 
             var executor = container.GetExportedValue<IScriptExecutor>();
             var scriptPackManager = new ScriptPackResolver(container);
 
-            executor.Execute(script, paths, scriptPackManager.GetPacks());
+            try
+            {
+                var workingDirectory = fileSystem.GetWorkingDirectory(script);
+                var paths = resolver.GetAssemblyNames(workingDirectory).ToList();
+                foreach (var path in paths)
+                {
+                    Console.WriteLine("Found assembly reference: " + path);
+                }
+                executor.Execute(script, paths, scriptPackManager.GetPacks());
+            }
+            catch (MissingAssemblyException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static CompositionContainer ConfigureMef()

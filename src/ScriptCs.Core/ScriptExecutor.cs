@@ -33,7 +33,9 @@ namespace ScriptCs
         {
             _scriptEngine.AddReference("System");
             _scriptEngine.AddReference("System.Core");
-            var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
+
+            var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
+
             _scriptEngine.BaseDirectory = bin;
 
             var files = PrepareBinFolder(paths, bin);

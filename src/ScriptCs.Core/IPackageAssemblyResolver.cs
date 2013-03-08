@@ -6,6 +6,6 @@ namespace ScriptCs
     [InheritedExport]
     public interface IPackageAssemblyResolver
     {
-        IEnumerable<string> GetAssemblyNames();
+        IEnumerable<string> GetAssemblyNames(string workingDirectory);
     }
 }

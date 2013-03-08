@@ -20,9 +20,17 @@ namespace ScriptCs
         string[] ReadFileLines(string path);
 
         DateTime GetLastWriteTime(string file);
+        
         bool IsPathRooted(string path);
 
         string CurrentDirectory { get; }
+
         string NewLine { get; }
+
+        string GetWorkingDirectory(string path);
+
+        void Move(string source, string dest);
+
+        bool FileExists(string path);
     }
 }
