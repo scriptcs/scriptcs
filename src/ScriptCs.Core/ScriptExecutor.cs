@@ -1,9 +1,9 @@
 ﻿using System;
 using Roslyn.Scripting.CSharp;
-using ScriptCs.Contracts;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -43,10 +43,12 @@ namespace ScriptCs
             var host = _scriptHostFactory.CreateScriptHost(contexts);
             var session = _scriptEngine.CreateSession(host);
             AddReferences(files, session);
-            InitializeScriptPacks(scriptPacks, session);
+            var scriptPackSession = new ScriptPackSession(session);
+            InitializeScriptPacks(scriptPacks, scriptPackSession);
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var csx = _filePreProcessor.ProcessFile(path);
             session.Execute(csx);
+            TerminateScriptPacks(scriptPacks);
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
@@ -85,11 +87,19 @@ namespace ScriptCs
             }
         } 
 
-        private void InitializeScriptPacks(IEnumerable<IScriptPack> scriptPacks, ISession session)
+        private void InitializeScriptPacks(IEnumerable<IScriptPack> scriptPacks, IScriptPackSession session)
         {
             foreach (var pack in scriptPacks)
             {
                 pack.Initialize(session);
+            }
+        }
+
+        private void TerminateScriptPacks(IEnumerable<IScriptPack> scriptPacks)
+        {
+            foreach (var pack in scriptPacks)
+            {
+                pack.Terminate();
             }
         }
 
