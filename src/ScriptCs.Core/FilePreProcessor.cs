@@ -49,7 +49,7 @@ namespace ScriptCs
                     var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
                     var filecontent = _fileSystem.IsPathRooted(filepath)
                                               ? _fileSystem.ReadFileLines(filepath)
-                                              : _fileSystem.ReadFileLines(Path.Combine(_fileSystem.CurrentDirectory, filepath));
+                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
 
                     if (filecontent != null)
                     {

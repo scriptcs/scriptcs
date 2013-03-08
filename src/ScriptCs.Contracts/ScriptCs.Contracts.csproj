@@ -53,10 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IScriptcsRecipeMetadata.cs" />
-    <Compile Include="IScriptsRecipe.cs" />
+    <Compile Include="IScriptPack.cs" />
+    <Compile Include="IScriptPackContext.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptcsRecipe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
