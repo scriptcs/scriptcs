@@ -1,4 +1,5 @@
 ﻿using Roslyn.Compilers;
+using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,19 @@ namespace DebugSymbols
     {
         static void Main(string[] args)
         {
+            if (args.Length == 0) 
+            {
+                Console.WriteLine("Usage:\r\n\r\nDebugSymbols [.csx file] \r\n");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("IMPORTANT");
+            Console.WriteLine("================================================");
+            Console.WriteLine("In this spike the .csx file must only make use of classes in mscorlib, System and System.Core assemblies.");
+            Console.WriteLine("================================================");
+            Console.WriteLine();
+
             var filePath = args[0];
             var fileDir = Path.GetDirectoryName(filePath);
             fileDir = Path.IsPathRooted(filePath) ? fileDir : Path.Combine(Environment.CurrentDirectory, fileDir);
@@ -27,7 +41,9 @@ namespace DebugSymbols
             var tree = SyntaxTree.ParseText(code);
 
             var compilation = Compilation.Create("DerivedClass")
-                             .WithOptions(new CompilationOptions(OutputKind.ConsoleApplication))
+                .WithOptions(new CompilationOptions(OutputKind.ConsoleApplication, 
+                    debugInformationKind: DebugInformationKind.Full, 
+                    platform: Platform.AnyCPU))
                              .AddSyntaxTrees(tree)
                              .AddReferences(
                                  MetadataReference.CreateAssemblyReference("mscorlib"),
