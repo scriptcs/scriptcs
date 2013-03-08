@@ -1,7 +1,7 @@
 # scriptcs
 
 ## Why should you care?
-Write .net apps with a text editor, nuget and the power of Rosyln!
+Write C# apps with a text editor, nuget and the power of Rosyln!
 
 **Note**: *Rosyln is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
 
@@ -59,5 +59,5 @@ Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/mas
 * Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))
 
 ## License 
-Apache 2
+[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/license.txt)
 
