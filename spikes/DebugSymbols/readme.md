@@ -10,9 +10,7 @@ DebugSymbols [.csx file]
 Findings
 ========
 To compile SyntaxTree is being used, could not find a way to build from ScriptEngine. Generating a .pdb file with the current settings seems simple. The following figure shows a debugging session with mdbg (still need to figure out how to get mdbg to recognize the source file).
-![alt text][logo]
-
-[logo]: https://github.com/dschenkelman/scriptcs/blob/dev/spikes/DebugSymbols/debugSession.png "Debugging session"
+![debugSession](https://f.cloud.github.com/assets/3376731/235457/97f6f1bc-87a7-11e2-97aa-1d3b9a3cadaf.png)
 
 Source needs to be a valid "compilation unit". In the case of a console app, that means having an entry point (main method) and inside a class. For example, this code:
 ```
