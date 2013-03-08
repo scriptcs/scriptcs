@@ -24,8 +24,13 @@ namespace ScriptCs.Tests
 
             if (scriptEngine == null)
             {
+                var mockSession = new Mock<ISession>();
+                mockSession.Setup(s => s.AddReference(It.IsAny<string>()));
+                mockSession.Setup(s => s.Execute(It.IsAny<string>())).Returns(new object());
+
                 scriptEngine = new Mock<IScriptEngine>();
-                scriptEngine.Setup(e => e.CreateSession()).Returns(new Mock<ISession>().Object);
+                scriptEngine.Setup(e => e.CreateSession()).Returns(mockSession.Object);
+                scriptEngine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(mockSession.Object);
             }
 
             if (scriptHostFactory == null)
