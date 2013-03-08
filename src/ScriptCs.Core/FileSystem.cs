@@ -55,5 +55,20 @@ namespace ScriptCs
         {
             return File.GetLastWriteTime(file);
         }
+
+        public void Move(string source, string dest)
+        {
+            File.Move(source, dest);
+        }
+
+        public bool FileExists(string path)
+        {
+            return File.Exists(path);
+        }
+
+        public string GetWorkingDirectory(string path)
+        {
+            return IsPathRooted(path) ? Path.GetDirectoryName(path) : CurrentDirectory;
+        }
     }
 }
