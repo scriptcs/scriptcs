@@ -12,7 +12,7 @@ namespace ScriptCs.Tests
 {
     public class ScriptExecutorTests
     {
-        private static ScriptExecutor CreateScriptExecutor(
+        public static ScriptExecutor CreateScriptExecutor(
             Mock<IFileSystem> fileSystem = null,
             Mock<IFilePreProcessor> fileProcessor = null,
             Mock<IScriptEngine> scriptEngine = null,
@@ -44,7 +44,7 @@ namespace ScriptCs.Tests
             }
         }
 
-        public class TheExecuteMethod 
+        public class TheExecuteMethod
         {
             [Fact]
             public void ConstructsAbsolutePathBeforePreProcessingFile()
@@ -52,7 +52,7 @@ namespace ScriptCs.Tests
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
-                
+
                 var preProcessor = new Mock<IFilePreProcessor>();
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
 
@@ -74,7 +74,7 @@ namespace ScriptCs.Tests
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
                 executor.Execute(@"c:\my_script\script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                
+
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
 
@@ -190,7 +190,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
 
                 var scriptExecutor = CreateScriptExecutor(
-                    fileSystem: fileSystem, 
+                    fileSystem: fileSystem,
                     fileProcessor: preProcessor,
                     scriptEngine: scriptEngine);
 
@@ -223,7 +223,7 @@ namespace ScriptCs.Tests
                 var scriptPack1 = new Mock<IScriptPack>();
                 scriptPack1.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
                 scriptPack1.Setup(p => p.GetContext()).Returns(Mock.Of<IScriptPackContext>());
-   
+
                 executor.Execute("script.csx", Enumerable.Empty<string>(), new List<IScriptPack> { scriptPack1.Object });
                 scriptPack1.Verify(p => p.Initialize(It.IsAny<IScriptPackSession>()));
             }
@@ -267,9 +267,9 @@ namespace ScriptCs.Tests
 
                 engine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(new Mock<ISession>().Object);
                 executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                engine.Verify(e=>e.CreateSession(It.IsAny<ScriptHost>()));
+                engine.Verify(e => e.CreateSession(It.IsAny<ScriptHost>()));
             }
- 
+
             [Fact]
             public void ShouldTerminateScriptPacksWhenScriptFinishes()
             {
@@ -290,7 +290,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin() 
+            public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin()
             {
                 // arrange
                 var fileSystem = new Mock<IFileSystem>();
@@ -302,11 +302,12 @@ namespace ScriptCs.Tests
                 var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
 
                 var scriptName = "script.csx";
-                var paths = new string[]{ sourceFilePath };
+                var paths = new string[] { sourceFilePath };
 
                 var sourceWriteTime = new DateTime(2013, 3, 7);
                 var destinatioWriteTime = new DateTime(2013, 3, 8);
 
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
@@ -339,6 +340,7 @@ namespace ScriptCs.Tests
                 var sourceWriteTime = new DateTime(2013, 3, 7);
                 var destinatioWriteTime = sourceWriteTime;
 
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
@@ -376,8 +378,10 @@ namespace ScriptCs.Tests
                 var destinationFilePath4 = Path.Combine(currentDirectory, @"bin\fileName4.cs");
 
                 var scriptName = "script.csx";
+
                 var paths = new string[] { sourceFilePath1, sourceFilePath2, sourceFilePath3, sourceFilePath4 };
 
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
 
                 session.Setup(e => e.AddReference(destinationFilePath1)).Verifiable();
