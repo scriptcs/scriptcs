@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.IO;
 using System.Linq;
 using ScriptCs.Exceptions;
-using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -22,10 +19,8 @@ namespace ScriptCs
             
             var container = ConfigureMef();
             var fileSystem = container.GetExportedValue<IFileSystem>();
-            var packageContainer = container.GetExportedValue<IPackageContainer>();
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
-
-            var executor = container.GetExportedValue<IScriptExecutor>();
+            var executor = container.GetExportedValue<IScriptExecutor>(Constants.RunContractName);
             var scriptPackManager = new ScriptPackResolver(container);
 
             try
@@ -36,6 +31,7 @@ namespace ScriptCs
                 {
                     Console.WriteLine("Found assembly reference: " + path);
                 }
+
                 executor.Execute(script, paths, scriptPackManager.GetPacks());
             }
             catch (MissingAssemblyException ex)

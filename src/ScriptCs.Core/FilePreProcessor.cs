@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 namespace ScriptCs
 {
+    [Export(Constants.RunContractName, typeof(IFilePreProcessor))]
     public class FilePreProcessor : IFilePreProcessor
     {
         private const string LoadString = "#load ";

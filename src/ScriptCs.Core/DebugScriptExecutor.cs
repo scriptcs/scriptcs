@@ -1,13 +1,15 @@
 ﻿namespace ScriptCs
 {
-    using System;
+    using System.ComponentModel.Composition;
     using System.IO;
 
     using Roslyn.Compilers.Common;
 
+    [Export(Constants.DebugContractName, typeof(IScriptExecutor))]
     public class DebugScriptExecutor : ScriptExecutor
     {
-        public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
+        [ImportingConstructor]
+        public DebugScriptExecutor(IFileSystem fileSystem, [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
             : base(fileSystem, filePreProcessor, scriptEngine, scriptHostFactory)
         {
         }
