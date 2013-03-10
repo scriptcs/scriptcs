@@ -31,8 +31,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompilationResult.cs" />
     <Compile Include="DebugFilePreProcessor.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
+    <Compile Include="Exceptions\CompilationException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -43,6 +45,7 @@
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="ICompilation.cs" />
+    <Compile Include="ICompilationResult.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />

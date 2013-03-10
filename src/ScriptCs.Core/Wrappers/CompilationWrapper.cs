@@ -13,9 +13,10 @@ namespace ScriptCs.Wrappers
             this._compilation = compilation;
         }
 
-        public CommonEmitResult Emit(Stream outputStream, Stream pdbStream)
+        public ICompilationResult Emit(Stream outputStream, Stream pdbStream)
         {
-            return this._compilation.Emit(outputStream, pdbStream: pdbStream);
+            var emitResult = this._compilation.Emit(outputStream, pdbStream: pdbStream);
+            return new CompilationResult(emitResult);
         }
     }
 }

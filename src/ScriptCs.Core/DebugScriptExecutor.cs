@@ -5,6 +5,8 @@
 
     using Roslyn.Compilers.Common;
 
+    using ScriptCs.Exceptions;
+
     [Export(Constants.DebugContractName, typeof(IScriptExecutor))]
     public class DebugScriptExecutor : ScriptExecutor
     {
@@ -30,12 +32,21 @@
             
             ISubmission<object> submission = session.CompileSubmission<object>(code);
 
-            CommonEmitResult result;
+            ICompilationResult result;
 
             using (Stream outputStream = _fileSystem.CreateFileStream(outputPath, FileMode.OpenOrCreate))
             using (Stream pdbStream = _fileSystem.CreateFileStream(pdbPath, FileMode.OpenOrCreate))
             {
                  result = submission.Compilation.Emit(outputStream, pdbStream);
+            }
+
+            if (result.Success)
+            {
+
+            }
+            else
+            {
+                throw new CompilationException(result.ErrorMessage);
             }
         }
     }

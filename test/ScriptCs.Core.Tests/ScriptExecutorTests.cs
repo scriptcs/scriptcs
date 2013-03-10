@@ -370,7 +370,7 @@ namespace ScriptCs.Tests
 
                 scriptEngine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(session.Object);
 
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem, scriptEngine: scriptEngine);
+                var scriptExecutor = CreateScriptExecutor(fileSystem, scriptEngine: scriptEngine);
 
                 var currentDirectory = @"C:\";
                 var sourceFilePath1 = Path.Combine(@"C:\fileDir", "fileName1.cs");
