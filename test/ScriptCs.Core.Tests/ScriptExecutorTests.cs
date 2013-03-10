@@ -18,7 +18,11 @@ namespace ScriptCs.Tests
             Mock<IScriptEngine> scriptEngine = null,
             Mock<IScriptHostFactory> scriptHostFactory = null)
         {
-            fileSystem = fileSystem ?? new Mock<IFileSystem>();
+            if (fileSystem == null)
+            {
+                fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(@"C:\");
+            }
 
             fileProcessor = fileProcessor ?? new Mock<IFilePreProcessor>();
 
@@ -309,7 +313,6 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -343,7 +346,6 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -386,7 +388,6 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
 
                 session.Setup(e => e.AddReference(destinationFilePath1)).Verifiable();
                 session.Setup(e => e.AddReference(destinationFilePath2)).Verifiable();

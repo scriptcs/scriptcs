@@ -4,6 +4,8 @@ using System.ComponentModel.Composition;
 
 namespace ScriptCs
 {
+    using System.IO;
+
     [InheritedExport]
     public interface IFileSystem
     {
@@ -32,5 +34,7 @@ namespace ScriptCs
         void Move(string source, string dest);
 
         bool FileExists(string path);
+
+        Stream CreateFileStream(string filePath, FileMode mode);
     }
 }

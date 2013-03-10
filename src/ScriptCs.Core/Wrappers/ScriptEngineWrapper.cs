@@ -1,15 +1,16 @@
-﻿using Roslyn.Scripting;
-using Roslyn.Scripting.CSharp;
+﻿using Roslyn.Scripting.CSharp;
 
 namespace ScriptCs.Wrappers
 {
+    using Roslyn.Scripting;
+
     internal class ScriptEngineWrapper : IScriptEngine
     {
-        private ScriptEngine scriptEngine;
+        private CommonScriptEngine scriptEngine;
 
-        public ScriptEngineWrapper()
+        public ScriptEngineWrapper(CommonScriptEngine engine = null)
         {
-            this.scriptEngine = new ScriptEngine();
+            this.scriptEngine = engine ?? new ScriptEngine();
         }
 
         public string BaseDirectory

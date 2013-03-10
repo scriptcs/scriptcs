@@ -11,6 +11,14 @@ namespace ScriptCs.Wrappers
             this._session = session;
         }
 
+        public IScriptEngine Engine 
+        {    
+            get
+            {
+                return new ScriptEngineWrapper(this._session.Engine);
+            }
+        }
+
         public object Execute(string code)
         {
             return this._session.Execute(code);
@@ -24,6 +32,12 @@ namespace ScriptCs.Wrappers
         public void ImportNamespace(string @namespace)
         {
             this._session.ImportNamespace(@namespace);
+        }
+
+        public ISubmission<T> CompileSubmission<T>(string code)
+        {
+            var submission = this._session.CompileSubmission<T>(code);
+            return new SubmissionWrapper<T>(submission);
         }
     }
 }

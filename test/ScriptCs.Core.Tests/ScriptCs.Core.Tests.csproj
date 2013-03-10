@@ -16,6 +16,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Should">
       <HintPath>..\..\packages\Should.1.1.12.0\lib\Should.dll</HintPath>
     </Reference>

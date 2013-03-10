@@ -7,7 +7,7 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
-        private readonly IFileSystem _fileSystem;
+        protected readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
@@ -43,15 +43,15 @@ namespace ScriptCs
             AddReferences(files, session);
             var scriptPackSession = new ScriptPackSession(session);
             InitializeScriptPacks(scriptPacks, scriptPackSession);
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var csx = _filePreProcessor.ProcessFile(path);
-            Execute(session, csx);
+            var absolutePathToScript = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            var processedCode = _filePreProcessor.ProcessFile(absolutePathToScript);
+            Execute(absolutePathToScript, session, processedCode);
             TerminateScriptPacks(scriptPacks);
         }
 
-        protected virtual void Execute(ISession session, string csx)
+        protected virtual void Execute(string absolutePathToScript, ISession session, string code)
         {
-            session.Execute(csx);
+            session.Execute(code);
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
