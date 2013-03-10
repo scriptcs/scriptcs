@@ -16,7 +16,7 @@ namespace ScriptCs.Package
 
         public IEnumerable<IPackageReference> FindReferences(string path)
         {
-            var packageReferenceFile = new PackageReferenceFile(path + @"/" + Constants.PackagesFile);
+            var packageReferenceFile = new PackageReferenceFile(path);
             var references = packageReferenceFile.GetPackageReferences();
             if (references == null) return Enumerable.Empty<IPackageReference>();
 
