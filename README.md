@@ -59,5 +59,5 @@ Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/mas
 * Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))
 
 ## License 
-[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/license.txt)
+[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md)
 
