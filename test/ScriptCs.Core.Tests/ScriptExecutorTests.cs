@@ -308,6 +308,7 @@ namespace ScriptCs.Tests
                 var destinatioWriteTime = new DateTime(2013, 3, 8);
 
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -340,6 +341,7 @@ namespace ScriptCs.Tests
                 var destinatioWriteTime = sourceWriteTime;
 
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -358,6 +360,7 @@ namespace ScriptCs.Tests
             {
                 // arrange
                 var fileSystem = new Mock<IFileSystem>();
+
                 var scriptEngine = new Mock<IScriptEngine>();
                 var session = new Mock<ISession>();
 
@@ -379,6 +382,7 @@ namespace ScriptCs.Tests
                 var paths = new string[] { sourceFilePath1, sourceFilePath2, sourceFilePath3, sourceFilePath4 };
 
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
 
                 session.Setup(e => e.AddReference(destinationFilePath1)).Verifiable();
                 session.Setup(e => e.AddReference(destinationFilePath2)).Verifiable();
