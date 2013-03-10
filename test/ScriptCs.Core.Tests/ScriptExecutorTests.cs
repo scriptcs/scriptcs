@@ -309,6 +309,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -342,6 +343,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
                 fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
@@ -360,6 +362,7 @@ namespace ScriptCs.Tests
             {
                 // arrange
                 var fileSystem = new Mock<IFileSystem>();
+
                 var scriptEngine = new Mock<IScriptEngine>();
                 var session = new Mock<ISession>();
 
@@ -383,6 +386,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
 
                 session.Setup(e => e.AddReference(destinationFilePath1)).Verifiable();
                 session.Setup(e => e.AddReference(destinationFilePath2)).Verifiable();

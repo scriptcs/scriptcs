@@ -2,11 +2,14 @@
 
 Before submitting a feature or substantial code contribution please discuss it with the team in our [discussion group](https://groups.google.com/forum/?fromgroups#!forum/scriptcs).
 
+Also please see the discussion [here] on which things are open for contribution (https://github.com/scriptcs/scriptcs/issues/79)
+
 ## Workflow
 
 * We use the **dev** branch for active development. All pull requests should be made to this branch.
 * The master branch is only updated via pull requests from the dev branch.
 * Tests need to be provided for every bug/feature that is completed.
+* Please do not submit a PR unless without running all unit tests. If any tests are failing in the PR they will be rejected.
 
 ## Issue Management
 
