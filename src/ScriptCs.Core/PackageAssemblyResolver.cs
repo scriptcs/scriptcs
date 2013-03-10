@@ -22,10 +22,11 @@ namespace ScriptCs
         public IEnumerable<string> GetAssemblyNames(string workingDirectory)
         {
             var packageDir = Path.Combine(workingDirectory, Constants.PackagesFolder);
-            if (!_fileSystem.DirectoryExists(packageDir) || !_fileSystem.FileExists(Path.Combine(packageDir, Constants.PackagesFile)))
+            var packageFilePath = Path.Combine(workingDirectory, Constants.PackagesFile);
+            if (!_fileSystem.DirectoryExists(packageDir) || !_fileSystem.FileExists(packageFilePath))
                 return Enumerable.Empty<string>();
 
-            var packages = _packageContainer.FindReferences(packageDir);
+            var packages = _packageContainer.FindReferences(packageFilePath);
             var foundAssemblyPaths = new List<string>();
             var missingAssemblies = new List<IPackageReference>();
 
