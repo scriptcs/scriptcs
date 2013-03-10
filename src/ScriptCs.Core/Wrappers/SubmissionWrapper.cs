@@ -1,11 +1,8 @@
-﻿using Roslyn.Scripting;
+﻿using Roslyn.Compilers.CSharp;
+using Roslyn.Scripting;
 
 namespace ScriptCs.Wrappers
 {
-    using System.Threading;
-
-    using Roslyn.Compilers;
-
     public class SubmissionWrapper<T> : ISubmission<T>
     {
         private readonly Submission<T> _submission;
@@ -19,7 +16,7 @@ namespace ScriptCs.Wrappers
         { 
             get
             {
-                return new CompilationWrapper(this._submission.Compilation);
+                return new CompilationWrapper((Compilation)this._submission.Compilation);
             }
         }
     }

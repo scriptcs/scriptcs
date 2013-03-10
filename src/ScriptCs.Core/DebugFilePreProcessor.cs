@@ -9,6 +9,7 @@ namespace ScriptCs
     {
         private const string SystemDiagnosticsUsing = "using System.Diagnostics;";
 
+        [ImportingConstructor]
         public DebugFilePreProcessor(IFileSystem fileSystem)
             : base(fileSystem)
         {
