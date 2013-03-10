@@ -1,20 +1,18 @@
-scriptcs
-========
+# scriptcs
 
-
-# Why should you care?
-Write .net apps with a text editor, nuget and the power of Rosyln!
+## Why should you care?
+Write C# apps with a text editor, nuget and the power of Rosyln!
 
 **Note**: *Rosyln is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
 
 * More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 * Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
 
-# Pre-reqs
+## Pre-reqs
 * Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
 * Build the project and put scriptcs.exe in your path.
 
-# Quick start
+## Quick start
 * Open a cmd prompt as admin
 * Create a directory "c:\scriptcs_hello" and change to it.
 * run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
@@ -42,20 +40,24 @@ Console.ReadKey();
 
 This will launch a web api host.
 
-# How it works
+## How it works
 scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
 
-# What's next
+## What's next
 * Adding support for pluggable recipe "packs" for different frameworks.
 
-# License 
-Apache 2
+## Contributing
+Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
 
-# Credits
-* Special thanks to [@filip_woj] (http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.
+## Credits
+* Special thanks to [@filip_woj](http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.
 * Thanks to the Roslyn team who helped point me in the right direction.
 
-# Coordinators
-* Glenn Block [@gblock] (http://twitter.com/gblock)
-* Justin Rusbatch [@jrusbatch] (http://twitter.com/jrusbatch)
-* Filip Wojcieszyn [@filip_woj] (http://twitter.com/filip_woj)
+## Coordinators
+* Glenn Block ([@gblock](https://twitter.com/gblock))
+* Justin Rusbatch ([@jrusbatch](https://twitter.com/jrusbatch))
+* Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))
+
+## License 
+[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/license.txt)
+
