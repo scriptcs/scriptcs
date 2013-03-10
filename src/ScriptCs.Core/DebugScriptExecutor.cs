@@ -1,23 +1,32 @@
-﻿namespace ScriptCs
+﻿using System.ComponentModel.Composition;
+using System.IO;
+using ScriptCs.Exceptions;
+
+namespace ScriptCs
 {
-    using System.ComponentModel.Composition;
-    using System.IO;
-
-    using Roslyn.Compilers.Common;
-
-    using ScriptCs.Exceptions;
-
     [Export(Constants.DebugContractName, typeof(IScriptExecutor))]
     public class DebugScriptExecutor : ScriptExecutor
     {
+        private readonly ICompiledDllDebugger compiledDllDebugger;
+
         [ImportingConstructor]
-        public DebugScriptExecutor(IFileSystem fileSystem, [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
+        public DebugScriptExecutor(
+            IFileSystem fileSystem, 
+            [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, 
+            IScriptEngine scriptEngine, 
+            ICompiledDllDebugger compiledDllDebugger,
+            IScriptHostFactory scriptHostFactory)
             : base(fileSystem, filePreProcessor, scriptEngine, scriptHostFactory)
         {
+            this.compiledDllDebugger = compiledDllDebugger;
         }
 
-        public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine)
-            : base(fileSystem, filePreProcessor, scriptEngine)
+        public DebugScriptExecutor(
+            IFileSystem fileSystem,
+            IFilePreProcessor filePreProcessor,
+            IScriptEngine scriptEngine,
+            ICompiledDllDebugger compiledDllDebugger)
+            : this(fileSystem, filePreProcessor, scriptEngine, compiledDllDebugger, new ScriptHostFactory())
         {
         }
 
@@ -42,7 +51,7 @@
 
             if (result.Success)
             {
-
+                this.compiledDllDebugger.Run(outputPath, session);   
             }
             else
             {

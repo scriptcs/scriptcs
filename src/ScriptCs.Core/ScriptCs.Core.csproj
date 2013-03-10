@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompilationResult.cs" />
+    <Compile Include="ConsoleCompiledDllDebugger.cs" />
     <Compile Include="DebugFilePreProcessor.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\CompilationException.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="FileSystem.cs" />
     <Compile Include="ICompilation.cs" />
     <Compile Include="ICompilationResult.cs" />
+    <Compile Include="ICompiledDllDebugger.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />

@@ -19,6 +19,14 @@ namespace ScriptCs.Wrappers
             }
         }
 
+        public Session WrappedSession
+        {
+            get
+            {
+                return this._session;
+            }
+        }
+
         public object Execute(string code)
         {
             return this._session.Execute(code);

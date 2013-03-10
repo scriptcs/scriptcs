@@ -16,7 +16,8 @@ namespace ScriptCs.Tests
             Mock<IFileSystem> fileSystem = null,
             Mock<IFilePreProcessor> fileProcessor = null,
             Mock<IScriptEngine> scriptEngine = null,
-            Mock<IScriptHostFactory> scriptHostFactory = null)
+            Mock<IScriptHostFactory> scriptHostFactory = null,
+            Mock<ICompiledDllDebugger> compiledDllDebugger = null)
         {
             if (fileSystem == null)
             {
@@ -40,13 +41,15 @@ namespace ScriptCs.Tests
                 scriptEngine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(mockSession.Object);
             }
 
+            compiledDllDebugger = compiledDllDebugger ?? new Mock<ICompiledDllDebugger>();
+
             if (scriptHostFactory == null)
             {
-                return new DebugScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object);
+                return new DebugScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object, compiledDllDebugger.Object);
             }
             else
             {
-                return new DebugScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object, scriptHostFactory.Object);
+                return new DebugScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object, compiledDllDebugger.Object, scriptHostFactory.Object);
             }
         }
 
@@ -174,6 +177,46 @@ namespace ScriptCs.Tests
 
                 compilationResult.Verify(r => r.ErrorMessage, Times.Once());
                 compilationResult.Verify(r => r.Success, Times.Once());
+            }
+
+            [Fact]
+            public void ShouldRunCompileAssemblyRunnerOnOutputPathIfCompilationSucceeds()
+            {
+                // arrange
+                var scriptEngine = new Mock<IScriptEngine>();
+                var session = new Mock<ISession>();
+                var submission = new Mock<ISubmission<object>>();
+                var compilation = new Mock<ICompilation>();
+                var compilationResult = new Mock<ICompilationResult>();
+                var compiledDllDebugger = new Mock<ICompiledDllDebugger>();
+
+                compilationResult.Setup(r => r.Success).Returns(true).Verifiable();
+
+                const string PathToScript = @"C:\script.csx";
+                const string BinDir = @"C:\bin";
+                const string OutputDllName = "script.dll";
+                var dllFullPath = Path.Combine(BinDir, OutputDllName);
+
+                scriptEngine.Setup(e => e.CreateSession(It.IsAny<ScriptHost>())).Returns(session.Object);
+                scriptEngine.SetupProperty(e => e.BaseDirectory);
+
+                session.Setup(s => s.CompileSubmission<object>(It.IsAny<string>())).Returns(submission.Object);
+                session.Setup(s => s.Engine).Returns(scriptEngine.Object);
+
+                submission.Setup(s => s.Compilation).Returns(compilation.Object);
+
+                compilation.Setup(c => c.Emit(It.IsAny<Stream>(), It.IsAny<Stream>())).Returns(compilationResult.Object).Verifiable();
+
+                compiledDllDebugger.Setup(r => r.Run(dllFullPath, session.Object)).Verifiable();
+
+                var scriptExecutor = DebugScriptExecutorTests.CreateScriptExecutor(scriptEngine: scriptEngine, compiledDllDebugger: compiledDllDebugger);
+
+                // act
+                scriptExecutor.Execute(PathToScript, Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                // assert
+                compilationResult.Verify(r => r.Success, Times.Once());
+                compiledDllDebugger.Verify(r => r.Run(dllFullPath, session.Object), Times.Once());
             }
         }
     }
