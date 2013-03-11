@@ -10,6 +10,7 @@ using Scriptcs.Contracts;
 
 namespace Scriptcs
 {
+    [Export("-run", typeof(IScriptExecutor))]
     public class ScriptExecutor : IScriptExecutor
     {
         private readonly IFileSystem _fileSystem;

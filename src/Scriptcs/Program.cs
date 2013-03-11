@@ -14,21 +14,16 @@ namespace Scriptcs
     {
         private static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                Console.WriteLine("Usage:\r\n\r\nscriptcs [file] [recipe1] [recipe2] ...\r\n");
+            var options = args.Where(x => x.StartsWith("-")).ToList();
+            var script = args.Where(x => !x.StartsWith("-")).FirstOrDefault();
+            var recipes = args.Where(x => !x.StartsWith("-")).Skip(1).ToList();
+
+            if (args.Length == 0) {
+                Console.WriteLine(@"usage: scriptcs [options] [file] [recipe1] [recipe2] ...
+
+    -debug            enables debugging of the script
+");
                 return;
-            }
-
-            var script = args[0];
-
-            var recipes = new List<string>();
-            if (args.Length > 1)
-            {
-                for (int i = 1; i <= args.Length; i++)
-                {
-                    recipes.Add(args[i]);
-                }
             }
 
             var container = ConfigureMef();
@@ -36,7 +31,9 @@ namespace Scriptcs
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
             var paths = resolver.GetAssemblyNames();
 
-            var executor = container.GetExportedValue<IScriptExecutor>();
+            var executorName = options.Contains("-debug") ? "-debug" : "-run";
+
+            var executor = container.GetExportedValue<IScriptExecutor>(executorName);
             var recipeManager = new RecipeManager(container);
 
             executor.Execute(script, paths, recipeManager.GetReceipes(recipes));

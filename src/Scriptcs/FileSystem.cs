@@ -9,6 +9,11 @@ namespace Scriptcs
 {
     public class FileSystem : IFileSystem
     {
+        public FileStream CreateFileStream(string path, FileMode mode)
+        {
+            return new FileStream(path, mode);
+        }
+
         public IEnumerable<string> EnumerateFiles(string dir, string searchPattern)
         {
             return Directory.EnumerateFiles(dir, searchPattern, SearchOption.AllDirectories);
