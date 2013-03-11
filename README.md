@@ -1,7 +1,7 @@
 # scriptcs
 
 ## Why should you care?
-Write C# apps with a text editor, nuget and the power of Rosyln!
+Write C# apps with a text editor, nuget and the power of Roslyn!
 
 **Note**: *Roslyn is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
 
