@@ -1,5 +1,4 @@
 ﻿using System;
-using Roslyn.Scripting.CSharp;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -24,31 +23,28 @@ namespace ScriptCs
         }
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine) :
-            this(fileSystem, filePreProcessor, scriptEngine, new ScriptHostFactory())
-        {
-            
-        }
+            this(fileSystem, filePreProcessor, scriptEngine, new ScriptHostFactory()) { }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            _scriptEngine.AddReference("System");
-            _scriptEngine.AddReference("System.Core");
-
             var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
+            var files = PrepareBinFolder(paths, bin);
+    
+            var references = new List<string>();
+            references.Add("System");
+            references.Add("System.Core");
+            references.AddRange(files);
 
             _scriptEngine.BaseDirectory = bin;
+            _scriptEngine.ScriptHostFactory = _scriptHostFactory;
 
-            var files = PrepareBinFolder(paths, bin);
-            var contexts = GetContexts(scriptPacks);
-            var host = _scriptHostFactory.CreateScriptHost(contexts);
-            var session = _scriptEngine.CreateSession(host);
-            AddReferences(files, session);
-            var scriptPackSession = new ScriptPackSession(session);
-            InitializeScriptPacks(scriptPacks, scriptPackSession);
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var csx = _filePreProcessor.ProcessFile(path);
-            session.Execute(csx);
-            TerminateScriptPacks(scriptPacks);
+            var code = _filePreProcessor.ProcessFile(path);
+            
+            _scriptEngine.Execute(
+                code: code,
+                references: references,
+                scriptPacks: scriptPacks);
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
@@ -70,38 +66,5 @@ namespace ScriptCs
  
             return files;
         }
-
-        private void AddReferences(IEnumerable<string> files, ISession session)
-        {
-            foreach (var file in files)
-            {
-                session.AddReference(file);
-            }
-        }
-
-        private IEnumerable<IScriptPackContext> GetContexts(IEnumerable<IScriptPack> scriptPacks)
-        {
-            foreach (var pack in scriptPacks)
-            {
-                yield return pack.GetContext();
-            }
-        } 
-
-        private void InitializeScriptPacks(IEnumerable<IScriptPack> scriptPacks, IScriptPackSession session)
-        {
-            foreach (var pack in scriptPacks)
-            {
-                pack.Initialize(session);
-            }
-        }
-
-        private void TerminateScriptPacks(IEnumerable<IScriptPack> scriptPacks)
-        {
-            foreach (var pack in scriptPacks)
-            {
-                pack.Terminate();
-            }
-        }
-
     }
 }
