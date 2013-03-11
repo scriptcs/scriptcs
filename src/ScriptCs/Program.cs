@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.IO;
 using System.Linq;
 using ScriptCs.Exceptions;
-using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -14,18 +11,34 @@ namespace ScriptCs
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage:\r\n\r\nscriptcs [file]\r\n");
+                WriteUsageMessage();
                 return;
             }
 
             var script = args[0];
-            
+            bool debug = false;
+
+            if (args.Length == 2)
+            {
+                var secondParam = args[1];
+                if (secondParam.Equals("-debug"))
+                {
+                    debug = true;
+                }
+                else
+                {
+                    Console.WriteLine("Unrecognized parameter {0}.", secondParam);
+                    WriteUsageMessage();
+                    return;
+                }
+            }
+
+            var contractsMode = debug ? Constants.DebugContractName : Constants.RunContractName;
+
             var container = ConfigureMef();
             var fileSystem = container.GetExportedValue<IFileSystem>();
-            var packageContainer = container.GetExportedValue<IPackageContainer>();
             var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
-
-            var executor = container.GetExportedValue<IScriptExecutor>();
+            var executor = container.GetExportedValue<IScriptExecutor>(contractsMode);
             var scriptPackManager = new ScriptPackResolver(container);
 
             try
@@ -36,12 +49,18 @@ namespace ScriptCs
                 {
                     Console.WriteLine("Found assembly reference: " + path);
                 }
+
                 executor.Execute(script, paths, scriptPackManager.GetPacks());
             }
             catch (MissingAssemblyException ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private static void WriteUsageMessage()
+        {
+            Console.WriteLine("Usage:\r\n\r\nscriptcs csxFile [-debug]\r\n");
         }
 
         private static CompositionContainer ConfigureMef()

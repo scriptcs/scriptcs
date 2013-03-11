@@ -1,21 +1,20 @@
-﻿using System;
-using Roslyn.Scripting.CSharp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
+    [Export(Constants.RunContractName, typeof(IScriptExecutor))]
     public class ScriptExecutor : IScriptExecutor
     {
-        private readonly IFileSystem _fileSystem;
+        protected readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
+        public ScriptExecutor(IFileSystem fileSystem, [Import(Constants.RunContractName)]IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;
@@ -26,7 +25,7 @@ namespace ScriptCs
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine) :
             this(fileSystem, filePreProcessor, scriptEngine, new ScriptHostFactory())
         {
-            
+
         }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
@@ -45,10 +44,15 @@ namespace ScriptCs
             AddReferences(files, session);
             var scriptPackSession = new ScriptPackSession(session);
             InitializeScriptPacks(scriptPacks, scriptPackSession);
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var csx = _filePreProcessor.ProcessFile(path);
-            session.Execute(csx);
+            var absolutePathToScript = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            var processedCode = _filePreProcessor.ProcessFile(absolutePathToScript);
+            Execute(absolutePathToScript, session, processedCode);
             TerminateScriptPacks(scriptPacks);
+        }
+
+        protected virtual void Execute(string absolutePathToScript, ISession session, string code)
+        {
+            session.Execute(code);
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
@@ -67,7 +71,7 @@ namespace ScriptCs
                     _fileSystem.Copy(file, destFile, true);
                 files.Add(destFile);
             }
- 
+
             return files;
         }
 
@@ -85,7 +89,7 @@ namespace ScriptCs
             {
                 yield return pack.GetContext();
             }
-        } 
+        }
 
         private void InitializeScriptPacks(IEnumerable<IScriptPack> scriptPacks, IScriptPackSession session)
         {
