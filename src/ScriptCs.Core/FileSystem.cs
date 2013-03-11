@@ -66,6 +66,11 @@ namespace ScriptCs
             return File.Exists(path);
         }
 
+        public Stream CreateFileStream(string filePath, FileMode mode)
+        {
+            return new FileStream(filePath, mode);
+        }
+
         public string GetWorkingDirectory(string path)
         {
             return IsPathRooted(path) ? Path.GetDirectoryName(path) : CurrentDirectory;

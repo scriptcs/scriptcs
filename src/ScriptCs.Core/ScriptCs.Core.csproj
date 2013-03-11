@@ -31,6 +31,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompilationResult.cs" />
+    <Compile Include="ConsoleCompiledDllDebugger.cs" />
+    <Compile Include="DebugFilePreProcessor.cs" />
+    <Compile Include="DebugScriptExecutor.cs" />
+    <Compile Include="Exceptions\CompilationException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -40,6 +45,9 @@
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="ICompilation.cs" />
+    <Compile Include="ICompilationResult.cs" />
+    <Compile Include="ICompiledDllDebugger.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
@@ -63,8 +71,11 @@
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptPackSession.cs" />
+    <Compile Include="ISubmission.cs" />
+    <Compile Include="Wrappers\CompilationWrapper.cs" />
     <Compile Include="Wrappers\ScriptEngineWrapper.cs" />
     <Compile Include="Wrappers\SessionWrapper.cs" />
+    <Compile Include="Wrappers\SubmissionWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

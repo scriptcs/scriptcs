@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 
 namespace ScriptCs
 {
@@ -32,5 +33,7 @@ namespace ScriptCs
         void Move(string source, string dest);
 
         bool FileExists(string path);
+
+        Stream CreateFileStream(string filePath, FileMode mode);
     }
 }

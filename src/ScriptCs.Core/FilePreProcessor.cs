@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 namespace ScriptCs
 {
+    [Export(Constants.RunContractName, typeof(IFilePreProcessor))]
     public class FilePreProcessor : IFilePreProcessor
     {
         private const string LoadString = "#load ";
         private const string UsingString = "using ";
 
-        private readonly IFileSystem _fileSystem;
+        protected readonly IFileSystem _fileSystem;
 
         [ImportingConstructor]
         public FilePreProcessor(IFileSystem fileSystem)
@@ -25,10 +24,16 @@ namespace ScriptCs
             var entryFile = _fileSystem.ReadFileLines(path);
             var parsed = ParseFile(entryFile);
 
-            var result = string.Join(_fileSystem.NewLine, parsed.Item1);
+            // item1 === usings; item2 === code
+            var result = GenerateUsings(parsed.Item1);
             result += _fileSystem.NewLine + parsed.Item2;
 
             return result;
+        }
+
+        protected virtual string GenerateUsings(ICollection<string> usingLines)
+        {
+            return string.Join(_fileSystem.NewLine, usingLines);
         }
 
         private Tuple<List<string>, string> ParseFile(IEnumerable<string> file)
