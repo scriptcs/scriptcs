@@ -9,14 +9,14 @@ namespace ScriptCs.Wrappers
 
         public SubmissionWrapper(Submission<T> submission)
         {
-            this._submission = submission;
+            _submission = submission;
         }
 
         public ICompilation Compilation 
         { 
             get
             {
-                return new CompilationWrapper((Compilation)this._submission.Compilation);
+                return new CompilationWrapper((Compilation)_submission.Compilation);
             }
         }
     }

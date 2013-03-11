@@ -10,9 +10,8 @@ namespace ScriptCs
     {
         public CompilationResult(CommonEmitResult emitResult)
         {
-            this.Success = emitResult.Success;
-
-            this.ErrorMessage = this.RetrieveErrorMessage(emitResult.Diagnostics);
+            Success = emitResult.Success;
+            ErrorMessage = RetrieveErrorMessage(emitResult.Diagnostics);
         }
 
         public bool Success { get; private set; }

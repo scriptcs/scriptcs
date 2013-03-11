@@ -30,8 +30,8 @@ namespace ScriptCs
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            this._scriptEngine.AddReference("System");
-            this._scriptEngine.AddReference("System.Core");
+            _scriptEngine.AddReference("System");
+            _scriptEngine.AddReference("System.Core");
 
             var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
 

@@ -25,7 +25,7 @@ namespace ScriptCs
             var parsed = ParseFile(entryFile);
 
             // item1 === usings; item2 === code
-            var result = this.GenerateUsings(parsed.Item1);
+            var result = GenerateUsings(parsed.Item1);
             result += _fileSystem.NewLine + parsed.Item2;
 
             return result;

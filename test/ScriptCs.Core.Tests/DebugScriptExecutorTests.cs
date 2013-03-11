@@ -3,13 +3,12 @@ using System.IO;
 using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
+using ScriptCs.Exceptions;
 using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using ScriptCs.Exceptions;
-
     public class DebugScriptExecutorTests
     {
         public static DebugScriptExecutor CreateScriptExecutor(

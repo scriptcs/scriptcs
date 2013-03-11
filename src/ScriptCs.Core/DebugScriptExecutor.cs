@@ -7,7 +7,7 @@ namespace ScriptCs
     [Export(Constants.DebugContractName, typeof(IScriptExecutor))]
     public class DebugScriptExecutor : ScriptExecutor
     {
-        private readonly ICompiledDllDebugger compiledDllDebugger;
+        private readonly ICompiledDllDebugger _compiledDllDebugger;
 
         [ImportingConstructor]
         public DebugScriptExecutor(
@@ -18,7 +18,7 @@ namespace ScriptCs
             IScriptHostFactory scriptHostFactory)
             : base(fileSystem, filePreProcessor, scriptEngine, scriptHostFactory)
         {
-            this.compiledDllDebugger = compiledDllDebugger;
+            _compiledDllDebugger = compiledDllDebugger;
         }
 
         public DebugScriptExecutor(
@@ -51,7 +51,7 @@ namespace ScriptCs
 
             if (result.Success)
             {
-                this.compiledDllDebugger.Run(outputPath, session);   
+                _compiledDllDebugger.Run(outputPath, session);   
             }
             else
             {

@@ -1,13 +1,12 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Moq;
 using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class DebugFilePreProcessorTests
     {
         private static DebugFilePreProcessor CreateFilePreProcessor(Mock<IFileSystem> fileSystem = null)
@@ -19,7 +18,7 @@ namespace ScriptCs.Tests
 
         public class TheParseFileMethod
         {
-            private List<string> fileWithoutSystemDiagnostics = new List<string>
+            private List<string> _fileWithoutSystemDiagnostics = new List<string>
             {
                 "using System;",
                 "using System.Collections.Generic;",
@@ -27,7 +26,7 @@ namespace ScriptCs.Tests
                 @"Console.WriteLine(""Goodbye Script 3"");"
             };
 
-            private List<string> fileWithSystemDiagnostics = new List<string>
+            private List<string> _fileWithSystemDiagnostics = new List<string>
             {
                 "using System;",
                 "using System.Diagnostics;",
@@ -50,7 +49,7 @@ namespace ScriptCs.Tests
             {
                 // arrange
                 const string FilePath = "C:\filePath.csx";
-                _fileSystem.Setup(fs => fs.ReadFileLines(FilePath)).Returns(this.fileWithoutSystemDiagnostics.ToArray());
+                _fileSystem.Setup(fs => fs.ReadFileLines(FilePath)).Returns(_fileWithoutSystemDiagnostics.ToArray());
 
                 var preProcessor = CreateFilePreProcessor(_fileSystem);
                 
@@ -66,7 +65,7 @@ namespace ScriptCs.Tests
             {
                 // arrange
                 const string FilePath = "C:\filePath.csx";
-                _fileSystem.Setup(fs => fs.ReadFileLines(FilePath)).Returns(this.fileWithSystemDiagnostics.ToArray());
+                _fileSystem.Setup(fs => fs.ReadFileLines(FilePath)).Returns(_fileWithSystemDiagnostics.ToArray());
 
                 var preProcessor = CreateFilePreProcessor(_fileSystem);
 

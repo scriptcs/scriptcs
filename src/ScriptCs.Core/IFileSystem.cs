@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 
 namespace ScriptCs
 {
-    using System.IO;
-
     [InheritedExport]
     public interface IFileSystem
     {
