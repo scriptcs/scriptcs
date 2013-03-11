@@ -35,7 +35,6 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="DebugScriptExecutorTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="PackageAssemblyResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

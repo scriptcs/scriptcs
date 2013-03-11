@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Roslyn.Scripting;
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Engine.Roslyn
 {
-    public class ScriptPackSession : IScriptPackSession
+    public class RoslynScriptPackSession : IScriptPackSession
     {
-        private readonly ISession _session;
+        private readonly Session _session;
 
-        public ScriptPackSession(ISession session)
+        internal RoslynScriptPackSession(Session session)
         {
             _session = session;
         }
@@ -23,7 +21,7 @@ namespace ScriptCs
 
         public void ImportNamespace(string ns)
         {
-            
+            _session.ImportNamespace(ns);
         }
     }
 }

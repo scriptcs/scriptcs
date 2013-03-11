@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Roslyn.Scripting;
+using System.Threading.Tasks;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -8,13 +10,8 @@ namespace ScriptCs
     public interface IScriptEngine
     {
         string BaseDirectory { get; set; }
-        
-        void AddReference(string assemblyDisplayNameOrPath);
+        IScriptHostFactory ScriptHostFactory { get; set; }
 
-        ISession CreateSession<THostObject>(THostObject hostObject) where THostObject : class;
-        
-        ISession CreateSession(object hostObject, Type hostObjectType = null);
-
-        ISession CreateSession();
+        void Execute(string code, IEnumerable<string> references, IEnumerable<IScriptPack> scriptPacks);
     }
 }
