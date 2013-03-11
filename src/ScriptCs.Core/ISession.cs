@@ -1,4 +1,6 @@
-﻿using Roslyn.Scripting;
+﻿using System.Threading;
+
+using Roslyn.Scripting;
 
 namespace ScriptCs
 {
@@ -10,5 +12,6 @@ namespace ScriptCs
         void AddReference(string assemblyDisplayNameOrPath);
         void ImportNamespace(string @namespace);
         ISubmission<T> CompileSubmission<T>(string code);
+        void SetApartmentState(ApartmentState apartmentState);
     }
 }

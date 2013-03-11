@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading;
+
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -24,6 +21,11 @@ namespace ScriptCs
         public void ImportNamespace(string ns)
         {
             
+        }
+
+        public void SetApartmentState(ApartmentState state)
+        {
+            _session.SetApartmentState(state);
         }
     }
 }
