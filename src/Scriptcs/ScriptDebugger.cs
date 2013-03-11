@@ -61,9 +61,11 @@ namespace Scriptcs
 			var submission = session.CompileSubmission<object>(csx);
 
 			var startDebuggerProcess = false;
+			var dllBytes = new byte[0];
+			var pdbBytes = new byte[0];
 
-			using (var dllStream = _fileSystem.CreateFileStream(outputDll, FileMode.OpenOrCreate))
-			using (var pdbStream = _fileSystem.CreateFileStream(outputPdb, FileMode.OpenOrCreate)) {
+			using (var dllStream = new MemoryStream())
+			using (var pdbStream = new MemoryStream()) {
 				var result = submission.Compilation.Emit(
 					executableStream: dllStream,
 					pdbStream: pdbStream);
@@ -74,11 +76,14 @@ namespace Scriptcs
 					var error = String.Join(Environment.NewLine, result.Diagnostics.Select(d => d.ToString()));
 					Console.WriteLine("failed to compile");
 					Console.WriteLine(error);
+				} else {
+					dllBytes = dllStream.ToArray();
+					pdbBytes = pdbStream.ToArray();
 				}
 			}
 
 			if (startDebuggerProcess) {
-				var assembly = Assembly.LoadFrom(outputDll);
+				var assembly = AppDomain.CurrentDomain.Load(dllBytes, pdbBytes);
 				var type = assembly.GetType(TypeName);
 				var factory = type.GetMethod(FactoryMethodName, BindingFlags.Static | BindingFlags.Public);
 
