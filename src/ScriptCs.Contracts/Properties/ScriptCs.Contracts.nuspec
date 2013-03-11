@@ -4,7 +4,7 @@
     <id>$id$</id>
     <version>$version$</version>
     <authors>$author$</authors>
-    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <licenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>http://scriptcs.net</projectUrl>
     <description>$description$</description>
   </metadata>
