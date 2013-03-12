@@ -11,6 +11,9 @@
     <Root>$([System.IO.Path]::GetFullPath( '$(MSBuildThisFileDirectory)..\' ))</Root>
     <BaseArtifactsPath>$([System.IO.Path]::Combine( $(Root), 'artifacts\' ))</BaseArtifactsPath>
     <ArtifactsPath>$([System.IO.Path]::Combine( $(BaseArtifactsPath), $(Configuration) ))\</ArtifactsPath>
+    <PackageOutputPath>$(ArtifactsPath.TrimEnd(new[] { '\' }))</PackageOutputPath>
+    <NuGetExePath>$([System.IO.Path]::Combine( $(Root), '.nuget\nuget.exe' ))</NuGetExePath>
+
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
 
@@ -48,7 +51,12 @@
 
   <Target Name="Package" DependsOnTargets="Test">
     <ItemGroup>
+      <NuSpecFiles Include="$(Root)src\**\*.nuspec" />
     </ItemGroup>
+    
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack %(NuSpecFiles.Identity) -Version $(PackageVersion) -OutputDirectory &quot;$(PackageOutputPath)&quot; -Symbols -NoPackageAnalysis -p @(Solution -> '%(AdditionalProperties.Trim())', ';')" />
+  </Target>
+
   <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
     <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
   </Target>
