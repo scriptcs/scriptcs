@@ -1,6 +1,6 @@
 #load "FluentAutomation.csx"
 
-Bootstrap<FluentAutomation.SeleniumWebDriver>("Chrome");
+Bootstrap<FluentAutomation.SeleniumWebDriver>("InternetExplorer");
 
 I.Open("http://knockoutjs.com/examples/cartEditor.html");
 I.Select("Motorcycles").From(".liveExample tr select:eq(0)"); // Select by value/text
