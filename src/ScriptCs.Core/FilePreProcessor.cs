@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
@@ -13,17 +14,18 @@ namespace ScriptCs
         private const string UsingString = "using ";
 
         private readonly IFileSystem _fileSystem;
-
+        private readonly List<string> _loadedPaths;
+            
         [ImportingConstructor]
         public FilePreProcessor(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
+            _loadedPaths = new List<string>();
         }
 
         public string ProcessFile(string path)
         {
-            var fileLines = _fileSystem.ReadFileLines(path);
-            var parsedFileResult = ParseFile(fileLines);
+            var parsedFileResult = ParseFile(path);
 
             var generatedScript = GenerateScript(parsedFileResult);
 
@@ -44,7 +46,7 @@ namespace ScriptCs
                 builder.AppendLine("using " + @using + ";");
             }
 
-            foreach (var bodyLine in parsedFileResult.Body)
+            foreach (var bodyLine in parsedFileResult.RecursiveBody)
             {
                 builder.AppendLine(bodyLine);
             }
@@ -52,23 +54,29 @@ namespace ScriptCs
             return builder.ToString();
         }
 
-        private ParsedFileResult ParseFile(IEnumerable<string> lines)
+        private ParsedFileResult ParseFile(string path)
         {
+            // Check if we've already loaded this file...
+            if (_loadedPaths.Contains(path)) return null;
+
+            _loadedPaths.Add(path);
+
             var script = new ParsedFileResult();
 
-            foreach (var line in lines)
+            foreach (var line in _fileSystem.ReadFileLines(path))
             {
                 if (IsLoadLine(line))
                 {
-                    var fileContent = LoadFileContents(line);
-                    if (fileContent != null)
+                    var filePath = GetFilePath(line);
+
+                    var subScript = ParseFile(filePath);
+                    if (subScript == null)
                     {
-                        var subScript = ParseFile(fileContent);
-                        script.SubScripts.Add(subScript);
+                        // File has already been loaded, skip
+                        continue;
                     }
 
-                    // TODO: Raise an exception?
-
+                    script.SubScripts.Add(subScript);
                     continue;
                 }
 
@@ -91,17 +99,6 @@ namespace ScriptCs
             }
 
             return script;
-        }
-
-        private IEnumerable<string> LoadFileContents(string line)
-        {
-            var filePath = GetFilePath(line);
-
-            var fileContent = !_fileSystem.IsPathRooted(filePath)
-                ? _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + "\\" + filePath)
-                : _fileSystem.ReadFileLines(filePath);
-
-            return fileContent;
         }
 
         private static bool IsUsingLine(string line)
@@ -129,9 +126,17 @@ namespace ScriptCs
             return line.TrimStart(' ').Replace(ReferenceString, string.Empty).Replace("\"", string.Empty);
         }
 
-        private static string GetFilePath(string line)
+        private string GetFilePath(string line)
         {
-            return line.TrimStart(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+            var path = line.TrimStart(' ')
+                .Replace(LoadString, string.Empty)
+                .Replace("\"", string.Empty)
+                .Replace(";", string.Empty);
+
+            if (!_fileSystem.IsPathRooted(path))
+                path = _fileSystem.CurrentDirectory + "\\" + path;
+
+            return path;
         }
 
         protected class ParsedFileResult
@@ -154,12 +159,23 @@ namespace ScriptCs
 
             public IEnumerable<string> RecursiveUsings
             {
-                get { return Usings.Union(SubScripts.SelectMany(script => script.Usings)).Distinct(); }
+                get { return GetRecursive(Usings, script => script.RecursiveUsings); }
             }
 
             public IEnumerable<string> RecursiveReferences
             {
-                get { return References.Union(SubScripts.SelectMany(script => script.References)).Distinct(); }
+                get { return GetRecursive(References, script => script.RecursiveReferences); }
+            }
+
+            public IEnumerable<string> RecursiveBody
+            {
+                get { return GetRecursive(Body, script => script.RecursiveBody); }
+            }
+
+            private IEnumerable<string> GetRecursive(
+                IEnumerable<string> list, Func<ParsedFileResult, IEnumerable<string>> selector)
+            {
+                return list.Union(SubScripts.SelectMany(selector));
             }
         }
     }
