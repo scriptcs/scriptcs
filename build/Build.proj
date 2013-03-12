@@ -28,8 +28,8 @@
   <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
 
   <Target Name="Clean">
-    <RemoveDir Directories="$(ArtifactsPath)" Condition="Exists('$(ArtifactsPath)')"/>
     <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
+    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') "/>
   </Target>
 
   <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
