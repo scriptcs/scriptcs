@@ -13,5 +13,8 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net45" />
     </frameworkAssemblies>
+    <dependencies>
+      <dependency id="ScriptCs.Contracts" version="[0.1, 1)" />
+    </dependencies>
   </metadata>
 </package>
