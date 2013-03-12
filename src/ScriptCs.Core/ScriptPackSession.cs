@@ -9,19 +9,23 @@ namespace ScriptCs
 	{
 		private readonly IEnumerable<IScriptPack> _scriptPacks;
 
+		private IList<string> _references;
+		private IList<string> _namespaces;
+
 		public ScriptPackSession(IEnumerable<IScriptPack> scriptPacks)
 		{
 			_scriptPacks = scriptPacks;
 
-			References = new List<string>();
-			Namespaces = new List<string>();
+			_references = new List<string>();
+			_namespaces = new List<string>();
 
 			InitializePacks();
 		}
 
-		public List<string> References { get; private set; }
-		public List<string> Namespaces { get; private set; }
-
+		public IEnumerable<IScriptPack> ScriptPacks { get { return _scriptPacks; } }
+		public IEnumerable<string> References { get { return _references; } }
+		public IEnumerable<string> Namespaces { get { return _namespaces; } }
+ 
 		public void Dispose()
 		{
 			TerminatePacks();
@@ -41,12 +45,12 @@ namespace ScriptCs
 
 		void IScriptPackSession.AddReference(string assemblyDisplayNameOrPath)
 		{
-			References.Add(assemblyDisplayNameOrPath);
+			_references.Add(assemblyDisplayNameOrPath);
 		}
 
 		void IScriptPackSession.ImportNamespace(string @namespace)
 		{
-			Namespaces.Add(@namespace);
+			_namespaces.Add(@namespace);
 		}
 	}
 }

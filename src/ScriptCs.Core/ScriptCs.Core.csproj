@@ -39,7 +39,6 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
-    <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
@@ -51,8 +50,6 @@
     <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptHost.cs" />
-    <Compile Include="ScriptHostFactory.cs" />
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />

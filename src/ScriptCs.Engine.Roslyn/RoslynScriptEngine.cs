@@ -12,10 +12,14 @@ namespace ScriptCs.Engine.Roslyn
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
+        private readonly IScriptHostFactory _scriptHostFactory;
 
-        public RoslynScriptEngine()
+        [ImportingConstructor]
+        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory)
         {
             _scriptEngine = new ScriptEngine();
+
+            _scriptHostFactory = scriptHostFactory;
         }
 
         public string BaseDirectory
@@ -24,9 +28,12 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public void Execute(string code, IEnumerable<string> references, IScriptPackSession scriptPackSession, object hostObject = null)
+        public void Execute(string code, IEnumerable<string> references, ScriptPackSession scriptPackSession)
         {
-            var session = _scriptEngine.CreateSession(hostObject);
+            var contexts = scriptPackSession.ScriptPacks.Select(x => x.GetContext());
+            var host = _scriptHostFactory.CreateScriptHost(contexts);
+
+            var session = _scriptEngine.CreateSession(host);
 
             foreach (var reference in references)
                 session.AddReference(reference);

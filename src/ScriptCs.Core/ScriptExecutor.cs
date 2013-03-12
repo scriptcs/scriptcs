@@ -12,19 +12,14 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
-        private readonly IScriptHostFactory _scriptHostFactory;
 
         [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, [Import(Constants.RunContractName)]IFilePreProcessor filePreProcessor, [Import(Constants.RunContractName)]IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
+        public ScriptExecutor(IFileSystem fileSystem, [Import(Constants.RunContractName)]IFilePreProcessor filePreProcessor, [Import(Constants.RunContractName)]IScriptEngine scriptEngine)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;
             _scriptEngine = scriptEngine;
-            _scriptHostFactory = scriptHostFactory;
         }
-
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine) :
-            this(fileSystem, filePreProcessor, scriptEngine, new ScriptHostFactory()) { }
 
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
@@ -38,9 +33,6 @@ namespace ScriptCs
 
             _scriptEngine.BaseDirectory = bin;
 
-            var contexts = scriptPacks.Select(x => x.GetContext());
-            var host = _scriptHostFactory.CreateScriptHost(contexts);
-
             using (var scriptPackSession = new ScriptPackSession(scriptPacks)) {
                 var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
                 var code = _filePreProcessor.ProcessFile(path);
@@ -48,8 +40,7 @@ namespace ScriptCs
                 _scriptEngine.Execute(
                     code: code,
                     references: references,
-                    scriptPackSession: scriptPackSession,
-                    hostObject: host);
+                    scriptPackSession: scriptPackSession);
             }
         }
 

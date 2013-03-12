@@ -16,6 +16,10 @@ namespace ScriptCs.Engine.Roslyn
         private const string AttachMessageTemplate =
             "Attach to process {0} and press ENTER. Then use the 'go' command in the debugger.";
 
+        [ImportingConstructor]
+        public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory)
+            : base(scriptHostFactory) { }
+
         protected override void Execute(string code, Session session)
         {
             var submission = session.CompileSubmission<object>(code);

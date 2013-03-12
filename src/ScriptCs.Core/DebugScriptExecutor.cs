@@ -6,7 +6,7 @@ namespace ScriptCs
 	public class DebugScriptExecutor : ScriptExecutor
 	{
 		[ImportingConstructor]
-		public DebugScriptExecutor(IFileSystem fileSystem, [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, [Import(Constants.DebugContractName)]IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
-			: base(fileSystem, filePreProcessor, scriptEngine, scriptHostFactory) { }
+		public DebugScriptExecutor(IFileSystem fileSystem, [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, [Import(Constants.DebugContractName)]IScriptEngine scriptEngine)
+			: base(fileSystem, filePreProcessor, scriptEngine) { }
 	}
 }
