@@ -38,9 +38,9 @@
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
+    <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPackResolver.cs" />
-    <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
@@ -56,6 +56,7 @@
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
+    <Compile Include="ScriptPackSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

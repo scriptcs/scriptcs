@@ -51,7 +51,6 @@
     <Compile Include="RoslynScriptDebuggerEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynScriptEngine.cs" />
-    <Compile Include="RoslynScriptPackSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

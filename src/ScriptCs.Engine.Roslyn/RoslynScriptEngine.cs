@@ -24,27 +24,17 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public IScriptHostFactory ScriptHostFactory { get; set; }
-
-        public void Execute(string code, IEnumerable<string> references, IEnumerable<IScriptPack> scriptPacks)
+        public void Execute(string code, IEnumerable<string> references, IScriptPackSession scriptPackSession, object hostObject = null)
         {
-            var contexts = scriptPacks.Select(x => x.GetContext());
-            var host = ScriptHostFactory.CreateScriptHost(contexts);
-
-            var session = _scriptEngine.CreateSession(host);
+            var session = _scriptEngine.CreateSession(hostObject);
 
             foreach (var reference in references)
                 session.AddReference(reference);
 
-            var scriptPackSession = new RoslynScriptPackSession(session);
-
-            foreach (var pack in scriptPacks)
-                pack.Initialize(scriptPackSession);
+            foreach (var reference in scriptPackSession.References)
+                session.AddReference(reference);
 
             Execute(code, session);
-
-            foreach (var pack in scriptPacks)
-                pack.Terminate();
         }
 
         protected virtual void Execute(string code, Session session)

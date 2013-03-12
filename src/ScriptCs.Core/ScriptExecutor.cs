@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -36,15 +37,20 @@ namespace ScriptCs
             references.AddRange(files);
 
             _scriptEngine.BaseDirectory = bin;
-            _scriptEngine.ScriptHostFactory = _scriptHostFactory;
 
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var code = _filePreProcessor.ProcessFile(path);
+            var contexts = scriptPacks.Select(x => x.GetContext());
+            var host = _scriptHostFactory.CreateScriptHost(contexts);
+
+            using (var scriptPackSession = new ScriptPackSession(scriptPacks)) {
+                var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+                var code = _filePreProcessor.ProcessFile(path);
             
-            _scriptEngine.Execute(
-                code: code,
-                references: references,
-                scriptPacks: scriptPacks);
+                _scriptEngine.Execute(
+                    code: code,
+                    references: references,
+                    scriptPackSession: scriptPackSession,
+                    hostObject: host);
+            }
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
