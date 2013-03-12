@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
-using Roslyn.Scripting;
 
 namespace ScriptCs
 {

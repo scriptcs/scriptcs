@@ -6,7 +6,6 @@ using ScriptCs.Exceptions;
 namespace ScriptCs
 {
     using System.ComponentModel.Composition.Registration;
-    using System.Reflection;
 
     using ScriptCs.Contracts;
     using ScriptCs.Package;

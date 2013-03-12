@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using System.IO;
+﻿using System.IO;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs
