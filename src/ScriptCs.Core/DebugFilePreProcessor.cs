@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace ScriptCs
@@ -7,7 +6,7 @@ namespace ScriptCs
     [Export(Constants.DebugContractName, typeof(IFilePreProcessor))]
     public class DebugFilePreProcessor : FilePreProcessor
     {
-        private const string SystemDiagnosticsUsing = "using System.Diagnostics;";
+        private const string SystemDiagnosticsUsing = "System.Diagnostics";
 
         [ImportingConstructor]
         public DebugFilePreProcessor(IFileSystem fileSystem)
@@ -15,14 +14,14 @@ namespace ScriptCs
         {
         }
 
-        protected override string GenerateUsings(ICollection<string> usingLines)
+        protected override string GenerateScript(ParsedFileResult parsedFileResult)
         {
-            if (usingLines.Count(l => l.Equals(SystemDiagnosticsUsing)) == 0)
+            if (parsedFileResult.Usings.All(@using => @using != SystemDiagnosticsUsing))
             {
-                usingLines.Add(SystemDiagnosticsUsing);
+                parsedFileResult.Usings.Add(SystemDiagnosticsUsing);
             }
-            
-            return string.Join(_fileSystem.NewLine, usingLines);
+
+            return base.GenerateScript(parsedFileResult);
         }
     }
 }

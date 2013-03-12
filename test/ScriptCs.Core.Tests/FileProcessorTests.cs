@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Moq;
 using Xunit;
 
@@ -9,7 +8,7 @@ namespace ScriptCs.Tests
 {
     public class FileProcessorTests
     {
-        private List<string> file1 = new List<string>
+        private readonly List<string> _file1 = new List<string>
             {
                 "using System;",
                 @"Console.WriteLine(""Hello Script 1"");",
@@ -22,7 +21,7 @@ namespace ScriptCs.Tests
                 @"Console.WriteLine(""Goodbye Script 1"");"
             };
 
-        private List<string> file2 = new List<string>
+        private readonly List<string> _file2 = new List<string>
             {
                 "using System;",
                 @"Console.WriteLine(""Hello Script 2"");",
@@ -32,7 +31,7 @@ namespace ScriptCs.Tests
                 @"Console.WriteLine(""Goodbye Script 2"");"
             };
 
-        private List<string> file3 = new List<string>
+        private readonly List<string> _file3 = new List<string>
             {
                 "using System;",
                 "using System.Collections.Generic;",
@@ -40,12 +39,19 @@ namespace ScriptCs.Tests
                 @"Console.WriteLine(""Goodbye Script 3"");"
             };
 
-        private List<string> file4 = new List<string>
+        private readonly List<string> _file4 = new List<string>
             {
                 "using System;",
                 "using System.Core;",
                 @"Console.WriteLine(""Hello Script 4"");",
                 @"Console.WriteLine(""Goodbye Script 4"");"
+            };
+
+        private readonly List<string> _file5 = new List<string>
+            {
+                "using System.Collections.Generic;",
+                @"#r ""PresentationCore""",
+                @"Console.WriteLine(""Hello Script 5"");"
             };
 
         private readonly Mock<IFileSystem> _fileSystem;
@@ -55,13 +61,15 @@ namespace ScriptCs.Tests
             _fileSystem = new Mock<IFileSystem>();
             _fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
             _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx")))
-                       .Returns(file1.ToArray());
+                       .Returns(_file1.ToArray());
             _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx")))
-                       .Returns(file2.ToArray());
+                       .Returns(_file2.ToArray());
             _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script3.csx")))
-                       .Returns(file3.ToArray());
+                       .Returns(_file3.ToArray());
             _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
-                        .Returns(file4.ToArray());
+                        .Returns(_file4.ToArray());
+            _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script5.csx")))
+                        .Returns(_file5.ToArray());
         }
 
         [Fact]
@@ -73,7 +81,7 @@ namespace ScriptCs.Tests
             var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 
             _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i.StartsWith("\\script"))),Times.Exactly(4));
-            Assert.Equal(3, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
+            Assert.Equal(2, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
         }
 
         [Fact]
@@ -93,7 +101,7 @@ namespace ScriptCs.Tests
         public void ThreeLoadedFilesShoulAllBeCalledOnce()
         {
             var processor = new FilePreProcessor(_fileSystem.Object);
-            var output = processor.ProcessFile("\\script1.csx");
+            processor.ProcessFile("\\script1.csx");
 
             _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script1.csx")), Times.Once());
             _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script2.csx")), Times.Once());
@@ -148,6 +156,21 @@ namespace ScriptCs.Tests
             var firstCodeLine = splitOutput.ToList().FindIndex(x => x.Contains("Console"));
 
             Assert.True(firstNonImportUsing > firstCodeLine);
+        }
+
+        [Fact]
+        public void ReferencesShouldAlwaysBeOnTop()
+        {
+            var processor = new FilePreProcessor(_fileSystem.Object);
+            var output = processor.ProcessFile("\\script5.csx");
+
+            var splitOutput = output.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+                .Select(line => line.Trim(' ')).ToList();
+
+            var lastReference = splitOutput.FindLastIndex(line => line.StartsWith("#r "));
+            var firstNotReference = splitOutput.FindIndex(line => !line.StartsWith("#r "));
+
+            Assert.True(lastReference < firstNotReference);
         }
     }
 }
