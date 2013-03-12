@@ -11,6 +11,7 @@
     <Root>$([System.IO.Path]::GetFullPath( '$(MSBuildThisFileDirectory)..\' ))</Root>
     <BaseArtifactsPath>$([System.IO.Path]::Combine( $(Root), 'artifacts\' ))</BaseArtifactsPath>
     <ArtifactsPath>$([System.IO.Path]::Combine( $(BaseArtifactsPath), $(Configuration) ))\</ArtifactsPath>
+    <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,16 +47,16 @@
     </MSBuild>
   </Target>
 
-  <Target Name="Test" DependsOnTargets="GatherTestAssemblies">
-    <xunit Assemblies="@(TestAssemblies)" Xml="%(TestAssemblies.Identity).xunit.xml" />
+  <Target Name="Test" DependsOnTargets="Build">
+    <ItemGroup>
+      <TestAssemblies Include="$(ArtifactsPath)**\*.Tests.dll" />
+    </ItemGroup>
+    
+    <xunit Assemblies="@(TestAssemblies)" Xml="$([System.IO.Path]::Combine( $(ArtifactsPath), 'TestResults.xml' ))" />
   </Target>
 
   <Target Name="Package" DependsOnTargets="Test">
-  </Target>
-
-  <Target Name="GatherTestAssemblies" DependsOnTargets="Build">
     <ItemGroup>
-      <TestAssemblies Include="%(ProjectAssemblies.Identity)" Condition=" Exists('%(RootDir)%(Directory)xunit.dll') " />
     </ItemGroup>
   </Target>
 
