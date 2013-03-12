@@ -4,7 +4,6 @@ using Roslyn.Scripting;
 
 namespace ScriptCs
 {
-    [InheritedExport]
     public interface IScriptEngine
     {
         string BaseDirectory { get; set; }

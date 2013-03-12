@@ -5,7 +5,6 @@ using System.IO;
 
 namespace ScriptCs
 {
-    [InheritedExport]
     public interface IFileSystem
     {
         IEnumerable<string> EnumerateFiles(string dir, string search);

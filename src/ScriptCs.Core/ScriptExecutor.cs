@@ -5,7 +5,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [Export(Constants.RunContractName, typeof(IScriptExecutor))]
     public class ScriptExecutor : IScriptExecutor
     {
         protected readonly IFileSystem _fileSystem;
@@ -13,8 +12,7 @@ namespace ScriptCs
         private readonly IScriptEngine _scriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
 
-        [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, [Import(Constants.RunContractName)]IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory scriptHostFactory)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;

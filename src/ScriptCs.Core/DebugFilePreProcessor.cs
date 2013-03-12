@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace ScriptCs
 {
-    [Export(Constants.DebugContractName, typeof(IFilePreProcessor))]
     public class DebugFilePreProcessor : FilePreProcessor
     {
         private const string SystemDiagnosticsUsing = "using System.Diagnostics;";
 
-        [ImportingConstructor]
         public DebugFilePreProcessor(IFileSystem fileSystem)
             : base(fileSystem)
         {

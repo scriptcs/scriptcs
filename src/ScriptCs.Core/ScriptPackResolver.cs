@@ -1,8 +1,6 @@
-﻿using ScriptCs.Contracts;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {

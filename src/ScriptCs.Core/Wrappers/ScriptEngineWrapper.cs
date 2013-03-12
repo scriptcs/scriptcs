@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using Roslyn.Scripting;
+﻿using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 namespace ScriptCs.Wrappers
@@ -8,7 +7,6 @@ namespace ScriptCs.Wrappers
     {
         private CommonScriptEngine _scriptEngine;
 
-        [ImportingConstructor]
         public ScriptEngineWrapper()
         {
             _scriptEngine = new ScriptEngine();

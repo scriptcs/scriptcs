@@ -4,15 +4,13 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs
 {
-    [Export(Constants.DebugContractName, typeof(IScriptExecutor))]
     public class DebugScriptExecutor : ScriptExecutor
     {
         private readonly ICompiledDllDebugger _compiledDllDebugger;
 
-        [ImportingConstructor]
         public DebugScriptExecutor(
             IFileSystem fileSystem, 
-            [Import(Constants.DebugContractName)]IFilePreProcessor filePreProcessor, 
+            IFilePreProcessor filePreProcessor, 
             IScriptEngine scriptEngine, 
             ICompiledDllDebugger compiledDllDebugger,
             IScriptHostFactory scriptHostFactory)

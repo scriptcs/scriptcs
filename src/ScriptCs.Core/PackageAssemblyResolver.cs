@@ -12,7 +12,6 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IPackageContainer _packageContainer;
 
-        [ImportingConstructor]
         public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer)
         {
             _fileSystem = fileSystem;
