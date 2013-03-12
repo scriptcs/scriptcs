@@ -28,12 +28,12 @@ public static void Bootstrap<T>(string browserName)
     var browserEnumValue = Enum.Parse(bootstrapParams[0].ParameterType, browserName);
     bootstrapMethod.Invoke(null, new object[] { browserEnumValue });
 	
-	I = new FluentTest().I;
+    I = new FluentTest().I;
 
-	// hack to move drivers into bin so they can be located by Selenium (only prob on scriptcs atm)
-	foreach (var driver in Directory.GetFiles(Environment.CurrentDirectory, "*.exe"))
-	{
-		var newFileName = Path.Combine(Environment.CurrentDirectory, "bin", Path.GetFileName(driver));
-		if (!File.Exists(newFileName)) File.Move(driver, newFileName);
-	}
+    // hack to move drivers into bin so they can be located by Selenium (only prob on scriptcs atm)
+    foreach (var driver in Directory.GetFiles(Environment.CurrentDirectory, "*.exe"))
+    {
+        var newFileName = Path.Combine(Environment.CurrentDirectory, "bin", Path.GetFileName(driver));
+        if (!File.Exists(newFileName)) File.Move(driver, newFileName);
+    }
 }
