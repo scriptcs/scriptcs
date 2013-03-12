@@ -1,3 +1,9 @@
+#r "PresentationCore"
+#r "PresentationFramework"
+#r "WindowsBase"
+#r "System.Xaml"
+#r "System.Xml"
+
 #load utilities.csx
 #load mvvm.csx
 
@@ -6,6 +12,7 @@
 
 using System;
 using System.Windows;
+using System.Threading;
 
 public class App : Application 
 { 
@@ -23,4 +30,4 @@ public class App : Application
 	}
 }
 
-new App().Run();
+Utilities.RunInSTAThread(() => new App().Run());
