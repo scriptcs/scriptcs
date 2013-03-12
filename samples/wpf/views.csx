@@ -2,6 +2,6 @@ public class CalculatorView : Window
 {
 	public CalculatorView()
 	{
-		Utilities.LoadXaml(this, "CalculatorView.xaml");
+		XamlUtility.LoadXaml(this, "CalculatorView.xaml");
 	}
 }
