@@ -50,11 +50,8 @@
   </Target>
 
   <Target Name="Package" DependsOnTargets="Test">
-    <ItemGroup>
-      <NuSpecFiles Include="$(Root)src\**\*.nuspec" />
-    </ItemGroup>
-    
-    <Exec Command="&quot;$(NuGetExePath)&quot; pack %(NuSpecFiles.Identity) -Version $(PackageVersion) -OutputDirectory &quot;$(PackageOutputPath)&quot; -Symbols -NoPackageAnalysis -p @(Solution -> '%(AdditionalProperties.Trim())', ';')" />
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack $(Root)src\ScriptCs.Core\ScriptCs.Core.csproj -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack $(Root)src\ScriptCs.Contracts\ScriptCs.Contracts.csproj -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
   </Target>
 
   <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
