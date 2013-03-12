@@ -21,17 +21,8 @@
         ArtifactsPath=$(ArtifactsPath)
       </AdditionalProperties>
     </Solution>
-  </ItemGroup>
 
-  <ItemGroup>
-    <RegexTransform Include="$(Root)src\Common\CommonVersionInfo.cs">
-      <Find>AssemblyVersion\("\d+\.\d+\.\d+"\)</Find>
-      <ReplaceWith>AssemblyVersion("$(AssemblyVersion)")</ReplaceWith>
-    </RegexTransform>
-    <RegexTransform Include="$(Root)src\Common\CommonVersionInfo.cs">
-      <Find>AssemblyInformationalVersion\("\d+\.\d+\.\d+(-\w+\d*(-\d+)?)?"\)</Find>
-      <ReplaceWith>AssemblyInformationalVersion("$(PackageVersion)")</ReplaceWith>
-    </RegexTransform>
+    <TestProjects Include="$(Root)test\**\*.csproj" />
   </ItemGroup>
 
   <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
@@ -58,9 +49,16 @@
   <Target Name="Package" DependsOnTargets="Test">
     <ItemGroup>
     </ItemGroup>
+  <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
   </Target>
 
-  <Target Name="UpdateProjectVersions" Condition=" '$(BUILD_NUMBER)' != '' ">
-    <RegexTransform Items="@(RegexTransform)" />
+  <Target Name="BackupCommonVersionInfo">
+    <Copy SourceFiles="$(CommonVersionInfoPath)" DestinationFiles="$(CommonVersionInfoPath).bak" />
+  </Target>
+
+  <Target Name="RestoreCommonVersionInfo" AfterTargets="Build" Condition=" Exists('$(CommonVersionInfoPath).bak') ">
+    <Delete Files="$(CommonVersionInfoPath)" Condition=" Exists('$(CommonVersionInfoPath)') " />
+    <Move SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
   </Target>
 </Project>
