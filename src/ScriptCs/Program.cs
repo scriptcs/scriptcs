@@ -88,10 +88,7 @@ namespace ScriptCs
             conventions.ForTypesDerivedFrom<IPackageAssemblyResolver>().Export<IPackageAssemblyResolver>();
             conventions.ForTypesDerivedFrom<IScriptEngine>()
                        .Export<IScriptEngine>()
-                       .SelectConstructor(
-                           constructors =>
-                           constructors.First(
-                               c => c.GetParameters().Length == constructors.Min(ctor => ctor.GetParameters().Length)));
+                       .SelectConstructor(constructors => constructors.OrderBy(c => c.GetParameters().Length).First());
             conventions.ForTypesDerivedFrom<IPackageContainer>().Export<IPackageContainer>();
             conventions.ForTypesDerivedFrom<IScriptPack>().Export<IScriptPack>();
 
