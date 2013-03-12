@@ -18,4 +18,13 @@
     <PackageVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)</PackageVersion>
     <PackageVersion Condition=" '$(BuildQuality)' != '' ">$(PackageVersion)-$(BuildQuality)</PackageVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttributes Include="System.Reflection.AssemblyVersionAttribute">
+      <_Parameter1>$(AssemblyVersion)</_Parameter1>
+    </AssemblyAttributes>
+    <AssemblyAttributes Include="System.Reflection.AssemblyInformationalVersionAttribute">
+      <_Parameter1>$(PackageVersion)</_Parameter1>
+    </AssemblyAttributes>
+  </ItemGroup>
 </Project>
