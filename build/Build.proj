@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
+  <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
+  <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
+  
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 
@@ -19,14 +22,25 @@
     </Solution>
   </ItemGroup>
 
-  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test"></Target>
+  <ItemGroup>
+    <RegexTransform Include="$(Root)src\Common\CommonVersionInfo.cs">
+      <Find>AssemblyVersion\("\d+\.\d+\.\d+"\)</Find>
+      <ReplaceWith>AssemblyVersion("$(AssemblyVersion)")</ReplaceWith>
+    </RegexTransform>
+    <RegexTransform Include="$(Root)src\Common\CommonVersionInfo.cs">
+      <Find>AssemblyInformationalVersion\("\d+\.\d+\.\d+(-\w+\d*(-\d+)?)?"\)</Find>
+      <ReplaceWith>AssemblyInformationalVersion("$(PackageVersion)")</ReplaceWith>
+    </RegexTransform>
+  </ItemGroup>
+
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
 
   <Target Name="Clean">
     <RemoveDir Directories="$(ArtifactsPath)" Condition="Exists('$(ArtifactsPath)')"/>
     <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
   </Target>
 
-  <Target Name="Build">
+  <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
     <MSBuild Projects="@(Solution)" Targets="Build">
       <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
     </MSBuild>
@@ -36,9 +50,16 @@
     <xunit Assemblies="@(TestAssemblies)" Xml="%(TestAssemblies.Identity).xunit.xml" />
   </Target>
 
+  <Target Name="Package" DependsOnTargets="Test">
+  </Target>
+
   <Target Name="GatherTestAssemblies" DependsOnTargets="Build">
     <ItemGroup>
       <TestAssemblies Include="%(ProjectAssemblies.Identity)" Condition=" Exists('%(RootDir)%(Directory)xunit.dll') " />
     </ItemGroup>
+  </Target>
+
+  <Target Name="UpdateProjectVersions" Condition=" '$(BUILD_NUMBER)' != '' ">
+    <RegexTransform Items="@(RegexTransform)" />
   </Target>
 </Project>
