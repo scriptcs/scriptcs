@@ -1,29 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptPackSession : IScriptPackSession
-    {
-        private readonly ISession _session;
+	public class ScriptPackSession : IScriptPackSession, IDisposable
+	{
+		private readonly IEnumerable<IScriptPack> _scriptPacks;
 
-        public ScriptPackSession(ISession session)
-        {
-            _session = session;
-        }
+		private IList<string> _references;
+		private IList<string> _namespaces;
 
-        public void AddReference(string assemblyDisplayNameOrPath)
-        {
-            _session.AddReference(assemblyDisplayNameOrPath);
-        }
+		public ScriptPackSession(IEnumerable<IScriptPack> scriptPacks)
+		{
+			_scriptPacks = scriptPacks;
 
-        public void ImportNamespace(string ns)
-        {
-            
-        }
-    }
+			_references = new List<string>();
+			_namespaces = new List<string>();
+
+			InitializePacks();
+		}
+
+		public IEnumerable<IScriptPack> ScriptPacks { get { return _scriptPacks; } }
+		public IEnumerable<string> References { get { return _references; } }
+		public IEnumerable<string> Namespaces { get { return _namespaces; } }
+ 
+		public void Dispose()
+		{
+			TerminatePacks();
+		}
+
+		private void InitializePacks()
+		{
+			foreach (var s in _scriptPacks)
+				s.Initialize(this);
+		}
+
+		private void TerminatePacks()
+		{
+			foreach (var s in _scriptPacks)
+				s.Terminate();
+		}
+
+		void IScriptPackSession.AddReference(string assemblyDisplayNameOrPath)
+		{
+			_references.Add(assemblyDisplayNameOrPath);
+		}
+
+		void IScriptPackSession.ImportNamespace(string @namespace)
+		{
+			_namespaces.Add(@namespace);
+		}
+	}
 }

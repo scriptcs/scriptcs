@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs
@@ -73,22 +74,18 @@ namespace ScriptCs
             var catalog = new AggregateCatalog();
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(Program).Assembly, conventions));
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptExecutor).Assembly, conventions));
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynScriptEngine).Assembly, conventions));
             catalog.Catalogs.Add(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.pack.dll", conventions));
-            
-            return new CompositionContainer(catalog);
+            return new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
         }
 
         private static RegistrationBuilder SetupMefConventions(bool debug)
         {
             var conventions = new RegistrationBuilder();
 
-            conventions.ForTypesDerivedFrom<ICompiledDllDebugger>().Export<ICompiledDllDebugger>();
             conventions.ForTypesDerivedFrom<IScriptHostFactory>().Export<IScriptHostFactory>();
             conventions.ForTypesDerivedFrom<IFileSystem>().Export<IFileSystem>();
             conventions.ForTypesDerivedFrom<IPackageAssemblyResolver>().Export<IPackageAssemblyResolver>();
-            conventions.ForTypesDerivedFrom<IScriptEngine>()
-                       .Export<IScriptEngine>()
-                       .SelectConstructor(constructors => constructors.OrderBy(c => c.GetParameters().Length).First());
             conventions.ForTypesDerivedFrom<IPackageContainer>().Export<IPackageContainer>();
             conventions.ForTypesDerivedFrom<IScriptPack>().Export<IScriptPack>();
 
@@ -96,11 +93,13 @@ namespace ScriptCs
             {
                 conventions.ForType<DebugScriptExecutor>().Export<IScriptExecutor>();
                 conventions.ForType<DebugFilePreProcessor>().Export<IFilePreProcessor>();
+                conventions.ForType<RoslynScriptDebuggerEngine>().Export<IScriptEngine>();
             }
             else
             {
                 conventions.ForType<ScriptExecutor>().Export<IScriptExecutor>();
                 conventions.ForType<FilePreProcessor>().Export<IFilePreProcessor>();
+                conventions.ForType<RoslynScriptEngine>().Export<IScriptEngine>();
             }
 
             return conventions;
