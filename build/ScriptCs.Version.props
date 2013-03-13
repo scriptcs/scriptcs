@@ -18,12 +18,13 @@
     <PackageVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)</PackageVersion>
     <PackageVersion Condition=" '$(BuildQuality)' != '' ">$(PackageVersion)-$(BuildQuality)</PackageVersion>
   </PropertyGroup>
-  <!--
-  <PropertyGroup>
-    <BuildNumber Condition=" '$(BuildNumber)' == '' And '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
 
-    <BuildRevision Condition=" '$(BuildRevision)' == '' And '$(BuildNumber)' != '' ">+build.$(BuildNumber)</BuildRevision>
-    <BuildRevision Condition=" '$(BuildRevision)' != '' And '$(GitCommitSha)' != '' ">$(BuildRevision).$(GitCommitSha)</BuildRevision>
-  </PropertyGroup>
-  -->
+  <ItemGroup>
+    <AssemblyAttributes Include="System.Reflection.AssemblyVersionAttribute">
+      <_Parameter1>$(AssemblyVersion)</_Parameter1>
+    </AssemblyAttributes>
+    <AssemblyAttributes Include="System.Reflection.AssemblyInformationalVersionAttribute">
+      <_Parameter1>$(PackageVersion)</_Parameter1>
+    </AssemblyAttributes>
+  </ItemGroup>
 </Project>
