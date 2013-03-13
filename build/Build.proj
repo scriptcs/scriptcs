@@ -2,12 +2,19 @@
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
+  <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
+  <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
+  
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 
     <Root>$([System.IO.Path]::GetFullPath( '$(MSBuildThisFileDirectory)..\' ))</Root>
     <BaseArtifactsPath>$([System.IO.Path]::Combine( $(Root), 'artifacts\' ))</BaseArtifactsPath>
     <ArtifactsPath>$([System.IO.Path]::Combine( $(BaseArtifactsPath), $(Configuration) ))\</ArtifactsPath>
+    <PackageOutputPath>$(ArtifactsPath.TrimEnd(new[] { '\' }))</PackageOutputPath>
+    <NuGetExePath>$([System.IO.Path]::Combine( $(Root), '.nuget\nuget.exe' ))</NuGetExePath>
+
+    <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,28 +24,50 @@
         ArtifactsPath=$(ArtifactsPath)
       </AdditionalProperties>
     </Solution>
+
+    <CoreProjects Include="$(Root)src\**\*.csproj" />
+    <TestProjects Include="$(Root)test\**\*.csproj" />
   </ItemGroup>
 
-  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test"></Target>
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
 
   <Target Name="Clean">
-    <RemoveDir Directories="$(ArtifactsPath)" Condition="Exists('$(ArtifactsPath)')"/>
     <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
+    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') "/>
   </Target>
 
-  <Target Name="Build">
+  <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
     <MSBuild Projects="@(Solution)" Targets="Build">
       <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
     </MSBuild>
   </Target>
 
-  <Target Name="Test" DependsOnTargets="GatherTestAssemblies">
-    <xunit Assemblies="@(TestAssemblies)" Xml="%(TestAssemblies.Identity).xunit.xml" />
+  <Target Name="Test" DependsOnTargets="Build">
+    <ItemGroup>
+      <TestAssemblies Include="$(ArtifactsPath)**\*.Tests.dll" />
+    </ItemGroup>
+    
+    <xunit Assemblies="@(TestAssemblies)" Xml="$([System.IO.Path]::Combine( $(ArtifactsPath), 'TestResults.xml' ))" />
   </Target>
 
-  <Target Name="GatherTestAssemblies" DependsOnTargets="Build">
+  <Target Name="Package" DependsOnTargets="Test">
     <ItemGroup>
-      <TestAssemblies Include="%(ProjectAssemblies.Identity)" Condition=" Exists('%(RootDir)%(Directory)xunit.dll') " />
+      <NuGetProjects Include="@(CoreProjects)" Condition=" Exists('%(RootDir)%(Directory)Properties\%(Filename).nuspec') " />
     </ItemGroup>
+    
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
+  </Target>
+
+  <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
+  </Target>
+
+  <Target Name="BackupCommonVersionInfo">
+    <Copy SourceFiles="$(CommonVersionInfoPath)" DestinationFiles="$(CommonVersionInfoPath).bak" />
+  </Target>
+
+  <Target Name="RestoreCommonVersionInfo" AfterTargets="Build" Condition=" Exists('$(CommonVersionInfoPath).bak') ">
+    <Delete Files="$(CommonVersionInfoPath)" Condition=" Exists('$(CommonVersionInfoPath)') " />
+    <Move SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
   </Target>
 </Project>

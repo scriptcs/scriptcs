@@ -25,11 +25,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(ArtifactsPath)' != '' ">
-    <ProjectOutputPath>$(MSBuildProjectName)\bin\</ProjectOutputPath>
-    <ProjectIntermediatePath>$(MSBuildProjectName)\obj\</ProjectIntermediatePath>
+    <!--<ProjectIntermediatePath>$(MSBuildProjectName)\obj\</ProjectIntermediatePath>-->
     
-    <OutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), $(ProjectOutputPath)))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), $(ProjectIntermediatePath)))</IntermediateOutputPath>
+    <OutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), 'bin\'))</OutputPath>
+    <!--<IntermediateOutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), $(ProjectIntermediatePath)))</IntermediateOutputPath>-->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
