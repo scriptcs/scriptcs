@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ScriptCs.Engine.Roslyn</RootNamespace>
     <AssemblyName>ScriptCs.Engine.Roslyn</AssemblyName>
-    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Roslyn.Compilers">
@@ -25,6 +25,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\common\CommonVersionInfo.cs">
+      <Link>Properties\CommonVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="RoslynScriptDebuggerEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
