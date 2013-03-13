@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace ScriptCs
@@ -24,7 +23,7 @@ namespace ScriptCs
             var rs = new List<string>();
             var loads = new List<string>();
 
-            var parsed = ParseFile(entryFile, ref usings, ref rs, ref loads);
+            var parsed = ParseFile(path, entryFile, ref usings, ref rs, ref loads);
 
             var result = GenerateRs(rs);
             if (!string.IsNullOrWhiteSpace(result))
@@ -53,20 +52,29 @@ namespace ScriptCs
             return string.Join(_fileSystem.NewLine, rLines.Distinct());
         }
 
-        private string ParseFile(IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
+        private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
         {
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(i => IsNonDirectiveLine(i));
+            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
 
+            var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
+
+            // add #line before the actual code begins
+            // +1 because we are in a zero indexed list, but line numbers are 1 indexed
+            // we need to keep the original position of the actual line 
+            if (firstBody != -1)
+            {
+                fileList.Insert(firstBody, string.Format(@"#line {0} ""{1}""", firstBody + 1, path));
+            }
+            
             for (var i = 0; i < fileList.Count; i++)
             {
                 var line = fileList[i];
                 if (IsUsingLine(line))
                 {
                     usings.Add(line);
-                }
-
-                if (IsRLine(line))
+                } 
+                else if (IsRLine(line))
                 {
                     if (i < firstCode)
                     {
@@ -76,9 +84,8 @@ namespace ScriptCs
                     {
                         fileList[i] = string.Empty;
                     }
-                }
-
-                if (IsLoadLine(line))
+                } 
+                else if (IsLoadLine(line))
                 {
                     if (i < firstCode && !loads.Contains(line))
                     {
@@ -90,8 +97,8 @@ namespace ScriptCs
                         if (filecontent != null)
                         {
                             loads.Add(line);
-                            var parsed = ParseFile(filecontent, ref usings, ref rs, ref loads);
-                            fileList[i] = "//" + filepath + _fileSystem.NewLine + parsed;
+                            var parsed = ParseFile(filepath, filecontent, ref usings, ref rs, ref loads);
+                            fileList[i] =/* string.Format("//{0}{1}", filepath, _fileSystem.NewLine) + */parsed;
                         }
                     }
                     else
@@ -123,6 +130,17 @@ namespace ScriptCs
         private static bool IsLoadLine(string line)
         {
             return line.TrimStart(' ').StartsWith(LoadString);
+        }
+
+        private enum ParsingStatus
+        {
+            ForbidReferences,
+            
+            ForbidLoads,
+
+            ForbidUsings,
+
+            NoRestrictions
         }
     }
 }

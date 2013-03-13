@@ -4,10 +4,13 @@ using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
+using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
+    using Roslyn.Scripting.CSharp;
+
     public class RoslynScriptEngineTests
     {
         private static RoslynScriptEngine CreateScriptEngine(
@@ -44,6 +47,7 @@ namespace ScriptCs.Tests
 
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IEnumerable<IScriptPackContext>>()));
             }
+
         }
     }
 }
