@@ -1,20 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
+
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [Export(Constants.RunContractName, typeof(IScriptExecutor))]
     public class ScriptExecutor : IScriptExecutor
     {
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
 
-        [ImportingConstructor]
-        public ScriptExecutor(IFileSystem fileSystem, [Import(Constants.RunContractName)]IFilePreProcessor filePreProcessor, [Import(Constants.RunContractName)]IScriptEngine scriptEngine)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine)
         {
             _fileSystem = fileSystem;
             _filePreProcessor = filePreProcessor;

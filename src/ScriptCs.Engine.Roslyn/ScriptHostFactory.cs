@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs.Engine.Roslyn
 {

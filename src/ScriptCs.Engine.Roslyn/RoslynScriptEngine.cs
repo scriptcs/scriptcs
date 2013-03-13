@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
-using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    [Export(Constants.RunContractName, typeof(IScriptEngine))]
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
 
-        [ImportingConstructor]
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory)
         {
             _scriptEngine = new ScriptEngine();
