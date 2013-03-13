@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.Composition;
-
-namespace ScriptCs
+﻿namespace ScriptCs
 {
     public interface IFilePreProcessor
     {
