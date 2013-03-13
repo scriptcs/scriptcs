@@ -55,14 +55,16 @@ namespace ScriptCs
         private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
         {
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(i => IsNonDirectiveLine(i));
+            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
+
+            var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
 
             // add #line before the actual code begins
             // +1 because we are in a zero indexed list, but line numbers are 1 indexed
             // we need to keep the original position of the actual line 
-            if (firstCode != -1)
+            if (firstBody != -1)
             {
-                fileList.Insert(firstCode, string.Format(@"#line {0} ""{1}""", firstCode + 1, path));
+                fileList.Insert(firstBody, string.Format(@"#line {0} ""{1}""", firstBody + 1, path));
             }
             
             for (var i = 0; i < fileList.Count; i++)
@@ -112,7 +114,7 @@ namespace ScriptCs
 
         private static bool IsNonDirectiveLine(string line)
         {
-            return !IsRLine(line) && !IsLoadLine(line) && !IsUsingLine(line) && line.Trim() != string.Empty;
+            return !IsRLine(line) && !IsLoadLine(line) && line.Trim() != string.Empty;
         }
 
         private static bool IsUsingLine(string line)

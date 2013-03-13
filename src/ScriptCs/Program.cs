@@ -56,7 +56,7 @@ namespace ScriptCs
 
                 executor.Execute(script, paths, scriptPackManager.GetPacks());
             }
-            catch (MissingAssemblyException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }

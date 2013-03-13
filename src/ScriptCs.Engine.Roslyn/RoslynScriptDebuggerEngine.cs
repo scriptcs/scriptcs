@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Roslyn.Scripting;
+using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -47,7 +48,20 @@ namespace ScriptCs.Engine.Roslyn
                 var type = assembly.GetType(CompiledScriptClass);
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
-                method.Invoke(null, new[] { session });
+                try
+                {
+                    method.Invoke(null, new[] { session });
+                }
+                catch (Exception e)
+                {
+                    var message = 
+                        string.Format(
+                        "Exception Message: {0} {1}Stack Trace:{2}",
+                        e.InnerException.Message,
+                        Environment.NewLine, 
+                        e.InnerException.StackTrace);
+                    throw new ScriptExecutionException(message);
+                }
             }
         }
     }
