@@ -23,7 +23,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugFilePreProcessor.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\CompilationException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />

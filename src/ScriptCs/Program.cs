@@ -88,17 +88,16 @@ namespace ScriptCs
             conventions.ForTypesDerivedFrom<IPackageAssemblyResolver>().Export<IPackageAssemblyResolver>();
             conventions.ForTypesDerivedFrom<IPackageContainer>().Export<IPackageContainer>();
             conventions.ForTypesDerivedFrom<IScriptPack>().Export<IScriptPack>();
+            conventions.ForTypesDerivedFrom<IFilePreProcessor>().Export<IFilePreProcessor>();
 
             if (debug)
             {
                 conventions.ForType<DebugScriptExecutor>().Export<IScriptExecutor>();
-                conventions.ForType<DebugFilePreProcessor>().Export<IFilePreProcessor>();
                 conventions.ForType<RoslynScriptDebuggerEngine>().Export<IScriptEngine>();
             }
             else
             {
                 conventions.ForType<ScriptExecutor>().Export<IScriptExecutor>();
-                conventions.ForType<FilePreProcessor>().Export<IFilePreProcessor>();
                 conventions.ForType<RoslynScriptEngine>().Export<IScriptEngine>();
             }
 
