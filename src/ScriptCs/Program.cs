@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs
@@ -68,6 +69,7 @@ namespace ScriptCs
             var catalog = new AggregateCatalog();
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(Program).Assembly));
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptExecutor).Assembly));
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynScriptEngine).Assembly));
             catalog.Catalogs.Add(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory,"*.pack.dll"));
             return new CompositionContainer(catalog);
         }
