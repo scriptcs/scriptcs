@@ -6,6 +6,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ScriptCs.Engine.Roslyn</RootNamespace>
     <AssemblyName>ScriptCs.Engine.Roslyn</AssemblyName>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Roslyn.Compilers">
