@@ -33,15 +33,18 @@ namespace ScriptCs
 
             _scriptEngine.BaseDirectory = bin;
 
-            using (var scriptPackSession = new ScriptPackSession(scriptPacks)) {
-                var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-                var code = _filePreProcessor.ProcessFile(path);
+            var scriptPackSession = new ScriptPackSession(scriptPacks);
+            scriptPackSession.InitializePacks();
+
+            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            var code = _filePreProcessor.ProcessFile(path);
             
-                _scriptEngine.Execute(
-                    code: code,
-                    references: references,
-                    scriptPackSession: scriptPackSession);
-            }
+            _scriptEngine.Execute(
+                code: code,
+                references: references,
+                scriptPackSession: scriptPackSession);
+
+            scriptPackSession.TerminatePacks();
         }
 
         private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
