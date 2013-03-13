@@ -25,6 +25,7 @@
       </AdditionalProperties>
     </Solution>
 
+    <CoreProjects Include="$(Root)src\**\*.csproj" />
     <TestProjects Include="$(Root)test\**\*.csproj" />
   </ItemGroup>
 
@@ -50,8 +51,11 @@
   </Target>
 
   <Target Name="Package" DependsOnTargets="Test">
-    <Exec Command="&quot;$(NuGetExePath)&quot; pack $(Root)src\ScriptCs.Core\ScriptCs.Core.csproj -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
-    <Exec Command="&quot;$(NuGetExePath)&quot; pack $(Root)src\ScriptCs.Contracts\ScriptCs.Contracts.csproj -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
+    <ItemGroup>
+      <NuGetProjects Include="@(CoreProjects)" Condition=" Exists('%(RootDir)%(Directory)Properties\%(Filename).nuspec') " />
+    </ItemGroup>
+    
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; -Version $(PackageVersion) -Symbols -NoPackageAnalysis -p Configuration=$(Configuration);ArtifactsPath=$(ArtifactsPath)" WorkingDirectory="$(ArtifactsPath)" />
   </Target>
 
   <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
