@@ -18,8 +18,8 @@ namespace ScriptCs
 
         public string ProcessFile(string path)
         {
-            var entryFile = _fileSystem.ReadFileLines(path);
-            var parsed = ParseFile(entryFile);
+            var lines = _fileSystem.ReadFileLines(path);
+            var parsed = ParseFile(path, lines);
 
             // item1 === usings; item2 === code
             var result = GenerateUsings(parsed.Item1);
@@ -33,36 +33,56 @@ namespace ScriptCs
             return string.Join(_fileSystem.NewLine, usingLines);
         }
 
-        private Tuple<List<string>, string> ParseFile(IEnumerable<string> file)
+        private Tuple<List<string>, string> ParseFile(string path, IEnumerable<string> lines)
         {
             var usings = new List<string>();
+            var linesList = lines.ToList();
 
-            var fileList = file.ToList();
-            for (var i = 0; i < fileList.Count; i++)
+            var parsingStatus = ParsingStatus.NoRestrictions;
+
+            for (var i = 0; i < linesList.Count; i++)
             {
-                var line = fileList[i];
+                var line = linesList[i];
                 if (IsUsingLine(line))
                 {
                     usings.Add(line);
                 }
-
-                if (IsLoadLine(line))
+                else if (IsLoadLine(line))
                 {
-                    var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+                    if (parsingStatus == ParsingStatus.NoRestrictions)
+                    {
+                        parsingStatus = ParsingStatus.ForbidUsings;
+                    }
+
+                    var filepath =
+                        line.Trim(' ')
+                            .Replace(LoadString, string.Empty)
+                            .Replace("\"", string.Empty)
+                            .Replace(";", string.Empty);
                     var filecontent = _fileSystem.IsPathRooted(filepath)
-                                              ? _fileSystem.ReadFileLines(filepath)
-                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
+                                          ? _fileSystem.ReadFileLines(filepath)
+                                          : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
 
                     if (filecontent != null)
                     {
-                        var parsed = ParseFile(filecontent);
-                        fileList[i] = parsed.Item2;
+                        var parsed = ParseFile(filepath, filecontent);
+                        linesList[i] = parsed.Item2;
                         usings.AddRange(parsed.Item1);
                     }
                 }
+                else if (parsingStatus != ParsingStatus.ForbidLoads)
+                {
+                    // we are in the first body line (until we add support for #r)
+                    // add #line statement
+                    parsingStatus = ParsingStatus.ForbidLoads;
+
+                    // +1 because we are in a zero indexed list, but line numbers are 1 indexed
+                    // we need to keep the original position of the actual line 
+                    linesList.Insert(i, string.Format(@"#line {0} ""{1}""", i + 1, path));
+                }
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line)));
+            var result = string.Join(_fileSystem.NewLine, linesList.Where(line => !IsUsingLine(line)));
             var tuple = new Tuple<List<string>, string>(usings.Distinct().ToList(), result);
 
             return tuple;
@@ -76,6 +96,16 @@ namespace ScriptCs
         private static bool IsLoadLine(string line)
         {
             return line.TrimStart(' ').StartsWith(LoadString);
+        }
+
+        [Flags]
+        private enum ParsingStatus
+        {
+            ForbidLoads,
+
+            ForbidUsings,
+
+            NoRestrictions
         }
     }
 }
