@@ -1,20 +1,14 @@
-﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Roslyn.Scripting;
+using System.Linq;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [InheritedExport]
-    public interface IScriptEngine
-    {
-        string BaseDirectory { get; set; }
-        
-        void AddReference(string assemblyDisplayNameOrPath);
-
-        ISession CreateSession<THostObject>(THostObject hostObject) where THostObject : class;
-        
-        ISession CreateSession(object hostObject, Type hostObjectType = null);
-
-        ISession CreateSession();
-    }
+	[InheritedExport]
+	public interface IScriptEngine
+	{
+		string BaseDirectory { get; set; }
+		void Execute(string code, IEnumerable<string> references, ScriptPackSession scriptPackSession);
+	}
 }
