@@ -58,6 +58,9 @@ Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/mas
 * Justin Rusbatch ([@jrusbatch](https://twitter.com/jrusbatch))
 * Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))
 
+## Community
+Want to chat? In addition to Twitter, you can find us on [Google Groups](https://groups.google.com/forum/?fromgroups#!forum/scriptcs) and [JabbR](https://jabbr.net/#/rooms/scriptcs)!
+
 ## License 
 [Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md)
 
