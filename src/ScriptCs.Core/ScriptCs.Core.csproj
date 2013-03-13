@@ -13,14 +13,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
-    </Reference>
-    <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -31,11 +23,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompilationResult.cs" />
-    <Compile Include="ConsoleCompiledDllDebugger.cs" />
-    <Compile Include="DebugFilePreProcessor.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
-    <Compile Include="Exceptions\CompilationException.cs" />
+    <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -45,17 +34,12 @@
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
-    <Compile Include="ICompilation.cs" />
-    <Compile Include="ICompilationResult.cs" />
-    <Compile Include="ICompiledDllDebugger.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
-    <Compile Include="IScriptHostFactory.cs" />
-    <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
+    <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptExecutor.cs" />
-    <Compile Include="ISession.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Package\IPackageContainer.cs" />
@@ -65,17 +49,10 @@
     <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptHost.cs" />
-    <Compile Include="ScriptHostFactory.cs" />
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptPackSession.cs" />
-    <Compile Include="ISubmission.cs" />
-    <Compile Include="Wrappers\CompilationWrapper.cs" />
-    <Compile Include="Wrappers\ScriptEngineWrapper.cs" />
-    <Compile Include="Wrappers\SessionWrapper.cs" />
-    <Compile Include="Wrappers\SubmissionWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
