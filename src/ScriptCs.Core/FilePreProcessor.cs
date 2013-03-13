@@ -10,6 +10,7 @@ namespace ScriptCs
     {
         private const string LoadString = "#load ";
         private const string UsingString = "using ";
+        private const string RString = "#r ";
 
         protected readonly IFileSystem _fileSystem;
 
@@ -22,25 +23,44 @@ namespace ScriptCs
         public string ProcessFile(string path)
         {
             var entryFile = _fileSystem.ReadFileLines(path);
-            var parsed = ParseFile(entryFile);
+            var usings = new List<string>();
+            var rs = new List<string>();
+            var loads = new List<string>();
 
-            // item1 === usings; item2 === code
-            var result = GenerateUsings(parsed.Item1);
-            result += _fileSystem.NewLine + parsed.Item2;
+            var parsed = ParseFile(entryFile, ref usings, ref rs, ref loads);
+
+            var result = GenerateRs(rs);
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                result += _fileSystem.NewLine;
+            }
+
+            result += GenerateUsings(usings);
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                result += _fileSystem.NewLine;
+            }
+
+            result += parsed;
 
             return result;
         }
 
         protected virtual string GenerateUsings(ICollection<string> usingLines)
         {
-            return string.Join(_fileSystem.NewLine, usingLines);
+            return string.Join(_fileSystem.NewLine, usingLines.Distinct());
         }
 
-        private Tuple<List<string>, string> ParseFile(IEnumerable<string> file)
+        protected virtual string GenerateRs(ICollection<string> rLines)
         {
-            var usings = new List<string>();
+            return string.Join(_fileSystem.NewLine, rLines.Distinct());
+        }
 
+        private string ParseFile(IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
+        {
             var fileList = file.ToList();
+            var firstCode = fileList.FindIndex(i => IsNonDirectiveLine(i));
+
             for (var i = 0; i < fileList.Count; i++)
             {
                 var line = fileList[i];
@@ -49,31 +69,58 @@ namespace ScriptCs
                     usings.Add(line);
                 }
 
+                if (IsRLine(line))
+                {
+                    if (i < firstCode)
+                    {
+                        rs.Add(line);
+                    }
+                    else
+                    {
+                        fileList[i] = string.Empty;
+                    }
+                }
+
                 if (IsLoadLine(line))
                 {
-                    var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
-                    var filecontent = _fileSystem.IsPathRooted(filepath)
+                    if (i < firstCode && !loads.Contains(line))
+                    {
+                        var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+                        var filecontent = _fileSystem.IsPathRooted(filepath)
                                               ? _fileSystem.ReadFileLines(filepath)
                                               : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
 
-                    if (filecontent != null)
+                        if (filecontent != null)
+                        {
+                            loads.Add(line);
+                            var parsed = ParseFile(filecontent, ref usings, ref rs, ref loads);
+                            fileList[i] = "//" + filepath + _fileSystem.NewLine + parsed;
+                        }
+                    }
+                    else
                     {
-                        var parsed = ParseFile(filecontent);
-                        fileList[i] = parsed.Item2;
-                        usings.AddRange(parsed.Item1);
+                        fileList[i] = string.Empty;
                     }
                 }
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line)));
-            var tuple = new Tuple<List<string>, string>(usings.Distinct().ToList(), result);
+            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
+            return result;
+        }
 
-            return tuple;
-        }        
+        private static bool IsNonDirectiveLine(string line)
+        {
+            return !IsRLine(line) && !IsLoadLine(line) && line.Trim() != string.Empty;
+        }
 
         private static bool IsUsingLine(string line)
         {
             return line.TrimStart(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";");
+        }
+
+        private static bool IsRLine(string line)
+        {
+            return line.TrimStart(' ').StartsWith(RString);
         }
 
         private static bool IsLoadLine(string line)

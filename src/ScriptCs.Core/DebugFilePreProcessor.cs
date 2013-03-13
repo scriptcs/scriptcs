@@ -22,7 +22,7 @@ namespace ScriptCs
                 usingLines.Add(SystemDiagnosticsUsing);
             }
             
-            return string.Join(_fileSystem.NewLine, usingLines);
+            return string.Join(_fileSystem.NewLine, usingLines.Distinct());
         }
     }
 }
