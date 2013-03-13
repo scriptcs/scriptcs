@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Roslyn.Scripting;
+using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -11,8 +11,6 @@ namespace ScriptCs.Engine.Roslyn
     {
         private const string CompiledScriptClass = "Submission#0";
         private const string CompiledScriptMethod = "<Factory>";
-        private const string AttachMessageTemplate =
-            "Attach to process {0} and press ENTER. Then use the 'go' command in the debugger.";
 
         public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory)
             : base(scriptHostFactory)
@@ -27,29 +25,43 @@ namespace ScriptCs.Engine.Roslyn
             var compileSuccess = false;
 
             using (var exeStream = new MemoryStream())
-            using (var pdbStream = new MemoryStream()) {
+            using (var pdbStream = new MemoryStream()) 
+            {
                 var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
                 compileSuccess = result.Success;
 
-                if (result.Success) {
+                if (result.Success) 
+                {
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
-                } else {
+                }
+                else 
+                {
                     var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
                     Console.WriteLine(errors);
                 }
             }
 
-            if (compileSuccess) {
+            if (compileSuccess) 
+            {
                 var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
                 var type = assembly.GetType(CompiledScriptClass);
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
-                var pid = Process.GetCurrentProcess().Id;
-                Console.WriteLine(AttachMessageTemplate, pid);
-                Console.ReadLine();
-
-                method.Invoke(null, new[] { session });
+                try
+                {
+                    method.Invoke(null, new[] { session });
+                }
+                catch (Exception e)
+                {
+                    var message = 
+                        string.Format(
+                        "Exception Message: {0} {1}Stack Trace:{2}",
+                        e.InnerException.Message,
+                        Environment.NewLine, 
+                        e.InnerException.StackTrace);
+                    throw new ScriptExecutionException(message);
+                }
             }
         }
     }
