@@ -1,43 +1,28 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using PowerArgs;
 using ScriptCs.Engine.Roslyn;
-using ScriptCs.Exceptions;
+using System.ComponentModel.Composition.Registration;
+using ScriptCs.Contracts;
+using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    using System.ComponentModel.Composition.Registration;
-
-    using ScriptCs.Contracts;
-    using ScriptCs.Package;
-
     internal class Program
     {
         private static void Main(string[] args)
         {
-            if (args.Length == 0)
+            var commandArgs = Args.Parse<ScriptCsArgs>(args);
+
+            if (!commandArgs.IsValid())
             {
-                WriteUsageMessage();
+                Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
                 return;
             }
 
-            var script = args[0];
-            bool debug = false;
-
-            if (args.Length == 2)
-            {
-                var secondParam = args[1];
-                if (secondParam.Equals("-debug"))
-                {
-                    debug = true;
-                }
-                else
-                {
-                    Console.WriteLine("Unrecognized parameter {0}.", secondParam);
-                    WriteUsageMessage();
-                    return;
-                }
-            }
+            var script = commandArgs.ScriptName;
+            var debug = commandArgs.DebugFlag;
 
             var container = ConfigureMef(debug);
             var fileSystem = container.GetExportedValue<IFileSystem>();
@@ -60,11 +45,6 @@ namespace ScriptCs
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-
-        private static void WriteUsageMessage()
-        {
-            Console.WriteLine("Usage:\r\n\r\nscriptcs csxFile [-debug]\r\n");
         }
 
         private static CompositionContainer ConfigureMef(bool debug)
