@@ -11,17 +11,22 @@ Steps
 -----
 1. Open Visual Studio.
 2. Open the **Open Project** dialog by navigating to File -> Open -> Project/Solution.
-	[openProject]
+	![open project](images/DEBUGGING/openscriptcs.png)
+	
 	The resulting solution explorer should look like this:
-	[solutionExplorer]
+
+	![solution explorer](images/DEBUGGING/solutionExplorer.png)
 3. Right-click the scriptcs solution item and click **Properties**.
 4. Provide values for the following fields:
 	* Arguments: `server.csx -debug`
 	* Working directory: the source folder of the app you want to debug, in this the directory where server.csx is located.
+		![properties](images/DEBUGGING/rightClick.png)
 5. Close the **Properties** window and save the solution.
 6. Add server.csx to the solution by right-clicking the solution and selecting **Add Existing Item**.
 7. Set a breakpoint in the `return "Hello World";` line of the **TestController**.
+	![set breakpoint](images/DEBUGGING/breakpoint.png)
 8. Press F5.
 9. Open any browser and navigate to localhost:8080/api/test.
 
 That's it, the breakpoint will be hit. You have all the goodness of VS, such as the Immediate Window, Add Watch to help you debugging.
+![hit breakpoint](images/DEBUGGING/hitbreakpoint.png)
