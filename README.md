@@ -43,6 +43,9 @@ This will launch a web api host.
 ## How it works
 scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
 
+## Samples
+You can find additional samples for scriptcs in our [samples repository](https://github.com/scriptcs/scriptcs-samples).
+
 ## What's next
 * Adding support for pluggable recipe "packs" for different frameworks.
 
