@@ -1,25 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public class ScriptPackResolver : IScriptPackResolver
     {
-        private readonly ExportProvider _exportProvider;
         private IEnumerable<IScriptPack> _scriptPacks; 
  
-        public ScriptPackResolver(ExportProvider exportProvider)
+        public ScriptPackResolver(IEnumerable<IScriptPack> scriptPacks)
         {
-            _exportProvider = exportProvider;
+            _scriptPacks = scriptPacks;
         }
 
         public IEnumerable<IScriptPack> GetPacks()
         {
-            if (_scriptPacks == null)
-            {
-                _scriptPacks = _exportProvider.GetExportedValues<IScriptPack>();
-            }
             return _scriptPacks;
         }
     }
