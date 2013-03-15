@@ -4,7 +4,7 @@ using NuGet;
 
 namespace ScriptCs.Package
 {
-    internal class PackageContainer : IPackageContainer
+    public class PackageContainer : IPackageContainer
     {
         public IPackageObject FindPackage(string path, string packageId)
         {
