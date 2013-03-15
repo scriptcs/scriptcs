@@ -1,22 +1,58 @@
-﻿namespace ScriptCs
+﻿using System;
+using System.ComponentModel.Composition.Hosting;
+using Autofac;
+using Autofac.Integration.Mef;
+using ScriptCs.Engine.Roslyn;
+using ScriptCs.Package;
+
+namespace ScriptCs
 {
     public class CompositionRoot
     {
-        public CompositionRoot(
-            IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver, 
-            IScriptExecutor executor, 
-            IScriptPackResolver scriptPackResolver )
+        private readonly bool _debug;
+        private IContainer _container;
+
+        public CompositionRoot(bool debug)
         {
-            FileSystem = fileSystem;
-            PackageAssemblyResolver = packageAssemblyResolver;
-            Executor = executor;
-            ScriptPackResolver = scriptPackResolver;
+            _debug = debug;
         }
 
-        public IFileSystem FileSystem { get; private set; }
-        public IPackageAssemblyResolver PackageAssemblyResolver { get; private set; }
-        public IScriptExecutor Executor { get; private set; }
-        public IScriptPackResolver ScriptPackResolver { get; private set; }
+        public void Initialize()
+        {
+            var builder = new ContainerBuilder();
+            var types = new[]
+                {
+                    typeof (ScriptHostFactory),
+                    typeof (FileSystem),
+                    typeof (PackageAssemblyResolver),
+                    typeof (PackageContainer),
+                    typeof (FilePreProcessor),
+                    typeof (ScriptPackResolver)
+                };
+
+            builder.RegisterTypes(types).AsImplementedInterfaces();
+
+            if (_debug)
+            {
+                builder.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>();
+                builder.RegisterType<RoslynScriptDebuggerEngine>().As<IScriptEngine>();
+            }
+            else
+            {
+                builder.RegisterType<ScriptExecutor>().As<IScriptExecutor>();
+                builder.RegisterType<RoslynScriptEngine>().As<IScriptEngine>();
+            }
+
+            builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
+
+            var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.pack.dll");
+            builder.RegisterComposablePartCatalog(catalog);
+            _container = builder.Build();
+        }
+
+        public ScriptServiceRoot GetServiceRoot()
+        {
+            return _container.Resolve<ScriptServiceRoot>();
+        }
     }
 }

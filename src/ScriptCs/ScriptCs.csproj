@@ -41,8 +41,8 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptCsArgs.cs" />
