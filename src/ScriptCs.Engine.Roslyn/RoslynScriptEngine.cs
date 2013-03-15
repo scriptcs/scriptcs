@@ -36,6 +36,9 @@ namespace ScriptCs.Engine.Roslyn
             foreach (var reference in scriptPackSession.References)
                 session.AddReference(reference);
 
+            foreach (var @namespace in scriptPackSession.Namespaces)
+                session.ImportNamespace(@namespace);
+
             Execute(code, session);
         }
 
