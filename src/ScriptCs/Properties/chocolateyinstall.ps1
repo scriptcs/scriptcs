@@ -6,7 +6,7 @@
 	if(!(Test-Path $binpath)){mkdir $binPath}
 	Copy-Item "$tools\scriptcs\*" $binPath -force
 	mkdir "$tools\nugets"
-	"nuget.core","Roslyn.Compilers.Common","Roslyn.Compilers.CSharp" |
+	"nuget.core","Roslyn.Compilers.Common","Roslyn.Compilers.CSharp","PowerArgs" |
 		% {.$nugetexe install $_ -o "$tools\nugets"}
 	Get-childItem "$tools\nugets" -filter *.dll -recurse | % {Copy-Item $_.FullName $binPath }
 	New-Item "$tools\scriptcs\scriptcs.exe.ignore" -type file -force
