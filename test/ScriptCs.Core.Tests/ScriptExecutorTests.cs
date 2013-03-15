@@ -170,7 +170,7 @@ namespace ScriptCs.Tests
 
                 var currentDirectory = @"C:\";
                 var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
-                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
+                var destinationFilePath = Path.Combine(currentDirectory, "bin", "fileName.cs");
 
                 var scriptName = "script.csx";
                 var paths = new string[] { sourceFilePath };
@@ -203,7 +203,7 @@ namespace ScriptCs.Tests
 
                 var currentDirectory = @"C:\";
                 var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
-                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
+                var destinationFilePath = Path.Combine(currentDirectory, "bin", "fileName.cs");
 
                 var scriptName = "script.csx";
                 var paths = new string[] { sourceFilePath };
@@ -240,10 +240,10 @@ namespace ScriptCs.Tests
                 var sourceFilePath2 = Path.Combine(@"C:\fileDir", "fileName2.cs");
                 var sourceFilePath3 = Path.Combine(@"C:\fileDir", "fileName3.cs");
                 var sourceFilePath4 = Path.Combine(@"C:\fileDir", "fileName4.cs");
-                var destinationFilePath1 = Path.Combine(currentDirectory, @"bin\fileName1.cs");
-                var destinationFilePath2 = Path.Combine(currentDirectory, @"bin\fileName2.cs");
-                var destinationFilePath3 = Path.Combine(currentDirectory, @"bin\fileName3.cs");
-                var destinationFilePath4 = Path.Combine(currentDirectory, @"bin\fileName4.cs");
+                var destinationFilePath1 = Path.Combine(currentDirectory, "bin", "fileName1.cs");
+                var destinationFilePath2 = Path.Combine(currentDirectory, "bin", "fileName2.cs");
+                var destinationFilePath3 = Path.Combine(currentDirectory, "bin", "fileName3.cs");
+                var destinationFilePath4 = Path.Combine(currentDirectory, "bin", "fileName4.cs");
 
                 var scriptName = "script.csx";
 
