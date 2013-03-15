@@ -34,6 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Properties\chocolateyinstall.ps1" />
+    <None Include="Properties\Scriptcs.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
