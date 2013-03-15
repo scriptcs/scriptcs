@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ScriptCs</id>
+    <version>0.0.0</version>
+    <authors>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</authors>
+    <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
+    <licenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>http://scriptcs.net</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/5c754f646971d8bc800b9d4057931938.png?s=120</iconUrl>
+    <description>Write .Net apps with a text editor, NuGet, and the power of Roslyn!</description>
+    <tags>roslyn csx script scriptcs</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net45" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="..\scriptcs\properties\chocolateyinstall.ps1" target="tools"/>
+    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.contracts.dll" target="tools/scriptcs"/>
+    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.core.dll" target="tools/scriptcs"/>
+    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.engine.roslyn.dll" target="tools/scriptcs"/>
+    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.exe" target="tools/scriptcs"/>
+    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.exe.config" target="tools/scriptcs"/>
+  </files>
+</package>
