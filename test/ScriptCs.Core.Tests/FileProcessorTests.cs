@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Moq;
 using Should;
@@ -262,11 +263,13 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldAddLineDirectiveRightAfterLastLoadIsIncludedInEachFile()
             {
+                string root = Path.GetTempPath();
+
                 // f1 has usings and then loads
                 var f1 = new List<string>
                         {
-                            @"#load ""C:\f2.csx"";",
-                            @"#load ""C:\f3.csx"";",
+                            @"#load " + Path.Combine(root, "f2.csx") + ";",
+                            @"#load " + Path.Combine(root, "f3.csx") + ";",
                             "using System;",
                             "using System.Diagnostics;",
                             @"Console.WriteLine(""First line of f1"");",
@@ -275,8 +278,8 @@ namespace ScriptCs.Tests
                 // f2 has no usings and multiple loads
                 var f2 = new List<string>
                         {
-                            @"#load ""C:\f4.csx"";",
-                            @"#load ""C:\f5.csx"";",
+                            @"#load " + Path.Combine(root, "f4.csx") + ";",
+                            @"#load " + Path.Combine(root, "f5.csx") + ";",
                             @"Console.WriteLine(""First line of f2"");",
                         };
 
@@ -302,21 +305,21 @@ namespace ScriptCs.Tests
                         };
 
                 _fileSystem.SetupGet(fs => fs.NewLine).Returns(Environment.NewLine);
-                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx"))
+                _fileSystem.Setup(fs => fs.ReadFileLines(Path.Combine(root, "f1.csx")))
                             .Returns(f1.ToArray());
-                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f2.csx"))
+                _fileSystem.Setup(fs => fs.ReadFileLines(Path.Combine(root, "f2.csx")))
                             .Returns(f2.ToArray()).Verifiable();
-                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f3.csx"))
+                _fileSystem.Setup(fs => fs.ReadFileLines(Path.Combine(root, "f3.csx")))
                             .Returns(f3.ToArray());
-                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f4.csx"))
+                _fileSystem.Setup(fs => fs.ReadFileLines(Path.Combine(root, "f4.csx")))
                             .Returns(f4.ToArray());
-                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f5.csx"))
+                _fileSystem.Setup(fs => fs.ReadFileLines(Path.Combine(root, "f5.csx")))
                             .Returns(f5.ToArray());
                 _fileSystem.Setup(fs => fs.IsPathRooted(It.IsAny<string>())).Returns(true);
 
                 var preProcessor = new FilePreProcessor(_fileSystem.Object);
 
-                var file = preProcessor.ProcessFile(@"C:\f1.csx");
+                var file = preProcessor.ProcessFile(Path.Combine(root, "f1.csx"));
                 
                 var fileLines = file.Split(new[]{ Environment.NewLine }, StringSplitOptions.None);
 
@@ -325,19 +328,19 @@ namespace ScriptCs.Tests
                 fileLines[line++].ShouldEqual("using System;");
                 fileLines[line++].ShouldEqual("using System.Diagnostics;");
 
-                fileLines[line++].ShouldEqual(@"#line 1 ""C:\f4.csx""");
+                fileLines[line++].ShouldEqual("#line 1 \"" + Path.Combine(root, "f4.csx") + "\"");
                 fileLines[line++].ShouldEqual(f4[0]);
 
-                fileLines[line++].ShouldEqual(@"#line 2 ""C:\f5.csx""");
+                fileLines[line++].ShouldEqual("#line 2 \"" + Path.Combine(root, "f5.csx") + "\"");
                 fileLines[line++].ShouldEqual(f5[1]);
 
-                fileLines[line++].ShouldEqual(@"#line 3 ""C:\f2.csx""");
+                fileLines[line++].ShouldEqual("#line 3 \"" + Path.Combine(root, "f2.csx") + "\"");
                 fileLines[line++].ShouldEqual(f2[2]);
 
-                fileLines[line++].ShouldEqual(@"#line 3 ""C:\f3.csx""");
+                fileLines[line++].ShouldEqual("#line 3 \"" + Path.Combine(root, "f3.csx") + "\"");
                 fileLines[line++].ShouldEqual(f3[2]);
 
-                fileLines[line++].ShouldEqual(@"#line 5 ""C:\f1.csx""");
+                fileLines[line++].ShouldEqual("#line 5 \"" + Path.Combine(root, "f1.csx") + "\"");
                 fileLines[line].ShouldEqual(f1[4]);
             }
         }
