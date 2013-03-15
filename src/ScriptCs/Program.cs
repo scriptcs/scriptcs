@@ -20,20 +20,20 @@ namespace ScriptCs
 
             var script = commandArgs.ScriptName;
             var debug = commandArgs.DebugFlag;
-            var bootstrapper = new Bootstrapper(debug);
-            bootstrapper.Initialize();
-            var root = bootstrapper.GetCompositionRoot(); 
+            var compositionRoot = new CompositionRoot(debug);
+            compositionRoot.Initialize();
+            var scriptServiceRoot = compositionRoot.GetServiceRoot(); 
  
             try
             {
-                var workingDirectory = root.FileSystem.GetWorkingDirectory(script);
-                var paths = root.PackageAssemblyResolver.GetAssemblyNames(workingDirectory).ToList();
+                var workingDirectory = scriptServiceRoot.FileSystem.GetWorkingDirectory(script);
+                var paths = scriptServiceRoot.PackageAssemblyResolver.GetAssemblyNames(workingDirectory).ToList();
                 foreach (var path in paths)
                 {
                     Console.WriteLine("Found assembly reference: " + path);
                 }
 
-                root.Executor.Execute(script, paths, root.ScriptPackResolver.GetPacks());
+                scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
             }
             catch (Exception ex)
             {
