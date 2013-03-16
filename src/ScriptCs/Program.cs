@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Autofac.Builder;
+
 using PowerArgs;
-using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -20,8 +19,12 @@ namespace ScriptCs
 
             var script = commandArgs.ScriptName;
             var debug = commandArgs.DebugFlag;
-            var compositionRoot = new CompositionRoot(debug);
+            var logLevel = commandArgs.LogLevel;
+            var compositionRoot = new CompositionRoot(debug, logLevel);
             compositionRoot.Initialize();
+            var logger = compositionRoot.GetLogger();
+            
+            logger.Debug("Creating ScriptServiceRoot");
             var scriptServiceRoot = compositionRoot.GetServiceRoot(); 
  
             try
@@ -30,14 +33,14 @@ namespace ScriptCs
                 var paths = scriptServiceRoot.PackageAssemblyResolver.GetAssemblyNames(workingDirectory).ToList();
                 foreach (var path in paths)
                 {
-                    Console.WriteLine("Found assembly reference: " + path);
+                    logger.InfoFormat("Found assembly reference: {0}", path);
                 }
 
                 scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                logger.Fatal(ex.Message);
             }
         }
     }

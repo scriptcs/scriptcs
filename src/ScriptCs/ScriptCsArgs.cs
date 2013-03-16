@@ -1,9 +1,23 @@
-﻿using PowerArgs;
+﻿using System;
+using System.Linq;
+
+using PowerArgs;
+
+using log4net;
 
 namespace ScriptCs
 {
+    using System.Globalization;
+
+    using log4net.Core;
+
     public class ScriptCsArgs
     {
+        private const string ValidLogLevels =
+            "off, debug, emergency, fatal, alert, critical, severe, error, warn, notice, info, debug, fine, trace, verbose";
+
+        private string _logLevel;
+
         [ArgDescription("Script file name")]
         [ArgPosition(0)]
         public string ScriptName { get; set; }
@@ -12,9 +26,35 @@ namespace ScriptCs
         [ArgShortcut("debug")]
         public bool DebugFlag { get; set; }
 
+        [ArgDescription("Flag which defines the log level used. Possible values:" + ValidLogLevels)]
+        [ArgShortcut("log")]
+        [DefaultValue("off")]
+        public string LogLevel 
+        {
+            get
+            {
+                return _logLevel;
+            }
+            set
+            {
+                _logLevel = value.ToUpper(CultureInfo.CurrentUICulture);
+            }
+        }
+
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(ScriptName);
+            return !(this.IsLogLevelValid() && string.IsNullOrWhiteSpace(ScriptName));
+        }
+
+        private bool IsLogLevelValid()
+        {
+            var repository = LogManager.GetRepository();
+            var levelMap = repository.LevelMap;
+            return levelMap
+                .AllLevels
+                .Cast<Level>()
+                .Any(level =>
+                    level.Name.Equals(LogLevel, StringComparison.CurrentCulture));
         }
     }
 }

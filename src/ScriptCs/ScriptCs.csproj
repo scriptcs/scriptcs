@@ -21,6 +21,9 @@
     <Reference Include="Autofac.Integration.Mef">
       <HintPath>..\..\packages\Autofac.Mef.3.0.0\lib\net40\Autofac.Integration.Mef.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="PowerArgs">
       <HintPath>..\..\packages\PowerArgs.1.2.0.1\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
