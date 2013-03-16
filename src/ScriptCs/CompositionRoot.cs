@@ -4,7 +4,6 @@ using Autofac;
 using Autofac.Integration.Mef;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
-
 using log4net;
 using log4net.Appender;
 using log4net.Core;

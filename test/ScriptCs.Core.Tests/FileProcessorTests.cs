@@ -7,6 +7,8 @@ using Xunit;
 
 namespace ScriptCs.Tests
 {
+    using log4net;
+
     public class FileProcessorTests
     {
         public class ProcessFileMethod
@@ -52,6 +54,8 @@ namespace ScriptCs.Tests
 
             private readonly Mock<IFileSystem> _fileSystem;
 
+            private readonly Mock<ILog> _logger;
+
             public ProcessFileMethod()
             {
                 _fileSystem = new Mock<IFileSystem>();
@@ -64,12 +68,14 @@ namespace ScriptCs.Tests
                            .Returns(_file3.ToArray());
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
                            .Returns(_file4.ToArray());
+
+                _logger = new Mock<ILog>();
             }
 
             [Fact]
             public void MultipleUsingStatementsShouldProduceDistinctOutput()
             {
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\script1.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -81,7 +87,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void UsingStateMentsShoulAllBeAtTheTop()
             {
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\script1.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -94,7 +100,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotLoadInlineLoads()
             {
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 processor.ProcessFile("\\script1.csx");
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script1.csx")), Times.Once());
@@ -120,7 +126,7 @@ namespace ScriptCs.Tests
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
                   .Returns(_file4.ToArray());
 
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 processor.ProcessFile("\\script1.csx");
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script1.csx")), Times.Once());
@@ -142,7 +148,7 @@ namespace ScriptCs.Tests
 
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
 
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\file.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -164,7 +170,7 @@ namespace ScriptCs.Tests
                     };
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
 
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\file.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -191,7 +197,7 @@ namespace ScriptCs.Tests
                     };
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
 
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\file.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -218,7 +224,7 @@ namespace ScriptCs.Tests
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx"))).Returns(file1.ToArray());
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx"))).Returns(_file2.ToArray());
 
-                var processor = new FilePreProcessor(fs.Object);
+                var processor = new FilePreProcessor(fs.Object, _logger.Object);
                 var output = processor.ProcessFile("\\script1.csx");
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None).ToList();
 
@@ -252,7 +258,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\scriptX.csx")))
                            .Returns(file2.ToArray());
 
-                var processor = new FilePreProcessor(_fileSystem.Object);
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var output = processor.ProcessFile("\\script1.csx");
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
@@ -314,7 +320,7 @@ namespace ScriptCs.Tests
                             .Returns(f5.ToArray());
                 _fileSystem.Setup(fs => fs.IsPathRooted(It.IsAny<string>())).Returns(true);
 
-                var preProcessor = new FilePreProcessor(_fileSystem.Object);
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
 
                 var file = preProcessor.ProcessFile(@"C:\f1.csx");
                 

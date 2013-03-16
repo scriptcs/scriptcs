@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-
-using PowerArgs;
-
 using log4net;
+using PowerArgs;
 
 namespace ScriptCs
 {

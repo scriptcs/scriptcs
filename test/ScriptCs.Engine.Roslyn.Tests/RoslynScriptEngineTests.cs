@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
-using Should;
 using Xunit;
+using log4net;
 
 namespace ScriptCs.Tests
 {
-    using Roslyn.Scripting.CSharp;
-
     public class RoslynScriptEngineTests
     {
         private static RoslynScriptEngine CreateScriptEngine(
             Mock<IScriptHostFactory> scriptHostFactory = null)
         {
             scriptHostFactory = scriptHostFactory ?? new Mock<IScriptHostFactory>();
+            var logger = new Mock<ILog>();
 
-            return new RoslynScriptEngine(scriptHostFactory.Object);
+            return new RoslynScriptEngine(scriptHostFactory.Object, logger.Object);
         }
 
         public class TheExecuteMethod 

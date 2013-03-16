@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using log4net;
 using Roslyn.Scripting;
 using ScriptCs.Exceptions;
 
@@ -11,14 +12,17 @@ namespace ScriptCs.Engine.Roslyn
     {
         private const string CompiledScriptClass = "Submission#0";
         private const string CompiledScriptMethod = "<Factory>";
+        private readonly ILog _logger;
 
-        public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory)
-            : base(scriptHostFactory)
+        public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+            : base(scriptHostFactory, logger)
         {
+            this._logger = logger;
         }
 
         protected override void Execute(string code, Session session)
         {
+            _logger.Info("Compiling submission");
             var submission = session.CompileSubmission<object>(code);
             var exeBytes = new byte[0];
             var pdbBytes = new byte[0];
@@ -32,13 +36,14 @@ namespace ScriptCs.Engine.Roslyn
 
                 if (result.Success) 
                 {
+                    _logger.Info("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }
                 else 
                 {
                     var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
-                    Console.WriteLine(errors);
+                    _logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                 }
             }
 
@@ -54,6 +59,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception e)
                 {
+                    _logger.Error("An error occurred when executing the scripts.");
                     var message = 
                         string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
