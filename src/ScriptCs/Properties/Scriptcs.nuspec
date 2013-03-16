@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>ScriptCs</id>
+    <id>scriptcs</id>
     <version>0.0.0</version>
     <authors>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</authors>
     <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
