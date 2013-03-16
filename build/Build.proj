@@ -34,6 +34,7 @@
   <Target Name="Clean">
     <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
     <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') "/>
+    <MakeDir Directories="$(ArtifactsPath)" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
