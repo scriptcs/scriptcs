@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using PowerArgs;
+using ScriptCs.Command;
 using ScriptCs.Engine.Roslyn;
 using System.ComponentModel.Composition.Registration;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
+using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
@@ -21,30 +24,13 @@ namespace ScriptCs
                 return;
             }
 
-            var script = commandArgs.ScriptName;
             var debug = commandArgs.DebugFlag;
 
             var container = ConfigureMef(debug);
-            var fileSystem = container.GetExportedValue<IFileSystem>();
-            var resolver = container.GetExportedValue<IPackageAssemblyResolver>();
-            var executor = container.GetExportedValue<IScriptExecutor>();
-            var scriptPackManager = new ScriptPackResolver(container);
+            var commandFactory = new CommandFactory(container);
+            var command = commandFactory.CreateCommand(commandArgs);
 
-            try
-            {
-                var workingDirectory = fileSystem.GetWorkingDirectory(script);
-                var paths = resolver.GetAssemblyNames(workingDirectory).ToList();
-                foreach (var path in paths)
-                {
-                    Console.WriteLine("Found assembly reference: " + path);
-                }
-
-                executor.Execute(script, paths, scriptPackManager.GetPacks());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            command.Execute();
         }
 
         private static CompositionContainer ConfigureMef(bool debug)
@@ -69,6 +55,8 @@ namespace ScriptCs
             conventions.ForTypesDerivedFrom<IPackageContainer>().Export<IPackageContainer>();
             conventions.ForTypesDerivedFrom<IScriptPack>().Export<IScriptPack>();
             conventions.ForTypesDerivedFrom<IFilePreProcessor>().Export<IFilePreProcessor>();
+            conventions.ForTypesDerivedFrom<IPackageInstaller>().Export<IPackageInstaller>();
+            conventions.ForTypesDerivedFrom<IInstallationProvider>().Export<IInstallationProvider>();
 
             if (debug)
             {

@@ -16,7 +16,10 @@
       <HintPath>..\..\packages\Should.1.1.12.0\lib\Should.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reflection.Context" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -33,9 +36,18 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ScriptCs.Core\ScriptCs.Core.csproj">
+      <Project>{E590E710-E159-48E6-A3E6-1A83D3FE732C}</Project>
+      <Name>ScriptCs.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
+      <Project>{E79EC231-E27D-4057-91C9-2D001A3A8C3B}</Project>
+      <Name>ScriptCs.Engine.Roslyn</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\ScriptCs\ScriptCs.csproj">
       <Project>{25080671-1a80-4041-b9c7-260578ff4849}</Project>
       <Name>ScriptCs</Name>

@@ -33,6 +33,11 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Command\CommandFactory.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\InstallCommand.cs" />
+    <Compile Include="Command\InvalidCommand.cs" />
+    <Compile Include="Command\ScriptExecuteCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptCsArgs.cs" />

@@ -5,6 +5,6 @@ namespace ScriptCs.Package
     public interface IPackageContainer
     {
         IEnumerable<IPackageReference> FindReferences(string path);
-        IPackageObject FindPackage(string path, string packageId);
+        IPackageObject FindPackage(string path, IPackageReference packageReference);
     }
 }
