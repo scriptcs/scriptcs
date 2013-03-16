@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using ScriptCs.Exceptions;
@@ -23,10 +24,10 @@ namespace ScriptCs.Tests
 
             public GetAssemblyNamesMethod()
             {
-                _workingDirectory = "c:\\test";
+                _workingDirectory = Path.Combine(Path.GetTempPath(), "test");
 
                 _filesystem = new Mock<IFileSystem>();
-                _filesystem.SetupGet(i => i.CurrentDirectory).Returns("c:\\test");
+                _filesystem.SetupGet(i => i.CurrentDirectory).Returns(_workingDirectory);
                 _filesystem.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
                 _filesystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
 
@@ -112,8 +113,8 @@ namespace ScriptCs.Tests
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
 
-                found.First().ShouldEqual("c:\\test\\packages\\id.3.0\\test.dll");
-                found.ElementAt(1).ShouldEqual("c:\\test\\packages\\id.3.0\\test2.dll");
+                found.First().ShouldEqual(Path.Combine(_workingDirectory, "packages", "id.3.0", "test.dll"));
+                found.ElementAt(1).ShouldEqual(Path.Combine(_workingDirectory, "packages", "id.3.0", "test2.dll"));
             }
 
             [Fact]
