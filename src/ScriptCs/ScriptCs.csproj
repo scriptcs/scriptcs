@@ -50,7 +50,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\chocolateyinstall.ps1" />
-    <None Include="Properties\Scriptcs.nuspec" />
+    <None Include="Properties\scriptcs.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
