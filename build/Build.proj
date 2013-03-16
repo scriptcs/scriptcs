@@ -45,7 +45,7 @@
 
   <Target Name="Test" DependsOnTargets="Build">
     <ItemGroup>
-      <TestAssemblies Include="$(ArtifactsPath)**\*.Tests.dll" />
+      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
     </ItemGroup>
     
     <xunit Assemblies="@(TestAssemblies)" Xml="$([System.IO.Path]::Combine( $(ArtifactsPath), 'TestResults.xml' ))" />
