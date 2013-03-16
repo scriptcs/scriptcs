@@ -6,7 +6,7 @@ using NuGet;
 
 namespace ScriptCs.Package.InstallationProvider
 {
-    internal class NugetInstallationProvider : IInstallationProvider
+    public class NugetInstallationProvider : IInstallationProvider
     {
         private readonly PackageManager _manager;
         private readonly IEnumerable<string> _repositoryUrls;

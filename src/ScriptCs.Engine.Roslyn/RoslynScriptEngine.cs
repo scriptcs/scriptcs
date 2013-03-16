@@ -30,11 +30,11 @@ namespace ScriptCs.Engine.Roslyn
 
             var session = _scriptEngine.CreateSession(host);
 
-            foreach (var reference in references)
+            foreach (var reference in references.Union(scriptPackSession.References).Distinct())
                 session.AddReference(reference);
 
-            foreach (var reference in scriptPackSession.References)
-                session.AddReference(reference);
+            foreach (var @namespace in scriptPackSession.Namespaces.Distinct())
+                session.ImportNamespace(@namespace);
 
             Execute(code, session);
         }

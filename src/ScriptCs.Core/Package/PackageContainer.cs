@@ -5,7 +5,7 @@ using NuGet;
 
 namespace ScriptCs.Package
 {
-    internal class PackageContainer : IPackageContainer
+    public class PackageContainer : IPackageContainer
     {
         private readonly IFileSystem _fileSystem;
 

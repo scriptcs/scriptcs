@@ -1,5 +1,8 @@
-﻿namespace ScriptCs.Contracts
+﻿using System.ComponentModel.Composition;
+
+namespace ScriptCs.Contracts
 {
+    [InheritedExport]
     public interface IScriptPack
     {
         void Initialize(IScriptPackSession session);

@@ -11,9 +11,9 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly IScriptExecutor _scriptExecutor;
-        private readonly ScriptPackResolver _scriptPackResolver;
+        private readonly IScriptPackResolver _scriptPackResolver;
 
-        public ScriptExecuteCommand(string script, IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver, IScriptExecutor scriptExecutor, ScriptPackResolver scriptPackResolver)
+        public ScriptExecuteCommand(string script, IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver, IScriptExecutor scriptExecutor, IScriptPackResolver scriptPackResolver)
         {
             _script = script;
             _fileSystem = fileSystem;

@@ -1,4 +1,5 @@
 ﻿using System;
+using PowerArgs;
 
 namespace ScriptCs.Command
 {
@@ -6,7 +7,7 @@ namespace ScriptCs.Command
     {
         public void Execute()
         {
-            Console.WriteLine("Invalid use!");
+            Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
         }
     }
 }
