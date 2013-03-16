@@ -8,11 +8,13 @@ namespace ScriptCs.Package.InstallationProvider
 {
     public class NugetInstallationProvider : IInstallationProvider
     {
+        private readonly IFileSystem _fileSystem;
         private readonly PackageManager _manager;
         private readonly IEnumerable<string> _repositoryUrls;
 
         public NugetInstallationProvider(IFileSystem fileSystem)
         {
+            _fileSystem = fileSystem;
             var path = Path.Combine(fileSystem.CurrentDirectory, Constants.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
             var remoteRepository = new AggregateRepository(PackageRepositoryFactory.Default, _repositoryUrls, true);
@@ -22,7 +24,17 @@ namespace ScriptCs.Package.InstallationProvider
         public IEnumerable<string> GetRepositorySources(string path)
         {
             var configFileSystem = new PhysicalFileSystem(path);
-            var settings = Settings.LoadDefaultSettings(configFileSystem);
+
+            ISettings settings;
+            if (_fileSystem.FileExists(Path.Combine(_fileSystem.CurrentDirectory, Constants.NugetFile)))
+            {
+                settings = new Settings(configFileSystem, Constants.NugetFile);
+            }
+            else
+            {
+                settings = Settings.LoadDefaultSettings(configFileSystem);
+            }
+
             if (settings == null) return new[] { Constants.DefaultRepositoryUrl };
 
             var sourceProvider = new PackageSourceProvider(settings);
