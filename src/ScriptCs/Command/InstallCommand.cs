@@ -22,7 +22,7 @@ namespace ScriptCs.Command
             _packageInstaller = packageInstaller;
         }
 
-        public void Execute()
+        public int Execute()
         {
             var workingDirectory = _fileSystem.CurrentDirectory;
             IEnumerable<IPackageReference> pkgs;
@@ -35,7 +35,18 @@ namespace ScriptCs.Command
             {
                 pkgs = new[] { new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.0"), new Version()) };
             }
-            _packageInstaller.InstallPackages(pkgs, _allowPre, msg => Console.WriteLine(msg));
+
+            try
+            {
+                _packageInstaller.InstallPackages(pkgs, _allowPre, msg => Console.WriteLine(msg));
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Installation failed");
+                Console.WriteLine(e.Message);
+                return -1;   
+            }
         }
     }
 }

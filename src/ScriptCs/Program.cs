@@ -5,7 +5,7 @@ namespace ScriptCs
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
             var commandArgs = Args.Parse<ScriptCsArgs>(args);
 
@@ -17,7 +17,7 @@ namespace ScriptCs
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs);
 
-            command.Execute();
+            return command.Execute();
         }
     }
 }

@@ -5,9 +5,10 @@ namespace ScriptCs.Command
 {
     internal class InvalidCommand : IInvalidCommand
     {
-        public void Execute()
+        public int Execute()
         {
             Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
+            return -1;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
         }
 
-        public void Execute()
+        public int Execute()
         {
             try
             {
@@ -34,10 +34,12 @@ namespace ScriptCs.Command
                 }
 
                 _scriptExecutor.Execute(_script, paths, _scriptPackResolver.GetPacks());
+                return 0;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return -1;
             }
         }
     }
