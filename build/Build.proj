@@ -8,11 +8,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 
-    <Root>$([System.IO.Path]::GetFullPath( '$(MSBuildThisFileDirectory)..\' ))</Root>
-    <BaseArtifactsPath>$([System.IO.Path]::Combine( $(Root), 'artifacts\' ))</BaseArtifactsPath>
-    <ArtifactsPath>$([System.IO.Path]::Combine( $(BaseArtifactsPath), $(Configuration) ))\</ArtifactsPath>
-    <PackageOutputPath>$(ArtifactsPath.TrimEnd(new[] { '\' }))</PackageOutputPath>
-    <NuGetExePath>$([System.IO.Path]::Combine( $(Root), '.nuget\nuget.exe' ))</NuGetExePath>
+    <Root>$(MSBuildThisFileDirectory)..\</Root>
+    <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
+    <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
+    <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
+    <NuGetExePath>$(Root).nuget\nuget.exe</NuGetExePath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
