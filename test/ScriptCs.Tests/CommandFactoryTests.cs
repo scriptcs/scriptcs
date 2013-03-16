@@ -1,10 +1,6 @@
-﻿using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
+﻿using Moq;
 using ScriptCs.Command;
-using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
 using Should;
 using Xunit;
 
@@ -14,26 +10,16 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static CompositionContainer CreateCompositionContainer()
+            private static ScriptServiceRoot CreateRoot()
             {
-                var conventions = new RegistrationBuilder();
-                conventions.ForTypesDerivedFrom<IScriptHostFactory>().Export<IScriptHostFactory>();
-                conventions.ForTypesDerivedFrom<IFileSystem>().Export<IFileSystem>();
-                conventions.ForTypesDerivedFrom<IPackageAssemblyResolver>().Export<IPackageAssemblyResolver>();
-                conventions.ForTypesDerivedFrom<IPackageContainer>().Export<IPackageContainer>();
-                conventions.ForTypesDerivedFrom<IFilePreProcessor>().Export<IFilePreProcessor>();
-                conventions.ForTypesDerivedFrom<IPackageInstaller>().Export<IPackageInstaller>();
-                conventions.ForTypesDerivedFrom<IInstallationProvider>().Export<IInstallationProvider>();
-                conventions.ForType<ScriptExecutor>().Export<IScriptExecutor>();
-                conventions.ForType<RoslynScriptEngine>().Export<IScriptEngine>();
+                var fs = new Mock<IFileSystem>();
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
 
-                var catalog = new AggregateCatalog();
-                catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptExecutor).Assembly, conventions));
-                catalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynScriptEngine).Assembly, conventions));
-
-                var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
-
-                return container;
+                return root;
             }
 
             [Fact]
@@ -46,7 +32,7 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
-                var factory = new CommandFactory(CreateCompositionContainer());
+                var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IInstallCommand>();
@@ -62,7 +48,7 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
-                var factory = new CommandFactory(CreateCompositionContainer());
+                var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IScriptCommand>();
@@ -78,7 +64,7 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
-                var factory = new CommandFactory(CreateCompositionContainer());
+                var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IScriptCommand>();
@@ -94,13 +80,11 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
-                var factory = new CommandFactory(CreateCompositionContainer());
+                var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IInvalidCommand>();
             }
-
-
         }
     }
 }

@@ -37,9 +37,15 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="CommandFactoryTests.cs" />
+    <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptExecuteCommandTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
+      <Project>{6049E205-8B5F-4080-B023-70600E51FD64}</Project>
+      <Name>ScriptCs.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\ScriptCs.Core\ScriptCs.Core.csproj">
       <Project>{E590E710-E159-48E6-A3E6-1A83D3FE732C}</Project>
       <Name>ScriptCs.Core</Name>
