@@ -33,8 +33,8 @@ namespace ScriptCs
                     Console.WriteLine("Found assembly reference: " + path);
                 }
 
-                scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
-                return 0;
+                var result = scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
+                return result is int ? (int)result : 0;
             }
             catch (Exception ex)
             {

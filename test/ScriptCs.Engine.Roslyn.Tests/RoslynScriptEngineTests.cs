@@ -10,6 +10,7 @@ using Xunit;
 namespace ScriptCs.Tests
 {
     using Roslyn.Scripting.CSharp;
+    using Xunit.Extensions;
 
     public class RoslynScriptEngineTests
     {
@@ -48,6 +49,18 @@ namespace ScriptCs.Tests
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IEnumerable<IScriptPackContext>>()));
             }
 
+            [Theory]
+            [InlineData("1 + 1", 2)]
+            [InlineData("int a; a = 1;", 1)]
+            [InlineData("int a = 1;", null)]
+            [InlineData("var b = \"test\"; b", "test")]
+            [InlineData("System.Console.WriteLine()", null)]
+            public void ShouldReturnValueOfLastExpressionOrNullForVoid(string code, object expectedResult)
+            {
+                var engine = CreateScriptEngine();
+                var result = engine.Execute(code, Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>()));
+                result.ShouldEqual(expectedResult, "Script: " + code);
+            }
         }
     }
 }
