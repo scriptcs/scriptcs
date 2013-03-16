@@ -28,7 +28,10 @@ namespace ScriptCs
         {
             var builder = new ContainerBuilder();
 
-            var logger = CreateLogger();
+            var loggerConfigurator = new LoggerConfigurator(_logLevel);
+            loggerConfigurator.Configure();
+            var logger = loggerConfigurator.GetLogger();
+
             builder.RegisterInstance<ILog>(logger);
 
             var types = new[]
@@ -69,25 +72,6 @@ namespace ScriptCs
         public ILog GetLogger()
         {
             return _container.Resolve<ILog>();
-        }
-
-        private ILog CreateLogger()
-        {
-            const string Pattern = "%-5level Thread[%thread]: %message%newline";
-            const string LoggerName = "scriptcs";
-            var hierarchy = (Hierarchy)LogManager.GetRepository();
-            var logger = LogManager.GetLogger(LoggerName);
-            var consoleAppender = new ConsoleAppender
-                                                  {
-                                                      Layout = new PatternLayout(Pattern),
-                                                      Threshold = hierarchy.LevelMap[_logLevel]
-                                                  };
-
-            hierarchy.Root.AddAppender(consoleAppender);
-            hierarchy.Root.Level = Level.All;
-            hierarchy.Configured = true;
-
-            return logger;
         }
     }
 }

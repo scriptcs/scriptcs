@@ -22,7 +22,7 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override void Execute(string code, Session session)
         {
-            _logger.Info("Compiling submission");
+            _logger.Debug("Compiling submission");
             var submission = session.CompileSubmission<object>(code);
             var exeBytes = new byte[0];
             var pdbBytes = new byte[0];
@@ -36,7 +36,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 if (result.Success) 
                 {
-                    _logger.Info("Compilation was successful.");
+                    _logger.Debug("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }

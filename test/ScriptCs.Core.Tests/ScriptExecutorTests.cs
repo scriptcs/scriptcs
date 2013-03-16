@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using log4net;
 using Moq;
 using ScriptCs.Contracts;
 using Should;
@@ -31,7 +31,9 @@ namespace ScriptCs.Tests
                 scriptEngine.SetupProperty(e => e.BaseDirectory);
             }
 
-            return new ScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object);
+            var logger = new Mock<ILog>();
+
+            return new ScriptExecutor(fileSystem.Object, fileProcessor.Object, scriptEngine.Object, logger.Object);
         }
 
         public class TheExecuteMethod

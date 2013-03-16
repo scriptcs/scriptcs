@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using log4net;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using log4net;
-
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
@@ -29,13 +28,13 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Execute(string code, IEnumerable<string> references, ScriptPackSession scriptPackSession)
         {
-            _logger.Info("Retrieving script packs contexts");
+            _logger.Debug("Retrieving script packs contexts");
             var contexts = scriptPackSession.ScriptPacks.Select(x => x.GetContext());
             
-            _logger.Info("Creating script host");
+            _logger.Debug("Creating script host");
             var host = _scriptHostFactory.CreateScriptHost(contexts);
 
-            _logger.Info("Creating session");
+            _logger.Debug("Creating session");
             var session = _scriptEngine.CreateSession(host);
 
             foreach (var reference in references.Union(scriptPackSession.References).Distinct())
@@ -50,7 +49,7 @@ namespace ScriptCs.Engine.Roslyn
                 session.ImportNamespace(@namespace);    
             }
 
-            _logger.Info("Executing code");
+            _logger.Debug("Executing code");
             Execute(code, session);
         }
 

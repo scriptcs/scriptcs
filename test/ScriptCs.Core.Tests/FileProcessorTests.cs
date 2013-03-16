@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
 using Moq;
 using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using log4net;
-
     public class FileProcessorTests
     {
         public class ProcessFileMethod
