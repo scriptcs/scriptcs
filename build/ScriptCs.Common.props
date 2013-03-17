@@ -17,18 +17,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">bin\$(Configuration)\</OutputPath>
 
     <DebugSymbols>true</DebugSymbols>
     
     <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(ArtifactsPath)' != '' ">
-    <!--<ProjectIntermediatePath>$(MSBuildProjectName)\obj\</ProjectIntermediatePath>-->
-    
-    <OutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), 'bin\'))</OutputPath>
-    <!--<IntermediateOutputPath>$([System.IO.Path]::Combine($(ArtifactsPath), $(ProjectIntermediatePath)))</IntermediateOutputPath>-->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
