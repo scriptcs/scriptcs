@@ -17,7 +17,7 @@ namespace ScriptCs.Engine.Roslyn
         {
         }
 
-        protected override void Execute(string code, Session session)
+        protected override object Execute(string code, Session session)
         {
             var submission = session.CompileSubmission<object>(code);
             var exeBytes = new byte[0];
@@ -50,7 +50,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 try
                 {
-                    method.Invoke(null, new[] { session });
+                    return method.Invoke(null, new[] { session });
                 }
                 catch (Exception e)
                 {
@@ -63,6 +63,8 @@ namespace ScriptCs.Engine.Roslyn
                     throw new ScriptExecutionException(message);
                 }
             }
+
+            return null;
         }
     }
 }
