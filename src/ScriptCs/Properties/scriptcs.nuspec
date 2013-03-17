@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>ScriptCs</id>
+    <id>scriptcs</id>
     <version>0.0.0</version>
     <authors>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</authors>
     <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
@@ -15,11 +15,10 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="..\scriptcs\properties\chocolateyinstall.ps1" target="tools"/>
-    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.contracts.dll" target="tools/scriptcs"/>
-    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.core.dll" target="tools/scriptcs"/>
-    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.engine.roslyn.dll" target="tools/scriptcs"/>
-    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.exe" target="tools/scriptcs"/>
-    <file src="..\..\artifacts\$configuration$\bin\Scriptcs.exe.config" target="tools/scriptcs"/>
+    <file src="Properties\chocolateyInstall.ps1" target="tools" />
+    <file src="Properties\chocolateyUninstall.ps1" target="tools" />
+    <file src="bin\$configuration$\scriptcs.exe" target="tools/scriptcs" />
+    <file src="bin\$configuration$\scriptcs.*.dll" target="tools/scriptcs" />
+    <file src="bin\$configuration$\scriptcs.*.pdb" target="tools/scriptcs" />
   </files>
 </package>

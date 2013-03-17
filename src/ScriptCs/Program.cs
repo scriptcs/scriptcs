@@ -4,30 +4,33 @@ using PowerArgs;
 
 namespace ScriptCs
 {
+    using log4net;
+
     internal class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
-            var commandArgs = Args.Parse<ScriptCsArgs>(args);
-
-            if (!commandArgs.IsValid())
-            {
-                Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
-                return;
-            }
-
-            var script = commandArgs.ScriptName;
-            var debug = commandArgs.DebugFlag;
-            var logLevel = commandArgs.LogLevel;
-            var compositionRoot = new CompositionRoot(debug, logLevel);
-            compositionRoot.Initialize();
-            var logger = compositionRoot.GetLogger();
-            
-            logger.Debug("Creating ScriptServiceRoot");
-            var scriptServiceRoot = compositionRoot.GetServiceRoot(); 
- 
+            ILog logger = null;
             try
             {
+                var commandArgs = Args.Parse<ScriptCsArgs>(args);
+
+                if (!commandArgs.IsValid())
+                {
+                    Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
+                    return -1;
+                }
+
+                var script = commandArgs.ScriptName;
+                var debug = commandArgs.DebugFlag;
+                var logLevel = commandArgs.LogLevel;
+                var compositionRoot = new CompositionRoot(debug, logLevel);
+                compositionRoot.Initialize();
+                logger = compositionRoot.GetLogger();
+            
+                logger.Debug("Creating ScriptServiceRoot");
+                var scriptServiceRoot = compositionRoot.GetServiceRoot(); 
+ 
                 var workingDirectory = scriptServiceRoot.FileSystem.GetWorkingDirectory(script);
                 var paths = scriptServiceRoot.PackageAssemblyResolver.GetAssemblyNames(workingDirectory).ToList();
                 foreach (var path in paths)
@@ -36,10 +39,20 @@ namespace ScriptCs
                 }
 
                 scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
+                return 0;
             }
             catch (Exception ex)
             {
-                logger.Fatal(ex.Message);
+                if (logger != null)
+                {
+                    logger.Fatal(ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                return -1;
             }
         }
     }
