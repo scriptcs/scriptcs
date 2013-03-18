@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ScriptCs
@@ -87,7 +88,7 @@ namespace ScriptCs
                 } 
                 else if (IsLoadLine(line))
                 {
-                    if (i < firstCode && !loads.Contains(line))
+                    if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
                     {
                         var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
                         var filecontent = _fileSystem.IsPathRooted(filepath)
