@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -10,19 +11,36 @@ namespace ScriptCs.Package
         private const string Dll = ".dll";
         private readonly IPackage _package;
 
-        public PackageObject(IPackage package)
+        public PackageObject(IPackage package, FrameworkName frameworkName)
         {
             _package = package;
+            FrameworkName = frameworkName;
             Id = package.Id;
-            Version = package.Version.ToString();
+            Version = package.Version.Version;
+            TextVersion = package.Version.ToString();
+
+            var dependencies = _package.GetCompatiblePackageDependencies(frameworkName);
+            if (dependencies != null)
+            {
+                Dependencies = dependencies.Select(i => new PackageObject(i.Id) {FrameworkName = frameworkName});
+            }
+        }
+
+        public PackageObject(string packageId)
+        {
+            Id = packageId;
         }
 
         public string Id { get; private set; }
-        public string Version { get; private set; }
+        public string TextVersion { get; private set; }
+        public Version Version { get; private set; }
+        public FrameworkName FrameworkName { get; private set; }
+
+        public IEnumerable<IPackageObject> Dependencies { get; set; }
 
         public string FullName
         {
-            get { return Id + "." + Version; }
+            get { return Id + "." + TextVersion; }
         }
 
         public IEnumerable<string> GetCompatibleDlls(FrameworkName frameworkName)

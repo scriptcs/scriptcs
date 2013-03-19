@@ -12,9 +12,15 @@ namespace ScriptCs
         [ArgShortcut("debug")]
         public bool DebugFlag { get; set; }
 
+        [ArgShortcut("install")]
+        public string Install { get; set; }
+
+        [ArgShortcut("pre")]
+        public bool AllowPreReleaseFlag { get; set; }
+
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(ScriptName);
+            return !string.IsNullOrWhiteSpace(ScriptName) || Install != null;
         }
     }
 }
