@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Integration.Mef;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
+using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
@@ -27,7 +28,9 @@ namespace ScriptCs
                     typeof (PackageAssemblyResolver),
                     typeof (PackageContainer),
                     typeof (FilePreProcessor),
-                    typeof (ScriptPackResolver)
+                    typeof (ScriptPackResolver),
+                    typeof (NugetInstallationProvider),
+                    typeof (PackageInstaller)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();

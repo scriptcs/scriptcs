@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Versioning;
 
 namespace ScriptCs.Package
@@ -6,5 +7,7 @@ namespace ScriptCs.Package
     {
         string PackageId { get; }
         FrameworkName FrameworkName { get; }
+        Version Version { get; set; }
+        string SpecialVersion { get; }
     }
 }
