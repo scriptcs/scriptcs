@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using Autofac.Builder;
-using PowerArgs;
-using ScriptCs.Contracts;
+﻿using PowerArgs;
+using ScriptCs.Command;
 
 namespace ScriptCs
 {
@@ -10,37 +7,17 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-            try
-            {
-                var commandArgs = Args.Parse<ScriptCsArgs>(args);
+            var commandArgs = Args.Parse<ScriptCsArgs>(args);
 
-                if (!commandArgs.IsValid())
-                {
-                    Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
-                    return -1;
-                }
+            var debug = commandArgs.DebugFlag;
+            var compositionRoot = new CompositionRoot(debug);
+            compositionRoot.Initialize();
+            var scriptServiceRoot = compositionRoot.GetServiceRoot();
 
-                var script = commandArgs.ScriptName;
-                var debug = commandArgs.DebugFlag;
-                var compositionRoot = new CompositionRoot(debug);
-                compositionRoot.Initialize();
-                var scriptServiceRoot = compositionRoot.GetServiceRoot(); 
+            var commandFactory = new CommandFactory(scriptServiceRoot);
+            var command = commandFactory.CreateCommand(commandArgs);
 
-                var workingDirectory = scriptServiceRoot.FileSystem.GetWorkingDirectory(script);
-                var paths = scriptServiceRoot.PackageAssemblyResolver.GetAssemblyNames(workingDirectory).ToList();
-                foreach (var path in paths)
-                {
-                    Console.WriteLine("Found assembly reference: " + path);
-                }
-
-                scriptServiceRoot.Executor.Execute(script, paths, scriptServiceRoot.ScriptPackResolver.GetPacks());
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return -1;
-            }
+            return command.Execute();
         }
     }
 }
