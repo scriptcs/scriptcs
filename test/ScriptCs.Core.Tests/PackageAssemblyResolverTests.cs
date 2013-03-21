@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using ScriptCs.Exceptions;
@@ -34,23 +35,25 @@ namespace ScriptCs.Tests
                 _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
                         .Returns(new List<string> {"test.dll", "test2.dll"});
                 _package.SetupGet(i => i.Id).Returns("id");
-                _package.SetupGet(i => i.Version).Returns("3.0");
+                _package.SetupGet(i => i.Version).Returns(new Version("3.0"));
+                _package.SetupGet(i => i.TextVersion).Returns("3.0");
                 _package.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
 
                 _packageIds = new List<IPackageReference>
                     {
-                        new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"))
+                        new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"), new Version("3.0"))
                     };
 
                 _packageContainer = new Mock<IPackageContainer>();
                 _packageContainer.Setup(i => i.FindReferences(It.IsAny<string>())).Returns(_packageIds);
-                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<string>())).Returns(_package.Object);
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>())).Returns(_package.Object);
             }
 
             [Fact]
-            public void WhenPackageIsMatchedItsMatchingDllsShouldBeReturned()
+            public void WhenManyPackagesAreMatchedAllMatchingDllsWithUniquePathsShouldBeReturned()
             {
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
+                _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -61,9 +64,18 @@ namespace ScriptCs.Tests
             [Fact]
             public void WhenManyPackagesAreMatchedAllMatchingDllsShouldBeReturned()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
-                _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40")));
+                _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
+                var p = new Mock<IPackageObject>();
+                p.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
+                        .Returns(new List<string> { "test3.dll", "test4.dll" });
+                p.SetupGet(i => i.Id).Returns("testId2");
+                p.SetupGet(i => i.Version).Returns(new Version("3.0"));
+                p.SetupGet(i => i.TextVersion).Returns("3.0");
+                p.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
 
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "testId2"))).Returns(p.Object);
+
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
@@ -94,8 +106,18 @@ namespace ScriptCs.Tests
                     i =>
                     i.GetCompatibleDlls(
                         It.Is<FrameworkName>(x => x.FullName == VersionUtility.ParseFrameworkName("net40").FullName)))
-                        .Returns(new List<string> {"test.dll"});
-                _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40")));
+                        .Returns(new List<string> { "test.dll" });
+                _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
+
+                var p = new Mock<IPackageObject>();
+                p.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
+                        .Returns(new List<string> { "test3.dll" });
+                p.SetupGet(i => i.Id).Returns("testId2");
+                p.SetupGet(i => i.Version).Returns(new Version("3.0"));
+                p.SetupGet(i => i.TextVersion).Returns("3.0");
+                p.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "testId2"))).Returns(p.Object);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
 
@@ -119,7 +141,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void WhenNoPackagesAreFoundShouldThrowArgumentEx()
             {
-                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<string>()))
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                                  .Returns<List<IPackageObject>>(null);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
@@ -155,6 +177,119 @@ namespace ScriptCs.Tests
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
                 found.ShouldBeEmpty();
+            }
+
+            [Fact]
+            public void ShouldLoadAllDependenciesIfPackageHasAny()
+            {
+                var p = new Mock<IPackageObject>();
+                p.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
+                        .Returns(new List<string> { "test3.dll", "test4.dll" });
+                p.SetupGet(i => i.Id).Returns("p2");
+                p.SetupGet(i => i.Version).Returns(new Version("4.0"));
+                p.SetupGet(i => i.TextVersion).Returns("4.0");
+                p.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+
+                _package.Setup(i => i.Dependencies).Returns(new List<IPackageObject> { p.Object });
+                _packageContainer.Setup(
+                    i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
+                                 .Returns(p.Object);
+
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
+
+                var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
+
+                _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
+                found.ShouldNotBeEmpty();
+                found.Count.ShouldEqual(4);
+            }
+
+            [Fact]
+            public void ShouldNotLoadDuplicateDependencies()
+            {
+                var p = new Mock<IPackageObject>();
+                p.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
+                        .Returns(new List<string> { "test3.dll", "test4.dll" });
+                p.SetupGet(i => i.Id).Returns("p2");
+                p.SetupGet(i => i.Version).Returns(new Version("4.0"));
+                p.SetupGet(i => i.TextVersion).Returns("4.0");
+                p.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+
+                _packageIds.Add(new PackageReference("p2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
+
+                _package.Setup(i => i.Dependencies).Returns(new List<IPackageObject> { p.Object });
+                _packageContainer.Setup(
+                    i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
+                                 .Returns(p.Object);
+
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
+
+                var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
+
+                _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
+                found.ShouldNotBeEmpty();
+                found.Count.ShouldEqual(4);
+            }
+
+            [Fact]
+            public void ShouldNotLoadIncompatibleDependenciesDlls()
+            {
+                var p = new Mock<IPackageObject>();
+                p.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
+                        .Returns(new List<string>());
+                p.SetupGet(i => i.Id).Returns("p2");
+                p.SetupGet(i => i.Version).Returns(new Version("4.0"));
+                p.SetupGet(i => i.TextVersion).Returns("4.0");
+                p.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+
+                _package.Setup(i => i.Dependencies).Returns(new List<IPackageObject> { p.Object });
+                _packageContainer.Setup(
+                    i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
+                                 .Returns(p.Object);
+
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
+
+                var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
+
+                _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
+                found.ShouldNotBeEmpty();
+                found.Count.ShouldEqual(2);
+            }
+        }
+
+        public class GetPackagesMethod
+        {
+            private Mock<IFileSystem> _fs;
+            private Mock<IPackageContainer> _pc;
+
+            public GetPackagesMethod()
+            {
+                _fs = new Mock<IFileSystem>();
+                _pc = new Mock<IPackageContainer>();
+            }
+
+            [Fact]
+            public void ShouldReturnEmptyIfPackagesConfigDoesNotExist()
+            {
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+
+                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object);
+                var result = resolver.GetPackages(@"c:/");
+
+                result.ShouldBeEmpty();
+            }
+
+            [Fact]
+            public void ShouldGetReferencesToPackages()
+            {
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
+                _pc.Setup(i => i.FindReferences(It.IsAny<string>())).Returns(new List<IPackageReference> { new PackageReference("id", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")) });
+
+                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object);
+                var result = resolver.GetPackages(@"c:/");
+
+                _pc.Verify(i => i.FindReferences(It.IsAny<string>()), Times.Once());
+                result.Count().ShouldEqual(1);
             }
         }
     }

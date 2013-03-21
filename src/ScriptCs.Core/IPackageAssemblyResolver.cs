@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ScriptCs.Package;
 
 namespace ScriptCs
 {
     public interface IPackageAssemblyResolver
     {
-        IEnumerable<string> GetAssemblyNames(string workingDirectory);
+        IEnumerable<IPackageReference> GetPackages(string workingDirectory);
+        IEnumerable<string> GetAssemblyNames(string workingDirectory, Action<string> outputCallback = null);
     }
 }

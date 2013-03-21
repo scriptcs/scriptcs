@@ -44,6 +44,11 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Command\CommandFactory.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\InstallCommand.cs" />
+    <Compile Include="Command\InvalidCommand.cs" />
+    <Compile Include="Command\ScriptExecuteCommand.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="ScriptServiceRoot.cs" />

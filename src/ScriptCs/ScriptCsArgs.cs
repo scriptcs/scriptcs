@@ -39,9 +39,15 @@ namespace ScriptCs
             }
         }
 
+        [ArgShortcut("install")]
+        public string Install { get; set; }
+
+        [ArgShortcut("pre")]
+        public bool AllowPreReleaseFlag { get; set; }
+
         public bool IsValid()
         {
-            return !(this.IsLogLevelValid() && string.IsNullOrWhiteSpace(ScriptName));
+            return (!string.IsNullOrWhiteSpace(ScriptName) || Install != null) && this.IsLogLevelValid();
         }
 
         private bool IsLogLevelValid()
