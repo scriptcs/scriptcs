@@ -10,8 +10,10 @@ namespace ScriptCs
     public class PackageAssemblyResolver : IPackageAssemblyResolver
     {
         private readonly IFileSystem _fileSystem;
+
         private readonly IPackageContainer _packageContainer;
-        private IEnumerable<IPackageReference> _topLevelPackages;
+
+        private List<IPackageReference> _topLevelPackages;
 
         public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer)
         {
@@ -22,7 +24,8 @@ namespace ScriptCs
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)
         {
             var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);
-            var packages = _packageContainer.FindReferences(packageFile);
+            var packages = _packageContainer.FindReferences(packageFile).ToList();
+
             _topLevelPackages = packages;
 
             return packages;
@@ -30,11 +33,8 @@ namespace ScriptCs
 
         public IEnumerable<string> GetAssemblyNames(string workingDirectory, Action<string> outputCallback = null)
         {
-            var packages = GetPackages(workingDirectory);
-            if (!packages.Any())
-            {
-                return Enumerable.Empty<string>();
-            }
+            var packages = GetPackages(workingDirectory).ToList();
+            if (!packages.Any()) return Enumerable.Empty<string>();
 
             var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);
             var packageDir = Path.Combine(workingDirectory, Constants.PackagesFolder);
@@ -45,7 +45,10 @@ namespace ScriptCs
             LoadFiles(packageDir, packages, ref missingAssemblies, ref foundAssemblyPaths, _fileSystem.FileExists(packageFile), outputCallback);
 
             if (missingAssemblies.Count > 0)
-                throw new MissingAssemblyException(string.Format("Missing: {0}", string.Join(",", missingAssemblies.Select(i => i.PackageId + " " + i.FrameworkName.FullName))));
+            {
+                var missingAssembliesString = string.Join(",", missingAssemblies.Select(i => i.PackageId + " " + i.FrameworkName.FullName));
+                throw new MissingAssemblyException(string.Format("Missing: {0}", missingAssembliesString));
+            }
 
             return foundAssemblyPaths;
         }
@@ -62,6 +65,7 @@ namespace ScriptCs
                     {
                         outputCallback("Cannot find: " + packageRef.PackageId + " " + packageRef.Version);
                     }
+
                     continue;
                 }
 
@@ -74,29 +78,30 @@ namespace ScriptCs
                         outputCallback("Cannot find binaries for " + packageRef.FrameworkName + " in: " +
                                        packageRef.PackageId + " " + packageRef.Version);
                     }
+
                     continue;
                 }
 
-                foreach (var packageFile in compatibleFiles)
+                var compatibleFilePaths = compatibleFiles.Select(packageFile => Path.Combine(packageDir, nugetPackage.FullName, packageFile));
+
+                foreach (var path in compatibleFilePaths)
                 {
-                    var path = Path.Combine(packageDir, nugetPackage.FullName, packageFile);
-                    if (!foundAssemblies.Contains(path))
+                    if (foundAssemblies.Contains(path)) continue;
+
+                    foundAssemblies.Add(path);
+                    if (outputCallback != null)
                     {
-                        foundAssemblies.Add(path);
-                        if (outputCallback != null)
-                        {
-                            outputCallback("Found: " + path);
-                        }
+                        outputCallback("Found: " + path);
                     }
                 }
 
-                if (nugetPackage.Dependencies != null && nugetPackage.Dependencies.Any() && strictLoad)
-                {
-                    LoadFiles(packageDir,
-                        nugetPackage.Dependencies.Where(i => _topLevelPackages.All(x => x.PackageId != i.Id)).Select(
-                                  i => new PackageReference(i.Id, i.FrameworkName, i.Version)), ref missingAssemblies,
-                              ref foundAssemblies, true, outputCallback);
-                }
+                if (nugetPackage.Dependencies == null || !nugetPackage.Dependencies.Any() || !strictLoad) continue;
+
+                var dependencyReferences = nugetPackage.Dependencies
+                    .Where(i => _topLevelPackages.All(x => x.PackageId != i.Id))
+                    .Select(i => new PackageReference(i.Id, i.FrameworkName, i.Version));
+
+                LoadFiles(packageDir, dependencyReferences, ref missingAssemblies, ref foundAssemblies, true, outputCallback);
             }
         }
     }
