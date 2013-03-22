@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -23,13 +24,12 @@ namespace ScriptCs.Command
         {
             try
             {
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
-                var binFolder = Path.Combine(workingDirectory, "bin");
+                var assemblyPaths = Enumerable.Empty<string>();
 
-                var assemblyPaths = _fileSystem.EnumerateFiles(binFolder, "*.dll").ToList();
-                foreach (var path in assemblyPaths.Select(Path.GetFileName))
+                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                if (workingDirectory != null)
                 {
-                    Console.WriteLine("Found assembly reference: " + path);
+                    assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
 
                 _scriptExecutor.Execute(_script, assemblyPaths, _scriptPackResolver.GetPacks());
@@ -40,6 +40,19 @@ namespace ScriptCs.Command
                 Console.WriteLine(ex.Message);
                 return -1;
             }
+        }
+
+        private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
+        {
+            var binFolder = Path.Combine(workingDirectory, "bin");
+
+            var assemblyPaths = _fileSystem.EnumerateFiles(binFolder, "*.dll").ToList();
+            foreach (var path in assemblyPaths.Select(Path.GetFileName))
+            {
+                Console.WriteLine("Found assembly reference: " + path);
+            }
+
+            return assemblyPaths;
         }
     }
 }

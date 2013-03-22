@@ -37,7 +37,9 @@ namespace ScriptCs.Tests
                     () =>
                     scriptEngine.Execute(
                         code, Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
-                
+
+                Console.WriteLine(exception.Message);
+
                 exception.Message.ShouldContain("line 2");
                 exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
             }

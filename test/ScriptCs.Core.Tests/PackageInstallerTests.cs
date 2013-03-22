@@ -66,7 +66,7 @@ namespace ScriptCs.Tests
 
                 provider.Verify(i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>(), It.IsAny<Action<string>>()), Times.Exactly(3));
                 callbacks.Count.ShouldEqual(1);
-                callbacks.Count(x => x.EndsWith("unsuccessful")).ShouldEqual(1);
+                callbacks.Count(x => x.EndsWith("unsuccessful.")).ShouldEqual(1);
             }
 
             [Fact]
@@ -88,7 +88,7 @@ namespace ScriptCs.Tests
                 installer.InstallPackages(references, true, msg => callbacks.Add(msg));
 
                 callbacks.Count.ShouldEqual(1);
-                callbacks.Count(x => x.EndsWith("successful")).ShouldEqual(1);
+                callbacks.Count(x => x.EndsWith("successful.")).ShouldEqual(1);
             }
         }
     }
