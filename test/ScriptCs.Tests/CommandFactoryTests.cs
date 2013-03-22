@@ -71,6 +71,17 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldRestoreWhenRestoreIsPassed()
+            {
+                var args = new ScriptCsArgs { Restore = "" };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldImplement<IRestoreCommand>();
+            }
+
+            [Fact]
             public void ShouldReturnInvalidWhenNoNameOrInstallSet()
             {
                 var args = new ScriptCsArgs

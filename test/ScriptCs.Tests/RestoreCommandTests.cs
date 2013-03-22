@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 
 using Moq;
 
 using ScriptCs.Command;
-using ScriptCs.Contracts;
+using ScriptCs.Package;
 
 using Xunit;
 
@@ -19,96 +20,101 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotCopyFilesInPathIfLastWriteTimeEqualsLastWriteTimeOfFileInBin()
             {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
-                var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
+                var args = new ScriptCsArgs { Restore = "" };
 
-                var command = new RestoreCommand(fileSystem.Object, packageAssemblyResolver.Object);
+                var fs = new Mock<IFileSystem>();
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
 
-                var currentDirectory = @"C:\fileDir";
+                const string CurrentDirectory = @"C:\";
 
-                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
+                var sourceFilePath = Path.Combine(CurrentDirectory, "fileName.cs");
                 var sourceWriteTime = new DateTime(2013, 3, 7);
 
-                var destinationFilePath = Path.Combine(currentDirectory, @"C:\fileDir\bin\fileName.cs");
-                var destinatioWriteTime = sourceWriteTime;
+                var destFilePath = Path.Combine(CurrentDirectory, "bin", "fileName.cs");
+                var destWriteTime = sourceWriteTime;
 
-                packageAssemblyResolver.Setup(par => par.GetAssemblyNames(currentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
+                fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
 
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
-                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args);
 
-                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
+                result.Execute();
 
-                // act
-                command.Execute();
-
-                // assert
-                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Never());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
+                fs.Verify(x => x.Copy(sourceFilePath, destFilePath, true), Times.Never());
+                fs.Verify(x => x.GetLastWriteTime(sourceFilePath), Times.Once());
+                fs.Verify(x => x.GetLastWriteTime(destFilePath), Times.Once());
             }
 
             [Fact]
             public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin()
             {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
-                var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
+                var args = new ScriptCsArgs { Restore = "" };
 
-                var command = new RestoreCommand(fileSystem.Object, packageAssemblyResolver.Object);
+                var fs = new Mock<IFileSystem>();
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
 
-                var currentDirectory = @"C:\fileDir";
+                const string CurrentDirectory = @"C:\";
 
-                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
+                var sourceFilePath = Path.Combine(CurrentDirectory, "fileName.cs");
                 var sourceWriteTime = new DateTime(2013, 3, 7);
 
-                var destinationFilePath = Path.Combine(currentDirectory, @"C:\fileDir\bin\fileName.cs");
-                var destinatioWriteTime = new DateTime(2013, 3, 8);
+                var destFilePath = Path.Combine(CurrentDirectory, "bin", "fileName.cs");
+                var destWriteTime = new DateTime(2013, 2, 7);
 
-                packageAssemblyResolver.Setup(par => par.GetAssemblyNames(currentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
+                fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
 
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
+                resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
-                // act
-                command.Execute();
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args);
 
-                // assert
-                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
+                result.Execute();
+
+                fs.Verify(x => x.Copy(sourceFilePath, destFilePath, true), Times.Once());
+                fs.Verify(x => x.GetLastWriteTime(sourceFilePath), Times.Once());
+                fs.Verify(x => x.GetLastWriteTime(destFilePath), Times.Once());
             }
 
             [Fact]
-            public void ShouldCreateCurrentDirectoryIfItDoesNotExist()
+            public void ShouldCreateBinFolderIfItDoesNotExist()
             {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
+                var args = new ScriptCsArgs { Restore = "", };
 
-                var currentDirectory = @"C:\";
-                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                var fs = new Mock<IFileSystem>();
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
 
-                var binDirectory = Path.Combine(currentDirectory, "bin");
+                const string CurrentDirectory = @"C:\";
+                const string BinFolder = @"C:\bin";
 
-                fileSystem.Setup(fs => fs.DirectoryExists(binDirectory)).Returns(false).Verifiable();
-                fileSystem.Setup(fs => fs.CreateDirectory(binDirectory)).Verifiable();
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.DirectoryExists(BinFolder)).Returns(false).Verifiable();
+                fs.Setup(x => x.CreateDirectory(BinFolder)).Verifiable();
 
-                var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args);
 
-                var command = new RestoreCommand(fileSystem.Object, packageAssemblyResolver.Object);
+                result.Execute();
 
-                // act
-                command.Execute();
-
-                // assert
-                fileSystem.Verify(fs => fs.DirectoryExists(binDirectory), Times.Once());
-                fileSystem.Verify(fs => fs.CreateDirectory(binDirectory), Times.Once());
+                fs.Verify(x => x.DirectoryExists(BinFolder), Times.Once());
+                fs.Verify(x => x.CreateDirectory(BinFolder), Times.Once());
             }
         }
     }
