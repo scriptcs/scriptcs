@@ -1,5 +1,6 @@
 ﻿using PowerArgs;
 using ScriptCs.Command;
+using System;
 
 namespace ScriptCs
 {
@@ -7,6 +8,7 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
+            Console.WriteLine(string.Format("ScriptCs version {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version));
             var commandArgs = Args.Parse<ScriptCsArgs>(args);
 
             var debug = commandArgs.DebugFlag;
