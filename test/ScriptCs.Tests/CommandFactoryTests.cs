@@ -73,7 +73,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRestoreWhenRestoreIsPassed()
             {
-                var args = new ScriptCsArgs { Restore = "" };
+                var args = new ScriptCsArgs { Restore = true };
 
                 var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);

@@ -30,7 +30,7 @@
                     _scriptServiceRoot.PackageInstaller);
             }
 
-            if (args.Restore != null)
+            if (args.Restore)
             {
                 return new RestoreCommand(_scriptServiceRoot.FileSystem, _scriptServiceRoot.PackageAssemblyResolver);
             }

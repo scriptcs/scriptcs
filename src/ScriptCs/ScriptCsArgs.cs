@@ -16,7 +16,7 @@ namespace ScriptCs
         public string Install { get; set; }
 
         [ArgShortcut("restore")]
-        public string Restore { get; set; }
+        public bool Restore { get; set; }
 
         [ArgShortcut("pre")]
         public bool AllowPreReleaseFlag { get; set; }

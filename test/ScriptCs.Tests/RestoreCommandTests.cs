@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
 
 using Moq;
 
@@ -20,7 +17,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotCopyFilesInPathIfLastWriteTimeEqualsLastWriteTimeOfFileInBin()
             {
-                var args = new ScriptCsArgs { Restore = "" };
+                var args = new ScriptCsArgs { Restore = true };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -56,7 +53,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin()
             {
-                var args = new ScriptCsArgs { Restore = "" };
+                var args = new ScriptCsArgs { Restore = true };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -92,7 +89,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldCreateBinFolderIfItDoesNotExist()
             {
-                var args = new ScriptCsArgs { Restore = "", };
+                var args = new ScriptCsArgs { Restore = true };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();

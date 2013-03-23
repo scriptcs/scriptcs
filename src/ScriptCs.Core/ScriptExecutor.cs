@@ -29,13 +29,15 @@ namespace ScriptCs
 
             _scriptEngine.BaseDirectory = bin;
 
-            using (var scriptPackSession = new ScriptPackSession(scriptPacks))
-            {
-                var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-                var code = _filePreProcessor.ProcessFile(path);
+            var scriptPackSession = new ScriptPackSession(scriptPacks);
+            scriptPackSession.InitializePacks();
 
-                _scriptEngine.Execute(code, references, scriptPackSession);
-            }
+            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            var code = _filePreProcessor.ProcessFile(path);
+
+            _scriptEngine.Execute(code, references, scriptPackSession);
+
+            scriptPackSession.TerminatePacks();
         }
     }
 }
