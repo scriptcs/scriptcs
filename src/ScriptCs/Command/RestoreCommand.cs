@@ -3,64 +3,68 @@ using System.IO;
 
 namespace ScriptCs.Command
 {
-    public class RestoreCommand : IRestoreCommand
+    internal class RestoreCommand : IRestoreCommand
     {
+        private readonly string _scriptName;
+
         private readonly IFileSystem _fileSystem;
 
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
-        public RestoreCommand(IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver)
+        public RestoreCommand(string scriptName, IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver)
         {
+            _scriptName = scriptName;
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
         }
 
-        public virtual int Execute()
+        public CommandResult Execute()
         {
-            Console.WriteLine("Moving assemblies to bin folder...");
+            Console.WriteLine("Copying assemblies to bin folder...");
 
-            var binFolder = Path.Combine(_fileSystem.CurrentDirectory, "bin");
+            var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
+            var binFolder = Path.Combine(workingDirectory, "bin");
 
             try
             {
                 if (!_fileSystem.DirectoryExists(binFolder))
                     _fileSystem.CreateDirectory(binFolder);
 
-                var packages = _packageAssemblyResolver.GetAssemblyNames(_fileSystem.CurrentDirectory);
+                var packages = _packageAssemblyResolver.GetAssemblyNames(workingDirectory);
                 foreach (var package in packages)
                 {
-                    MoveFile(package, binFolder);
+                    CopyFile(package, binFolder);
                 }
 
                 Console.WriteLine("Restore completed successfully.");
-                return 0;
+                return CommandResult.Success;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Restore failed: {0}.", e.Message);
-                return -1;
+                return CommandResult.Error;
             }
         }
 
-        private void MoveFile(string package, string binFolder)
+        private void CopyFile(string package, string binFolder)
         {
-            var packageFileName = Path.GetFileName(package);
-            if (packageFileName == null) return;
+            var assemblyFileName = Path.GetFileName(package);
+            if (assemblyFileName == null) return;
 
-            var destFile = Path.Combine(binFolder, packageFileName);
+            var destFile = Path.Combine(binFolder, assemblyFileName);
 
             var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(package);
             var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
 
             if (sourceFileLastWriteTime == destFileLastWriteTime)
             {
-                Console.WriteLine("Skipped {0}.", packageFileName);
+                Console.WriteLine("Skipped: {0}.", assemblyFileName);
                 return;
             }
 
             _fileSystem.Copy(package, destFile, true);
 
-            Console.WriteLine("Moved {0}.", packageFileName);
+            Console.WriteLine("Copied: {0}.", assemblyFileName);
         }
     }
 }

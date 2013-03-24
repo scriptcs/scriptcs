@@ -6,7 +6,7 @@ using ScriptCs.Package;
 
 namespace ScriptCs.Command
 {
-    internal class InstallCommand : RestoreCommand, IInstallCommand
+    internal class InstallCommand : IInstallCommand
     {
         private readonly string _name;
 
@@ -23,7 +23,7 @@ namespace ScriptCs.Command
             bool allowPre,
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
-            IPackageInstaller packageInstaller) : base(fileSystem, packageAssemblyResolver)
+            IPackageInstaller packageInstaller)
         {
             _name = name;
             _allowPre = allowPre;
@@ -32,7 +32,7 @@ namespace ScriptCs.Command
             _packageInstaller = packageInstaller;
         }
 
-        public override int Execute()
+        public CommandResult Execute()
         {
             Console.WriteLine("Installing packages...");
 
@@ -44,12 +44,12 @@ namespace ScriptCs.Command
                 _packageInstaller.InstallPackages(packages, _allowPre, Console.WriteLine);
 
                 Console.WriteLine("Installation completed successfully.");
-                return base.Execute();
+                return CommandResult.Success;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Installation failed: {0}.", e.Message);
-                return -1;
+                return CommandResult.Error;
             }
         }
 

@@ -40,7 +40,7 @@
     <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestoreCommandTests.cs" />
-    <Compile Include="ScriptExecuteCommandTests.cs" />
+    <Compile Include="ExecuteScriptCommandTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">

@@ -17,7 +17,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotCopyFilesInPathIfLastWriteTimeEqualsLastWriteTimeOfFileInBin()
             {
-                var args = new ScriptCsArgs { Restore = true };
+                var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -34,7 +34,8 @@ namespace ScriptCs.Tests
                 var destFilePath = Path.Combine(CurrentDirectory, "bin", "fileName.cs");
                 var destWriteTime = sourceWriteTime;
 
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
 
@@ -53,7 +54,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin()
             {
-                var args = new ScriptCsArgs { Restore = true };
+                var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -70,7 +71,8 @@ namespace ScriptCs.Tests
                 var destFilePath = Path.Combine(CurrentDirectory, "bin", "fileName.cs");
                 var destWriteTime = new DateTime(2013, 2, 7);
 
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
 
@@ -89,7 +91,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldCreateBinFolderIfItDoesNotExist()
             {
-                var args = new ScriptCsArgs { Restore = true };
+                var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -101,7 +103,8 @@ namespace ScriptCs.Tests
                 const string CurrentDirectory = @"C:\";
                 const string BinFolder = @"C:\bin";
 
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+
                 fs.Setup(x => x.DirectoryExists(BinFolder)).Returns(false).Verifiable();
                 fs.Setup(x => x.CreateDirectory(BinFolder)).Verifiable();
 

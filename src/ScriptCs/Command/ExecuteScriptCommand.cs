@@ -5,14 +5,14 @@ using System.Linq;
 
 namespace ScriptCs.Command
 {
-    internal class ScriptExecuteCommand : IScriptCommand
+    internal class ExecuteScriptCommand : IScriptCommand
     {
         private readonly string _script;
         private readonly IFileSystem _fileSystem;
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
 
-        public ScriptExecuteCommand(string script, IFileSystem fileSystem, IScriptExecutor scriptExecutor, IScriptPackResolver scriptPackResolver)
+        public ExecuteScriptCommand(string script, IFileSystem fileSystem, IScriptExecutor scriptExecutor, IScriptPackResolver scriptPackResolver)
         {
             _script = script;
             _fileSystem = fileSystem;
@@ -20,7 +20,7 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
         }
 
-        public int Execute()
+        public CommandResult Execute()
         {
             try
             {
@@ -33,12 +33,12 @@ namespace ScriptCs.Command
                 }
 
                 _scriptExecutor.Execute(_script, assemblyPaths, _scriptPackResolver.GetPacks());
-                return 0;
+                return CommandResult.Success;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return -1;
+                return CommandResult.Error;
             }
         }
 

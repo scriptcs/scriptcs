@@ -24,6 +24,8 @@ namespace ScriptCs.Tests
                     };
 
                 var fs = new Mock<IFileSystem>();
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(@"C:\");
+
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
@@ -49,6 +51,8 @@ namespace ScriptCs.Tests
                 };
 
                 var fs = new Mock<IFileSystem>();
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(@"C:\");
+
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
