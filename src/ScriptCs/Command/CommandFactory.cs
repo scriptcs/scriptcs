@@ -13,14 +13,40 @@
         {
             if (args.ScriptName != null)
             {
-                return new ScriptExecuteCommand(args.ScriptName, _scriptServiceRoot.FileSystem, 
-                    _scriptServiceRoot.PackageAssemblyResolver, _scriptServiceRoot.Executor, _scriptServiceRoot.ScriptPackResolver);
+                var executeCommand = new ExecuteScriptCommand(
+                    args.ScriptName,
+                    _scriptServiceRoot.FileSystem,
+                    _scriptServiceRoot.Executor,
+                    _scriptServiceRoot.ScriptPackResolver);
+
+                if (args.Restore)
+                {
+                    var restoreCommand = new RestoreCommand(
+                        args.ScriptName, 
+                        _scriptServiceRoot.FileSystem, 
+                        _scriptServiceRoot.PackageAssemblyResolver);
+
+                    return new CompositeCommand(restoreCommand, executeCommand);
+                }
+
+                return executeCommand;
             }
 
             if (args.Install != null)
             {
-                return new InstallCommand(args.Install, args.AllowPreReleaseFlag, _scriptServiceRoot.FileSystem, 
-                    _scriptServiceRoot.PackageAssemblyResolver, _scriptServiceRoot.PackageInstaller);
+                var installCommand = new InstallCommand(
+                    args.Install,
+                    args.AllowPreReleaseFlag,
+                    _scriptServiceRoot.FileSystem,
+                    _scriptServiceRoot.PackageAssemblyResolver,
+                    _scriptServiceRoot.PackageInstaller);
+
+                var restoreCommand = new RestoreCommand(
+                    args.Install,
+                    _scriptServiceRoot.FileSystem,
+                    _scriptServiceRoot.PackageAssemblyResolver);
+
+                return new CompositeCommand(installCommand, restoreCommand);
             }
 
             return new InvalidCommand();

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ScriptCs.Tests
 {
-    public class ScriptExecuteCommandTests
+    public class ExecuteScriptCommandTests
     {
         public class ExecuteMethod
         {
