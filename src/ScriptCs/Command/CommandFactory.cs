@@ -23,6 +23,11 @@
                     _scriptServiceRoot.PackageAssemblyResolver, _scriptServiceRoot.PackageInstaller);
             }
 
+            if (args.Version)
+            {
+                return new VersionCommand();
+            }
+
             return new InvalidCommand();
         }
     }
