@@ -12,6 +12,10 @@
     {
     }
 
+    public interface IVersionCommand : ICommand
+    {
+    }
+
     public interface ICommand
     {
         int Execute();

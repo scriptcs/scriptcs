@@ -46,6 +46,7 @@
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\InvalidCommand.cs" />
     <Compile Include="Command\ScriptExecuteCommand.cs" />
+    <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />

@@ -18,6 +18,10 @@ namespace ScriptCs
         [ArgShortcut("pre")]
         public bool AllowPreReleaseFlag { get; set; }
 
+        [ArgDescription("Outputs version information")]
+        public bool Version { get; set; }
+
+
         public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(ScriptName) || Install != null;
