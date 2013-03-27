@@ -105,15 +105,17 @@ namespace ScriptCs.Tests
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
 
-                fs.Setup(x => x.DirectoryExists(BinFolder)).Returns(false).Verifiable();
-                fs.Setup(x => x.CreateDirectory(BinFolder)).Verifiable();
+                var binFolderCreated = false;
+
+                fs.Setup(x => x.DirectoryExists(BinFolder)).Returns(() => binFolderCreated).Verifiable();
+                fs.Setup(x => x.CreateDirectory(BinFolder)).Callback(() => binFolderCreated = true).Verifiable();
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);
 
                 result.Execute();
 
-                fs.Verify(x => x.DirectoryExists(BinFolder), Times.Once());
+                fs.Verify(x => x.DirectoryExists(BinFolder), Times.AtLeastOnce());
                 fs.Verify(x => x.CreateDirectory(BinFolder), Times.Once());
             }
         }
