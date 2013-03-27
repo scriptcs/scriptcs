@@ -46,6 +46,9 @@ namespace ScriptCs.Command
         {
             var binFolder = Path.Combine(workingDirectory, "bin");
 
+            if (!_fileSystem.DirectoryExists(binFolder))
+                _fileSystem.CreateDirectory(binFolder);
+
             var assemblyPaths = _fileSystem.EnumerateFiles(binFolder, "*.dll").ToList();
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
