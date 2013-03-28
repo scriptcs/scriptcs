@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-
 using Moq;
-
 using ScriptCs.Command;
 using ScriptCs.Package;
-
 using Xunit;
 
 namespace ScriptCs.Tests
