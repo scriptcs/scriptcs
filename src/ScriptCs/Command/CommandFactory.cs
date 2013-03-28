@@ -49,6 +49,16 @@
                 return new CompositeCommand(installCommand, restoreCommand);
             }
 
+            if (args.Clean)
+            {
+                var cleanCommand = new CleanCommand(
+                    args.ScriptName,
+                    _scriptServiceRoot.FileSystem,
+                    _scriptServiceRoot.PackageAssemblyResolver);
+
+                return cleanCommand;
+            }
+
             return new InvalidCommand();
         }
     }

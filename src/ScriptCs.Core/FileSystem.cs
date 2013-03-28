@@ -26,6 +26,11 @@ namespace ScriptCs
             Directory.CreateDirectory(path);
         }
 
+        public void DeleteDirectory(string path)
+        {
+            Directory.Delete(path, true);
+        }
+
         public string ReadFile(string path)
         {
             return File.ReadAllText(path);
@@ -64,6 +69,11 @@ namespace ScriptCs
         public bool FileExists(string path)
         {
             return File.Exists(path);
+        }
+
+        public void FileDelete(string path)
+        {
+            File.Delete(path);
         }
 
         public Stream CreateFileStream(string filePath, FileMode mode)
