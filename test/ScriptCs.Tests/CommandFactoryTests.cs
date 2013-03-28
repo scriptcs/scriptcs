@@ -90,6 +90,18 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldCleanWhenCleanFlagIsPassed()
+            {
+                var args = new ScriptCsArgs { Clean = true, ScriptName = null };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldNotBeNull();
+                result.ShouldImplement<ICleanCommand>();
+            }
+
+            [Fact]
             public void ShouldReturnInvalidWhenNoNameOrInstallSet()
             {
                 var args = new ScriptCsArgs

@@ -36,6 +36,7 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="CleanCommandTests.cs" />
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

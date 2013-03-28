@@ -14,6 +14,8 @@ namespace ScriptCs
 
         void CreateDirectory(string path);
 
+        void DeleteDirectory(string path);
+
         string ReadFile(string path);
 
         string[] ReadFileLines(string path);
@@ -31,6 +33,8 @@ namespace ScriptCs
         void Move(string source, string dest);
 
         bool FileExists(string path);
+
+        void FileDelete(string path);
 
         Stream CreateFileStream(string filePath, FileMode mode);
     }
