@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
                 var exception = Assert.Throws<ScriptExecutionException>(
                     () =>
                     scriptEngine.Execute(
-                        code, Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
+                        code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
 
                 Console.WriteLine(exception.Message);
 
