@@ -41,6 +41,7 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />

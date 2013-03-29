@@ -6,9 +6,7 @@ namespace ScriptCs.Command
     internal class RestoreCommand : IRestoreCommand
     {
         private readonly string _scriptName;
-
         private readonly IFileSystem _fileSystem;
-
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
         public RestoreCommand(string scriptName, IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver)
@@ -23,7 +21,7 @@ namespace ScriptCs.Command
             Console.WriteLine("Copying assemblies to bin folder...");
 
             var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
-            var binFolder = Path.Combine(workingDirectory, "bin");
+            var binFolder = Path.Combine(workingDirectory, Constants.BinFolder);
 
             try
             {
