@@ -8,10 +8,11 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
+        private static readonly string[] DefaultReferences = new[] {"System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
+        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks"};
+
         private readonly IFileSystem _fileSystem;
-
         private readonly IFilePreProcessor _filePreProcessor;
-
         private readonly IScriptEngine _scriptEngine;
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine)
@@ -25,7 +26,7 @@ namespace ScriptCs
         {
             var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
 
-            var references = new List<string> { "System", "System.Core" }.Union(paths);
+            var references = DefaultReferences.Union(paths);
 
             _scriptEngine.BaseDirectory = bin;
 
@@ -35,7 +36,7 @@ namespace ScriptCs
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var code = _filePreProcessor.ProcessFile(path);
 
-            _scriptEngine.Execute(code, references, scriptPackSession);
+            _scriptEngine.Execute(code, references, DefaultNamespaces, scriptPackSession);
 
             scriptPackSession.TerminatePacks();
         }
