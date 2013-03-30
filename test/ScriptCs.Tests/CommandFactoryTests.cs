@@ -35,7 +35,11 @@ namespace ScriptCs.Tests
                 var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
-                result.ShouldImplement<IInstallCommand>();
+                var compositeCommand = result as ICompositeCommand;
+                compositeCommand.ShouldNotBeNull();
+
+                (compositeCommand.Commands[0] is IInstallCommand).ShouldBeTrue();
+                (compositeCommand.Commands[1] is IRestoreCommand).ShouldBeTrue();
             }
 
             [Fact]
@@ -68,6 +72,33 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IScriptCommand>();
+            }
+
+            [Fact]
+            public void ShouldRestoreWhenBothNameAndRestoreArePassed()
+            {
+                var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                var compositeCommand = result as ICompositeCommand;
+                compositeCommand.ShouldNotBeNull();
+
+                (compositeCommand.Commands[0] is IRestoreCommand).ShouldBeTrue();
+                (compositeCommand.Commands[1] is IScriptCommand).ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldCleanWhenCleanFlagIsPassed()
+            {
+                var args = new ScriptCsArgs { Clean = true, ScriptName = null };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldNotBeNull();
+                result.ShouldImplement<ICleanCommand>();
             }
 
             [Fact]
