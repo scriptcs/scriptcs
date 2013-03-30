@@ -59,6 +59,11 @@
                 return cleanCommand;
             }
 
+            if (args.Version)
+            {
+                return new VersionCommand();
+            }
+
             return new InvalidCommand();
         }
     }
