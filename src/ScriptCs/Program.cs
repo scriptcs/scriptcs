@@ -1,5 +1,6 @@
 ﻿using PowerArgs;
 using ScriptCs.Command;
+using System;
 
 namespace ScriptCs
 {
