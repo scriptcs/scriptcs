@@ -108,3 +108,7 @@ Backup*/
 UpgradeLog*.XML
 
 artifacts
+
+# Resharper DotSettings file
+ScriptCS.sln.DotSettings
+
