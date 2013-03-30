@@ -4,10 +4,10 @@ namespace ScriptCs.Command
 {
     internal class VersionCommand : IVersionCommand
     {
-        public int Execute()
+        public CommandResult Execute()
         {
             Console.WriteLine(string.Format("ScriptCs version {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version));
-            return 0;
+            return CommandResult.Success;
         }
     }
 }
