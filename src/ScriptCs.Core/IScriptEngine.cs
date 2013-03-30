@@ -2,9 +2,9 @@
 
 namespace ScriptCs
 {
-	public interface IScriptEngine
-	{
-		string BaseDirectory { get; set; }
-		void Execute(string code, IEnumerable<string> references, ScriptPackSession scriptPackSession);
-	}
+    public interface IScriptEngine
+    {
+        string BaseDirectory { get; set; }
+        void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession);
+    }
 }
