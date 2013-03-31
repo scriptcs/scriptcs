@@ -43,32 +43,5 @@ namespace ScriptCs
 
             scriptPackSession.TerminatePacks();
         }
-
-        private IEnumerable<string> PrepareBinFolder(IEnumerable<string> paths, string bin)
-        {
-            var files = new List<string>();
-
-            if (!_fileSystem.DirectoryExists(bin))
-            {
-                _logger.DebugFormat("Creating directory {0}", bin);
-                _fileSystem.CreateDirectory(bin);
-            }
-
-            foreach (var file in paths)
-            {
-                var destFile = Path.Combine(bin, Path.GetFileName(file));
-                var sourceFileLastWriteTime = _fileSystem.GetLastWriteTime(file);
-                var destFileLastWriteTime = _fileSystem.GetLastWriteTime(destFile);
-                if (sourceFileLastWriteTime != destFileLastWriteTime)
-                {
-                    _logger.DebugFormat("Copying file {0} to bin folder {1}", file, destFile);
-                    _fileSystem.Copy(file, destFile, true);
-                }
-                
-                files.Add(destFile);
-            }
-
-            return files;
-        }
     }
 }

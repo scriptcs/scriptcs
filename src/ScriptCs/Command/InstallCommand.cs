@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
-
+using Common.Logging;
 using ScriptCs.Package;
 
 namespace ScriptCs.Command
 {
-    using Common.Logging;
-
     internal class InstallCommand : IInstallCommand
     {
         private readonly string _name;
