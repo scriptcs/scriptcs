@@ -25,7 +25,8 @@
                     var restoreCommand = new RestoreCommand(
                         args.ScriptName, 
                         _scriptServiceRoot.FileSystem, 
-                        _scriptServiceRoot.PackageAssemblyResolver);
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.Logger);
 
                     return new CompositeCommand(restoreCommand, executeCommand);
                 }
@@ -40,12 +41,14 @@
                     args.AllowPreReleaseFlag,
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver,
-                    _scriptServiceRoot.PackageInstaller);
+                    _scriptServiceRoot.PackageInstaller,
+                    _scriptServiceRoot.Logger);
 
                 var restoreCommand = new RestoreCommand(
                     args.Install,
                     _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver);
+                    _scriptServiceRoot.PackageAssemblyResolver,
+                    _scriptServiceRoot.Logger);
 
                 return new CompositeCommand(installCommand, restoreCommand);
             }
@@ -55,7 +58,8 @@
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,
                     _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver);
+                    _scriptServiceRoot.PackageAssemblyResolver,
+                    _scriptServiceRoot.Logger);
 
                 return cleanCommand;
             }
@@ -65,7 +69,7 @@
                 return new VersionCommand();
             }
 
-            return new InvalidCommand();
+            return new InvalidCommand(_scriptServiceRoot.Logger);
         }
     }
 }

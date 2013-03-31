@@ -6,7 +6,7 @@ namespace ScriptCs.Command
     {
         public CommandResult Execute()
         {
-            Console.WriteLine(string.Format("ScriptCs version {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine("ScriptCs version {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
             return CommandResult.Success;
         }
     }

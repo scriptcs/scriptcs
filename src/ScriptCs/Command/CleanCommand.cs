@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Common.Logging;
 
 namespace ScriptCs.Command
 {
@@ -9,17 +10,21 @@ namespace ScriptCs.Command
         private readonly string _scriptName;
         private readonly IFileSystem _fileSystem;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
+        private readonly ILog _logger;
 
-        public CleanCommand(string scriptName, IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver)
+        public CleanCommand(string scriptName, 
+            IFileSystem fileSystem, 
+            IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
         {
             _scriptName = scriptName;
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
+            _logger = logger;
         }
 
         public CommandResult Execute()
         {
-            Console.WriteLine("Cleaning initiated...");
+            _logger.Info("Cleaning initiated...");
 
             var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
             var binFolder = Path.Combine(workingDirectory, Constants.BinFolder);
@@ -46,12 +51,12 @@ namespace ScriptCs.Command
                 if (_fileSystem.DirectoryExists(packageFolder))
                     _fileSystem.DeleteDirectory(packageFolder);
 
-                Console.WriteLine("Clean completed successfully.");
+                _logger.Info("Clean completed successfully.");
                 return CommandResult.Success;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Clean failed: {0}.", e.Message);
+                _logger.ErrorFormat("Clean failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
         }

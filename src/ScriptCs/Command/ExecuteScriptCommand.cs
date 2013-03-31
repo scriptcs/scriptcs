@@ -25,7 +25,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
-            this._logger = logger;
+            _logger = logger;
         }
 
         public CommandResult Execute()
