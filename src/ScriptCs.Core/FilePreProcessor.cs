@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 
 namespace ScriptCs
 {
-    using log4net;
-
     public class FilePreProcessor : IFilePreProcessor
     {
         private const string LoadString = "#load ";

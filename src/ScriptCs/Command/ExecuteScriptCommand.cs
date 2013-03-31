@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using log4net;
+using Common.Logging;
 
 namespace ScriptCs.Command
 {

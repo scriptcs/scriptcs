@@ -1,12 +1,12 @@
-﻿namespace ScriptCs
-{
-	using log4net;
+﻿using Common.Logging;
 
-	public class DebugScriptExecutor : ScriptExecutor
-	{
-		public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
-			: base(fileSystem, filePreProcessor, scriptEngine, logger)
-		{
-		}
-	}
+namespace ScriptCs
+{
+    public class DebugScriptExecutor : ScriptExecutor
+    {
+        public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
+        {
+        }
+    }
 }

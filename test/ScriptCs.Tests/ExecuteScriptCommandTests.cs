@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using log4net;
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Contracts;

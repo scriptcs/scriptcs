@@ -1,7 +1,6 @@
-﻿using log4net;
+﻿using Common.Logging;
 using PowerArgs;
 using ScriptCs.Command;
-using System;
 
 namespace ScriptCs
 {

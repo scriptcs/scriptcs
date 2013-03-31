@@ -1,4 +1,4 @@
-﻿using log4net;
+﻿using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;

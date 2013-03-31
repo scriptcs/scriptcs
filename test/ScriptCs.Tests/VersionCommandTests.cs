@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Common.Logging;
+using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
 using System.IO;
@@ -6,13 +7,10 @@ using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using log4net;
-
     public class VersionCommandTests
     {
         public class ExecuteMethod
         {
-
             private readonly System.Version _currentVersion;
 
             System.Text.StringBuilder _outputText;

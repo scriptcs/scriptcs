@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using Xunit;
-using log4net;
 
 namespace ScriptCs.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using log4net;
+using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;

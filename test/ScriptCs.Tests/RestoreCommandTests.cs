@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
@@ -7,8 +8,6 @@ using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using log4net;
-
     public class RestoreCommandTests
     {
         public class TheExecuteMethod

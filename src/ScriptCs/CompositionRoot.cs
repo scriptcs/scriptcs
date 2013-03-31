@@ -2,15 +2,10 @@
 using System.ComponentModel.Composition.Hosting;
 using Autofac;
 using Autofac.Integration.Mef;
+using Common.Logging;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
-
-using log4net;
-using log4net.Appender;
-using log4net.Core;
-using log4net.Layout;
-using log4net.Repository.Hierarchy;
 
 namespace ScriptCs
 {

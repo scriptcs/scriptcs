@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using log4net;
+using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Exceptions;
 

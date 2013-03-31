@@ -4,6 +4,10 @@ using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 
+using ICommonLog = Common.Logging.ILog;
+
+using Common.Logging.Log4Net;
+
 namespace ScriptCs
 {
     public class LoggerConfigurator
@@ -13,7 +17,7 @@ namespace ScriptCs
 
         private readonly string _logLevel;
 
-        private ILog _logger;
+        private ICommonLog _logger;
 
         public LoggerConfigurator(string logLevel)
         {
@@ -23,7 +27,7 @@ namespace ScriptCs
         public void Configure()
         {
             var hierarchy = (Hierarchy)LogManager.GetRepository();
-            _logger = LogManager.GetLogger(LoggerName);
+            var logger = LogManager.GetLogger(LoggerName);
             var consoleAppender = new ConsoleAppender
             {
                 Layout = new PatternLayout(Pattern),
@@ -33,11 +37,21 @@ namespace ScriptCs
             hierarchy.Root.AddAppender(consoleAppender);
             hierarchy.Root.Level = Level.All;
             hierarchy.Configured = true;
+
+            _logger = new CodeConfigurableLog4NetLogger(logger);
         }
 
-        public ILog GetLogger()
+        public ICommonLog GetLogger()
         {
             return _logger;
+        }
+
+        private class CodeConfigurableLog4NetLogger : Log4NetLogger
+        {
+            protected internal CodeConfigurableLog4NetLogger(ILoggerWrapper log)
+                : base(log)
+            {
+            }
         }
     }
 }
