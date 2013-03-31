@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using log4net;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    using System;
-
     public class ScriptExecutor : IScriptExecutor
     {
+        private static readonly string[] DefaultReferences = new[] {"System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
+        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks"};
+
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
@@ -25,15 +28,8 @@ namespace ScriptCs
         public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
             var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
-            var files = PrepareBinFolder(paths, bin);
     
-            var references = new List<string>();
-            _logger.Debug("Adding System reference");
-            references.Add("System");
-            _logger.Debug("Adding System.Core");
-            references.Add("System.Core");
-            _logger.DebugFormat("Adding references to files {0}", string.Join(Environment.NewLine, files));
-            references.AddRange(files);
+            var references = DefaultReferences.Union(paths);
 
             _scriptEngine.BaseDirectory = bin;
 
@@ -43,11 +39,8 @@ namespace ScriptCs
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             var code = _filePreProcessor.ProcessFile(path);
-            
-            _scriptEngine.Execute(
-                code: code,
-                references: references,
-                scriptPackSession: scriptPackSession);
+
+            _scriptEngine.Execute(code, references, DefaultNamespaces, scriptPackSession);
 
             scriptPackSession.TerminatePacks();
         }

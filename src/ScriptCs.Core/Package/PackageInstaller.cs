@@ -25,19 +25,16 @@ namespace ScriptCs.Package
                 {
                     packageInstalled("Nothing to install.");
                 }
+
                 return;
             }
 
-            var successful = true;
-            foreach (var packageId in packageIds)
-            {
-                var result = _installer.InstallPackage(packageId, allowPreRelease, packageInstalled);
-                successful = successful && result;
-            }
+            var successful = packageIds.Select(packageId => _installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
+                .Aggregate(true, (current, result) => current && result);
 
             if (packageInstalled != null && packageIds.Count() > 1)
             {
-                packageInstalled(successful ? "Installation successful" : "Installation unsuccessful");
+                packageInstalled(successful ? "Installation successful." : "Installation unsuccessful.");
             }
         }
     }

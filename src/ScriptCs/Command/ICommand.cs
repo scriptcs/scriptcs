@@ -1,19 +1,28 @@
-﻿namespace ScriptCs.Command
+﻿using System.Collections.Generic;
+
+namespace ScriptCs.Command
 {
-    public interface IScriptCommand : ICommand
+    public interface IScriptCommand : ICommand { }
+
+    public interface IRestoreCommand : ICommand { }
+
+    public interface ICleanCommand : ICommand { }
+
+    public interface IInstallCommand : ICommand { }
+
+    public interface IInvalidCommand : ICommand { }
+
+    public interface ICompositeCommand : ICommand
     {
+        List<ICommand> Commands { get; }
     }
 
-    public interface IInstallCommand : ICommand
-    {
-    }
-
-    public interface IInvalidCommand : ICommand
+    public interface IVersionCommand : ICommand
     {
     }
 
     public interface ICommand
     {
-        int Execute();
+        CommandResult Execute();
     }
 }

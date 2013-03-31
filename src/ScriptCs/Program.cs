@@ -1,6 +1,7 @@
 ﻿using log4net;
 using PowerArgs;
 using ScriptCs.Command;
+using System;
 
 namespace ScriptCs
 {
@@ -22,7 +23,15 @@ namespace ScriptCs
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs);
 
-            return command.Execute();
+            var result = command.Execute();
+
+            switch (result)
+            {
+                case CommandResult.Success:
+                    return 0;
+                default:
+                    return -1;
+            }
         }
     }
 }

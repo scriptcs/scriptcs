@@ -26,7 +26,7 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public void Execute(string code, IEnumerable<string> references, ScriptPackSession scriptPackSession)
+        public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             _logger.Debug("Retrieving script packs contexts");
             var contexts = scriptPackSession.ScriptPacks.Select(x => x.GetContext());
@@ -43,12 +43,12 @@ namespace ScriptCs.Engine.Roslyn
                 session.AddReference(reference);
             }
             
-            foreach (var @namespace in scriptPackSession.Namespaces.Distinct())
+            foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
             {
                 _logger.InfoFormat("Importing namespace {0}", @namespace);
                 session.ImportNamespace(@namespace);    
             }
-
+            
             _logger.Debug("Executing code");
             Execute(code, session);
         }

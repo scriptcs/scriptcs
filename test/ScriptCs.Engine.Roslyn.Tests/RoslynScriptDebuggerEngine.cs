@@ -38,8 +38,10 @@ namespace ScriptCs.Tests
                 var exception = Assert.Throws<ScriptExecutionException>(
                     () =>
                     scriptEngine.Execute(
-                        code, Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
-                
+                        code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
+
+                Console.WriteLine(exception.Message);
+
                 exception.Message.ShouldContain("line 2");
                 exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
             }

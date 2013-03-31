@@ -41,7 +41,7 @@ namespace ScriptCs.Tests
 
                 var scriptPackSession = new ScriptPackSession(new[] { scriptPack1.Object });
 
-                engine.Execute(code, Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
 
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IEnumerable<IScriptPackContext>>()));
             }

@@ -42,8 +42,18 @@ namespace ScriptCs
         [ArgShortcut("install")]
         public string Install { get; set; }
 
+        [ArgShortcut("restore")]
+        public bool Restore { get; set; }
+
+        [ArgShortcut("clean")]
+        public bool Clean { get; set; }
+
         [ArgShortcut("pre")]
         public bool AllowPreReleaseFlag { get; set; }
+
+        [ArgDescription("Outputs version information")]
+        public bool Version { get; set; }
+
 
         public bool IsValid()
         {

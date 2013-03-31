@@ -98,35 +98,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldCreateCurrentDirectoryIfItDoesNotExist()
-            {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
-
-                var currentDirectory = @"C:\";
-                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-
-                var binDirectory = Path.Combine(currentDirectory, "bin");
-
-                fileSystem.Setup(fs => fs.DirectoryExists(binDirectory)).Returns(false).Verifiable();
-                fileSystem.Setup(fs => fs.CreateDirectory(binDirectory)).Verifiable();
-
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem);
-
-                var scriptName = "script.csx";
-                var paths = new string[0];
-                IEnumerable<IScriptPack> recipes = Enumerable.Empty<IScriptPack>();
-
-                // act
-                scriptExecutor.Execute(scriptName, paths, recipes);
-
-                // assert
-                fileSystem.Verify(fs => fs.DirectoryExists(binDirectory), Times.Once());
-                fileSystem.Verify(fs => fs.CreateDirectory(binDirectory), Times.Once());
-            }
-
-            [Fact]
             public void ShouldExecuteScriptReturnedFromFileProcessorInScriptEngineWhenExecuteIsInvoked()
             {
                 // arrange
@@ -150,7 +121,7 @@ namespace ScriptCs.Tests
                 var recipes = Enumerable.Empty<IScriptPack>();
 
                 preProcessor.Setup(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName))).Returns(code).Verifiable();
-                scriptEngine.Setup(e => e.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+                scriptEngine.Setup(e => e.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
                 scriptExecutor.Execute(scriptName, paths, recipes);
@@ -158,90 +129,21 @@ namespace ScriptCs.Tests
                 // assert
                 preProcessor.Verify(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName)), Times.Once());
 
-                scriptEngine.Verify(s => s.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+                scriptEngine.Verify(s => s.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
  
-            }
-
-            [Fact]
-            public void ShouldCopyFilesInPathIfLastWriteTimeDiffersFromLastWriteTimeOfFileInBin()
-            {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
-
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem);
-
-                var currentDirectory = @"C:\";
-                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
-                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
-
-                var scriptName = "script.csx";
-                var paths = new string[] { sourceFilePath };
-
-                var sourceWriteTime = new DateTime(2013, 3, 7);
-                var destinatioWriteTime = new DateTime(2013, 3, 8);
-
-                fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
-
-                // act
-                scriptExecutor.Execute(scriptName, paths, Enumerable.Empty<IScriptPack>());
-
-                // assert
-                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
-            }
-
-            [Fact]
-            public void ShouldNotCopyFilesInPathIfLastWriteTimeEqualsLastWriteTimeOfFileInBin()
-            {
-                // arrange
-                var fileSystem = new Mock<IFileSystem>();
-
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem);
-
-                var currentDirectory = @"C:\";
-                var sourceFilePath = Path.Combine(@"C:\fileDir", "fileName.cs");
-                var destinationFilePath = Path.Combine(currentDirectory, @"bin\fileName.cs");
-
-                var scriptName = "script.csx";
-                var paths = new string[] { sourceFilePath };
-
-                var sourceWriteTime = new DateTime(2013, 3, 7);
-                var destinatioWriteTime = sourceWriteTime;
-
-                fileSystem.Setup(fs => fs.GetWorkingDirectory(scriptName)).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.GetLastWriteTime(destinationFilePath)).Returns(destinatioWriteTime).Verifiable();
-                fileSystem.Setup(fs => fs.Copy(sourceFilePath, destinationFilePath, true));
-
-                // act
-                scriptExecutor.Execute(scriptName, paths, Enumerable.Empty<IScriptPack>());
-
-                // assert
-                fileSystem.Verify(fs => fs.Copy(sourceFilePath, destinationFilePath, true), Times.Never());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(sourceFilePath), Times.Once());
-                fileSystem.Verify(fs => fs.GetLastWriteTime(destinationFilePath), Times.Once());
             }
 
             [Fact]
             public void ShouldAddReferenceToEachDestinationFile()
             {
                 // arrange
+                var defaultReferences = new[] {"System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
                 var fileSystem = new Mock<IFileSystem>();
                 var scriptEngine = new Mock<IScriptEngine>();
 
                 var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem, scriptEngine: scriptEngine);
 
                 var currentDirectory = @"C:\";
-                var sourceFilePath1 = Path.Combine(@"C:\fileDir", "fileName1.cs");
-                var sourceFilePath2 = Path.Combine(@"C:\fileDir", "fileName2.cs");
-                var sourceFilePath3 = Path.Combine(@"C:\fileDir", "fileName3.cs");
-                var sourceFilePath4 = Path.Combine(@"C:\fileDir", "fileName4.cs");
                 var destinationFilePath1 = Path.Combine(currentDirectory, @"bin\fileName1.cs");
                 var destinationFilePath2 = Path.Combine(currentDirectory, @"bin\fileName2.cs");
                 var destinationFilePath3 = Path.Combine(currentDirectory, @"bin\fileName3.cs");
@@ -249,20 +151,20 @@ namespace ScriptCs.Tests
 
                 var scriptName = "script.csx";
 
-                var paths = new string[] { sourceFilePath1, sourceFilePath2, sourceFilePath3, sourceFilePath4 };
+                var paths = new string[] { destinationFilePath1, destinationFilePath2, destinationFilePath3, destinationFilePath4 };
 
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
                 fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
 
                 var destPaths = new string[] { "System", "System.Core", destinationFilePath1, destinationFilePath2, destinationFilePath3, destinationFilePath4 };
 
-                scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(destPaths)), It.IsAny<ScriptPackSession>()));
+                scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
                 scriptExecutor.Execute(scriptName, paths, Enumerable.Empty<IScriptPack>());
 
                 // assert
-                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(destPaths)), It.IsAny<ScriptPackSession>()), Times.Once());
+                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
 
             [Fact]
@@ -306,6 +208,48 @@ namespace ScriptCs.Tests
                 executor.Execute("script.csx", Enumerable.Empty<string>(), new[] { scriptPack1.Object });
 
                 scriptPack1.Verify(p => p.Terminate());
+            }
+
+            [Fact]
+            public void ExecutorShouldPassDefaultNamespacesToEngine()
+            {
+                var expectedNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks"};
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+
+                var engine = new Mock<IScriptEngine>();
+
+                var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor, scriptEngine:engine);
+
+                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                engine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x => !x.Except(expectedNamespaces).Any()), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
+            }
+
+            [Fact]
+            public void ExecutorShouldPassDefaultReferencesToEngine()
+            {
+                var defaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+
+                var engine = new Mock<IScriptEngine>();
+
+                var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor, scriptEngine: engine);
+
+                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                engine.Verify(i => i.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Except(defaultReferences).Any()), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
             }
         }
     }
