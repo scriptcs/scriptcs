@@ -50,7 +50,7 @@ namespace ScriptCs.Tests
 
                 result.Execute();
 
-                Assert.Contains("ScriptCs version " + _currentVersion.ToString(), _outputText.ToString());
+                Assert.Contains("scriptcs version " + _currentVersion.ToString(), _outputText.ToString());
             }
         }
     }
