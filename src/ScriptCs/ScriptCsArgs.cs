@@ -2,6 +2,7 @@
 
 namespace ScriptCs
 {
+    [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
     public class ScriptCsArgs
     {
         [ArgDescription("Script file name")]

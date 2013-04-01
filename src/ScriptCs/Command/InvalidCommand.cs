@@ -7,7 +7,7 @@ namespace ScriptCs.Command
     {
         public CommandResult Execute()
         {
-            Console.WriteLine(ArgUsage.GetUsage<ScriptCsArgs>());
+            ArgUsage.GetStyledUsage<ScriptCsArgs>().Write();
             return CommandResult.Error;
         }
     }
