@@ -47,6 +47,7 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
+    <Compile Include="IScriptPackManager.cs" />
     <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
