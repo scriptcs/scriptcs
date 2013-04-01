@@ -6,11 +6,17 @@ namespace ScriptCs.Engine.Roslyn
 {
     public class ScriptHost
     {
-        public ScriptHost(IEnumerable<IScriptPackContext> contexts)
+        private IScriptPackManager _scriptPackManager;
+
+        public ScriptHost(IScriptPackManager scriptPackManager)
         {
-            ScriptPackManager = new ScriptPackManager(contexts);
+            _scriptPackManager = scriptPackManager;
         }
 
-        public ScriptPackManager ScriptPackManager { get; private set; }
+        public T Get<T>() where T:IScriptPackContext
+        {
+            return _scriptPackManager.Get<T>();
+        }
+
     }
 }
