@@ -10,7 +10,8 @@ namespace ScriptCs
         {
             ScriptCsArgs commandArgs;
 
-            try
+            const string unexpectedArgumentMessage = "Unexpected Argument: ";
+            try 
             {
                 commandArgs = Args.Parse<ScriptCsArgs>(args);
             }
@@ -18,7 +19,15 @@ namespace ScriptCs
             {
                 commandArgs = new ScriptCsArgs();
 
-                Console.WriteLine(ex.Message);
+                if (ex.Message.StartsWith(unexpectedArgumentMessage)) 
+                {
+                    var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
+                    Console.WriteLine("Parameter \"{0}\" is not supported!", token);
+                }
+                else 
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             var debug = commandArgs.DebugFlag;
