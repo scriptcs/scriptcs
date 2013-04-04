@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace ScriptCs
@@ -10,53 +9,49 @@ namespace ScriptCs
         private const string UsingString = "using ";
         private const string RString = "#r ";
 
-        protected readonly IFileSystem _fileSystem;
+        protected readonly IFileSystem FileSystem;
 
         public FilePreProcessor(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            FileSystem = fileSystem;
         }
 
-        public string ProcessFile(string path)
+        public FilePreProcessingResult ProcessFile(string path)
         {
-            var entryFile = _fileSystem.ReadFileLines(path);
+            var entryFile = FileSystem.ReadFileLines(path);
             var usings = new List<string>();
-            var rs = new List<string>();
+            var references = new List<string>();
             var loads = new List<string>();
 
-            var parsed = ParseFile(path, entryFile, ref usings, ref rs, ref loads);
+            var parsed = ParseFile(path, entryFile, ref usings, ref references, ref loads);
 
-            var result = GenerateRs(rs);
-            if (!string.IsNullOrWhiteSpace(result))
+            var processedReferences = ProcessReferences(references).ToList();
+
+            var code = GenerateUsings(usings);
+            if (!string.IsNullOrWhiteSpace(code))
             {
-                result += _fileSystem.NewLine;
+                code += FileSystem.NewLine;
             }
 
-            result += GenerateUsings(usings);
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                result += _fileSystem.NewLine;
-            }
+            code += parsed;
 
-            result += parsed;
+            return new FilePreProcessingResult { Code = code, References = processedReferences };
+        }
 
-            return result;
+        private static IEnumerable<string> ProcessReferences(IEnumerable<string> references)
+        {
+            return references.Select(reference => reference.Replace(RString, string.Empty).Replace("\"", string.Empty));
         }
 
         protected virtual string GenerateUsings(ICollection<string> usingLines)
         {
-            return string.Join(_fileSystem.NewLine, usingLines.Distinct());
-        }
-
-        protected virtual string GenerateRs(ICollection<string> rLines)
-        {
-            return string.Join(_fileSystem.NewLine, rLines.Distinct());
+            return string.Join(FileSystem.NewLine, usingLines.Distinct());
         }
 
         private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
         {
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
+            var firstCode = fileList.FindIndex(IsNonDirectiveLine);
 
             var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
 
@@ -91,15 +86,15 @@ namespace ScriptCs
                     if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
                     {
                         var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
-                        var filecontent = _fileSystem.IsPathRooted(filepath)
-                                              ? _fileSystem.ReadFileLines(filepath)
-                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
+                        var filecontent = FileSystem.IsPathRooted(filepath)
+                                              ? FileSystem.ReadFileLines(filepath)
+                                              : FileSystem.ReadFileLines(FileSystem.CurrentDirectory + @"\" + filepath);
 
                         if (filecontent != null)
                         {
                             loads.Add(line);
                             var parsed = ParseFile(filepath, filecontent, ref usings, ref rs, ref loads);
-                            fileList[i] =/* string.Format("//{0}{1}", filepath, _fileSystem.NewLine) + */parsed;
+                            fileList[i] = parsed;
                         }
                     }
                     else
@@ -109,7 +104,7 @@ namespace ScriptCs
                 }
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
+            var result = string.Join(FileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
             return result;
         }
 
@@ -132,16 +127,17 @@ namespace ScriptCs
         {
             return line.TrimStart(' ').StartsWith(LoadString);
         }
+    }
 
-        private enum ParsingStatus
+    public class FilePreProcessingResult
+    {
+        public FilePreProcessingResult()
         {
-            ForbidReferences,
-            
-            ForbidLoads,
-
-            ForbidUsings,
-
-            NoRestrictions
+            References = new List<string>();
         }
+
+        public string Code { get; set; }
+
+        public List<string> References { get; set; }
     }
 }

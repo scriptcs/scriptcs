@@ -34,9 +34,9 @@ namespace ScriptCs
             scriptPackSession.InitializePacks();
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            var code = _filePreProcessor.ProcessFile(path);
+            var result = _filePreProcessor.ProcessFile(path);
 
-            _scriptEngine.Execute(code, references, DefaultNamespaces, scriptPackSession);
+            _scriptEngine.Execute(result.Code, references.Union(result.References), DefaultNamespaces, scriptPackSession);
 
             scriptPackSession.TerminatePacks();
         }
