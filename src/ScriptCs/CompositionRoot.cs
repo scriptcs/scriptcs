@@ -49,10 +49,10 @@ namespace ScriptCs
             }
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
-            var scriptPath = Environment.CurrentDirectory;
+            var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin") ;
             if (Directory.Exists(scriptPath))
             {
-                var catalog = new DirectoryCatalog(Path.Combine(Environment.CurrentDirectory, "bin"));
+                var catalog = new DirectoryCatalog(scriptPath);
                 builder.RegisterComposablePartCatalog(catalog);
             }
             _container = builder.Build();
