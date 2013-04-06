@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory)
         {
             _scriptEngine = new ScriptEngine();
-
+            _scriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
             _scriptHostFactory = scriptHostFactory;
         }
 
