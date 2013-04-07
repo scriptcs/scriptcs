@@ -14,6 +14,23 @@ namespace ScriptCs.Package
             _fileSystem = fileSystem;
         }
 
+        public IEnumerable<string> CreatePackageFile()
+        {
+            var packageReferenceFile = new PackageReferenceFile(Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile));
+            var repository = new LocalPackageRepository(Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder));
+            var arbitraryPackages = repository.GetPackages();
+            var result = new List<string>();
+
+            foreach (var package in arbitraryPackages.GroupBy(i => i.Id))
+            {
+                var p = package.OrderByDescending(i => i.Version).FirstOrDefault();
+                packageReferenceFile.AddEntry(p.Id, p.Version, VersionUtility.ParseFrameworkName("net45"));
+                result.Add(string.Format("{0}, Version {1}, .NET 4.5", p.Id, p.Version));
+            }
+
+            return result;
+        }
+
         public IPackageObject FindPackage(string path, IPackageReference packageRef)
         {
             var repository = new LocalPackageRepository(path);
