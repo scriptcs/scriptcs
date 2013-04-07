@@ -5,9 +5,9 @@ namespace ScriptCs.Engine.Roslyn
 {
     public class ScriptHostFactory : IScriptHostFactory
     {
-        public ScriptHost CreateScriptHost(IEnumerable<IScriptPackContext> contexts)
+        public ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager)
         {
-            return new ScriptHost(contexts);
+            return new ScriptHost(scriptPackManager);
         }
     }
 }

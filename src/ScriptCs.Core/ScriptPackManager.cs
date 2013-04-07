@@ -4,7 +4,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptPackManager
+    public class ScriptPackManager : IScriptPackManager
     {
         private IDictionary<Type, IScriptPackContext> _contexts = new Dictionary<Type, IScriptPackContext>(); 
 

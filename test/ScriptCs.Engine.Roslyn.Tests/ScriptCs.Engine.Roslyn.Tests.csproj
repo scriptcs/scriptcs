@@ -42,6 +42,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynScriptDebuggerEngine.cs" />
     <Compile Include="RoslynScriptEngineTests.cs" />
+    <Compile Include="ScriptHostTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

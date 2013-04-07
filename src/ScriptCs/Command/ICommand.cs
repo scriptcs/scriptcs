@@ -19,6 +19,10 @@ namespace ScriptCs.Command
         List<ICommand> Commands { get; }
     }
 
+    public interface IVersionCommand : ICommand
+    {
+    }
+
     public interface ICommand
     {
         CommandResult Execute();
