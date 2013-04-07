@@ -102,6 +102,18 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldSaveWhenSaveFlagIsPassed()
+            {
+                var args = new ScriptCsArgs { Save = true, ScriptName = null };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldNotBeNull();
+                result.ShouldImplement<ISaveCommand>();
+            }
+
+            [Fact]
             public void ShouldReturnInvalidWhenNoNameOrInstallSet()
             {
                 var args = new ScriptCsArgs
