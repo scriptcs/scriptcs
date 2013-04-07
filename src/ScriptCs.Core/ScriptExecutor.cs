@@ -31,6 +31,7 @@ namespace ScriptCs
             _scriptEngine.BaseDirectory = bin;
 
             var scriptPackSession = new ScriptPackSession(scriptPacks);
+            
             scriptPackSession.InitializePacks();
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
