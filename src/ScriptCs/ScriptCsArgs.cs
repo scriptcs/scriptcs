@@ -21,6 +21,10 @@ namespace ScriptCs
         [ArgShortcut("restore")]
         public bool Restore { get; set; }
 
+        [ArgDescription("Creates a packages.config file based on the packages directory")]
+        [ArgShortcut("save")]
+        public bool Save { get; set; }
+
         [ArgDescription("Cleans installed packages from working directory")]
         [ArgShortcut("clean")]
         public bool Clean { get; set; }
@@ -31,11 +35,5 @@ namespace ScriptCs
 
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
-
-
-        public bool IsValid()
-        {
-            return !string.IsNullOrWhiteSpace(ScriptName) || Install != null;
-        }
     }
 }
