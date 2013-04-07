@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -26,7 +27,7 @@ namespace ScriptCs.Engine.Roslyn
         public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
-
+  
             var session = _scriptEngine.CreateSession(host);
 
             foreach (var reference in references.Union(scriptPackSession.References).Distinct())

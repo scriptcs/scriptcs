@@ -16,7 +16,7 @@ namespace ScriptCs
         public ScriptPackSession(IEnumerable<IScriptPack> scriptPacks)
         {
             _scriptPacks = scriptPacks;
-            _contexts = _scriptPacks.Select(x => x.GetContext());
+            _contexts = _scriptPacks.Select(s => s.GetContext()).Where(c=>c != null);
             _references = new List<string>();
             _namespaces = new List<string>();
 
