@@ -2,7 +2,7 @@
 
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs
 {
     public class ScriptHost
     {
@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
             _scriptPackManager = scriptPackManager;
         }
 
-        public T Get<T>() where T:IScriptPackContext
+        public T Require<T>() where T:IScriptPackContext
         {
             return _scriptPackManager.Get<T>();
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs
 {
     public class ScriptHostFactory : IScriptHostFactory
     {

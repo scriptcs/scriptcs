@@ -6,6 +6,8 @@ namespace ScriptCs.Command
 
     public interface IRestoreCommand : ICommand { }
 
+    public interface ISaveCommand : ICommand { }
+
     public interface ICleanCommand : ICommand { }
 
     public interface IInstallCommand : ICommand { }

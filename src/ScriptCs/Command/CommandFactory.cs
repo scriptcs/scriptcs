@@ -59,6 +59,11 @@
                 return cleanCommand;
             }
 
+            if (args.Save)
+            {
+                return new SaveCommand(_scriptServiceRoot.PackageAssemblyResolver);
+            }
+
             if (args.Version)
             {
                 return new VersionCommand();

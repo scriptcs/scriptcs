@@ -36,18 +36,17 @@ namespace ScriptCs.Tests
                 var code = "var a = 0;";
 
                 var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
-
+ 
                 var scriptPack1 = new Mock<IScriptPack>();
                 scriptPack1.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
-                scriptPack1.Setup(p => p.GetContext()).Returns(Mock.Of<IScriptPackContext>());
+                scriptPack1.Setup(p => p.GetContext()).Returns((IScriptPackContext)null);
 
                 var scriptPackSession = new ScriptPackSession(new[] { scriptPack1.Object });
-
+    
                 engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
 
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>()));
             }
-
         }
     }
 }
