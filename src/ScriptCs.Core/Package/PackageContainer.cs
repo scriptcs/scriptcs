@@ -21,10 +21,11 @@ namespace ScriptCs.Package
             var arbitraryPackages = repository.GetPackages();
             var result = new List<string>();
 
-            foreach (var package in arbitraryPackages)
+            foreach (var package in arbitraryPackages.GroupBy(i => i.Id))
             {
-                packageReferenceFile.AddEntry(package.Id, package.Version, VersionUtility.ParseFrameworkName("net45"));
-                result.Add(string.Format("{0}, Version {1}, .NET 4.5", package.Id, package.Version));
+                var p = package.OrderByDescending(i => i.Version).FirstOrDefault();
+                packageReferenceFile.AddEntry(p.Id, p.Version, VersionUtility.ParseFrameworkName("net45"));
+                result.Add(string.Format("{0}, Version {1}, .NET 4.5", p.Id, p.Version));
             }
 
             return result;

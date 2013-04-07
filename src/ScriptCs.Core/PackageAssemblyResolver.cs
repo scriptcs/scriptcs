@@ -42,6 +42,7 @@ namespace ScriptCs
             if (!result.Any())
             {
                 output("No packages found!");
+                return;
             }
 
             result.ForEach(i => output(string.Format("Added {0}", i)));
