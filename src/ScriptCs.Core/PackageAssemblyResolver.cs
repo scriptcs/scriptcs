@@ -21,6 +21,33 @@ namespace ScriptCs
             _packageContainer = packageContainer;
         }
 
+        public void SavePackages(Action<string> output)
+        {
+            var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
+            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
+
+            if (_fileSystem.FileExists(packagesFile))
+            {
+                output("Packages.config already exists!");
+                return;
+            }
+
+            if (!_fileSystem.DirectoryExists(packagesFolder))
+            {
+                output("Packages directory does not exist!");
+                return;
+            }
+
+            var result = _packageContainer.CreatePackageFile().ToList();
+            if (!result.Any())
+            {
+                output("No packages found!");
+            }
+
+            result.ForEach(i => output(string.Format("Added {0}", i)));
+            output("Packages.config successfully created!");
+        }
+
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)
         {
             var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);

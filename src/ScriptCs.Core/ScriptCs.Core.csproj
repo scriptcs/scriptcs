@@ -68,7 +68,9 @@
     <Compile Include="ScriptPackSession.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\ScriptCs.Core.nuspec" />
   </ItemGroup>
   <ItemGroup>
