@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory)
         {
             _scriptEngine = new ScriptEngine();
-
+            _scriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
             _scriptHostFactory = scriptHostFactory;
         }
 
@@ -25,8 +25,7 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
-            var contexts = scriptPackSession.ScriptPacks.Select(x => x.GetContext());
-            var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(contexts));
+            var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
 
             var session = _scriptEngine.CreateSession(host);
 

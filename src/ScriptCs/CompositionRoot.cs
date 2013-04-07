@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 using Autofac;
 using Autofac.Integration.Mef;
 using ScriptCs.Engine.Roslyn;
@@ -12,6 +13,7 @@ namespace ScriptCs
     {
         private readonly bool _debug;
         private IContainer _container;
+        private ScriptServiceRoot _scriptServiceRoot;
 
         public CompositionRoot(bool debug)
         {
@@ -47,15 +49,19 @@ namespace ScriptCs
             }
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
-
-            var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.pack.dll");
-            builder.RegisterComposablePartCatalog(catalog);
+            var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin") ;
+            if (Directory.Exists(scriptPath))
+            {
+                var catalog = new DirectoryCatalog(scriptPath);
+                builder.RegisterComposablePartCatalog(catalog);
+            }
             _container = builder.Build();
+            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
         }
 
         public ScriptServiceRoot GetServiceRoot()
         {
-            return _container.Resolve<ScriptServiceRoot>();
+            return _scriptServiceRoot;
         }
     }
 }

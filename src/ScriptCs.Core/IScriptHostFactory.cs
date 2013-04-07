@@ -2,7 +2,7 @@
 
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs
 {
 	public interface IScriptHostFactory
 	{
