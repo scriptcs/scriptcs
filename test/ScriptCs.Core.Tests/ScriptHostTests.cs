@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
+using ScriptCs;
 using Xunit;
 using Should;
 using Moq;
@@ -28,7 +28,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShoulGetScriptPackFromScriptPackManagerWhenInvoked()
             {
-                var result = _scriptHost.Get<IScriptPackContext>();
+                var result = _scriptHost.Require<IScriptPackContext>();
                 _mockScriptPackManager.Verify(s=>s.Get<IScriptPackContext>());
             }
         }
