@@ -21,6 +21,7 @@ namespace ScriptCs
         [ArgShortcut("restore")]
         public bool Restore { get; set; }
 
+        [ArgDescription("Creates a packages.config file based on the packages directory")]
         [ArgShortcut("save")]
         public bool Save { get; set; }
 
