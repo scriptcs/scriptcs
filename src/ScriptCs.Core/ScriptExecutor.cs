@@ -34,6 +34,7 @@ namespace ScriptCs
 
             _logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks);
+            
             scriptPackSession.InitializePacks();
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);

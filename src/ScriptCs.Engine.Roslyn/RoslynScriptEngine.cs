@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -15,7 +16,7 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
             _scriptEngine = new ScriptEngine();
-
+            _scriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
             _scriptHostFactory = scriptHostFactory;
             _logger = logger;
         }
@@ -28,12 +29,8 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
-            _logger.Debug("Retrieving script packs contexts");
-            var contexts = scriptPackSession.ScriptPacks.Select(x => x.GetContext());
-            
             _logger.Debug("Creating script host");
-            var host = _scriptHostFactory.CreateScriptHost(contexts);
-
+            var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
             _logger.Debug("Creating session");
             var session = _scriptEngine.CreateSession(host);
 

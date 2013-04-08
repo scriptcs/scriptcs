@@ -4,12 +4,35 @@ using ScriptCs.Command;
 
 namespace ScriptCs
 {
+    using System;
+
     internal class Program
     {
-        private static int Main(string[] args)
+        private static int Main(string[] args) 
         {
             ILog logger = null;
-            var commandArgs = Args.Parse<ScriptCsArgs>(args);
+            ScriptCsArgs commandArgs;
+
+            const string unexpectedArgumentMessage = "Unexpected Argument: ";
+
+            try 
+            {
+                commandArgs = Args.Parse<ScriptCsArgs>(args);
+            }
+            catch (ArgException ex) 
+            {
+                commandArgs = new ScriptCsArgs();
+
+                if (ex.Message.StartsWith(unexpectedArgumentMessage)) 
+                {
+                    var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
+                    Console.WriteLine("Parameter \"{0}\" is not supported!", token);
+                }
+                else 
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
 
             var debug = commandArgs.DebugFlag;
             var logLevel = commandArgs.LogLevel;

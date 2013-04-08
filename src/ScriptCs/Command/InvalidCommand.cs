@@ -14,7 +14,7 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _logger.Fatal(ArgUsage.GetUsage<ScriptCsArgs>());
+            _logger.Error(ArgUsage.GetUsage<ScriptCsArgs>());
             return CommandResult.Error;
         }
     }

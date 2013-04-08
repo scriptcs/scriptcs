@@ -31,8 +31,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="PowerArgs">
-      <HintPath>..\..\packages\PowerArgs.1.2.0.1\lib\net40\PowerArgs.dll</HintPath>
+    <Reference Include="PowerArgs, Version=1.4.0.0, Culture=neutral, PublicKeyToken=54832990a0812961, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\PowerArgs.1.4.0.0\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -58,6 +59,7 @@
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\InvalidCommand.cs" />
+    <Compile Include="Command\SaveCommand.cs" />
     <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\RestoreCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />

@@ -292,5 +292,88 @@ namespace ScriptCs.Tests
                 result.Count().ShouldEqual(1);
             }
         }
+
+        public class SavePackagesMethod
+        {
+            private Mock<IFileSystem> _fs;
+            private Mock<IPackageContainer> _pc;
+
+            public SavePackagesMethod()
+            {
+                _fs = new Mock<IFileSystem>();
+                _pc = new Mock<IPackageContainer>();
+            }
+
+            private IPackageAssemblyResolver GetResolver()
+            {
+                return new PackageAssemblyResolver(_fs.Object, _pc.Object);
+            }
+
+            [Fact]
+            public void ShouldNotSaveWhenThereIsPackagesFile()
+            {
+                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
+                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
+                var resolver = GetResolver();
+                var output = new List<string>();
+
+                resolver.SavePackages(msg => output.Add(msg));
+
+                _pc.Verify(i => i.CreatePackageFile(), Times.Never());
+                output.ShouldContain("Packages.config already exists!");
+            }
+
+            [Fact]
+            public void ShouldNotSaveWhenThereIsNoPackagesFolder()
+            {
+                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(false);
+                var resolver = GetResolver();
+
+                var output = new List<string>();
+
+                resolver.SavePackages(msg => output.Add(msg));
+
+                _pc.Verify(i => i.CreatePackageFile(), Times.Never());
+                output.ShouldContain("Packages directory does not exist!");
+            }
+
+            [Fact]
+            public void ShouldSaveWhenThereIsNoPackagesConfigAndThereIsPackagesFolder()
+            {
+                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
+                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string> {"package"});
+                var resolver = GetResolver();
+
+                var output = new List<string>();
+
+                resolver.SavePackages(msg => output.Add(msg));
+
+                _pc.Verify(i => i.CreatePackageFile(), Times.Once());
+                output.ShouldContain("Packages.config successfully created!");
+                output.ShouldContain("Added package");
+            }
+
+            [Fact]
+            public void ShouldDisplayErrorWhenNoPackagesFound()
+            {
+                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
+                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string>());
+                var resolver = GetResolver();
+
+                var output = new List<string>();
+
+                resolver.SavePackages(msg => output.Add(msg));
+
+                _pc.Verify(i => i.CreatePackageFile(), Times.Once());
+                output.ShouldContain("No packages found!");
+            }
+        }
     }
 }

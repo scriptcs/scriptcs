@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -8,22 +8,33 @@ namespace ScriptCs
     public class ScriptPackSession : IScriptPackSession
     {
         private readonly IEnumerable<IScriptPack> _scriptPacks;
+        private readonly IEnumerable<IScriptPackContext> _contexts; 
 
         private IList<string> _references;
         private IList<string> _namespaces;
-
+ 
         public ScriptPackSession(IEnumerable<IScriptPack> scriptPacks)
         {
             _scriptPacks = scriptPacks;
-
+            _contexts = _scriptPacks.Select(s => s.GetContext()).Where(c=>c != null);
             _references = new List<string>();
             _namespaces = new List<string>();
+
+            AddScriptContextNamespace();
         }
 
-        public IEnumerable<IScriptPack> ScriptPacks
+        private void AddScriptContextNamespace()
         {
-            get { return _scriptPacks; }
+            foreach (var context in _contexts)
+            {
+                _namespaces.Add(context.GetType().Namespace);
+            }
         }
+
+        public IEnumerable<IScriptPackContext> Contexts
+        {
+            get { return _contexts; }
+        } 
 
         public IEnumerable<string> References
         {
