@@ -49,12 +49,16 @@ namespace ScriptCs.Engine.Roslyn
 
             if (compileSuccess) 
             {
+                _logger.Debug("Loading assembly into appdomain.");
                 var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
+                _logger.Debug("Retrieving compiled script class (reflection).");
                 var type = assembly.GetType(CompiledScriptClass);
+                _logger.Debug("Retrieving compiled script method (reflection).");
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
                 try
                 {
+                    _logger.Debug("Invoking method.");
                     method.Invoke(null, new[] { session });
                 }
                 catch (Exception e)

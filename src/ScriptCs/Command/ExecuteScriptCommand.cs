@@ -60,7 +60,7 @@ namespace ScriptCs.Command
             var assemblyPaths = _fileSystem.EnumerateFiles(binFolder, "*.dll").ToList();
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
-                _logger.InfoFormat("Found assembly reference: {0}", path);
+                _logger.DebugFormat("Found assembly reference: {0}", path);
             }
 
             return assemblyPaths;

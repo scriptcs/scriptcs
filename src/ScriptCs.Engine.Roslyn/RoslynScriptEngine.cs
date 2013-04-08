@@ -29,6 +29,7 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
+            _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
             var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
             _logger.Debug("Creating session");
@@ -36,18 +37,19 @@ namespace ScriptCs.Engine.Roslyn
 
             foreach (var reference in references.Union(scriptPackSession.References).Distinct())
             {
-                _logger.InfoFormat("Adding reference to {0}", reference);
+                _logger.DebugFormat("Adding reference to {0}", reference);
                 session.AddReference(reference);
             }
             
             foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
             {
-                _logger.InfoFormat("Importing namespace {0}", @namespace);
+                _logger.DebugFormat("Importing namespace {0}", @namespace);
                 session.ImportNamespace(@namespace);    
             }
             
-            _logger.Debug("Executing code");
+            _logger.Info("Starting execution");
             Execute(code, session);
+            _logger.Info("Finished execution");
         }
 
         protected virtual void Execute(string code, Session session)

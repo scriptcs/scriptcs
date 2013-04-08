@@ -38,10 +38,14 @@ namespace ScriptCs
             scriptPackSession.InitializePacks();
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
+            
+            _logger.DebugFormat("File to process: {0}", path);
             var code = _filePreProcessor.ProcessFile(path);
 
+            _logger.Debug("Starting execution in engine");
             _scriptEngine.Execute(code, references, DefaultNamespaces, scriptPackSession);
 
+            _logger.Debug("Terminating packs");
             scriptPackSession.TerminatePacks();
         }
     }
