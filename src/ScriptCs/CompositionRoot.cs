@@ -52,7 +52,7 @@ namespace ScriptCs
             var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin") ;
             if (Directory.Exists(scriptPath))
             {
-                var catalog = new DirectoryCatalog(scriptPath);
+                var catalog = new DirectoryCatalog(scriptPath, "ScriptCs*.*");
                 builder.RegisterComposablePartCatalog(catalog);
             }
             _container = builder.Build();
