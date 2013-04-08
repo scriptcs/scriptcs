@@ -11,8 +11,7 @@ namespace ScriptCs
 
     public class ScriptCsArgs
     {
-        private const string ValidLogLevels =
-            "off, debug, emergency, fatal, alert, critical, severe, error, warn, notice, info, debug, fine, trace, verbose";
+        private const string ValidLogLevels = "error, info, debug, trace";
 
         private string _logLevel;
 
@@ -26,7 +25,7 @@ namespace ScriptCs
 
         [ArgDescription("Flag which defines the log level used. Possible values:" + ValidLogLevels)]
         [ArgShortcut("log")]
-        [DefaultValue("off")]
+        [DefaultValue("info")]
         public string LogLevel 
         {
             get
@@ -62,6 +61,11 @@ namespace ScriptCs
 
         private bool IsLogLevelValid()
         {
+            if (!ValidLogLevels.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Contains(LogLevel))
+            {
+                return false;
+            }
+
             var repository = LogManager.GetRepository();
             var levelMap = repository.LevelMap;
             return levelMap
