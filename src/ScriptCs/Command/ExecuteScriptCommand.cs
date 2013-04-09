@@ -49,7 +49,11 @@ namespace ScriptCs.Command
             if (!_fileSystem.DirectoryExists(binFolder))
                 _fileSystem.CreateDirectory(binFolder);
 
-            var assemblyPaths = _fileSystem.EnumerateFiles(binFolder, "*.dll").ToList();
+            var assemblyPaths = 
+                _fileSystem.EnumerateFiles(binFolder, "*.dll")
+                .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
+                .ToList();
+                        
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
                 Console.WriteLine("Found assembly reference: " + path);
