@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  
+  <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
+  <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
+  
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+
+    <Root>$(MSBuildThisFileDirectory)..\</Root>
+    <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
+    <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
+    <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
+    <NuGetExePath>$(Root).nuget\nuget.exe</NuGetExePath>
+
+    <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Solution Include="$(Root)*.sln">
+      <AdditionalProperties>
+        Configuration=$(Configuration);
+        ArtifactsPath=$(ArtifactsPath)
+      </AdditionalProperties>
+    </Solution>
+
+    <CoreProjects Include="$(Root)src\**\*.csproj" />
+    <TestProjects Include="$(Root)test\**\*.csproj" />
+  </ItemGroup>
+
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
+
+  <Target Name="Clean">
+    <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
+    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') "/>
+    <MakeDir Directories="$(ArtifactsPath)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
+    <MSBuild Projects="@(Solution)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <ItemGroup>
+      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
+    </ItemGroup>
+    
+    <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
+  </Target>
+
+  <Target Name="Package" DependsOnTargets="Test; BuildNuGetPackages; BuildChocolateyPackage"></Target>
+
+  <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
+  </Target>
+
+  <Target Name="BackupCommonVersionInfo">
+    <Copy SourceFiles="$(CommonVersionInfoPath)" DestinationFiles="$(CommonVersionInfoPath).bak" />
+  </Target>
+
+  <Target Name="RestoreCommonVersionInfo" AfterTargets="Build" Condition=" Exists('$(CommonVersionInfoPath).bak') ">
+    <Delete Files="$(CommonVersionInfoPath)" Condition=" Exists('$(CommonVersionInfoPath)') " />
+    <Move SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
+  </Target>
+
+  <PropertyGroup>
+    <NuGetParameters>-Version $(PackageVersion) -Symbols -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
+  </PropertyGroup>
+
+  <Target Name="BuildChocolateyPackage">
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;$(Root)src\ScriptCs\Properties\scriptcs.nuspec&quot; -BasePath &quot;$(Root)src\ScriptCs&quot; $(NuGetParameters)" />
+  </Target>
+
+  <Target Name="BuildNuGetPackages">
+    <ItemGroup>
+      <NuGetProjects Include="$(Root)src\ScriptCs.Contracts\ScriptCs.Contracts.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
+    </ItemGroup>
+
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
+  </Target>
+</Project>
