@@ -1,9 +1,9 @@
 # scriptcs
 
 ## Why should you care?
-Write C# apps with a text editor, nuget and the power of [Roslyn] (http://msdn.microsoft.com/en-us/vstudio/roslyn.aspx)!
+Write C# apps with a text editor, nuget and the power of Rosyln!
 
-**Note**: *Roslyn is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
+**Note**: *Rosyln is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
 
 * More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 * Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
@@ -43,14 +43,16 @@ This will launch a web api host.
 ## How it works
 scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
 
-## Samples
-You can find additional samples for scriptcs in our [samples repository](https://github.com/scriptcs/scriptcs-samples).
+## Docs
+* [Referencing other scripts from your script](https://github.com/scriptcs/scriptcs/wiki/Referencing-scripts)
+* [Debugging overview & How To](https://github.com/scriptcs/scriptcs/blob/dev/docs/DEBUGGING.md)
 
 ## What's next
 * Adding support for pluggable recipe "packs" for different frameworks.
 
 ## Contributing
-Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
+* Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
+* List of all [contributors to date](https://github.com/scriptcs/scriptcs/wiki/Contributors). Thanks!
 
 ## Credits
 * Special thanks to [@filip_woj](http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.

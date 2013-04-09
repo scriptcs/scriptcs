@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Contracts", "src\ScriptCs.Contracts\ScriptCs.Contracts.csproj", "{6049E205-8B5F-4080-B023-70600E51FD64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests", "test\ScriptCs.Tests\ScriptCs.Tests.csproj", "{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A59C6538-62EA-4BF6-AA00-E0E9A2892D47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E95E5426-BF99-458E-AE6F-544DBBA9BC9E}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core", "src\ScriptCs.Core\ScriptCs.Core.csproj", "{E590E710-E159-48E6-A3E6-1A83D3FE732C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
+	ProjectSection(SolutionItems) = preProject
+		build\Build.proj = build\Build.proj
+		build\Build.tasks = build\Build.tasks
+		build\ScriptCs.Common.props = build\ScriptCs.Common.props
+		build\ScriptCs.Version.props = build\ScriptCs.Version.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn", "src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25080671-1A80-4041-B9C7-260578FF4849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25080671-1A80-4041-B9C7-260578FF4849}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25080671-1A80-4041-B9C7-260578FF4849}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25080671-1A80-4041-B9C7-260578FF4849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6049E205-8B5F-4080-B023-70600E51FD64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6049E205-8B5F-4080-B023-70600E51FD64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6049E205-8B5F-4080-B023-70600E51FD64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6049E205-8B5F-4080-B023-70600E51FD64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E590E710-E159-48E6-A3E6-1A83D3FE732C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E590E710-E159-48E6-A3E6-1A83D3FE732C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E590E710-E159-48E6-A3E6-1A83D3FE732C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E590E710-E159-48E6-A3E6-1A83D3FE732C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC228213-7356-4F0D-BA48-EBA5FB8A7506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC228213-7356-4F0D-BA48-EBA5FB8A7506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC228213-7356-4F0D-BA48-EBA5FB8A7506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC228213-7356-4F0D-BA48-EBA5FB8A7506}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+		{AC228213-7356-4F0D-BA48-EBA5FB8A7506} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+	EndGlobalSection
+EndGlobal
