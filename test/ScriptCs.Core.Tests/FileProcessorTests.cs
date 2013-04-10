@@ -56,6 +56,7 @@ namespace ScriptCs.Tests
             {
                 _fileSystem = new Mock<IFileSystem>();
                 _fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
+                _fileSystem.Setup(x => x.IsPathRooted(It.Is<string>(s => s.StartsWith("\\")))).Returns(true);
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx")))
                            .Returns(_file1.ToArray());
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx")))
@@ -65,7 +66,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
                            .Returns(_file4.ToArray());
             }
-
+                
             [Fact]
             public void MultipleUsingStatementsShouldProduceDistinctOutput()
             {
@@ -106,20 +107,6 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotLoadSameFileTwice()
             {
-                var file = new List<string>
-                    {
-                        @"#load ""script4.csx""",
-                        "using System;",
-                        @"Console.WriteLine(""Hello Script 2"");",
-                    };
-
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.NewLine).Returns(Environment.NewLine);
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx")))
-                  .Returns(file.ToArray());
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
-                  .Returns(_file4.ToArray());
-
                 var processor = new FilePreProcessor(_fileSystem.Object);
                 processor.ProcessFile("\\script1.csx");
 
@@ -162,6 +149,7 @@ namespace ScriptCs.Tests
                         @"Console.WriteLine(""abc"");",
                         @"#load ""script4.csx"""
                     };
+
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
@@ -189,6 +177,7 @@ namespace ScriptCs.Tests
                         @"//do stuff",
                         @"}"
                     };
+
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
@@ -215,6 +204,7 @@ namespace ScriptCs.Tests
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(i => i.NewLine).Returns(Environment.NewLine);
+                fs.Setup(x => x.IsPathRooted(It.Is<string>(s => s.StartsWith("\\")))).Returns(true);
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx"))).Returns(file1.ToArray());
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx"))).Returns(_file2.ToArray());
 
@@ -302,6 +292,7 @@ namespace ScriptCs.Tests
                         };
 
                 _fileSystem.SetupGet(fs => fs.NewLine).Returns(Environment.NewLine);
+                _fileSystem.Setup(f => f.IsPathRooted(It.Is<string>(s => s.StartsWith("C:\\")))).Returns(true);
                 _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx"))
                             .Returns(f1.ToArray());
                 _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f2.csx"))
@@ -312,7 +303,6 @@ namespace ScriptCs.Tests
                             .Returns(f4.ToArray());
                 _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f5.csx"))
                             .Returns(f5.ToArray());
-                _fileSystem.Setup(fs => fs.IsPathRooted(It.IsAny<string>())).Returns(true);
 
                 var preProcessor = new FilePreProcessor(_fileSystem.Object);
 
