@@ -10,7 +10,14 @@
 
     Write-Host "Retrieving NuGet dependencies..." -ForegroundColor DarkYellow
 
-    "NuGet.Core","Autofac.Mef","Roslyn.Compilers.CSharp","PowerArgs" | %{ .$nuget install $_ -o $nugetPath -nocache } | Out-Null
+    $dependencies = @{
+        "NuGet.Core" = "2.2.0";
+        "Autofac.Mef" = "3.0.0";
+        "Roslyn.Compilers.CSharp" = "1.2.20906.2";
+        "PowerArgs" = "1.4.1.0";
+    }
+
+    $dependencies.GetEnumerator() | %{ .$nuget install $_.Name -version $_.Value -o $nugetPath -nocache } | Out-Null
 
     Get-ChildItem $nugetPath -Filter "*.dll" -Recurse | %{ Copy-Item $_.FullName $binPath -Force }
     Remove-Item $nugetPath -Recurse -Force
