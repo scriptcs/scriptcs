@@ -65,6 +65,7 @@
     <Compile Include="Command\ExecuteScriptCommand.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="LoggerConfigurator.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

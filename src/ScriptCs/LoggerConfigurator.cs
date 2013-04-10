@@ -1,12 +1,11 @@
-﻿using log4net;
+﻿using System.Globalization;
+using log4net;
 using log4net.Appender;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
-
-using ICommonLog = Common.Logging.ILog;
-
 using Common.Logging.Log4Net;
+using ICommonLog = Common.Logging.ILog;
 
 namespace ScriptCs
 {
@@ -15,11 +14,11 @@ namespace ScriptCs
         private const string Pattern = "%-5level Thread[%thread]: %message%newline";
         private const string LoggerName = "scriptcs";
 
-        private readonly string _logLevel;
+        private readonly LogLevel _logLevel;
 
         private ICommonLog _logger;
 
-        public LoggerConfigurator(string logLevel)
+        public LoggerConfigurator(LogLevel logLevel)
         {
             _logLevel = logLevel;
         }
@@ -31,7 +30,7 @@ namespace ScriptCs
             var consoleAppender = new ConsoleAppender
             {
                 Layout = new PatternLayout(Pattern),
-                Threshold = hierarchy.LevelMap[_logLevel]
+                Threshold = hierarchy.LevelMap[_logLevel.ToString().ToUpper(CultureInfo.CurrentCulture)]
             };
 
             hierarchy.Root.AddAppender(consoleAppender);

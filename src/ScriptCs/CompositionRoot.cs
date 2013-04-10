@@ -13,11 +13,11 @@ namespace ScriptCs
     public class CompositionRoot
     {
         private readonly bool _debug;
-        private readonly string _logLevel; 
+        private readonly LogLevel _logLevel; 
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
-        public CompositionRoot(bool debug, string logLevel)
+        public CompositionRoot(bool debug, LogLevel logLevel)
         {
             _debug = debug;
             _logLevel = logLevel;
