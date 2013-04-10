@@ -16,6 +16,7 @@ Write C# apps with a text editor, nuget and the power of Rosyln!
 * Open a cmd prompt as admin
 * Create a directory "c:\scriptcs_hello" and change to it.
 * run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
+* run "scriptcs -install"
 * create a server.csx with your favorite editor. Paste the text below into the file and save.
 
 ```csharp
