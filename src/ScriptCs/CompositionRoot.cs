@@ -12,12 +12,14 @@ namespace ScriptCs
     public class CompositionRoot
     {
         private readonly bool _debug;
+        private readonly bool _shouldInitDrirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
-        public CompositionRoot(bool debug)
+        public CompositionRoot(bool debug, bool useDirectoryCatalog)
         {
             _debug = debug;
+            _shouldInitDrirectoryCatalog = useDirectoryCatalog;
         }
 
         public void Initialize()
@@ -49,11 +51,15 @@ namespace ScriptCs
             }
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
-            var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin") ;
-            if (Directory.Exists(scriptPath))
+
+            if (_shouldInitDrirectoryCatalog) 
             {
-                var catalog = new DirectoryCatalog(scriptPath);
-                builder.RegisterComposablePartCatalog(catalog);
+                var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin");
+                if (Directory.Exists(scriptPath)) 
+                {
+                    var catalog = new DirectoryCatalog(scriptPath);
+                    builder.RegisterComposablePartCatalog(catalog);
+                }
             }
             _container = builder.Build();
             _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
