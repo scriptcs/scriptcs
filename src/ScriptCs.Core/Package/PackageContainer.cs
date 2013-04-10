@@ -9,6 +9,8 @@ namespace ScriptCs.Package
 {
     public class PackageContainer : IPackageContainer
     {
+        private const string DotNetFramework = ".NETFramework";
+
         private readonly IFileSystem _fileSystem;
 
         public PackageContainer(IFileSystem fileSystem)
@@ -76,7 +78,10 @@ namespace ScriptCs.Package
 
         private static FrameworkName GetNewestSupportedFramework(IPackage packageMetadata)
         {
-            return packageMetadata.GetSupportedFrameworks().OrderByDescending(x => x.Version).FirstOrDefault();
+            return packageMetadata.GetSupportedFrameworks()
+                .Where(x => x.Identifier == DotNetFramework)
+                .OrderByDescending(x => x.Version)
+                .FirstOrDefault();
         }
     }
 }
