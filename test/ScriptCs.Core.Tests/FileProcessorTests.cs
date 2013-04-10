@@ -69,8 +69,12 @@ namespace ScriptCs.Tests
             [Fact]
             public void MultipleUsingStatementsShouldProduceDistinctOutput()
             {
+                const string rootPath = "\\script1.csx";
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\script1.csx");
+                var output = processor.ProcessFile(rootPath);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 
@@ -81,8 +85,12 @@ namespace ScriptCs.Tests
             [Fact]
             public void UsingStateMentsShoulAllBeAtTheTop()
             {
+                const string rootPath = "\\script1.csx";
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\script1.csx");
+                var output = processor.ProcessFile(rootPath);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
                 var lastUsing = splitOutput.ToList().FindLastIndex(x => x.TrimStart(' ').StartsWith("using "));
@@ -94,8 +102,12 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotLoadInlineLoads()
             {
+                const string rootPath = "\\script1.csx";
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                processor.ProcessFile("\\script1.csx");
+                processor.ProcessFile(rootPath);
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script1.csx")), Times.Once());
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script2.csx")), Times.Once());
@@ -106,22 +118,12 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotLoadSameFileTwice()
             {
-                var file = new List<string>
-                    {
-                        @"#load ""script4.csx""",
-                        "using System;",
-                        @"Console.WriteLine(""Hello Script 2"");",
-                    };
+                const string rootPath = "\\script1.csx";
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.NewLine).Returns(Environment.NewLine);
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx")))
-                  .Returns(file.ToArray());
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script4.csx")))
-                  .Returns(_file4.ToArray());
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                processor.ProcessFile("\\script1.csx");
+                processor.ProcessFile(rootPath);
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script1.csx")), Times.Once());
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "\\script2.csx")), Times.Once());
@@ -132,6 +134,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void LoadBeforeUsingShouldBeAllowed()
             {
+                const string rootPath = "\\file.csx";
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
@@ -140,10 +143,12 @@ namespace ScriptCs.Tests
                         @"Console.WriteLine(""abc"");"
                     };
 
-                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == rootPath))).Returns(file.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\file.csx");
+                var output = processor.ProcessFile(rootPath);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
                 var lastUsing = splitOutput.ToList().FindLastIndex(x => x.TrimStart(' ').StartsWith("using "));
@@ -156,16 +161,20 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotBeAllowedToLoadAfterUsing()
             {
+                const string rootPath = "\\file.csx";
+
                 var file = new List<string>
                     {
                         "using System;",
                         @"Console.WriteLine(""abc"");",
                         @"#load ""script4.csx"""
                     };
-                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == rootPath))).Returns(file.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\file.csx");
+                var output = processor.ProcessFile(rootPath);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 
@@ -178,6 +187,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void UsingInCodeDoesNotCountAsUsingImport()
             {
+                const string rootPath = "\\file.csx";
+
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
@@ -189,10 +200,12 @@ namespace ScriptCs.Tests
                         @"//do stuff",
                         @"}"
                     };
-                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\file.csx"))).Returns(file.ToArray());
+
+                _fileSystem.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == rootPath))).Returns(file.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\file.csx");
+                var output = processor.ProcessFile(rootPath);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
                 var firstNonImportUsing =
@@ -205,6 +218,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHaveReferencesOnTop()
             {
+                const string rootPath = "\\script1.csx";
+
                 var file1 = new List<string>
                     {
                         @"#r ""My.dll""",
@@ -215,11 +230,12 @@ namespace ScriptCs.Tests
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(i => i.NewLine).Returns(Environment.NewLine);
+                fs.Setup(x => x.IsPathRooted(rootPath)).Returns(true);
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx"))).Returns(file1.ToArray());
                 fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script2.csx"))).Returns(_file2.ToArray());
 
                 var processor = new FilePreProcessor(fs.Object);
-                var output = processor.ProcessFile("\\script1.csx");
+                var output = processor.ProcessFile(rootPath);
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None).ToList();
 
                 var lastR = splitOutput.FindLastIndex(line => line.StartsWith("#r "));
@@ -232,6 +248,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHaveReferencesFromAllFiles()
             {
+                const string rootFile = "\\script1.csx";
+
                 var file1 = new List<string>
                     {
                         @"#r ""My.dll""",
@@ -247,13 +265,14 @@ namespace ScriptCs.Tests
                         @"Console.WriteLine(""Hi!"");"
                     };
 
+                _fileSystem.Setup(x => x.IsPathRooted(rootFile)).Returns(true);
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\script1.csx")))
                            .Returns(file1.ToArray());
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "\\scriptX.csx")))
                            .Returns(file2.ToArray());
 
                 var processor = new FilePreProcessor(_fileSystem.Object);
-                var output = processor.ProcessFile("\\script1.csx");
+                var output = processor.ProcessFile(rootFile);
 
                 var splitOutput = output.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
                 splitOutput.Count(line => line.StartsWith("#r ")).ShouldEqual(2);

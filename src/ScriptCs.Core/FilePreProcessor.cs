@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using NuGet;
 
 namespace ScriptCs
 {
@@ -19,28 +21,24 @@ namespace ScriptCs
 
         public string ProcessFile(string path)
         {
-            var entryFile = _fileSystem.ReadFileLines(path);
-            var usings = new List<string>();
-            var rs = new List<string>();
-            var loads = new List<string>();
+            //var entryFile = _fileSystem.ReadFileLines(path);
+            var parseResult = ParseFile(_fileSystem, path);
 
-            var parsed = ParseFile(path, entryFile, ref usings, ref rs, ref loads);
-
-            var result = GenerateRs(rs);
+            var result = GenerateRs(parseResult.Rs);
             if (!string.IsNullOrWhiteSpace(result))
             {
                 result += _fileSystem.NewLine;
             }
 
-            result += GenerateUsings(usings);
+            result += GenerateUsings(parseResult.Usings);
             if (!string.IsNullOrWhiteSpace(result))
             {
                 result += _fileSystem.NewLine;
             }
 
-            result += parsed;
+            result += parseResult.Parsed;
 
-            return result;
+            return result.TrimEnd(_fileSystem.NewLine.ToCharArray());
         }
 
         protected virtual string GenerateUsings(ICollection<string> usingLines)
@@ -53,10 +51,15 @@ namespace ScriptCs
             return string.Join(_fileSystem.NewLine, rLines.Distinct());
         }
 
-        private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
+        private static ParseResult ParseFile(IFileSystem fileSystem, string path) //, IEnumerable<string> file
         {
+            var parseResult = new ParseResult();
+
+            var file = GetFileContentFromPath(fileSystem, path);
+            if (file == null) return parseResult;
+
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
+            var firstCode = fileList.FindIndex(IsNonDirectiveLine);
 
             var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
 
@@ -73,44 +76,46 @@ namespace ScriptCs
                 var line = fileList[i];
                 if (IsUsingLine(line))
                 {
-                    usings.Add(line);
-                } 
-                else if (IsRLine(line))
-                {
-                    if (i < firstCode)
-                    {
-                        rs.Add(line);
-                    }
-                    else
-                    {
-                        fileList[i] = string.Empty;
-                    }
-                } 
-                else if (IsLoadLine(line))
-                {
-                    if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
-                    {
-                        var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
-                        var filecontent = _fileSystem.IsPathRooted(filepath)
-                                              ? _fileSystem.ReadFileLines(filepath)
-                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
-
-                        if (filecontent != null)
-                        {
-                            loads.Add(line);
-                            var parsed = ParseFile(filepath, filecontent, ref usings, ref rs, ref loads);
-                            fileList[i] =/* string.Format("//{0}{1}", filepath, _fileSystem.NewLine) + */parsed;
-                        }
-                    }
-                    else
-                    {
-                        fileList[i] = string.Empty;
-                    }
+                    parseResult.Usings.Add(line);
+                    continue;
                 }
+
+                if (IsRLine(line) && i < firstCode)
+                {
+                    parseResult.Rs.Add(line);
+                    continue;
+                }
+
+                if (IsLoadLine(line) && (i < firstCode || firstCode < 0) && !parseResult.Loads.Contains(line))
+                {
+                    var filepath = GetFilePathFromLine(line);
+
+                    var result = ParseFile(fileSystem, filepath);
+                    parseResult.Combine(result);
+
+                    continue;
+                }
+                
+                parseResult.Code.Add(line + fileSystem.NewLine);
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
-            return result;
+            return parseResult;
+        }
+
+        private static string GetFilePathFromLine(string line)
+        {
+            return line.Trim(' ')
+                       .Replace(LoadString, string.Empty)
+                       .Replace("\"", string.Empty)
+                       .Replace(";", string.Empty);
+        }
+
+        private static IEnumerable<string> GetFileContentFromPath(IFileSystem fileSystem, string filepath)
+        {
+            var isPathRooted = fileSystem.IsPathRooted(filepath);
+            return isPathRooted
+                       ? fileSystem.ReadFileLines(filepath)
+                       : fileSystem.ReadFileLines(fileSystem.CurrentDirectory + @"\" + filepath);
         }
 
         private static bool IsNonDirectiveLine(string line)
@@ -142,6 +147,42 @@ namespace ScriptCs
             ForbidUsings,
 
             NoRestrictions
+        }
+
+        private class ParseResult
+        {
+            public ParseResult()
+            {
+                Usings = new HashSet<string>();
+                Rs = new HashSet<string>();
+                Loads = new List<string>();
+                Code = new List<string>();
+            }
+
+            public string Parsed
+            {
+                get
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    Code.ForEach(l => stringBuilder.Append(l));
+
+                    return stringBuilder.ToString();
+                }
+            }
+
+            public HashSet<string> Usings { get; private set; }
+            public HashSet<string> Rs { get; private set; }
+            public List<string> Loads { get; private set; }
+            public List<string> Code { get; private set; }
+
+            public void Combine(ParseResult parseResult)
+            {
+                Usings.AddRange(parseResult.Usings);
+                Rs.AddRange(parseResult.Rs);
+                Loads.AddRange(parseResult.Loads);
+                Code.AddRange(parseResult.Code);
+            }
         }
     }
 }
