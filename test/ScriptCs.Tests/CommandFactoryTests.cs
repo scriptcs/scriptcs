@@ -10,20 +10,25 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static ScriptServiceRoot CreateRoot()
+            private static ScriptServiceRoot CreateRoot(bool packagesFileExists = true)
             {
+                const string CurrentDirectory = "C:\\";
+                const string PackagesFile = "C:\\packages.config";
+
                 var fs = new Mock<IFileSystem>();
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
+
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
 
-                return root;
+                return new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
             }
 
             [Fact]
-            public void ShouldInstallWhenInstallFlagIsOn()
+            public void ShouldInstallAndRestoreWhenInstallFlagIsOn()
             {
                 var args = new ScriptCsArgs
                 {
@@ -40,6 +45,27 @@ namespace ScriptCs.Tests
 
                 (compositeCommand.Commands[0] is IInstallCommand).ShouldBeTrue();
                 (compositeCommand.Commands[1] is IRestoreCommand).ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldInstallRestoreAndSaveWhenInstallFlagIsOnAndNoPackagesFileExists()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreReleaseFlag = false,
+                    Install = "",
+                    ScriptName = null
+                };
+
+                var factory = new CommandFactory(CreateRoot(packagesFileExists: false));
+                var result = factory.CreateCommand(args);
+
+                var compositeCommand = result as ICompositeCommand;
+                compositeCommand.ShouldNotBeNull();
+
+                (compositeCommand.Commands[0] is IInstallCommand).ShouldBeTrue();
+                (compositeCommand.Commands[1] is IRestoreCommand).ShouldBeTrue();
+                (compositeCommand.Commands[2] is ISaveCommand).ShouldBeTrue();
             }
 
             [Fact]
@@ -90,15 +116,18 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldCleanWhenCleanFlagIsPassed()
+            public void ShouldSaveAndCleanWhenCleanFlagIsPassed()
             {
                 var args = new ScriptCsArgs { Clean = true, ScriptName = null };
 
                 var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args);
 
-                result.ShouldNotBeNull();
-                result.ShouldImplement<ICleanCommand>();
+                var compositeCommand = result as ICompositeCommand;
+                compositeCommand.ShouldNotBeNull();
+
+                (compositeCommand.Commands[0] is ISaveCommand).ShouldBeTrue();
+                (compositeCommand.Commands[1] is ICleanCommand).ShouldBeTrue();
             }
 
             [Fact]
