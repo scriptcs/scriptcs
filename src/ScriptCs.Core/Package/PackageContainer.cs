@@ -34,7 +34,14 @@ namespace ScriptCs.Package
                 var newestFramework = GetNewestSupportedFramework(package);
                 packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
 
-                yield return string.Format("{0}, Version {1}, .NET {2}", package.Id, package.Version, newestFramework.Version);
+                if (newestFramework == null)
+                {
+                    yield return string.Format("{0}, Version {1}", package.Id, package.Version);
+                }
+                else
+                {
+                    yield return string.Format("{0}, Version {1}, .NET {2}", package.Id, package.Version, newestFramework.Version);
+                }
             }
         }
 
@@ -56,24 +63,38 @@ namespace ScriptCs.Package
             var references = packageReferenceFile.GetPackageReferences().ToList();
             if (references.Any())
             {
-                return references.Select(i => new PackageReference(i.Id, i.TargetFramework, i.Version.Version, i.Version.SpecialVersion));
+                foreach (var packageReference in references)
+                {
+                    yield return new PackageReference(
+                            packageReference.Id,
+                            packageReference.TargetFramework,
+                            packageReference.Version.Version,
+                            packageReference.Version.SpecialVersion);
+                }
+
+                yield break;
             }
 
             // No packages.config, check packages folder
             var packagesFolder = Path.Combine(_fileSystem.GetWorkingDirectory(path), Constants.PackagesFolder);
-            if (_fileSystem.DirectoryExists(packagesFolder))
+            if (!_fileSystem.DirectoryExists(packagesFolder)) yield break;
+
+            var repository = new LocalPackageRepository(packagesFolder);
+
+            var arbitraryPackages = repository.GetPackages();
+            if (!arbitraryPackages.Any()) yield break;
+
+            foreach (var arbitraryPackage in arbitraryPackages)
             {
-                var repository = new LocalPackageRepository(packagesFolder);
+                var newestFramework = GetNewestSupportedFramework(arbitraryPackage) 
+                    ?? VersionUtility.EmptyFramework;
 
-                var arbitraryPackages = repository.GetPackages();
-                if (arbitraryPackages.Any())
-                {
-                    return arbitraryPackages.Select(i => 
-                        new PackageReference(i.Id, GetNewestSupportedFramework(i), i.Version.Version, i.Version.SpecialVersion));
-                }
+                yield return new PackageReference(
+                        arbitraryPackage.Id,
+                        newestFramework,
+                        arbitraryPackage.Version.Version,
+                        arbitraryPackage.Version.SpecialVersion);
             }
-
-            return Enumerable.Empty<IPackageReference>();
         }
 
         private static FrameworkName GetNewestSupportedFramework(IPackage packageMetadata)
