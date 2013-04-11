@@ -31,7 +31,8 @@ namespace ScriptCs
             }
 
             var debug = commandArgs.DebugFlag;
-            var compositionRoot = new CompositionRoot(debug);
+            var scriptProvided = !string.IsNullOrWhiteSpace(commandArgs.ScriptName);
+            var compositionRoot = new CompositionRoot(debug, scriptProvided);
             compositionRoot.Initialize();
             var scriptServiceRoot = compositionRoot.GetServiceRoot();
 
