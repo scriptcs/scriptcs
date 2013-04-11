@@ -43,8 +43,9 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                (compositeCommand.Commands[0] is IInstallCommand).ShouldBeTrue();
-                (compositeCommand.Commands[1] is IRestoreCommand).ShouldBeTrue();
+                compositeCommand.Commands.Count.ShouldEqual(2);
+                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
             }
 
             [Fact]
@@ -63,9 +64,10 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                (compositeCommand.Commands[0] is IInstallCommand).ShouldBeTrue();
-                (compositeCommand.Commands[1] is IRestoreCommand).ShouldBeTrue();
-                (compositeCommand.Commands[2] is ISaveCommand).ShouldBeTrue();
+                compositeCommand.Commands.Count.ShouldEqual(3);
+                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
+                compositeCommand.Commands[2].ShouldImplement<ISaveCommand>();
             }
 
             [Fact]
@@ -111,8 +113,9 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                (compositeCommand.Commands[0] is IRestoreCommand).ShouldBeTrue();
-                (compositeCommand.Commands[1] is IScriptCommand).ShouldBeTrue();
+                compositeCommand.Commands.Count.ShouldEqual(2);
+                compositeCommand.Commands[0].ShouldImplement<IRestoreCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
@@ -126,8 +129,9 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                (compositeCommand.Commands[0] is ISaveCommand).ShouldBeTrue();
-                (compositeCommand.Commands[1] is ICleanCommand).ShouldBeTrue();
+                compositeCommand.Commands.Count.ShouldEqual(2);
+                compositeCommand.Commands[0].ShouldImplement<ISaveCommand>();
+                compositeCommand.Commands[1].ShouldImplement<ICleanCommand>();
             }
 
             [Fact]
