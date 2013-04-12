@@ -23,8 +23,11 @@ namespace ScriptCs.Tests
                         ScriptName = null
                     };
 
+                const string CurrentDirectory = @"C:\";
+
                 var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(@"C:\");
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
@@ -50,8 +53,11 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
+                const string CurrentDirectory = @"C:\";
+
                 var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(@"C:\");
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
