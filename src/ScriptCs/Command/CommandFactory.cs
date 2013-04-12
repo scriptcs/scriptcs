@@ -1,4 +1,6 @@
-﻿namespace ScriptCs.Command
+﻿using System.IO;
+
+namespace ScriptCs.Command
 {
     public class CommandFactory
     {
@@ -46,17 +48,28 @@
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver);
 
+                var currentDirectory = _scriptServiceRoot.FileSystem.CurrentDirectory;
+                var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
+
+                if (!_scriptServiceRoot.FileSystem.FileExists(packageFile))
+                {
+                    var saveCommand = new SaveCommand(_scriptServiceRoot.PackageAssemblyResolver);
+                    return new CompositeCommand(installCommand, restoreCommand, saveCommand);
+                }
+
                 return new CompositeCommand(installCommand, restoreCommand);
             }
 
             if (args.Clean)
             {
+                var saveCommand = new SaveCommand(_scriptServiceRoot.PackageAssemblyResolver);
+
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver);
 
-                return cleanCommand;
+                return new CompositeCommand(saveCommand, cleanCommand);
             }
 
             if (args.Save)
