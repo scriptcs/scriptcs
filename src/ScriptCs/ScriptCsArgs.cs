@@ -33,6 +33,14 @@ namespace ScriptCs
         [ArgShortcut("pre")]
         public bool AllowPreReleaseFlag { get; set; }
 
+        [ArgDescription("Allows script assembly to be cached")]
+        [ArgShortcut("cache")]
+        public bool CacheAssembly { get; set; }
+
+        [ArgDescription("Removes the cached script assembly")]
+        [ArgShortcut("uncache")]
+        public bool UncacheAssembly { get; set; }
+
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
     }
