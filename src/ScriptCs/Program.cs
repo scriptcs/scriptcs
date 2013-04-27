@@ -36,7 +36,8 @@ namespace ScriptCs
 
             var debug = commandArgs.DebugFlag;
             var logLevel = commandArgs.LogLevel;
-            var compositionRoot = new CompositionRoot(debug, logLevel);
+            var scriptProvided = !string.IsNullOrWhiteSpace(commandArgs.ScriptName);
+            var compositionRoot = new CompositionRoot(debug, scriptProvided, logLevel);
             compositionRoot.Initialize();
             logger = compositionRoot.GetLogger();
             logger.Debug("Creating ScriptServiceRoot");
