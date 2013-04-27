@@ -44,19 +44,28 @@ namespace ScriptCs.Command
 
         private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
         {
+            var scriptAssembly = Path.GetFileNameWithoutExtension(_script) + ".dll";
             var binFolder = Path.Combine(workingDirectory, "bin");
+            var assemblyPaths = new List<string>();
 
-            if (!_fileSystem.DirectoryExists(binFolder))
-                _fileSystem.CreateDirectory(binFolder);
-
-            var assemblyPaths = 
-                _fileSystem.EnumerateFiles(binFolder, "*.dll")
-                .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .ToList();
-                        
-            foreach (var path in assemblyPaths.Select(Path.GetFileName))
+            if (_fileSystem.DirectoryExists(binFolder))
             {
-                Console.WriteLine("Found assembly reference: " + path);
+                var paths = _fileSystem.EnumerateFiles(binFolder, "*.dll")
+                                       .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
+                                       .ToList();
+
+                foreach (var path in paths)
+                {
+                    if (String.Compare(Path.GetFileName(path), scriptAssembly, true) != 0)
+                    {
+                        assemblyPaths.Add(path);
+                        Console.WriteLine("Found assembly reference: " + path);
+                    }
+                }
+            }
+            else if (_scriptExecutor.CacheAssembly)
+            {
+                _fileSystem.CreateDirectory(binFolder);
             }
 
             return assemblyPaths;

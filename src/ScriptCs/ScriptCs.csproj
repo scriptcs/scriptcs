@@ -48,6 +48,7 @@
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />
+    <Compile Include="Command\UncacheCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\InvalidCommand.cs" />

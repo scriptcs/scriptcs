@@ -43,6 +43,7 @@ namespace ScriptCs.Command
             {
                 _packageInstaller.InstallPackages(packages, _allowPre, Console.WriteLine);
 
+                Console.WriteLine("Installation completed successfully.");
                 return CommandResult.Success;
             }
             catch (Exception e)

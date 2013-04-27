@@ -15,6 +15,11 @@ namespace ScriptCs.Command
         {
             if (args.ScriptName != null)
             {
+                if (args.UncacheAssembly)
+                    return new UncacheCommand(args.ScriptName, _scriptServiceRoot.FileSystem);
+
+                _scriptServiceRoot.Executor.CacheAssembly = args.CacheAssembly;
+
                 var executeCommand = new ExecuteScriptCommand(
                     args.ScriptName,
                     _scriptServiceRoot.FileSystem,

@@ -12,17 +12,17 @@ namespace ScriptCs
     public class CompositionRoot
     {
         private readonly bool _debug;
-        private readonly bool _shouldInitDrirectoryCatalog;
+        private readonly bool _shouldInitDirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
         public CompositionRoot(bool debug, bool useDirectoryCatalog)
         {
             _debug = debug;
-            _shouldInitDrirectoryCatalog = useDirectoryCatalog;
+            _shouldInitDirectoryCatalog = useDirectoryCatalog;
         }
 
-        public void Initialize()
+        public void Initialize(string scriptName)
         {
             var builder = new ContainerBuilder();
             var types = new[]
@@ -37,6 +37,7 @@ namespace ScriptCs
                     typeof (PackageInstaller)
                 };
 
+            var scriptAssemblyName = Path.GetFileNameWithoutExtension(scriptName) + ".dll";
             builder.RegisterTypes(types).AsImplementedInterfaces();
 
             if (_debug)
@@ -52,17 +53,26 @@ namespace ScriptCs
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
-            if (_shouldInitDrirectoryCatalog) 
+            if (_shouldInitDirectoryCatalog) 
             {
                 var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin");
-                if (Directory.Exists(scriptPath)) 
+                if (Directory.Exists(scriptPath))
                 {
-                    var catalog = new DirectoryCatalog(scriptPath);
-                    builder.RegisterComposablePartCatalog(catalog);
+                    var files = Directory.GetFiles(scriptPath);
+                    foreach (var file in files)
+                    {
+                        var filename = Path.GetFileName(file);
+                        if (String.Compare(scriptAssemblyName, filename, true) == 0)
+                            continue;
+
+                        var catalog = new DirectoryCatalog(scriptPath, filename);
+                        builder.RegisterComposablePartCatalog(catalog);
+                    }
                 }
             }
+
             _container = builder.Build();
-            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
+            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();
         }
 
         public ScriptServiceRoot GetServiceRoot()
