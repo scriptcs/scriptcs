@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
@@ -11,7 +12,8 @@ namespace ScriptCs
 {
     public class LoggerConfigurator
     {
-        private const string Pattern = "%-5level Thread[%thread]: %message%newline";
+        private const string ThreadPattern = " Thread[%thread]";
+        private const string Pattern = "%-5level{threadLevel}: %message%newline";
         private const string LoggerName = "scriptcs";
 
         private readonly LogLevel _logLevel;
@@ -29,7 +31,7 @@ namespace ScriptCs
             var logger = LogManager.GetLogger(LoggerName);
             var consoleAppender = new ConsoleAppender
             {
-                Layout = new PatternLayout(Pattern),
+                Layout = new PatternLayout(GetLogPattern(_logLevel)),
                 Threshold = hierarchy.LevelMap[_logLevel.ToString().ToUpper(CultureInfo.CurrentCulture)]
             };
 
@@ -43,6 +45,21 @@ namespace ScriptCs
         public ICommonLog GetLogger()
         {
             return _logger;
+        }
+
+        private static string GetLogPattern(LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Error:
+                case LogLevel.Info:
+                    return Pattern.Replace("{threadLevel}", string.Empty);
+                case LogLevel.Debug:
+                case LogLevel.Trace:
+                    return Pattern.Replace("{threadLevel}", ThreadPattern);
+                default:
+                    throw new ArgumentOutOfRangeException("logLevel");
+            }
         }
 
         private class CodeConfigurableLog4NetLogger : Log4NetLogger
