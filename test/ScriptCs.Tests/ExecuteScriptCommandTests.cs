@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
@@ -28,7 +28,8 @@ namespace ScriptCs.Tests
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);
@@ -55,7 +56,8 @@ namespace ScriptCs.Tests
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);
