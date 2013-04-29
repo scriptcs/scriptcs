@@ -2,6 +2,6 @@
 {
     public interface IFilePreProcessor
     {
-        string ProcessFile(string path);
+        FilePreProcessingResult ProcessFile(string path);
     }
 }

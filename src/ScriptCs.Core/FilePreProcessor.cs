@@ -6,13 +6,15 @@ namespace ScriptCs
 {
     public class FilePreProcessor : IFilePreProcessor
     {
-        private const string LoadString = "#load ";
         private const string UsingString = "using ";
-        private const string RString = "#r ";
+
+        private const string LoadDirective = "#load ";
+
+        private const string ReferenceDirective = "#r ";
 
         private readonly ILog _logger;
-        
-        protected readonly IFileSystem _fileSystem;
+
+        private readonly IFileSystem _fileSystem;
 
         public FilePreProcessor(IFileSystem fileSystem, ILog logger)
         {
@@ -20,50 +22,46 @@ namespace ScriptCs
             _logger = logger;
         }
 
-        public string ProcessFile(string path)
+        public FilePreProcessingResult ProcessFile(string path)
         {
             _logger.DebugFormat("{0} - Reading lines", path);
             var entryFile = _fileSystem.ReadFileLines(path);
             var usings = new List<string>();
-            var rs = new List<string>();
+            var references = new List<string>();
             var loads = new List<string>();
 
             _logger.DebugFormat("{0} - Parsing ", path);
-            var parsed = ParseFile(path, entryFile, ref usings, ref rs, ref loads);
+            var parsedCode = ParseFile(path, entryFile, ref usings, ref references, ref loads);
 
             _logger.DebugFormat("{0} - Generating references (#r)", path);
-            var result = GenerateRs(rs);
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                result += _fileSystem.NewLine;
-            }
+            var processedReferences = ProcessReferences(references).ToList();
 
             _logger.DebugFormat("{0} - Generating using statements", path);
-            result += GenerateUsings(usings);
-            if (!string.IsNullOrWhiteSpace(result))
+            var code = GenerateUsings(usings);
+            if (!string.IsNullOrWhiteSpace(code))
             {
-                result += _fileSystem.NewLine;
+                code += _fileSystem.NewLine;
             }
 
-            result += parsed;
+            code += parsedCode;
 
-            return result;
+            return new FilePreProcessingResult { Code = code, References = processedReferences };
         }
 
-        protected virtual string GenerateUsings(ICollection<string> usingLines)
+        private static IEnumerable<string> ProcessReferences(IEnumerable<string> references)
+        {
+            return references.Select(reference => reference.Replace(ReferenceDirective, string.Empty).Replace("\"", string.Empty));
+        }
+
+        private string GenerateUsings(IEnumerable<string> usingLines)
         {
             return string.Join(_fileSystem.NewLine, usingLines.Distinct());
-        }
-
-        protected virtual string GenerateRs(ICollection<string> rLines)
-        {
-            return string.Join(_fileSystem.NewLine, rLines.Distinct());
         }
 
         private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
         {
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
+            var firstCode = fileList.FindIndex(IsNonDirectiveLine);
 
             var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
 
@@ -98,7 +96,7 @@ namespace ScriptCs
                 {
                     if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
                     {
-                        var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+                        var filepath = line.Trim(' ').Replace(LoadDirective, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
                         var filecontent = _fileSystem.IsPathRooted(filepath)
                                               ? _fileSystem.ReadFileLines(filepath)
                                               : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
@@ -118,8 +116,7 @@ namespace ScriptCs
                 }
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
-            return result;
+            return string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
         }
 
         private static bool IsNonDirectiveLine(string line)
@@ -134,12 +131,24 @@ namespace ScriptCs
 
         private static bool IsRLine(string line)
         {
-            return line.TrimStart(' ').StartsWith(RString);
+            return line.TrimStart(' ').StartsWith(ReferenceDirective);
         }
 
         private static bool IsLoadLine(string line)
         {
-            return line.TrimStart(' ').StartsWith(LoadString);
+            return line.TrimStart(' ').StartsWith(LoadDirective);
         }
+    }
+
+    public class FilePreProcessingResult
+    {
+        public FilePreProcessingResult()
+        {
+            References = new List<string>();
+        }
+
+        public string Code { get; set; }
+
+        public List<string> References { get; set; }
     }
 }
