@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Common.Logging;
 
 namespace ScriptCs.Command
 {
@@ -12,12 +13,19 @@ namespace ScriptCs.Command
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
 
-        public ExecuteScriptCommand(string script, IFileSystem fileSystem, IScriptExecutor scriptExecutor, IScriptPackResolver scriptPackResolver)
+        private readonly ILog _logger;
+
+        public ExecuteScriptCommand(string script, 
+            IFileSystem fileSystem, 
+            IScriptExecutor scriptExecutor, 
+            IScriptPackResolver scriptPackResolver,
+            ILog logger)
         {
             _script = script;
             _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
+            _logger = logger;
         }
 
         public CommandResult Execute()
@@ -37,7 +45,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.Error(ex.Message);
                 return CommandResult.Error;
             }
         }
@@ -56,7 +64,7 @@ namespace ScriptCs.Command
                         
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
-                Console.WriteLine("Found assembly reference: " + path);
+                _logger.DebugFormat("Found assembly reference: {0}", path);
             }
 
             return assemblyPaths;

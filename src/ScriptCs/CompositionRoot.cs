@@ -3,6 +3,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using Autofac;
 using Autofac.Integration.Mef;
+using Common.Logging;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
@@ -12,19 +13,28 @@ namespace ScriptCs
     public class CompositionRoot
     {
         private readonly bool _debug;
+        private readonly LogLevel _logLevel; 
         private readonly bool _shouldInitDrirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
-        public CompositionRoot(bool debug, bool useDirectoryCatalog)
+        public CompositionRoot(bool debug, bool useDirectoryCatalog, LogLevel logLevel)
         {
             _debug = debug;
+            _logLevel = logLevel;
             _shouldInitDrirectoryCatalog = useDirectoryCatalog;
         }
 
         public void Initialize()
         {
             var builder = new ContainerBuilder();
+
+            var loggerConfigurator = new LoggerConfigurator(_logLevel);
+            loggerConfigurator.Configure();
+            var logger = loggerConfigurator.GetLogger();
+
+            builder.RegisterInstance<ILog>(logger);
+
             var types = new[]
                 {
                     typeof (ScriptHostFactory),
@@ -38,7 +48,7 @@ namespace ScriptCs
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
-
+            
             if (_debug)
             {
                 builder.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>();
@@ -68,6 +78,11 @@ namespace ScriptCs
         public ScriptServiceRoot GetServiceRoot()
         {
             return _scriptServiceRoot;
+        }
+
+        public ILog GetLogger()
+        {
+            return _container.Resolve<ILog>();
         }
     }
 }

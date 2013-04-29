@@ -1,4 +1,5 @@
-﻿using ScriptCs.Package;
+﻿using Common.Logging;
+using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -8,13 +9,16 @@ namespace ScriptCs
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
             IScriptExecutor executor, 
-            IScriptPackResolver scriptPackResolver, IPackageInstaller packageInstaller)
+            IScriptPackResolver scriptPackResolver, 
+            IPackageInstaller packageInstaller,
+            ILog logger)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
             Executor = executor;
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
+            Logger = logger;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -22,5 +26,6 @@ namespace ScriptCs
         public IScriptExecutor Executor { get; private set; }
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
+        public ILog Logger { get; private set; }
     }
 }
