@@ -1,4 +1,8 @@
-﻿using PowerArgs;
+﻿using System;
+using System.Linq;
+
+using PowerArgs;
+using System.Globalization;
 
 namespace ScriptCs
 {
@@ -12,6 +16,12 @@ namespace ScriptCs
         [ArgDescription("Flag which switches on debug mode")]
         [ArgShortcut("debug")]
         public bool DebugFlag { get; set; }
+
+        [ArgDescription("Flag which defines the log level used.")]
+        [ArgShortcut("log")]
+        [ArgIgnoreCase]
+        [DefaultValue(LogLevel.Info)]
+        public LogLevel LogLevel { get; set; }
 
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         [ArgShortcut("install")]

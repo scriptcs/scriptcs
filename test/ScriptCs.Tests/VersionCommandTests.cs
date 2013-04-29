@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Common.Logging;
+using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
 using System.IO;
@@ -10,7 +11,6 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-
             private readonly System.Version _currentVersion;
 
             System.Text.StringBuilder _outputText;
@@ -39,7 +39,8 @@ namespace ScriptCs.Tests
                 var executor = new Mock<IScriptExecutor>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);
@@ -49,7 +50,7 @@ namespace ScriptCs.Tests
 
                 result.Execute();
 
-                Assert.Contains("ScriptCs version " + _currentVersion.ToString(), _outputText.ToString());
+                Assert.Contains("scriptcs version " + _currentVersion.ToString(), _outputText.ToString());
             }
         }
     }

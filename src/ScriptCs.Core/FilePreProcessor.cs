@@ -1,51 +1,61 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 
 namespace ScriptCs
 {
     public class FilePreProcessor : IFilePreProcessor
     {
-        private const string LoadString = "#load ";
         private const string UsingString = "using ";
-        private const string RString = "#r ";
 
-        protected readonly IFileSystem FileSystem;
+        private const string LoadDirective = "#load ";
 
-        public FilePreProcessor(IFileSystem fileSystem)
+        private const string ReferenceDirective = "#r ";
+
+        private readonly ILog _logger;
+
+        private readonly IFileSystem _fileSystem;
+
+        public FilePreProcessor(IFileSystem fileSystem, ILog logger)
         {
-            FileSystem = fileSystem;
+            _fileSystem = fileSystem;
+            _logger = logger;
         }
 
         public FilePreProcessingResult ProcessFile(string path)
         {
-            var entryFile = FileSystem.ReadFileLines(path);
+            _logger.DebugFormat("{0} - Reading lines", path);
+            var entryFile = _fileSystem.ReadFileLines(path);
             var usings = new List<string>();
             var references = new List<string>();
             var loads = new List<string>();
 
-            var parsed = ParseFile(path, entryFile, ref usings, ref references, ref loads);
+            _logger.DebugFormat("{0} - Parsing ", path);
+            var parsedCode = ParseFile(path, entryFile, ref usings, ref references, ref loads);
 
+            _logger.DebugFormat("{0} - Generating references (#r)", path);
             var processedReferences = ProcessReferences(references).ToList();
 
+            _logger.DebugFormat("{0} - Generating using statements", path);
             var code = GenerateUsings(usings);
             if (!string.IsNullOrWhiteSpace(code))
             {
-                code += FileSystem.NewLine;
+                code += _fileSystem.NewLine;
             }
 
-            code += parsed;
+            code += parsedCode;
 
             return new FilePreProcessingResult { Code = code, References = processedReferences };
         }
 
         private static IEnumerable<string> ProcessReferences(IEnumerable<string> references)
         {
-            return references.Select(reference => reference.Replace(RString, string.Empty).Replace("\"", string.Empty));
+            return references.Select(reference => reference.Replace(ReferenceDirective, string.Empty).Replace("\"", string.Empty));
         }
 
-        protected virtual string GenerateUsings(ICollection<string> usingLines)
+        private string GenerateUsings(IEnumerable<string> usingLines)
         {
-            return string.Join(FileSystem.NewLine, usingLines.Distinct());
+            return string.Join(_fileSystem.NewLine, usingLines.Distinct());
         }
 
         private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
@@ -59,7 +69,8 @@ namespace ScriptCs
             // +1 because we are in a zero indexed list, but line numbers are 1 indexed
             // we need to keep the original position of the actual line 
             if (firstBody != -1)
-            {
+            {   
+                _logger.DebugFormat("Added #line statement for file {0} at line {1}", path, firstBody);
                 fileList.Insert(firstBody, string.Format(@"#line {0} ""{1}""", firstBody + 1, path));
             }
             
@@ -85,14 +96,15 @@ namespace ScriptCs
                 {
                     if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
                     {
-                        var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
-                        var filecontent = FileSystem.IsPathRooted(filepath)
-                                              ? FileSystem.ReadFileLines(filepath)
-                                              : FileSystem.ReadFileLines(FileSystem.CurrentDirectory + @"\" + filepath);
+                        var filepath = line.Trim(' ').Replace(LoadDirective, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+                        var filecontent = _fileSystem.IsPathRooted(filepath)
+                                              ? _fileSystem.ReadFileLines(filepath)
+                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
 
                         if (filecontent != null)
                         {
                             loads.Add(line);
+                            _logger.DebugFormat("Parsing file {0}", path);
                             var parsed = ParseFile(filepath, filecontent, ref usings, ref rs, ref loads);
                             fileList[i] = parsed;
                         }
@@ -104,8 +116,7 @@ namespace ScriptCs
                 }
             }
 
-            var result = string.Join(FileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
-            return result;
+            return string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
         }
 
         private static bool IsNonDirectiveLine(string line)
@@ -120,12 +131,12 @@ namespace ScriptCs
 
         private static bool IsRLine(string line)
         {
-            return line.TrimStart(' ').StartsWith(RString);
+            return line.TrimStart(' ').StartsWith(ReferenceDirective);
         }
 
         private static bool IsLoadLine(string line)
         {
-            return line.TrimStart(' ').StartsWith(LoadString);
+            return line.TrimStart(' ').StartsWith(LoadDirective);
         }
     }
 

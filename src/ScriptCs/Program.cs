@@ -1,16 +1,20 @@
-﻿using PowerArgs;
+﻿using Common.Logging;
+using PowerArgs;
 using ScriptCs.Command;
-using System;
 
 namespace ScriptCs
 {
+    using System;
+
     internal class Program
     {
         private static int Main(string[] args) 
         {
+            ILog logger = null;
             ScriptCsArgs commandArgs;
 
             const string unexpectedArgumentMessage = "Unexpected Argument: ";
+
             try 
             {
                 commandArgs = Args.Parse<ScriptCsArgs>(args);
@@ -31,9 +35,12 @@ namespace ScriptCs
             }
 
             var debug = commandArgs.DebugFlag;
+            var logLevel = commandArgs.LogLevel;
             var scriptProvided = !string.IsNullOrWhiteSpace(commandArgs.ScriptName);
-            var compositionRoot = new CompositionRoot(debug, scriptProvided);
+            var compositionRoot = new CompositionRoot(debug, scriptProvided, logLevel);
             compositionRoot.Initialize();
+            logger = compositionRoot.GetLogger();
+            logger.Debug("Creating ScriptServiceRoot");
             var scriptServiceRoot = compositionRoot.GetServiceRoot();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
