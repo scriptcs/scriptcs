@@ -24,7 +24,7 @@ namespace ScriptCs
             _logger = logger;
         }
 
-        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
+        public void Execute(string script, string[] scriptArgs, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
             var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
 
@@ -42,7 +42,7 @@ namespace ScriptCs
             var references = DefaultReferences.Union(paths).Union(result.References);
 
             _logger.Debug("Starting execution in engine");
-            _scriptEngine.Execute(result.Code, references, DefaultNamespaces, scriptPackSession);
+            _scriptEngine.Execute(result.Code, scriptArgs, references, DefaultNamespaces, scriptPackSession);
 
             _logger.Debug("Terminating packs");
             scriptPackSession.TerminatePacks();

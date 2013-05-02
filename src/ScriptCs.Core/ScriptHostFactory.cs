@@ -5,9 +5,9 @@ namespace ScriptCs
 {
     public class ScriptHostFactory : IScriptHostFactory
     {
-        public ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager)
+        public ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {
-            return new ScriptHost(scriptPackManager);
+            return new ScriptHost(scriptPackManager, scriptArgs);
         }
     }
 }

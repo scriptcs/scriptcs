@@ -21,7 +21,7 @@ namespace ScriptCs.Tests
 
             public TheGetMethod()
             {
-                _scriptHost = new ScriptHost(_mockScriptPackManager.Object);
+                _scriptHost = new ScriptHost(_mockScriptPackManager.Object, new string[0]);
                 _mockScriptPackManager.Setup(s => s.Get<IScriptPackContext>()).Returns(_mockContext.Object);
             }
 
