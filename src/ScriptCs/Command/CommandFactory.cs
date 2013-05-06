@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs.Command
 {
@@ -16,6 +17,14 @@ namespace ScriptCs.Command
             if (args.Help)
             {
                 return new HelpCommand(_scriptServiceRoot.Logger);
+            }
+
+            if (args.Repl)
+            {
+                var replCommand = new ExecuteReplCommand(
+                    _scriptServiceRoot.FileSystem, _scriptServiceRoot.ScriptPackResolver,
+                    new RoslynScriptEngine(new ScriptHostFactory(), _scriptServiceRoot.Logger), _scriptServiceRoot.Logger);
+                return replCommand;
             }
 
             if (args.ScriptName != null)

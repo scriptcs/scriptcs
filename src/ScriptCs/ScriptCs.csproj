@@ -58,6 +58,7 @@
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />
+    <Compile Include="Command\ExecuteReplCommand.cs" />
     <Compile Include="Command\HelpCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="Repl.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
