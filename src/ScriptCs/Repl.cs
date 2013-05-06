@@ -50,7 +50,14 @@ namespace ScriptCs
 
         public void Execute(string script)
         {
-            _scriptEngine.Execute(script, _references, DefaultNamespaces, _scriptPackSession);
+            try
+            {
+                _scriptEngine.Execute(script, _references, DefaultNamespaces, _scriptPackSession);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }
