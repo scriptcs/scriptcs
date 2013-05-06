@@ -12,6 +12,7 @@ namespace ScriptCs.Engine.Roslyn
         private readonly ScriptEngine _scriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
         private readonly ILog _logger;
+        public const string SessionKey = "Session";
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
@@ -20,7 +21,7 @@ namespace ScriptCs.Engine.Roslyn
             _scriptHostFactory = scriptHostFactory;
             _logger = logger;
         }
-
+        
         public string BaseDirectory
         {
             get {  return _scriptEngine.BaseDirectory;  }
@@ -32,8 +33,18 @@ namespace ScriptCs.Engine.Roslyn
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
             var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
-            _logger.Debug("Creating session");
-            var session = _scriptEngine.CreateSession(host);
+
+            Session session;
+            if (!scriptPackSession.State.ContainsKey(SessionKey))
+            {
+                _logger.Debug("Creating session");
+                session = _scriptEngine.CreateSession(host);
+            }
+            else
+            {
+                _logger.Debug("Reusing existing session");
+                session = (Session) scriptPackSession.State[SessionKey];
+            }
 
             foreach (var reference in references.Union(scriptPackSession.References).Distinct())
             {
