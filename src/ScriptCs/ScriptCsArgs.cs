@@ -13,6 +13,12 @@ namespace ScriptCs
         [ArgPosition(0)]
         public string ScriptName { get; set; }
 
+        [ArgDescription("Displays help")]
+        
+        [ArgShortcut("?")]
+        public bool Help { get; set; }
+
+
         [ArgDescription("Flag which switches on debug mode")]
         [ArgShortcut("debug")]
         public bool DebugFlag { get; set; }

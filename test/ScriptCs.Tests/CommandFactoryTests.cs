@@ -164,6 +164,20 @@ namespace ScriptCs.Tests
 
                 result.ShouldImplement<IInvalidCommand>();
             }
+
+            [Fact]
+            public void ShouldReturnHelpCommandWhenHelpIsPassed()
+            {
+                var args = new ScriptCsArgs
+                    {
+                        Help = true
+                    };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldImplement<IHelpCommand>();
+            }
         }
     }
 }

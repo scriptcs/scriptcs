@@ -13,6 +13,11 @@ namespace ScriptCs.Command
 
         public ICommand CreateCommand(ScriptCsArgs args)
         {
+            if (args.Help)
+            {
+                return new HelpCommand(_scriptServiceRoot.Logger);
+            }
+
             if (args.ScriptName != null)
             {
                 var executeCommand = new ExecuteScriptCommand(
