@@ -50,6 +50,11 @@ namespace ScriptCs.Tests
                 _scriptPackSession.Namespaces.Contains(_contextMock.Object.GetType().Namespace);
             }
 
+            [Fact]
+            public void ShouldInitializeState()
+            {
+                _scriptPackSession.State.ShouldNotBeNull();
+            }
         }
 
         public class TheInitializeMethod

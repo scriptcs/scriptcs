@@ -8,7 +8,8 @@ namespace ScriptCs
     public class ScriptPackSession : IScriptPackSession
     {
         private readonly IEnumerable<IScriptPack> _scriptPacks;
-        private readonly IEnumerable<IScriptPackContext> _contexts; 
+        private readonly IEnumerable<IScriptPackContext> _contexts;
+        private readonly IDictionary<string, object> _state; 
 
         private IList<string> _references;
         private IList<string> _namespaces;
@@ -19,7 +20,7 @@ namespace ScriptCs
             _contexts = _scriptPacks.Select(s => s.GetContext()).Where(c=>c != null);
             _references = new List<string>();
             _namespaces = new List<string>();
-
+            _state = new Dictionary<string, object>();
             AddScriptContextNamespace();
         }
 
@@ -62,6 +63,11 @@ namespace ScriptCs
             }
         }
 
+        public IDictionary<string, object> State
+        {
+            get { return _state; }
+        }
+ 
         void IScriptPackSession.AddReference(string assemblyDisplayNameOrPath)
         {
             _references.Add(assemblyDisplayNameOrPath);
