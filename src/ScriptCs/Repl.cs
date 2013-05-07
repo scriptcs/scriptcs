@@ -17,14 +17,16 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IScriptEngine _scriptEngine;
         private readonly ILog _logger;
+        private readonly IConsole _console;
         private ScriptPackSession _scriptPackSession;
         private IEnumerable<string> _references; 
 
-        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger)
+        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console)
         {
             _fileSystem = fileSystem;
             _scriptEngine = scriptEngine;
             _logger = logger;
+            _console = console;
         }
 
         public void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
@@ -50,20 +52,19 @@ namespace ScriptCs
 
         public void Execute(string script)
         {
-            var foregroundColor = Console.ForegroundColor;
+            var foregroundColor = _console.ForegroundColor;
 
             try
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
+                _console.ForegroundColor = ConsoleColor.Cyan;
                 _scriptEngine.Execute(script, _references, DefaultNamespaces, _scriptPackSession);
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + ex + "\r\n");
+                _console.ForegroundColor = ConsoleColor.Red;
+                _console.WriteLine("\r\n" + ex + "\r\n");
             }
-            Console.ForegroundColor = foregroundColor;
-
+            _console.ForegroundColor = foregroundColor;
         }
     }
 }

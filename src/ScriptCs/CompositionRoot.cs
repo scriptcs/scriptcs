@@ -44,7 +44,8 @@ namespace ScriptCs
                     typeof (FilePreProcessor),
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
-                    typeof (PackageInstaller)
+                    typeof (PackageInstaller),
+                    typeof (ReplConsole)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();

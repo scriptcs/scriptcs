@@ -15,23 +15,27 @@ namespace ScriptCs.Command
         private readonly IScriptEngine _scriptEngine;
 
         private readonly ILog _logger;
+        private readonly IConsole _console;
 
         public ExecuteReplCommand(
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
-            ILog logger)
+            ILog logger,
+            IConsole console
+            )
         {
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
             _logger = logger;
+            _console = console;
         }
 
         public CommandResult Execute()
         {
             Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_fileSystem, _scriptEngine, _logger);
+            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console);
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
             {
