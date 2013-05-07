@@ -50,6 +50,7 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
+            Console.Write("> ");
             var line = Console.ReadLine();
             if (line == "")
                 return false;

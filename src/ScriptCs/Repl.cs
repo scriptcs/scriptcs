@@ -60,7 +60,7 @@ namespace ScriptCs
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
+                Console.WriteLine("\r\n" + ex + "\r\n");
             }
             Console.ForegroundColor = foregroundColor;
 
