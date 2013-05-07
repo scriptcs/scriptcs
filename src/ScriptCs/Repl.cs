@@ -56,7 +56,10 @@ namespace ScriptCs
             }
             catch (Exception ex)
             {
+                var foregroundColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex);
+                Console.ForegroundColor = foregroundColor;
             }
         }
     }
