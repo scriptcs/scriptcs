@@ -37,10 +37,11 @@ namespace ScriptCs.Tests
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);

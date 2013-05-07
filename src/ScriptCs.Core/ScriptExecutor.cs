@@ -15,7 +15,7 @@ namespace ScriptCs
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IScriptEngine _scriptEngine;
         private readonly ILog _logger;
-
+ 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
         {
             _fileSystem = fileSystem;

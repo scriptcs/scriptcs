@@ -8,17 +8,21 @@ namespace ScriptCs
         public ScriptServiceRoot(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
-            IScriptExecutor executor, 
+            IScriptExecutor executor,
+            IScriptEngine engine,
             IScriptPackResolver scriptPackResolver, 
             IPackageInstaller packageInstaller,
-            ILog logger)
+            ILog logger,
+            IConsole console = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
             Executor = executor;
+            Engine = engine;
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
             Logger = logger;
+            Console = console;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -27,5 +31,7 @@ namespace ScriptCs
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
         public ILog Logger { get; private set; }
+        public IScriptEngine Engine { get; private set; }
+        public IConsole Console { get; private set; }
     }
 }
