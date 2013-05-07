@@ -50,17 +50,20 @@ namespace ScriptCs
 
         public void Execute(string script)
         {
+            var foregroundColor = Console.ForegroundColor;
+
             try
             {
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 _scriptEngine.Execute(script, _references, DefaultNamespaces, _scriptPackSession);
             }
             catch (Exception ex)
             {
-                var foregroundColor = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex);
-                Console.ForegroundColor = foregroundColor;
             }
+            Console.ForegroundColor = foregroundColor;
+
         }
     }
 }
