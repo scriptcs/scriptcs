@@ -44,6 +44,11 @@ namespace ScriptCs
 
         }
 
+        public void AddReference(string assembly)
+        {
+            _references = _references.Union(new[] { assembly });
+        }
+
         public void Terminate()
         {
             _logger.Debug("Terminating packs");

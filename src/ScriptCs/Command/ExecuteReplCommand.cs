@@ -13,6 +13,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IScriptEngine _scriptEngine;
+        private readonly IFilePreProcessor _filePreProcessor;
 
         private readonly ILog _logger;
         private readonly IConsole _console;
@@ -21,6 +22,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
+            IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console
             )
@@ -28,6 +30,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
+            _filePreProcessor = filePreProcessor;
             _logger = logger;
             _console = console;
         }
@@ -58,6 +61,18 @@ namespace ScriptCs.Command
             var line = Console.ReadLine();
             if (line == "")
                 return false;
+
+            if (PreProcessorUtil.IsLoadLine(line))
+            {
+                var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
+                line = _filePreProcessor.ProcessFile(filepath);
+            }
+            else if (PreProcessorUtil.IsRLine(line))
+            {
+                var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
+                repl.AddReference(assemblyPath);
+                return true;
+            }
 
             repl.Execute(line);
             return true;
