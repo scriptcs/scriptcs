@@ -11,60 +11,60 @@ namespace ScriptCs
 {
     public class Repl 
     {
-        private static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
+        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
+        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
 
-        private readonly IFileSystem _fileSystem;
-        private readonly IScriptEngine _scriptEngine;
-        private readonly ILog _logger;
-        private readonly IConsole _console;
-        private ScriptPackSession _scriptPackSession;
-        private IEnumerable<string> _references; 
+        public IFileSystem FileSystem { get; private set; }
+        public IScriptEngine ScriptEngine { get; private set; }
+        public ILog Logger { get; private set; }
+        public IConsole Console { get; private set; } 
+        public ScriptPackSession ScriptPackSession { get; private set; }
+        public IEnumerable<string> References { get; private set; } 
 
         public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console)
         {
-            _fileSystem = fileSystem;
-            _scriptEngine = scriptEngine;
-            _logger = logger;
-            _console = console;
+            FileSystem = fileSystem;
+            ScriptEngine = scriptEngine;
+            Logger = logger;
+            Console = console;
         }
 
         public void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            _references = DefaultReferences.Union(paths);
-            var bin = Path.Combine(_fileSystem.CurrentDirectory, "bin");
+            References = DefaultReferences.Union(paths);
+            var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
-            _scriptEngine.BaseDirectory = bin;
+            ScriptEngine.BaseDirectory = bin;
 
-            _logger.Debug("Initializing script packs");
+            Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks);
 
             scriptPackSession.InitializePacks();
-            _scriptPackSession = scriptPackSession;
+            ScriptPackSession = scriptPackSession;
 
         }
 
         public void Terminate()
         {
-            _logger.Debug("Terminating packs");
-            _scriptPackSession.TerminatePacks();
+            Logger.Debug("Terminating packs");
+            ScriptPackSession.TerminatePacks();
         }
 
         public void Execute(string script)
         {
-            var foregroundColor = _console.ForegroundColor;
+            var foregroundColor = Console.ForegroundColor;
 
             try
             {
-                _console.ForegroundColor = ConsoleColor.Cyan;
-                _scriptEngine.Execute(script, _references, DefaultNamespaces, _scriptPackSession);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
             }
             catch (Exception ex)
             {
-                _console.ForegroundColor = ConsoleColor.Red;
-                _console.WriteLine("\r\n" + ex + "\r\n");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\r\n" + ex + "\r\n");
             }
-            _console.ForegroundColor = foregroundColor;
+            Console.ForegroundColor = foregroundColor;
         }
     }
 }
