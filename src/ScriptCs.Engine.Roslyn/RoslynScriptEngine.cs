@@ -34,14 +34,14 @@ namespace ScriptCs.Engine.Roslyn
             _logger.Debug("Creating script host");
             
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
-            SessionState sessionState;
-            
+            SessionState<Session> sessionState;
+
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
- 
+
                 foreach (var reference in distinctReferences)
                 {
                     _logger.DebugFormat("Adding reference to {0}", reference);
@@ -54,22 +54,23 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState { References = distinctReferences, Session = session };
-                scriptPackSession.State[SessionKey] = sessionState; 
+                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                scriptPackSession.State[SessionKey] = sessionState;
             }
             else
             {
                 _logger.Debug("Reusing existing session");
-                sessionState = (SessionState)scriptPackSession.State[SessionKey];
+                sessionState = (SessionState<Session>) scriptPackSession.State[SessionKey];
 
-                var newReferences = distinctReferences.Except(sessionState.References);
+                var newReferences = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
                 if (newReferences.Any())
                 {
-                    foreach (var reference in distinctReferences)
+                    foreach (var reference in newReferences)
                     {
                         _logger.DebugFormat("Adding reference to {0}", reference);
                         sessionState.Session.AddReference(reference);
                     }
+                    sessionState.References = newReferences;
                 }
             }
 
@@ -81,12 +82,6 @@ namespace ScriptCs.Engine.Roslyn
         protected virtual void Execute(string code, Session session)
         {
             session.Execute(code);
-        }
-
-        private class SessionState
-        {
-            public Session Session { get; set; }
-            public IEnumerable<string> References { get; set; }
         }
     }
 }

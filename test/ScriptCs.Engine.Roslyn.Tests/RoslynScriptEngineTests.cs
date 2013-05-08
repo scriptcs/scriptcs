@@ -81,10 +81,10 @@ namespace ScriptCs.Tests
                 var engine = CreateTestScriptEngine(scriptHostFactory: scriptHostFactory);
                 var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
                 var roslynEngine = new ScriptEngine();
-                var session = roslynEngine.CreateSession();
+                var session = new SessionState<Session> {Session = roslynEngine.CreateSession()};
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
-                engine.Session.ShouldEqual(session);
+                engine.Session.ShouldEqual(session.Session);
             }
 
             [Fact]
@@ -99,6 +99,24 @@ namespace ScriptCs.Tests
                 var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
                 engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
                 engine.Session.ShouldNotBeNull();
+            }
+
+            [Fact]
+            public void ShouldAddNewReferencesIfTheyAreProvided()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>())).Returns((IScriptPackManager p) => new ScriptHost(p));
+
+                var code = "var a = 0;";
+
+                var engine = CreateTestScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession()};
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                engine.Execute(code, new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+                
+                ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
             }
         }
     }

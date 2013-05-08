@@ -38,7 +38,7 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console);
+            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
             {
@@ -61,18 +61,6 @@ namespace ScriptCs.Command
             var line = Console.ReadLine();
             if (line == "")
                 return false;
-
-            if (PreProcessorUtil.IsLoadLine(line))
-            {
-                var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
-                line = _filePreProcessor.ProcessFile(filepath);
-            }
-            else if (PreProcessorUtil.IsRLine(line))
-            {
-                var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
-                repl.AddReference(assemblyPath);
-                return true;
-            }
 
             repl.Execute(line);
             return true;

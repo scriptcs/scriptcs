@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -16,15 +14,17 @@ namespace ScriptCs
 
         public IFileSystem FileSystem { get; private set; }
         public IScriptEngine ScriptEngine { get; private set; }
+        public IFilePreProcessor FilePreProcessor { get; private set; } 
         public ILog Logger { get; private set; }
         public IConsole Console { get; private set; } 
         public ScriptPackSession ScriptPackSession { get; private set; }
         public IEnumerable<string> References { get; private set; } 
 
-        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console)
+        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
         {
             FileSystem = fileSystem;
             ScriptEngine = scriptEngine;
+            FilePreProcessor = filePreProcessor;
             Logger = logger;
             Console = console;
         }
@@ -44,11 +44,6 @@ namespace ScriptCs
 
         }
 
-        public void AddReference(string assembly)
-        {
-            _references = _references.Union(new[] { assembly });
-        }
-
         public void Terminate()
         {
             Logger.Debug("Terminating packs");
@@ -61,6 +56,18 @@ namespace ScriptCs
 
             try
             {
+                if (PreProcessorUtil.IsLoadLine(script))
+                {
+                    var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
+                    script = FilePreProcessor.ProcessFile(filepath);
+                }
+                else if (PreProcessorUtil.IsRLine(script))
+                {
+                    var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
+                    References = References.Union(new[] { assemblyPath });
+                    return;
+                }
+
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
             }
