@@ -134,7 +134,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void CallExecuteOnTheScriptEngine()
+            public void CallsExecuteOnTheScriptEngine()
             {
                 _mocks.ScriptEngine.Verify(x=>x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
             }
