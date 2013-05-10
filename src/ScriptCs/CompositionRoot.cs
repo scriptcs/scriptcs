@@ -18,11 +18,11 @@ namespace ScriptCs
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
-        public CompositionRoot(bool debug, bool useDirectoryCatalog, LogLevel logLevel)
+        public CompositionRoot(ScriptCsArgs args)
         {
-            _debug = debug;
-            _logLevel = logLevel;
-            _shouldInitDrirectoryCatalog = useDirectoryCatalog;
+            _debug = args.DebugFlag;
+            _logLevel = args.LogLevel;
+            _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(args);
         }
 
         public void Initialize()
@@ -84,6 +84,11 @@ namespace ScriptCs
         public ILog GetLogger()
         {
             return _container.Resolve<ILog>();
+        }
+
+        private static bool ShouldInitDrirectoryCatalog(ScriptCsArgs args)
+        {
+            return args.Repl || !string.IsNullOrWhiteSpace(args.ScriptName);
         }
     }
 }
