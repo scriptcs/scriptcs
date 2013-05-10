@@ -1,6 +1,34 @@
 # Contributing
 
-Before submitting a feature or substantial code contribution please discuss it with the team in our [discussion group](https://groups.google.com/forum/?fromgroups#!forum/scriptcs).
+We've seen some great energy from folks around contributing to scriptcs and WE LOVE IT. scriptcs *welcomes* your contribuitions! In order to make it easy we've come up with the following model so that you can [Jump in](http://nikcodes.com/2013/05/10/new-contributor-jump-in/). The guidelines will help us all to operate in harmony.
+
+We definitely want to soak up all that energy you have!
+
+## The issue tracker and how you can contribute.
+
+* Bugs - For bugs, just go fix it. Don't ask UNLESS it starts to turn into a feature.
+* Features - By default all issues tagged as enhancements will be fixed by the core team. However if you'd like to take it, please socialize the idea in our new google group (https://groups.google.com/forum/?fromgroups#!forum/scriptcs) so we can discuss before you put in a potentially wasted effort.
+* YOU TAKE IT - These are items that are important, but which we'd available for the community to take. One place we use this is for investigations and prototyping for features that would be really awesome, but which the core team just don't have bandwith for. As an example @dschenkelman [investigated](https://github.com/scriptcs/scriptcs/issues/68?source=cc) a VS debugging story. This lead to him ultimately implementing the feature, however don't feel pressure that you have to that. It's extremely valuable if you can just show us how it might be done.
+
+A few other points:
+
+* If an issue is marked as "Taken" then it is assigned to another member of the community.
+* To take an issue, reply in the comments "I'll take it"
+
+## Discussing features
+
+We'd like the design for all features to get socialized either via github issues or our [discussion group](https://groups.google.com/forum/?fromgroups#!forum/scriptcs). Please do this before you implement so that we can all get on the same page of the feature and not waste your time, which we really appreciate.
+
+## Summary:
+
+* unassigned bug - available for you
+* assigned bug / taken bug - unavailable
+* you take it issue - available for you
+* taken issue - unavailable as someone already took it.
+
+We really appreciate your help in taking scriptcs forward!
+
+Before submitting a feature or substantial code contribution please discuss it with the team in our
 
 Also please see the discussion [here] on which things are open for contribution (https://github.com/scriptcs/scriptcs/issues/79)
 
