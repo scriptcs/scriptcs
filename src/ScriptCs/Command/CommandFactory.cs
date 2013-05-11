@@ -53,7 +53,7 @@ namespace ScriptCs.Command
             {
                 var installCommand = new InstallCommand(
                     args.Install,
-                    args.AllowPreReleaseFlag,
+                    args.AllowPreRelease,
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver,
                     _scriptServiceRoot.PackageInstaller,

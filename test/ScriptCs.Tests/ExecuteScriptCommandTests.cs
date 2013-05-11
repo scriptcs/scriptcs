@@ -18,7 +18,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                     {
-                        AllowPreReleaseFlag = false,
+                        AllowPreRelease = false,
                         Install = "",
                         ScriptName = "test.csx"
                     };

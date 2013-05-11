@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };
@@ -79,7 +79,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = null,
                     ScriptName = "test.csx"
                 };
@@ -95,7 +95,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = "test.csx"
                 };
@@ -155,7 +155,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = null,
                     ScriptName = null
                 };

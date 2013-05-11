@@ -20,7 +20,7 @@ namespace ScriptCs
 
         public CompositionRoot(ScriptCsArgs args)
         {
-            _debug = args.DebugFlag;
+            _debug = args.Debug;
             _logLevel = args.LogLevel;
             _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(args);
         }
