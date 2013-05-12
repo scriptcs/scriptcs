@@ -14,6 +14,8 @@ namespace ScriptCs.Package.InstallationProvider
 
         public NugetInstallationProvider(IFileSystem fileSystem)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+
             _fileSystem = fileSystem;
             var path = Path.Combine(fileSystem.CurrentDirectory, Constants.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
@@ -47,6 +49,8 @@ namespace ScriptCs.Package.InstallationProvider
 
         public bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false, Action<string> packageInstalled = null)
         {
+            Guard.AgainstNullArgument("packageId", packageId);
+
             var useVersion = packageId.Version.CompareTo(new Version()) != 0;
             try
             {

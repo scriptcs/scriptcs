@@ -7,6 +7,7 @@
     <RootNamespace>ScriptCs.Engine.Roslyn</RootNamespace>
     <AssemblyName>ScriptCs.Engine.Roslyn</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <CodeAnalysisRuleSet>..\..\build\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
@@ -32,6 +33,9 @@
     </Compile>
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptCs.Core\Guard.cs">
+      <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="RoslynScriptDebuggerEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
