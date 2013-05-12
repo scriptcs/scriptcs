@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs.Command
 {
@@ -16,7 +15,7 @@ namespace ScriptCs.Command
         {
             if (args.Help)
             {
-                return new HelpCommand(_scriptServiceRoot.Logger);
+                return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: true);
             }
 
             if (args.Repl)
@@ -54,7 +53,7 @@ namespace ScriptCs.Command
             {
                 var installCommand = new InstallCommand(
                     args.Install,
-                    args.AllowPreReleaseFlag,
+                    args.AllowPreRelease,
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver,
                     _scriptServiceRoot.PackageInstaller,
@@ -101,7 +100,7 @@ namespace ScriptCs.Command
                 return new VersionCommand();
             }
 
-            return new InvalidCommand(_scriptServiceRoot.Logger);
+            return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: false);
         }
     }
 }
