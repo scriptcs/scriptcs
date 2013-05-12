@@ -3,52 +3,45 @@
 ## Why should you care?
 Write C# apps with a text editor, nuget and the power of Rosyln!
 
-**Note**: *Rosyln is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
+**Note**: *Roslyn is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
 
 * More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
 * Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
 
 ## Pre-reqs
-* Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
-* Build the project and put scriptcs.exe in your path.
+* Install scriptcs from Chocolatey `cinst scriptcs` or
+* Build the project from the source and put `scriptcs.exe` in your path.
 
 ## Quick start
 * Open a cmd prompt as admin
-* Create a directory "c:\scriptcs_hello" and change to it.
-* run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
-* create a server.csx with your favorite editor. Paste the text below into the file and save.
+* run `scriptcs -install scriptcs.webapi`
+* create a `server.csx` with your favorite editor. Paste the text below into the file and save (notice no namespaces & no top level class).
 
 ```csharp
-using System;
-using System.IO;
-using System.Web.Http;
-using System.Web.Http.SelfHost;
+public class TestController : ApiController {
+  public string Get() {
+    return "Hello world!";
+  }
+}
 
-var address = "http://localhost:8080";
-var conf = new HttpSelfHostConfiguration(new Uri(address));
-conf.Routes.MapHttpRoute(name: "DefaultApi",
-   routeTemplate: "api/{controller}/{id}",
-   defaults: new { id = RouteParameter.Optional }
-);
-
-var server = new HttpSelfHostServer(conf);
+var webApi = Require<WebApi>();
+var server = webApi.CreateServer("http://localhost:8080");
 server.OpenAsync().Wait();
+
 Console.WriteLine("Listening...");
 Console.ReadKey();
+server.CloseAsync().Wait();
 ```
-* run "scriptcs server.csx"
+* run `scriptcs server.csx`
 
-This will launch a web api host.
+This will launch a web api host with a sample controller, which you can access from the browser.
 
 ## How it works
-scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
+scriptcs relies on Roslyn for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
 
 ## Docs
 * [Referencing other scripts from your script](https://github.com/scriptcs/scriptcs/wiki/Referencing-scripts)
 * [Debugging overview & How To](https://github.com/scriptcs/scriptcs/blob/dev/docs/DEBUGGING.md)
-
-## What's next
-* Adding support for pluggable recipe "packs" for different frameworks.
 
 ## Contributing
 * Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
