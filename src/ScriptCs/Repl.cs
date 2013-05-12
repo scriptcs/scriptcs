@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Common.Logging;
 using ScriptCs.Contracts;
+using ServiceStack.Text;
 
 namespace ScriptCs
 {
@@ -57,7 +58,14 @@ namespace ScriptCs
             try
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                var result = ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                if (result != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(result.ToJsv()
+                        
+                        );
+                }
             }
             catch (Exception ex)
             {
