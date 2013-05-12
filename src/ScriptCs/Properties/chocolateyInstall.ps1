@@ -14,7 +14,7 @@
         "Roslyn.Compilers.CSharp" = "1.2.20906.2";
     }
 
-    $dependencies.GetEnumerator() | %{ .$nuget install $_.Name -version $_.Value -o $nugetPath }
+    $dependencies.GetEnumerator() | %{ &nuget install $_.Name -version $_.Value -o $nugetPath }
 
     Get-ChildItem $nugetPath -Filter "*.dll" -Recurse | %{ Copy-Item $_.FullName $binPath -Force }
     Remove-Item $nugetPath -Recurse -Force
