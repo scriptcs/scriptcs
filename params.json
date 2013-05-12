@@ -1,1 +1,57 @@
-{"name":"ScriptCS","tagline":"Write .Net apps with a text editor, NuGet, and the power of Rosyln!","body":"# ScriptCS\r\n========\r\n\r\n## Why should you care?\r\nWrite .NET apps with your favorite text editor, NuGet and the power of Rosyln!\r\n\r\n* More on why I developed this [here](http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)\r\n* Check out our goals and roadmap [here](https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)\r\n\r\n## Pre-requisites\r\n* Install the [nuget cmdline bootstrapper](http://nuget.codeplex.com/releases/view/58939)\r\n* Build the project and put scriptcs.exe in your path.\r\n\r\n## Quick start\r\n* Open a command prompt\r\n* Create a directory \"c:\\scriptcs_hello\" and change to it.\r\n* Run \"nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages\"\r\n* Create a server.csx with your favorite editor. Paste the text below into the file and save.\r\n\r\n```csharp\r\nusing System;\r\nusing System.IO;\r\nusing System.Web.Http;\r\nusing System.Web.Http.SelfHost;\r\n\r\nvar address = \"http://localhost:8080\";\r\nvar conf = new HttpSelfHostConfiguration(new Uri(address));\r\nconf.Routes.MapHttpRoute(name: \"DefaultApi\",\r\n   routeTemplate: \"api/{controller}/{id}\",\r\n   defaults: new { id = RouteParameter.Optional }\r\n);\r\n\r\nvar server = new HttpSelfHostServer(conf);\r\nserver.OpenAsync().Wait();\r\nConsole.WriteLine(\"Listening...\");\r\nConsole.ReadKey();\r\n```\r\n\r\n* Run the command `scriptcs server.csx`. This will launch a Web API host.\r\n\r\n## How it works\r\nScriptCS relies on Rosyln for loading loose C# script files. It will automatically discover NuGet packages local to the app and load the binaries.\r\n\r\n## What's next\r\n* Adding support for pluggable script \"packs\" for different frameworks.\r\n\r\n## License \r\n[Apache 2](http://www.apache.org/licenses/LICENSE-2.0.html)\r\n\r\n## Credits\r\n* Special thanks to [@filip_woj](https://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.\r\n* Thanks to the Roslyn team who helped point me in the right direction.\r\n\r\n## Coordinators\r\n* Glenn Block [@gblock](https://twitter.com/gblock)\r\n* Justin Rusbatch [@jrusbatch](https://twitter.com/jrusbatch)\r\n* Filip Wojcieszyn [@filip_woj](https://twitter.com/filip_woj)","google":"UA-38995388-1","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{"name":"ScriptCS","tagline":"Write .Net apps with a text editor, NuGet, and the power of Rosyln!","body":"# scriptcs
+
+## Why should you care?
+Write C# apps with a text editor, nuget and the power of Rosyln!
+
+**Note**: *Roslyn is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
+
+* More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
+* Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
+
+## Pre-reqs
+* Install scriptcs from Chocolatey `cinst scriptcs` or
+* Build the project from the source and put `scriptcs.exe` in your path.
+
+## Quick start
+* Open a cmd prompt as admin
+* run `scriptcs -install scriptcs.webapi`
+* create a `server.csx` with your favorite editor. Paste the text below into the file and save (notice no namespaces & no top level class).
+
+```csharp
+public class TestController : ApiController {
+  public string Get() {
+    return "Hello world!";
+  }
+}
+
+var webApi = Require<WebApi>();
+var server = webApi.CreateServer("http://localhost:8080");
+server.OpenAsync().Wait();
+
+Console.WriteLine("Listening...");
+Console.ReadKey();
+server.CloseAsync().Wait();
+```
+* run `scriptcs server.csx`
+
+This will launch a web api host with a sample controller, which you can access from the browser.
+
+## How it works
+scriptcs relies on Roslyn for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
+
+## Docs
+* [Referencing other scripts from your script](https://github.com/scriptcs/scriptcs/wiki/Referencing-scripts)
+* [Debugging overview & How To](https://github.com/scriptcs/scriptcs/blob/dev/docs/DEBUGGING.md)
+
+## Contributing
+* Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
+* List of all [contributors to date](https://github.com/scriptcs/scriptcs/wiki/Contributors). Thanks!
+
+## Credits
+* Special thanks to [@filip_woj](http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.
+* Thanks to the Roslyn team who helped point me in the right direction.
+
+## Coordinators
+* Glenn Block ([@gblock](https://twitter.com/gblock))
+* Justin Rusbatch ([@jrusbatch](https://twitter.com/jrusbatch))
+* Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))","google":"UA-38995388-1","note":"Don't delete this file! It's used internally to help with page regeneration."}
