@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
@@ -62,7 +62,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
                 executor.Execute(@"c:\my_script\script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -76,6 +76,8 @@ namespace ScriptCs.Tests
                 // arrange
                 var scriptEngine = new Mock<IScriptEngine>();
                 var fileSystem = new Mock<IFileSystem>();
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
                 var currentDirectory = @"C:\";
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
@@ -83,7 +85,7 @@ namespace ScriptCs.Tests
 
                 scriptEngine.SetupProperty(e => e.BaseDirectory);
 
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem, scriptEngine: scriptEngine);
+                var scriptExecutor = CreateScriptExecutor(fileSystem, preProcessor, scriptEngine);
 
                 var scriptName = "script.csx";
                 var paths = new string[0];
@@ -120,7 +122,7 @@ namespace ScriptCs.Tests
                 var paths = new string[0];
                 var recipes = Enumerable.Empty<IScriptPack>();
 
-                preProcessor.Setup(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName))).Returns(code).Verifiable();
+                preProcessor.Setup(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName))).Returns(new FilePreProcessorResult { Code = code }).Verifiable();
                 scriptEngine.Setup(e => e.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
@@ -140,8 +142,10 @@ namespace ScriptCs.Tests
                 var defaultReferences = new[] {"System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
                 var fileSystem = new Mock<IFileSystem>();
                 var scriptEngine = new Mock<IScriptEngine>();
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
-                var scriptExecutor = CreateScriptExecutor(fileSystem: fileSystem, scriptEngine: scriptEngine);
+                var scriptExecutor = CreateScriptExecutor(fileSystem, preProcessor, scriptEngine);
 
                 var currentDirectory = @"C:\";
                 var destinationFilePath1 = Path.Combine(currentDirectory, @"bin\fileName1.cs");
@@ -175,7 +179,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
@@ -196,7 +200,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
@@ -220,7 +224,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var engine = new Mock<IScriptEngine>();
 
@@ -241,7 +245,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
                 var preProcessor = new Mock<IFilePreProcessor>();
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns("var a = 0;");
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var engine = new Mock<IScriptEngine>();
 

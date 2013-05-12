@@ -19,32 +19,37 @@ namespace ScriptCs
             _logger = logger;
         }
 
-        public string ProcessFile(string path)
+        public FilePreProcessorResult ProcessFile(string path)
         {
             var context = new FilePreProcessContext();
 
             ParseFile(path, context);
 
-            return GenerateScript(context);
+            var code = GenerateScript(context);
+
+            return new FilePreProcessorResult
+            {
+                Usings = context.Usings,
+                LoadedFiles = context.LoadedScripts,
+                References = context.References,
+                Code = code
+            };
         }
 
         private static string GenerateScript(FilePreProcessContext context)
         {
             var stringBuilder = new StringBuilder();
 
-            AppendDistinct(stringBuilder, context.References, "#r {0}");
-            AppendDistinct(stringBuilder, context.Usings, "using {0};");
+            AppendUsings(stringBuilder, context.Usings);
 
             stringBuilder.Append(string.Join(Environment.NewLine, context.Body));
 
             return stringBuilder.ToString();
         }
 
-        private static void AppendDistinct(StringBuilder stringBuilder, IEnumerable<string> items, string format)
+        private static void AppendUsings(StringBuilder stringBuilder, IEnumerable<string> items)
         {
-            var lines = items.Distinct()
-                .Select(item => string.Format(format, item))
-                .ToList();
+            var lines = items.Distinct().Select(item => string.Format("using {0};", item)).ToList();
 
             if (lines.Count == 0) return;
 
@@ -123,24 +128,24 @@ namespace ScriptCs
         {
             return line.TrimStart(' ').Replace(PreProcessorUtil.RString, string.Empty).Replace("\"", string.Empty);
         }
-    }
 
-    public class FilePreProcessContext
-    {
-        public FilePreProcessContext()
+        private class FilePreProcessContext
         {
-            Usings = new List<string>();
-            References = new List<string>();
-            LoadedScripts = new List<string>();
-            Body = new List<string>();
+            public FilePreProcessContext()
+            {
+                Usings = new List<string>();
+                References = new List<string>();
+                LoadedScripts = new List<string>();
+                Body = new List<string>();
+            }
+
+            public List<string> Usings { get; private set; }
+
+            public List<string> References { get; private set; }
+
+            public List<string> LoadedScripts { get; private set; }
+
+            public List<string> Body { get; private set; }
         }
-
-        public List<string> Usings { get; private set; }
-
-        public List<string> References { get; private set; }
-
-        public List<string> LoadedScripts { get; private set; }
-
-        public List<string> Body { get; private set; }
     }
 }
