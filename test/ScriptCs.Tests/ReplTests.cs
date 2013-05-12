@@ -22,6 +22,7 @@ namespace ScriptCs.Tests
                 Logger = new Mock<ILog>();
                 Console = new Mock<IConsole>();
                 ScriptPack = new Mock<IScriptPack>();
+                FilePreProcessor = new Mock<IFilePreProcessor>();
             }
 
             public Mock<IFileSystem> FileSystem { get; private set; }
@@ -29,11 +30,12 @@ namespace ScriptCs.Tests
             public Mock<ILog> Logger { get; private set; }
             public Mock<IConsole> Console { get; private set; }
             public Mock<IScriptPack> ScriptPack { get; private set; }
+            public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
         }
 
         public static Repl GetRepl(Mocks mocks)
         {
-            return new Repl(mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object);
+            return new Repl(mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object);
         }
 
         public class TheConstructor
@@ -157,6 +159,51 @@ namespace ScriptCs.Tests
             public void SetsTheForegroundColorBackToTheDefault()
             {
                 _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.White);
+            }
+
+            [Fact]
+            public void ShouldProcessFileIfLineIsALoad()
+            {
+                var mocks = new Mocks();
+                _repl = GetRepl(mocks);
+                _repl.Execute("#load \"file.csx\"");
+                
+                mocks.FilePreProcessor.Verify(i => i.ProcessFile(It.Is<string>(x => x == "file.csx")), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldExecuteLoadedFileIfLineIsALoad()
+            {
+                var mocks = new Mocks();
+                _repl = GetRepl(mocks);
+                _repl.Execute("#load \"file.csx\"");
+
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldReferenceAssemblyIfLineIsAReference()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                //default references = 6, + 1 we just added
+                _repl.References.Count().ShouldEqual(7);
+            }
+
+            [Fact]
+            public void ShouldNotExecuteAnythingIfLineIsAReference()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
         }
     }

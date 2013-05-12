@@ -22,7 +22,7 @@ namespace ScriptCs.Command
             {
                 var replCommand = new ExecuteReplCommand(
                     _scriptServiceRoot.FileSystem, _scriptServiceRoot.ScriptPackResolver,
-                    _scriptServiceRoot.Engine, _scriptServiceRoot.Logger, _scriptServiceRoot.Console);
+                    _scriptServiceRoot.Engine, _scriptServiceRoot.FilePreProcessor, _scriptServiceRoot.Logger, _scriptServiceRoot.Console);
                 return replCommand;
             }
 
