@@ -23,9 +23,10 @@ namespace ScriptCs.Tests
 
             public Session Session { get; set; }
 
-            protected override void Execute(string code, Session session)
+            protected override object Execute(string code, Session session)
             {
                 Session = session;
+                return null;
             }
         }
 
