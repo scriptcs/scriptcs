@@ -20,7 +20,7 @@ namespace ScriptCs.Engine.Roslyn
             this._logger = logger;
         }
 
-        protected override void Execute(string code, Session session)
+        protected override object Execute(string code, Session session)
         {
             _logger.Debug("Compiling submission");
             var submission = session.CompileSubmission<object>(code);
@@ -59,7 +59,7 @@ namespace ScriptCs.Engine.Roslyn
                 try
                 {
                     _logger.Debug("Invoking method.");
-                    method.Invoke(null, new[] { session });
+                    return method.Invoke(null, new[] { session });
                 }
                 catch (Exception e)
                 {
@@ -73,6 +73,7 @@ namespace ScriptCs.Engine.Roslyn
                     throw new ScriptExecutionException(message);
                 }
             }
+            return null;
         }
     }
 }

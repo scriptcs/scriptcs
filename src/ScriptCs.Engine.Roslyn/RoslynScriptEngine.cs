@@ -28,7 +28,7 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public void Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public object Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
@@ -61,13 +61,14 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             _logger.Info("Starting execution");
-            Execute(code, session);
+            var result = Execute(code, session);
             _logger.Info("Finished execution");
+            return result;
         }
 
-        protected virtual void Execute(string code, Session session)
+        protected virtual object Execute(string code, Session session)
         {
-            session.Execute(code);
+            return session.Execute(code);
         }
     }
 }
