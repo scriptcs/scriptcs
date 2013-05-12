@@ -87,7 +87,11 @@ namespace ScriptCs
             if (PreProcessorUtil.IsUsingLine(line))
             {
                 var @using = GetUsing(line);
-                context.Usings.Add(@using);
+                if (!context.Usings.Contains(@using))
+                {
+                    context.Usings.Add(@using);
+                }
+                
                 return;
             }
 
@@ -96,7 +100,10 @@ namespace ScriptCs
                 if (isBeforeCode)
                 {
                     var reference = GetReference(line);
-                    context.References.Add(reference);
+                    if (!context.References.Contains(reference))
+                    {
+                        context.References.Add(reference);
+                    }
                 }
 
                 return;
@@ -109,7 +116,6 @@ namespace ScriptCs
                 if (isBeforeCode && !context.LoadedScripts.Contains(filePath))
                 {
                     ParseFile(filePath, context);
-                    context.LoadedScripts.Add(filePath);
                 }
 
                 return;
