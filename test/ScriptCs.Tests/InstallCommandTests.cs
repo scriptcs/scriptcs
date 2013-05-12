@@ -19,7 +19,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                     {
-                        AllowPreReleaseFlag = false,
+                        AllowPreRelease = false,
                         Install = "mypackage",
                         ScriptName = null
                     };
@@ -51,7 +51,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };

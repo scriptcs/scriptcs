@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using PowerArgs;
-using System.Globalization;
+﻿using PowerArgs;
 
 namespace ScriptCs
 {
@@ -12,8 +8,8 @@ namespace ScriptCs
         [ArgIgnore]
         public bool Repl { get; set; }
 
-        [ArgDescription("Script file name, must be specified first")]
         [ArgPosition(0)]
+        [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
         [ArgDescription("Displays help")]
@@ -21,37 +17,37 @@ namespace ScriptCs
         [ArgShortcut("?")]
         public bool Help { get; set; }
 
-
-        [ArgDescription("Flag which switches on debug mode")]
         [ArgShortcut("debug")]
-        public bool DebugFlag { get; set; }
+        [ArgDescription("Flag which switches on debug mode")]
+        public bool Debug { get; set; }
 
-        [ArgDescription("Flag which defines the log level used.")]
-        [ArgShortcut("log")]
         [ArgIgnoreCase]
+        [ArgShortcut("log")]
         [DefaultValue(LogLevel.Info)]
+        [ArgDescription("Flag which defines the log level used.")]
         public LogLevel LogLevel { get; set; }
 
-        [ArgDescription("Installs and restores packages which are specified in packages.config")]
         [ArgShortcut("install")]
+        [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
 
-        [ArgDescription("Restores installed packages, making them ready for using by the script")]
         [ArgShortcut("restore")]
+        [ArgDescription("Restores installed packages, making them ready for using by the script")]
         public bool Restore { get; set; }
 
-        [ArgDescription("Creates a packages.config file based on the packages directory")]
         [ArgShortcut("save")]
+        [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
 
-        [ArgDescription("Cleans installed packages from working directory")]
         [ArgShortcut("clean")]
+        [ArgDescription("Cleans installed packages from working directory")]
         public bool Clean { get; set; }
 
-        [ArgDescription("Allows installation of packages' prelease versions")]
         [ArgShortcut("pre")]
-        public bool AllowPreReleaseFlag { get; set; }
+        [ArgDescription("Allows installation of packages' prelease versions")]
+        public bool AllowPreRelease { get; set; }
 
+        [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
     }
