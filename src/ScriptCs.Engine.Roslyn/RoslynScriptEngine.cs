@@ -32,16 +32,17 @@ namespace ScriptCs.Engine.Roslyn
         {
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
-            Session session;
             
+            var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
+            SessionState<Session> sessionState;
+
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
                 _logger.Debug("Creating session");
-                session = _scriptEngine.CreateSession(host);
-                scriptPackSession.State[SessionKey] = session;
- 
-                foreach (var reference in references.Union(scriptPackSession.References).Distinct())
+                var session = _scriptEngine.CreateSession(host);
+
+                foreach (var reference in distinctReferences)
                 {
                     _logger.DebugFormat("Adding reference to {0}", reference);
                     session.AddReference(reference);
@@ -52,16 +53,29 @@ namespace ScriptCs.Engine.Roslyn
                     _logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
- 
+
+                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                scriptPackSession.State[SessionKey] = sessionState;
             }
             else
             {
                 _logger.Debug("Reusing existing session");
-                session = (Session) scriptPackSession.State[SessionKey];
+                sessionState = (SessionState<Session>) scriptPackSession.State[SessionKey];
+
+                var newReferences = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
+                if (newReferences.Any())
+                {
+                    foreach (var reference in newReferences)
+                    {
+                        _logger.DebugFormat("Adding reference to {0}", reference);
+                        sessionState.Session.AddReference(reference);
+                    }
+                    sessionState.References = newReferences;
+                }
             }
 
             _logger.Info("Starting execution");
-            var result = Execute(code, session);
+            var result = Execute(code, sessionState.Session);
             _logger.Info("Finished execution");
             return result;
         }

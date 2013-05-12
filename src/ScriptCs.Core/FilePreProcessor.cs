@@ -6,10 +6,6 @@ namespace ScriptCs
 {
     public class FilePreProcessor : IFilePreProcessor
     {
-        private const string LoadString = "#load ";
-        private const string UsingString = "using ";
-        private const string RString = "#r ";
-
         private readonly ILog _logger;
         
         protected readonly IFileSystem _fileSystem;
@@ -63,9 +59,9 @@ namespace ScriptCs
         private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
         {
             var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(l => IsNonDirectiveLine(l));
+            var firstCode = fileList.FindIndex(l => PreProcessorUtil.IsNonDirectiveLine(l));
 
-            var firstBody = fileList.FindIndex(l => IsNonDirectiveLine(l) && !IsUsingLine(l));
+            var firstBody = fileList.FindIndex(l => PreProcessorUtil.IsNonDirectiveLine(l) && !PreProcessorUtil.IsUsingLine(l));
 
             // add #line before the actual code begins
             // +1 because we are in a zero indexed list, but line numbers are 1 indexed
@@ -79,11 +75,11 @@ namespace ScriptCs
             for (var i = 0; i < fileList.Count; i++)
             {
                 var line = fileList[i];
-                if (IsUsingLine(line))
+                if (PreProcessorUtil.IsUsingLine(line))
                 {
                     usings.Add(line);
-                } 
-                else if (IsRLine(line))
+                }
+                else if (PreProcessorUtil.IsRLine(line))
                 {
                     if (i < firstCode)
                     {
@@ -94,11 +90,11 @@ namespace ScriptCs
                         fileList[i] = string.Empty;
                     }
                 } 
-                else if (IsLoadLine(line))
+                else if (PreProcessorUtil.IsLoadLine(line))
                 {
                     if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
                     {
-                        var filepath = line.Trim(' ').Replace(LoadString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+                        var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
                         var filecontent = _fileSystem.IsPathRooted(filepath)
                                               ? _fileSystem.ReadFileLines(filepath)
                                               : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
@@ -118,28 +114,8 @@ namespace ScriptCs
                 }
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !IsUsingLine(line) && !IsRLine(line)));
+            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !PreProcessorUtil.IsUsingLine(line) && !PreProcessorUtil.IsRLine(line)));
             return result;
-        }
-
-        private static bool IsNonDirectiveLine(string line)
-        {
-            return !IsRLine(line) && !IsLoadLine(line) && line.Trim() != string.Empty;
-        }
-
-        private static bool IsUsingLine(string line)
-        {
-            return line.TrimStart(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";");
-        }
-
-        private static bool IsRLine(string line)
-        {
-            return line.TrimStart(' ').StartsWith(RString);
-        }
-
-        private static bool IsLoadLine(string line)
-        {
-            return line.TrimStart(' ').StartsWith(LoadString);
         }
     }
 }

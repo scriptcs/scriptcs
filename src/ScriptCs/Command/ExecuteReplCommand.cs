@@ -13,6 +13,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IScriptEngine _scriptEngine;
+        private readonly IFilePreProcessor _filePreProcessor;
 
         private readonly ILog _logger;
         private readonly IConsole _console;
@@ -21,6 +22,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
+            IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console
             )
@@ -28,6 +30,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
+            _filePreProcessor = filePreProcessor;
             _logger = logger;
             _console = console;
         }
@@ -35,7 +38,7 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console);
+            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
             {
