@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -23,9 +24,13 @@ namespace ScriptCs
         {
             var context = new FilePreProcessContext();
 
+            _logger.DebugFormat("Starting pre-processing");
+
             ParseFile(path, context);
 
             var code = GenerateScript(context);
+
+            _logger.DebugFormat("Pre-processing finished successfully");
 
             return new FilePreProcessorResult
             {
@@ -59,6 +64,8 @@ namespace ScriptCs
 
         private void ParseFile(string path, FilePreProcessContext context)
         {
+            _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
+
             var fileLines = _fileSystem.ReadFileLines(path).ToList();
 
             InsertLineDirective(path, fileLines);

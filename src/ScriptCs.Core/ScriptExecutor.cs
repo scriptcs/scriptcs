@@ -37,7 +37,6 @@ namespace ScriptCs
 
             var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
             
-            _logger.DebugFormat("File to process: {0}", path);
             var result = _filePreProcessor.ProcessFile(path);
 
             var references = DefaultReferences.Union(paths).Union(result.References);
