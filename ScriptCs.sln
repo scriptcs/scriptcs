@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354
 		build\Build.proj = build\Build.proj
 		build\Build.tasks = build\Build.tasks
 		build\ScriptCs.Common.props = build\ScriptCs.Common.props
+		build\ScriptCs.ruleset = build\ScriptCs.ruleset
 		build\ScriptCs.Version.props = build\ScriptCs.Version.props
 	EndProjectSection
 EndProject

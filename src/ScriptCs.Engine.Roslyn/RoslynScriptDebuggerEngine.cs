@@ -22,6 +22,8 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override object Execute(string code, Session session)
         {
+            Guard.AgainstNullArgument("session", session);
+
             _logger.Debug("Compiling submission");
             var submission = session.CompileSubmission<object>(code);
             var exeBytes = new byte[0];
