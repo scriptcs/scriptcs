@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
@@ -19,9 +20,12 @@ namespace ScriptCs.Tests
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -56,9 +60,12 @@ namespace ScriptCs.Tests
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -93,9 +100,12 @@ namespace ScriptCs.Tests
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 const string CurrentDirectory = @"C:\";
                 const string BinFolder = @"C:\bin";

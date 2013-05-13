@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
@@ -18,7 +19,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                     {
-                        AllowPreReleaseFlag = false,
+                        AllowPreRelease = false,
                         Install = "mypackage",
                         ScriptName = null
                     };
@@ -31,9 +32,12 @@ namespace ScriptCs.Tests
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args);
@@ -48,7 +52,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };
@@ -61,9 +65,12 @@ namespace ScriptCs.Tests
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
                 resolver.Setup(i => i.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference>
                     {

@@ -3,6 +3,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using Autofac;
 using Autofac.Integration.Mef;
+using Common.Logging;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
@@ -12,19 +13,28 @@ namespace ScriptCs
     public class CompositionRoot
     {
         private readonly bool _debug;
+        private readonly LogLevel _logLevel; 
         private readonly bool _shouldInitDrirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
 
-        public CompositionRoot(bool debug, bool useDirectoryCatalog)
+        public CompositionRoot(ScriptCsArgs args)
         {
-            _debug = debug;
-            _shouldInitDrirectoryCatalog = useDirectoryCatalog;
+            _debug = args.Debug;
+            _logLevel = args.LogLevel;
+            _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(args);
         }
 
         public void Initialize()
         {
             var builder = new ContainerBuilder();
+
+            var loggerConfigurator = new LoggerConfigurator(_logLevel);
+            loggerConfigurator.Configure();
+            var logger = loggerConfigurator.GetLogger();
+
+            builder.RegisterInstance<ILog>(logger);
+
             var types = new[]
                 {
                     typeof (ScriptHostFactory),
@@ -34,11 +44,12 @@ namespace ScriptCs
                     typeof (FilePreProcessor),
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
-                    typeof (PackageInstaller)
+                    typeof (PackageInstaller),
+                    typeof (ReplConsole)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
-
+            
             if (_debug)
             {
                 builder.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>();
@@ -68,6 +79,16 @@ namespace ScriptCs
         public ScriptServiceRoot GetServiceRoot()
         {
             return _scriptServiceRoot;
+        }
+
+        public ILog GetLogger()
+        {
+            return _container.Resolve<ILog>();
+        }
+
+        private static bool ShouldInitDrirectoryCatalog(ScriptCsArgs args)
+        {
+            return args.Repl || !string.IsNullOrWhiteSpace(args.ScriptName);
         }
     }
 }
