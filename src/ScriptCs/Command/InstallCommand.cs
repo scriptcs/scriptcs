@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
-
+using Common.Logging;
 using ScriptCs.Package;
 
 namespace ScriptCs.Command
@@ -18,37 +18,41 @@ namespace ScriptCs.Command
 
         private readonly IPackageInstaller _packageInstaller;
 
+        private readonly ILog _logger;
+
         public InstallCommand(
             string name,
             bool allowPre,
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
-            IPackageInstaller packageInstaller)
+            IPackageInstaller packageInstaller,
+            ILog logger)
         {
             _name = name;
             _allowPre = allowPre;
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
             _packageInstaller = packageInstaller;
+            _logger = logger;
         }
 
         public CommandResult Execute()
         {
-            Console.WriteLine("Installing packages...");
+            _logger.Info("Installing packages...");
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var packages = GetPackages(workingDirectory);
 
             try
             {
-                _packageInstaller.InstallPackages(packages, _allowPre, Console.WriteLine);
+                _packageInstaller.InstallPackages(packages, _allowPre, _logger.Info);
 
-                Console.WriteLine("Installation completed successfully.");
+                _logger.Info("Installation completed successfully.");
                 return CommandResult.Success;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Installation failed: {0}.", e.Message);
+                _logger.ErrorFormat("Installation failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
         }

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Common.Logging;
+using Moq;
 using ScriptCs.Command;
 using ScriptCs.Package;
 using Should;
@@ -21,10 +22,14 @@ namespace ScriptCs.Tests
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
                 var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
 
-                return new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, scriptpackResolver.Object, packageInstaller.Object);
+                return root;
             }
 
             [Fact]
@@ -32,7 +37,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };
@@ -53,7 +58,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = null
                 };
@@ -75,7 +80,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = null,
                     ScriptName = "test.csx"
                 };
@@ -91,7 +96,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = "",
                     ScriptName = "test.csx"
                 };
@@ -151,7 +156,7 @@ namespace ScriptCs.Tests
             {
                 var args = new ScriptCsArgs
                 {
-                    AllowPreReleaseFlag = false,
+                    AllowPreRelease = false,
                     Install = null,
                     ScriptName = null
                 };
@@ -160,6 +165,20 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IInvalidCommand>();
+            }
+
+            [Fact]
+            public void ShouldReturnHelpCommandWhenHelpIsPassed()
+            {
+                var args = new ScriptCsArgs
+                    {
+                        Help = true
+                    };
+
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args);
+
+                result.ShouldImplement<IHelpCommand>();
             }
         }
     }

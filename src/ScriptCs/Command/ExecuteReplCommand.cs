@@ -2,53 +2,70 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Common.Logging;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteScriptCommand : IScriptCommand
+    internal class ExecuteReplCommand : IScriptCommand
     {
-        private readonly string _script;
         private readonly IFileSystem _fileSystem;
-        private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
+        private readonly IScriptEngine _scriptEngine;
+        private readonly IFilePreProcessor _filePreProcessor;
 
         private readonly ILog _logger;
+        private readonly IConsole _console;
 
-        public ExecuteScriptCommand(string script, 
-            IFileSystem fileSystem, 
-            IScriptExecutor scriptExecutor, 
+        public ExecuteReplCommand(
+            IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
-            ILog logger)
+            IScriptEngine scriptEngine,
+            IFilePreProcessor filePreProcessor,
+            ILog logger,
+            IConsole console
+            )
         {
-            _script = script;
             _fileSystem = fileSystem;
-            _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
+            _scriptEngine = scriptEngine;
+            _filePreProcessor = filePreProcessor;
             _logger = logger;
+            _console = console;
         }
 
         public CommandResult Execute()
         {
+            Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
+            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
+            repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
             {
-                var assemblyPaths = Enumerable.Empty<string>();
-
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
-                if (workingDirectory != null)
+                while (ExecuteLine(repl))
                 {
-                    assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
-
-                _scriptExecutor.Execute(_script, assemblyPaths, _scriptPackResolver.GetPacks());
-                return CommandResult.Success;
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
-                return CommandResult.Error;
+                return CommandResult.Error;              
             }
+            repl.Terminate();
+            return CommandResult.Success;
         }
+
+        private bool ExecuteLine(Repl repl)
+        {
+            Console.Write("> ");
+            var line = Console.ReadLine();
+            if (line == "")
+                return false;
+
+            repl.Execute(line);
+            return true;
+        }
+
 
         private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
         {
@@ -57,11 +74,11 @@ namespace ScriptCs.Command
             if (!_fileSystem.DirectoryExists(binFolder))
                 _fileSystem.CreateDirectory(binFolder);
 
-            var assemblyPaths = 
+            var assemblyPaths =
                 _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
                 .ToList();
-                        
+
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
                 _logger.DebugFormat("Found assembly reference: {0}", path);

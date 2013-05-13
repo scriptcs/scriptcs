@@ -1,53 +1,55 @@
-﻿using PowerArgs;
+﻿using System;
+
+using PowerArgs;
 using ScriptCs.Command;
-using System;
 
 namespace ScriptCs
 {
-    internal class Program
+    internal static class Program
     {
         private static int Main(string[] args) 
         {
-            ScriptCsArgs commandArgs;
+            var commandArgs = ParseArguments(args) ?? new ScriptCsArgs { Repl = true };
 
-            const string unexpectedArgumentMessage = "Unexpected Argument: ";
-            try 
+            var compositionRoot = new CompositionRoot(commandArgs);
+            compositionRoot.Initialize();
+
+            var logger = compositionRoot.GetLogger();
+            logger.Debug("Creating ScriptServiceRoot");
+           
+            var scriptServiceRoot = compositionRoot.GetServiceRoot();
+
+            var commandFactory = new CommandFactory(scriptServiceRoot);
+            var command = commandFactory.CreateCommand(commandArgs);
+            var result = command.Execute();
+
+            return result == CommandResult.Success ? 0 : -1;
+        }
+
+        private static ScriptCsArgs ParseArguments(string[] args)
+        {
+            const string UnexpectedArgumentMessage = "Unexpected Argument: ";
+
+            if (args.Length <= 0) return null;
+
+            try
             {
-                commandArgs = Args.Parse<ScriptCsArgs>(args);
+                return Args.Parse<ScriptCsArgs>(args);
             }
-            catch (ArgException ex) 
+            catch (ArgException ex)
             {
-                commandArgs = new ScriptCsArgs();
-
-                if (ex.Message.StartsWith(unexpectedArgumentMessage)) 
+                if (ex.Message.StartsWith(UnexpectedArgumentMessage))
                 {
-                    var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
+                    var token = ex.Message.Substring(UnexpectedArgumentMessage.Length);
                     Console.WriteLine("Parameter \"{0}\" is not supported!", token);
                 }
-                else 
+                else
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
 
-            var debug = commandArgs.DebugFlag;
-            var scriptProvided = !string.IsNullOrWhiteSpace(commandArgs.ScriptName);
-            var compositionRoot = new CompositionRoot(debug, scriptProvided);
-            compositionRoot.Initialize();
-            var scriptServiceRoot = compositionRoot.GetServiceRoot();
-
-            var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand(commandArgs);
-
-            var result = command.Execute();
-
-            switch (result)
-            {
-                case CommandResult.Success:
-                    return 0;
-                default:
-                    return -1;
-            }
+            return new ScriptCsArgs();
         }
     }
 }

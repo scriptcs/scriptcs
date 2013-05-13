@@ -14,6 +14,8 @@ namespace ScriptCs.Command
 
     public interface IInvalidCommand : ICommand { }
 
+    public interface IHelpCommand : ICommand { }
+
     public interface ICompositeCommand : ICommand
     {
         List<ICommand> Commands { get; }

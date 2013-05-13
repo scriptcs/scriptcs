@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
+using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
+using ScriptCs.Exceptions;
 using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using ScriptCs.Exceptions;
-
     public class RoslynScriptDebuggerEngineTests
     {
         private static RoslynScriptDebuggerEngine CreateScriptEngine(
@@ -17,7 +17,9 @@ namespace ScriptCs.Tests
         {
             scriptHostFactory = scriptHostFactory ?? new Mock<IScriptHostFactory>();
 
-            return new RoslynScriptDebuggerEngine(scriptHostFactory.Object);
+            var logger = new Mock<ILog>();
+
+            return new RoslynScriptDebuggerEngine(scriptHostFactory.Object, logger.Object);
         }
 
         public class TheExecuteMethod

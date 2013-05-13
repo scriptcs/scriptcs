@@ -13,20 +13,35 @@ namespace ScriptCs.Command
 
         public ICommand CreateCommand(ScriptCsArgs args)
         {
+            if (args.Help)
+            {
+                return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: true);
+            }
+
+            if (args.Repl)
+            {
+                var replCommand = new ExecuteReplCommand(
+                    _scriptServiceRoot.FileSystem, _scriptServiceRoot.ScriptPackResolver,
+                    _scriptServiceRoot.Engine, _scriptServiceRoot.FilePreProcessor, _scriptServiceRoot.Logger, _scriptServiceRoot.Console);
+                return replCommand;
+            }
+
             if (args.ScriptName != null)
             {
                 var executeCommand = new ExecuteScriptCommand(
-                    args.ScriptName,
-                    _scriptServiceRoot.FileSystem,
+                    args.ScriptName, 
+                    _scriptServiceRoot.FileSystem, 
                     _scriptServiceRoot.Executor,
-                    _scriptServiceRoot.ScriptPackResolver);
+                    _scriptServiceRoot.ScriptPackResolver,
+                    _scriptServiceRoot.Logger);
 
                 if (args.Restore)
                 {
                     var restoreCommand = new RestoreCommand(
                         args.ScriptName, 
                         _scriptServiceRoot.FileSystem, 
-                        _scriptServiceRoot.PackageAssemblyResolver);
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.Logger);
 
                     return new CompositeCommand(restoreCommand, executeCommand);
                 }
@@ -38,15 +53,17 @@ namespace ScriptCs.Command
             {
                 var installCommand = new InstallCommand(
                     args.Install,
-                    args.AllowPreReleaseFlag,
+                    args.AllowPreRelease,
                     _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.PackageAssemblyResolver,
-                    _scriptServiceRoot.PackageInstaller);
+                    _scriptServiceRoot.PackageInstaller,
+                    _scriptServiceRoot.Logger);
 
                 var restoreCommand = new RestoreCommand(
                     args.Install,
                     _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver);
+                    _scriptServiceRoot.PackageAssemblyResolver,
+                    _scriptServiceRoot.Logger);
 
                 var currentDirectory = _scriptServiceRoot.FileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
@@ -67,7 +84,8 @@ namespace ScriptCs.Command
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,
                     _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver);
+                    _scriptServiceRoot.PackageAssemblyResolver,
+                    _scriptServiceRoot.Logger);
 
                 return new CompositeCommand(saveCommand, cleanCommand);
             }
@@ -82,7 +100,7 @@ namespace ScriptCs.Command
                 return new VersionCommand();
             }
 
-            return new InvalidCommand();
+            return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: false);
         }
     }
 }
