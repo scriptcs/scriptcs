@@ -62,7 +62,7 @@ namespace ScriptCs.Package.InstallationProvider
                 }
                 else
                 {
-                    _manager.InstallPackage(packageId.PackageId);
+                    _manager.InstallPackage(packageId.PackageId, null, false, allowPreRelease);
                 }
 
                 if (packageInstalled != null)
