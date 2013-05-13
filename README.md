@@ -1,71 +1,226 @@
 # scriptcs
 
-## Why should you care?
-Write C# apps with a text editor, nuget and the power of Rosyln!
 
-**Note**: *Rosyln is a pre-release CTP and currently an unsupported technology. As such there may be changes in Roslyn itself that could impact this project. Please bear that in mind when using scriptcs*
+## What is it?
 
-* More on why I developed this [here] (http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/)
-* Check out our goals and rodmap [here] (https://github.com/scriptcs/scriptcs/wiki/Project-goals-and-roadmap)
+scriptcs makes it easy to write and execute C# with a simple text editor.
 
-## Pre-reqs
-* Install the [nuget cmdline bootstrapper] (http://nuget.codeplex.com/releases/view/58939)
-* Build the project and put scriptcs.exe in your path.
+While Visual Studio, and other IDEs, are powerful tools, they can sometimes hinder productivity more than they promote it. You don’t always need, or want, the overhead of a creating a new solution or project. Sometimes you want to just type away in your favorite text editor.
 
-## Quick start
-* Open a cmd prompt as admin
-* Create a directory "c:\scriptcs_hello" and change to it.
-* run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"
-* create a server.csx with your favorite editor. Paste the text below into the file and save.
+scriptcs frees you from Visual Studio, without sacrificing the advantages of a strongly-typed language. 
 
-```csharp
-using System;
-using System.IO;
-using System.Web.Http;
-using System.Web.Http.SelfHost;
+* Write C# in your favorite text editor.
+* Use NuGet to manage your dependencies.
+* The relaxed C# scripting syntax means you can write and execute an application with only one line of code. 
+* Script Packs allow you to bootstrap the environment for new scripts, further reduces the amount of code necessary to take advantage of your favorite C# frameworks.
 
-var address = "http://localhost:8080";
-var conf = new HttpSelfHostConfiguration(new Uri(address));
-conf.Routes.MapHttpRoute(name: "DefaultApi",
-   routeTemplate: "api/{controller}/{id}",
-   defaults: new { id = RouteParameter.Optional }
-);
 
-var server = new HttpSelfHostServer(conf);
+## Getting scriptcs
+
+Releases and nightly builds should be installed using [Chocolatey](http://chocolatey.org/). To install Chocolatey, execute the following command in your command prompt:
+
+    @powershell -NoProfile -ExecutionPolicy Unrestricted -Command "iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%systemdrive%\chocolatey\bin
+
+### Installing scriptcs
+
+Once Chocolatey has been installed, you can install the latest stable version of scriptcs from your command prompt:
+
+    cinst scriptcs
+
+Chocolatey will install scriptcs to `%APPDATA%\scriptcs\` and update your PATH accordingly.
+
+**Note:** You may need to restart your command prompt after the installation completes.
+
+### Staying up-to-date
+
+With Chocolatey, keeping scriptcs updated is just as easy:
+
+    cup scriptcs
+
+### Nightly builds
+
+Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be installed through with Chocolatey:
+
+    cinst scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
+
+### Building from source
+
+Execute `build.cmd` to start the build script.
+
+
+## Getting Started
+
+### Using the REPL
+The scriptcs REPL can be started by running scriptcs without any parameters. The REPL allows you to execute C# statements directly from your command prompt.
+
+```batchfile
+C:\> scriptcs
+scriptcs (ctrl-c or blank to exit)
+
+> var message = "Hello, world!";
+> Console.WriteLine(message);
+Hello, world!
+> 
+
+C:\>
+```
+
+### Writing a script
+
+* In an empty directory, create a new file named `app.csx`:
+
+```c#
+using Raven.Client;
+using Raven.Client.Embedded;
+using Raven.Client.Indexes;
+
+Console.WriteLine("Starting RavenDB server...");
+
+EmbeddableDocumentStore documentStore = null;
+try
+{
+    documentStore = new EmbeddableDocumentStore { UseEmbeddedHttpServer = true };
+    documentStore.Initialize();
+
+    var url = string.Format("http://localhost:{0}", documentStore.Configuration.Port);
+    Console.WriteLine("RavenDB started, listening on {0}.", url);
+
+    Console.ReadKey();
+}
+finally
+{
+    if (documentStore != null)
+        documentStore.Dispose();
+}
+```
+
+* Install the [RavenDB.Embedded](https://nuget.org/packages/RavenDB.Embedded/) package from NuGet using the [install command](https://github.com/scriptcs/scriptcs/wiki/Package-installation).
+
+```batchfile
+scriptcs -install RavenDB.Embedded
+```
+
+* Execute your script. Note that listening on a port requires that the command prompt be launched using the **Run as Administrator** option.
+
+```batchfile
+> scriptcs app.csx
+INFO : Starting to create execution components
+INFO : Starting execution
+Starting RavenDB server...
+.. snip ..
+RavenDB started, listening on http://localhost:8080.
+```
+
+* Navigating to the URL that Raven is listening on will now bring up the RavenDB management studio.
+
+### Bootstrap scripts with Script Packs
+
+Script Packs can be used to further reduce the amount of code you need to write when working with common frameworks. 
+
+* In an empty directory, install the [ScriptCs.WebApi](https://nuget.org/packages/ScriptCs.WebApi/) script pack from NuGet. The script pack will automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default `ControllerResolver` with a custom implementation that allows Web API to discover controllers declared in scripts.
+
+```batchfile
+scriptcs -install ScriptCs.WebApi
+```
+
+* Script packs can be imported into a script by calling `Require<TScriptPack>()`. Create a file named `server.csx` that contains the following code:
+
+```c#
+public class TestController : ApiController {
+    public string Get() {
+        return "Hello world!";
+    }
+}
+
+var webApi = Require<WebApi>();
+var server = webApi.CreateServer("http://localhost:8888");
 server.OpenAsync().Wait();
+
 Console.WriteLine("Listening...");
 Console.ReadKey();
+server.CloseAsync().Wait();
 ```
-* run "scriptcs server.csx"
 
-This will launch a web api host.
+* In a command prompt running as administrator, execute the `server.csx` file.
 
-## How it works
-scriptcs relies on Rosyln for loading loose C# script files. It will automatically discover nuget packages local to the app and load the binaries.
+```batchfile
+scriptcs server.csx 
+```
 
-## Docs
-* [Referencing other scripts from your script](https://github.com/scriptcs/scriptcs/wiki/Referencing-scripts)
-* [Debugging overview & How To](https://github.com/scriptcs/scriptcs/blob/dev/docs/DEBUGGING.md)
+* Browse to http://localhost:8888/test/ to see the result of the TestController.Get method.
 
-## What's next
-* Adding support for pluggable recipe "packs" for different frameworks.
+```xml
+<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">Hello world!</string>
+```
+
+### Referencing scripts
+
+* Move the TestController class from the previous example into a new file named `controller.csx` with the following content.
+
+* On the first line of `server.csx`, reference `controller.csx` using the [#load directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#loading-referenced-scripts). **Note:** #load directives must be placed at the top of a script, otherwise they will be ignored.
+
+```
+#load "controller.csx"
+```
+
+* In a command prompt running as administrator, execute the `server.csx` file.
+
+```batchfile
+scriptcs server.csx 
+```
+
+* Browse to http://localhost:8888/test/ to see the result of the TestController.Get method.
+
+```xml
+<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">Hello world!</string>
+```
+
+
+### Referencing assemblies
+
+You can reference additional assemblies from the GAC or from the bin folder in your script's directory using the [#r directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#referencing-assemblies):
+
+```
+#r "nunit.core.dll"
+#r "nunit.core.interfaces.dll"
+
+var path = "UnitTests.dll";
+var runner = TestSetup.GetRunner(new[] {path});
+var result = runner.Run(new ConsoleListener(msg => Console.WriteLine(msg)), TestFilter.Empty, true,     LoggingThreshold.All);
+
+Console.ReadKey();
+```
+
 
 ## Contributing
+
 * Read our [Contribution Guidelines](https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md). 
-* List of all [contributors to date](https://github.com/scriptcs/scriptcs/wiki/Contributors). Thanks!
 
-## Credits
-* Special thanks to [@filip_woj](http://twitter.com/filip_woj) for being the inspiration behind this with his Roslyn Web API posts.
-* Thanks to the Roslyn team who helped point me in the right direction.
 
-## Coordinators
-* Glenn Block ([@gblock](https://twitter.com/gblock))
-* Justin Rusbatch ([@jrusbatch](https://twitter.com/jrusbatch))
-* Filip Wojcieszyn ([@filip_woj](https://twitter.com/filip_woj))
+## Samples and Documentation
+
+Additional samples can be contributed to our [samples repository](https://github.com/scriptcs/scriptcs-samples). Documentation can be found on our [wiki](https://github.com/scriptcs/scriptcs/wiki). 
+
 
 ## Community
+
 Want to chat? In addition to Twitter, you can find us on [Google Groups](https://groups.google.com/forum/?fromgroups#!forum/scriptcs) and [JabbR](https://jabbr.net/#/rooms/scriptcs)!
 
-## License 
-[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md)
 
+## Coordinators
+
+* [Glenn Block](https://github.com/glennblock) ([@gblock](https://twitter.com/intent/user?screen_name=gblock))
+* [Justin Rusbatch](https://github.com/jrusbatch) ([@jrusbatch](https://twitter.com/intent/user?screen_name=jrusbatch))
+* [Filip Wojcieszyn](https://github.com/filipw) ([@filip_woj](https://twitter.com/intent/user?screen_name=filip_woj))
+
+
+## Credits 
+
+* Check out the [list of developers](https://github.com/scriptcs/scriptcs/wiki/Contributors) responsible for getting scriptcs to where it is today! 
+* Special thanks to Filip Wojcieszyn for being the inspiration behind this with his Roslyn Web API posts.
+* Thanks to the Roslyn team who helped point me in the right direction.
+
+
+## License 
+
+[Apache 2 License](https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md)
