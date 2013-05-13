@@ -7,6 +7,7 @@
     <RootNamespace>ScriptCs</RootNamespace>
     <AssemblyName>ScriptCs.Core</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <CodeAnalysisRuleSet>..\..\build\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -49,6 +50,7 @@
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="Guard.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />

@@ -10,6 +10,8 @@ namespace ScriptCs
 
         public ScriptPackManager(IEnumerable<IScriptPackContext> contexts)
         {
+            Guard.AgainstNullArgument("contexts", contexts);
+
             foreach (var context in contexts)
             {
                 _contexts.Add(context.GetType(), context);

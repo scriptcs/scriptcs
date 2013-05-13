@@ -47,6 +47,8 @@ namespace ScriptCs.Package
 
         public IPackageObject FindPackage(string path, IPackageReference packageRef)
         {
+            Guard.AgainstNullArgument("packageRef", packageRef);
+
             var repository = new LocalPackageRepository(path);
 
             var package = packageRef.Version != null 
