@@ -159,7 +159,7 @@ scriptcs server.csx
 
 * On the first line of `server.csx`, reference `controller.csx` using the [#load directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#loading-referenced-scripts). **Note:** #load directives must be placed at the top of a script, otherwise they will be ignored.
 
-```
+```c#
 #load "controller.csx"
 ```
 
@@ -180,7 +180,7 @@ scriptcs server.csx
 
 You can reference additional assemblies from the GAC or from the bin folder in your script's directory using the [#r directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#referencing-assemblies):
 
-```
+```c#
 #r "nunit.core.dll"
 #r "nunit.core.interfaces.dll"
 
