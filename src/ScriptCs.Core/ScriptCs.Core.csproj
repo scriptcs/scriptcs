@@ -49,6 +49,7 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
+    <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="IFilePreProcessor.cs" />
