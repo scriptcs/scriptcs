@@ -4,7 +4,6 @@ using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
-using System.IO;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -36,7 +35,7 @@ namespace ScriptCs.Engine.Roslyn
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
             
-            var distinctReferences = references.Union(scriptPackSession.References).Distinct().Where(IsManagedAssembly).ToList();
+            var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
             SessionState<Session> sessionState;
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -88,21 +87,6 @@ namespace ScriptCs.Engine.Roslyn
             Guard.AgainstNullArgument("session", session);
 
             return session.Execute(code);
-        }
-
-        protected bool IsManagedAssembly(string path)
-        {
-            if (!File.Exists(path)) return true;
-
-            try
-            {
-                AssemblyName.GetAssemblyName(path);
-            }
-            catch (System.BadImageFormatException)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }
