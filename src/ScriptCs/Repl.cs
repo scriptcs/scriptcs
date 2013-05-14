@@ -60,7 +60,8 @@ namespace ScriptCs
                 if (PreProcessorUtil.IsLoadLine(script))
                 {
                     var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    script = FilePreProcessor.ProcessFile(filepath);
+                    var processorResult = FilePreProcessor.ProcessFile(filepath);
+                    script = processorResult.Code;
                 }
                 else if (PreProcessorUtil.IsRLine(script))
                 {
@@ -74,9 +75,7 @@ namespace ScriptCs
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ToJsv()
-                        
-                        );
+                    Console.WriteLine(result.ToJsv());
                 }
             }
             catch (Exception ex)

@@ -175,6 +175,9 @@ namespace ScriptCs.Tests
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FilePreProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()))
+                     .Returns(new FilePreProcessorResult());
+
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
