@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Reflection;
 namespace ScriptCs
 {
-    public interface IAssemblyName
+    public interface IAssembly
     {
-        string GetAssemblyName(string path);
+        AssemblyName GetAssemblyName(string path);
     }
 }
