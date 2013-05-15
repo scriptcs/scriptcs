@@ -6,6 +6,8 @@ using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
 using Xunit;
+using System;
+using System.Linq;
 
 namespace ScriptCs.Tests
 {
@@ -72,6 +74,45 @@ namespace ScriptCs.Tests
                 result.Execute();
 
                 fs.Verify(x => x.CreateDirectory(binFolder), Times.Once());
+            }
+
+            [Fact]
+            public void NonManagedAssembliesAreExcluded()
+            {
+                const string nonManaged = "non-managed.dll";
+
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
+
+                var fs = new Mock<IFileSystem>();
+                fs.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] {
+                    "managed.dll",
+                    nonManaged
+                });
+
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var assembly = new Mock<IAssembly>();
+                assembly.Setup(x => x.GetAssemblyName(It.Is<string>(y => y == nonManaged))).Throws(new BadImageFormatException());
+
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assembly.Object);
+
+
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args);
+
+                result.Execute();
+
+                executor.Verify(i => i.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
         }
     }
