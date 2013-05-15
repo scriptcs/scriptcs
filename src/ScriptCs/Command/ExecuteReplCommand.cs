@@ -37,7 +37,7 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
+            _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
             var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
@@ -57,8 +57,8 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            Console.Write("> ");
-            var line = Console.ReadLine();
+            _console.Write("> ");
+            var line = _console.ReadLine();
             if (line == "")
                 return false;
 
