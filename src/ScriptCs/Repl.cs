@@ -53,8 +53,6 @@ namespace ScriptCs
 
         public void Execute(string script)
         {
-            var foregroundColor = Console.ForegroundColor;
-
             try
             {
                 if (PreProcessorUtil.IsLoadLine(script))
@@ -98,7 +96,10 @@ namespace ScriptCs
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
             }
-            Console.ForegroundColor = foregroundColor;
+            finally
+            {
+                Console.ResetColor();
+            }
         }
     }
 }

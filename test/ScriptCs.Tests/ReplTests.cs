@@ -56,15 +56,15 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheInitializeMethod()
             {
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
                 _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
-                var paths = new []{@"c:\path"};
-                _repl.Initialize(paths, new[] {_mocks.ScriptPack.Object});
-            }    
+                var paths = new[] { @"c:\path" };
+                _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
+            }
 
             [Fact]
             public void PopulatesReferences()
@@ -79,7 +79,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void SetsTheScriptEngineBaseDirectory()
             {
-                _mocks.ScriptEngine.VerifySet(x=>x.BaseDirectory = @"c:\bin");   
+                _mocks.ScriptEngine.VerifySet(x => x.BaseDirectory = @"c:\bin");
             }
 
             [Fact]
@@ -91,7 +91,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void InitializesScriptPacks()
             {
-                _mocks.ScriptPack.Verify(x=>x.Initialize(It.IsAny<IScriptPackSession>()));
+                _mocks.ScriptPack.Verify(x => x.Initialize(It.IsAny<IScriptPackSession>()));
             }
         }
 
@@ -99,13 +99,13 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheTerminateMethod()
             {
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
                 _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
-                _repl.Initialize(new List<string>(), new[] {_mocks.ScriptPack.Object});
+                _repl.Initialize(new List<string>(), new[] { _mocks.ScriptPack.Object });
                 _repl.Terminate();
             }
 
@@ -120,7 +120,7 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheExecuteMethod()
             {
                 _mocks = new Mocks();
@@ -132,13 +132,19 @@ namespace ScriptCs.Tests
             [Fact]
             public void SetsTheForegroundColorToCyan()
             {
-                _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
+                _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
+            }
+
+            [Fact]
+            public void ResetsColorAfterExecutingScript()
+            {
+                _mocks.Console.Verify(x => x.ResetColor());
             }
 
             [Fact]
             public void CallsExecuteOnTheScriptEngine()
             {
-                _mocks.ScriptEngine.Verify(x=>x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
+                _mocks.ScriptEngine.Verify(x => x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
             }
 
             [Fact]
@@ -154,11 +160,11 @@ namespace ScriptCs.Tests
                 _mocks.Console.Verify(x => x.WriteLine(It.IsAny<string>()));
 
             }
-            
+
             [Fact]
             public void SetsTheForegroundColorBackToTheDefault()
             {
-                _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.White);
+                _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.White);
             }
 
             [Fact]
@@ -169,7 +175,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
-                
+
                 mocks.FilePreProcessor.Verify(i => i.ProcessFile(It.Is<string>(x => x == "file.csx")), Times.Once());
             }
 
