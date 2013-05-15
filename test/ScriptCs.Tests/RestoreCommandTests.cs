@@ -25,9 +25,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assembly = new Mock<IAssembly>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assembly.Object);
-
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -67,9 +66,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assembly = new Mock<IAssembly>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assembly.Object);
-
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -109,8 +107,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assembly = new Mock<IAssembly>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assembly.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
                 const string BinFolder = @"C:\bin";

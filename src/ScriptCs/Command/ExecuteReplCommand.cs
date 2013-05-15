@@ -15,7 +15,7 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IScriptEngine _scriptEngine;
         private readonly IFilePreProcessor _filePreProcessor;
-        private readonly IAssembly _assembly;
+        private readonly IAssemblyName _assemblyName;
 
         private readonly ILog _logger;
         private readonly IConsole _console;
@@ -27,7 +27,7 @@ namespace ScriptCs.Command
             IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console,
-            IAssembly assembly
+            IAssemblyName assemblyName
             )
         {
             _fileSystem = fileSystem;
@@ -36,7 +36,7 @@ namespace ScriptCs.Command
             _filePreProcessor = filePreProcessor;
             _logger = logger;
             _console = console;
-            _assembly = assembly;
+            _assemblyName = assemblyName;
         }
 
         public CommandResult Execute()
@@ -96,7 +96,7 @@ namespace ScriptCs.Command
         {
             try
             {
-                _assembly.GetAssemblyName(path);
+                _assemblyName.GetAssemblyName(path);
             }
             catch (BadImageFormatException)
             {
