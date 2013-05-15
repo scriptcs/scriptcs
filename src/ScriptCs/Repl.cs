@@ -58,12 +58,27 @@ namespace ScriptCs
                 if (PreProcessorUtil.IsLoadLine(script))
                 {
                     var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    script = FilePreProcessor.ProcessFile(filepath);
+                    if (FileSystem.FileExists(filepath))
+                    {
+                        script = FilePreProcessor.ProcessFile(filepath);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
+                    }
                 }
                 else if (PreProcessorUtil.IsRLine(script))
                 {
                     var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                    References = References.Union(new[] { assemblyPath });
+                    if (FileSystem.FileExists(assemblyPath))
+                    {
+                        References = References.Union(new[] { assemblyPath });
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
+                    }
+
                     return;
                 }
 
@@ -72,9 +87,7 @@ namespace ScriptCs
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ToJsv()
-
-                        );
+                    Console.WriteLine(result.ToJsv());
                 }
             }
             catch (Exception ex)

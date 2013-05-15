@@ -171,6 +171,8 @@ namespace ScriptCs.Tests
             public void ShouldProcessFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
@@ -181,6 +183,8 @@ namespace ScriptCs.Tests
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
@@ -188,16 +192,45 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldNotExecuteLoadedFileIfFileDoesNotExist()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Execute("#load \"file.csx\"");
+
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+            }
+
+            [Fact]
             public void ShouldReferenceAssemblyIfLineIsAReference()
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
                 //default references = 6, + 1 we just added
                 _repl.References.Count().ShouldEqual(7);
+            }
+
+            [Fact]
+            public void ShouldNotReferenceAssemblyIfFileDoesNotExist()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                //default references = 6
+                _repl.References.Count().ShouldEqual(6);
             }
 
             [Fact]
