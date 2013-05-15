@@ -60,7 +60,8 @@ namespace ScriptCs
                     var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
                     if (FileSystem.FileExists(filepath))
                     {
-                        script = FilePreProcessor.ProcessFile(filepath);
+                        var processorResult = FilePreProcessor.ProcessFile(filepath);
+                        script = processorResult.Code;
                     }
                     else
                     {
