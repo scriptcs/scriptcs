@@ -35,7 +35,7 @@ namespace ScriptCs
             return new FilePreProcessorResult
             {
                 Usings = context.Usings,
-                LoadedFiles = context.LoadedScripts,
+                LoadedScripts = context.LoadedScripts,
                 References = context.References,
                 Code = code
             };
@@ -93,7 +93,7 @@ namespace ScriptCs
         {
             if (PreProcessorUtil.IsUsingLine(line))
             {
-                var @using = GetUsing(line);
+                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
                 if (!context.Usings.Contains(@using))
                 {
                     context.Usings.Add(@using);
@@ -106,7 +106,7 @@ namespace ScriptCs
             {
                 if (isBeforeCode)
                 {
-                    var reference = GetReference(line);
+                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
                     if (!context.References.Contains(reference))
                     {
                         context.References.Add(reference);
@@ -118,11 +118,13 @@ namespace ScriptCs
 
             if (PreProcessorUtil.IsLoadLine(line))
             {
-                var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
-
-                if (isBeforeCode && !context.LoadedScripts.Contains(filePath))
+                if (isBeforeCode)
                 {
-                    ParseFile(filePath, context);
+                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
+                    if (!context.LoadedScripts.Contains(filePath))
+                    {
+                        ParseFile(filePath, context);
+                    }
                 }
 
                 return;
@@ -130,16 +132,6 @@ namespace ScriptCs
 
             // If we've reached this, the line is part of the body...
             context.Body.Add(line);
-        }
-
-        private static string GetUsing(string line)
-        {
-            return line.TrimStart(' ').Replace(PreProcessorUtil.UsingString, string.Empty).Replace(";", string.Empty);
-        }
-
-        private static string GetReference(string line)
-        {
-            return line.TrimStart(' ').Replace(PreProcessorUtil.RString, string.Empty).Replace("\"", string.Empty);
         }
 
         private class FilePreProcessContext

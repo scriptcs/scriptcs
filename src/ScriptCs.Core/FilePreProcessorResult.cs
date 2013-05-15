@@ -7,13 +7,13 @@ namespace ScriptCs
         public FilePreProcessorResult()
         {
             Usings = new List<string>();
-            LoadedFiles = new List<string>();
+            LoadedScripts = new List<string>();
             References = new List<string>();
         }
 
         public List<string> Usings { get; set; }
 
-        public List<string> LoadedFiles { get; set; }
+        public List<string> LoadedScripts { get; set; }
 
         public List<string> References { get; set; }
 

@@ -109,6 +109,85 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldReturnResultWithAllLoadedFiles()
+            {
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+                var result = processor.ProcessFile("script1.csx");
+
+                result.LoadedScripts.Count.ShouldEqual(3);
+                result.LoadedScripts.ShouldContain("script1.csx");
+                result.LoadedScripts.ShouldContain("script2.csx");
+                result.LoadedScripts.ShouldContain("script4.csx");
+            }
+
+            [Fact]
+            public void ShouldReturnResultWithAllUsings()
+            {
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+                var result = processor.ProcessFile("script1.csx");
+
+                result.Usings.Count.ShouldEqual(2);
+                result.Usings.ShouldContain("System");
+                result.Usings.ShouldContain("System.Core");
+            }
+
+            [Fact]
+            public void ShouldReturnResultWithAllReferences()
+            {
+                var file1 = new List<string>
+                    {
+                        @"#r ""My.dll""",
+                        @"#load ""scriptX.csx""",
+                        "using System;",
+                        @"Console.WriteLine(""Hi!"");"
+                    };
+
+                var file2 = new List<string>
+                    {
+                        @"#r ""My2.dll""",
+                        "using System;",
+                        @"Console.WriteLine(""Hi!"");"
+                    };
+
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx"))).Returns(file1.ToArray());
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
+
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+                var result = processor.ProcessFile("script1.csx");
+
+                result.References.Count.ShouldEqual(2);
+                result.References.ShouldContain("My.dll");
+                result.References.ShouldContain("My2.dll");
+            }
+
+            [Fact]
+            public void ShouldNotIncludeReferencesInCode()
+            {
+                var file1 = new List<string>
+                    {
+                        @"#r ""My.dll""",
+                        @"#load ""scriptX.csx""",
+                        "using System;",
+                        @"Console.WriteLine(""Hi!"");"
+                    };
+
+                var file2 = new List<string>
+                    {
+                        @"#r ""My2.dll""",
+                        "using System;",
+                        @"Console.WriteLine(""Hi!"");"
+                    };
+
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx"))).Returns(file1.ToArray());
+                _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
+
+                var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+                var result = processor.ProcessFile("script1.csx");
+
+                result.Code.ShouldNotContain("#r");
+            }
+
+            [Fact]
             public void ShouldNotLoadSameFileTwice()
             {
                 var file = new List<string>
