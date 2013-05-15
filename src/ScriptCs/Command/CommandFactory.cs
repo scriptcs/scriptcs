@@ -13,6 +13,8 @@ namespace ScriptCs.Command
 
         public ICommand CreateCommand(ScriptCsArgs args)
         {
+            Guard.AgainstNullArgument("args", args);
+
             if (args.Help)
             {
                 return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: true);

@@ -20,34 +20,48 @@ namespace ScriptCs.Engine.Roslyn
             this._logger = logger;
         }
 
-        protected override object Execute(string code, Session session)
+        protected override ScriptExecutionResult Execute(string code, Session session)
         {
-            _logger.Debug("Compiling submission");
-            var submission = session.CompileSubmission<object>(code);
+            Guard.AgainstNullArgument("session", session);
+
+            var executionResult = new ScriptExecutionResult();
+
+            Submission<object> submission = null;
+            try
+            {
+                _logger.Debug("Compiling submission");
+                submission = session.CompileSubmission<object>(code);
+            }
+            catch (Exception compilationException)
+            {
+                executionResult.CompilationException = compilationException;
+                executionResult.UpdateClosingExpectation(compilationException);
+            }
+
             var exeBytes = new byte[0];
             var pdbBytes = new byte[0];
             var compileSuccess = false;
 
             using (var exeStream = new MemoryStream())
-            using (var pdbStream = new MemoryStream()) 
+            using (var pdbStream = new MemoryStream())
             {
                 var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
                 compileSuccess = result.Success;
 
-                if (result.Success) 
+                if (result.Success)
                 {
                     _logger.Debug("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }
-                else 
+                else
                 {
                     var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
                     _logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                 }
             }
 
-            if (compileSuccess) 
+            if (compileSuccess)
             {
                 _logger.Debug("Loading assembly into appdomain.");
                 var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
@@ -59,21 +73,21 @@ namespace ScriptCs.Engine.Roslyn
                 try
                 {
                     _logger.Debug("Invoking method.");
-                    return method.Invoke(null, new[] { session });
+                    executionResult.Result = method.Invoke(null, new[] {session});
                 }
                 catch (Exception e)
                 {
                     _logger.Error("An error occurred when executing the scripts.");
-                    var message = 
+                    var message =
                         string.Format(
-                        "Exception Message: {0} {1}Stack Trace:{2}",
-                        e.InnerException.Message,
-                        Environment.NewLine, 
-                        e.InnerException.StackTrace);
+                            "Exception Message: {0} {1}Stack Trace:{2}",
+                            e.InnerException.Message,
+                            Environment.NewLine,
+                            e.InnerException.StackTrace);
                     throw new ScriptExecutionException(message);
                 }
             }
-            return null;
+            return executionResult;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
 using Moq;
@@ -21,12 +22,19 @@ namespace ScriptCs.Tests
 
             }
 
+            private readonly ScriptPackSession _scriptPackSession = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+
             public Session Session { get; set; }
 
-            protected override object Execute(string code, Session session)
+            public ScriptExecutionResult Execute(string code)
+            {
+                return Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), _scriptPackSession);
+            }
+
+            protected override ScriptExecutionResult Execute(string code, Session session)
             {
                 Session = session;
-                return null;
+                return base.Execute(code, session);
             }
         }
 
@@ -118,6 +126,72 @@ namespace ScriptCs.Tests
                 engine.Execute(code, new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
                 
                 ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
+            }
+
+            [Fact]
+            public void ShouldReturnAResult()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "var a = 0;";
+
+                var result = engine.Execute(code);
+                result.ShouldNotBeNull();
+            }
+
+            [Fact]
+            public void ShouldReturnACompilationExceptionIfTheCodeDoesNotCompile()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "this should not compile";
+
+                var result = engine.Execute(code);
+                result.CompilationException.ShouldNotBeNull();
+            }
+
+            [Fact]
+            public void ShouldNotReturnACompilationExceptionIfTheCodeDoesCompile()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "var theNumber = 42; //this should compile";
+
+                var result = engine.Execute(code);
+                result.CompilationException.ShouldBeNull();
+            }
+
+            [Fact]
+            public void ShouldReturnARuntimeExceptionIfTheCodeThrowsARuntimeException()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "string foo = null; var i = foo.Length; //this should throw a NullReferenceException";
+
+                var result = engine.Execute(code);
+                result.RuntimeException.ShouldBeType(typeof(NullReferenceException));
+            }
+
+            [Fact]
+            public void ShouldReturnAResultIfTheCodeReturnsAResult()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "public int WhatIsTheNumber(){ return 42;} WhatIsTheNumber(); //this should return 42";
+
+                var result = engine.Execute(code);
+                result.Result.ShouldEqual(42);
+            }
+
+            [Fact]
+            public void ShouldIndicateAnUnclosedState()
+            {
+                var engine = CreateTestScriptEngine();
+
+                var code = "public class Foo { //this should be expecting a closing curly brace";
+
+                var result = engine.Execute(code);
+                result.ScriptIsMissingClosingChar.ShouldEqual('}');
             }
         }
     }

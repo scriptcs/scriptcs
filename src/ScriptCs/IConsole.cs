@@ -12,6 +12,7 @@ namespace ScriptCs
         void WriteLine(string value);
         string ReadLine();
         ConsoleColor ForegroundColor { get; set; }
+        ConsoleKeyInfo ReadKey();
     }
 }
 
