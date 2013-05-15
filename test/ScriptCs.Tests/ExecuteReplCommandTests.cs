@@ -79,6 +79,14 @@ namespace ScriptCs.Tests
                 ReadLineCounter++;
                 return reader.ReadLine();
             }
+
+            public void Exit()
+            {
+            }
+
+            public void ResetColor()
+            {
+            }
         }
     }
 }
