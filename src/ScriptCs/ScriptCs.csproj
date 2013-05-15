@@ -79,6 +79,7 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="Repl.cs" />
     <Compile Include="ReplConsole.cs" />
+    <Compile Include="ReplScript.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

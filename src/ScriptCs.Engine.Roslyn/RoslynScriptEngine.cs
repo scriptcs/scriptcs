@@ -104,8 +104,9 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception compilationException)
             {
-                result.CompilationException = compilationException;
                 result.UpdateClosingExpectation(compilationException);
+                if (!result.ScriptIsMissingClosingChar.HasValue)
+                    result.CompilationException = compilationException;
             }
             return result;
         }

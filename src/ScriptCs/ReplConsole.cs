@@ -24,5 +24,10 @@ namespace ScriptCs
             get { return Console.ForegroundColor; }
             set { Console.ForegroundColor = value; }
         }
+
+        public ConsoleKeyInfo ReadKey()
+        {
+            return Console.ReadKey();
+        }
     }
 }
