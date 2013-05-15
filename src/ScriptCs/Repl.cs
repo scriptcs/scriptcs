@@ -60,13 +60,28 @@ namespace ScriptCs
                 if (PreProcessorUtil.IsLoadLine(script))
                 {
                     var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    var processorResult = FilePreProcessor.ProcessFile(filepath);
-                    script = processorResult.Code;
+                    if (FileSystem.FileExists(filepath))
+                    {
+                        var processorResult = FilePreProcessor.ProcessFile(filepath);
+                        script = processorResult.Code;
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
+                    }
                 }
                 else if (PreProcessorUtil.IsRLine(script))
                 {
                     var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                    References = References.Union(new[] { assemblyPath });
+                    if (FileSystem.FileExists(assemblyPath))
+                    {
+                        References = References.Union(new[] { assemblyPath });
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
+                    }
+
                     return;
                 }
 
