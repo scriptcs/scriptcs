@@ -51,6 +51,7 @@
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="IAssemblyName.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
