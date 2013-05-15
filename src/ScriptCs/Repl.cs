@@ -74,9 +74,7 @@ namespace ScriptCs
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ToJsv()
-                        
-                        );
+                    Console.WriteLine(result.ToJsv());
                 }
             }
             catch (Exception ex)

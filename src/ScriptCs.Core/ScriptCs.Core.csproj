@@ -73,6 +73,7 @@
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="PreProcessorUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptExecutionResult.cs" />
     <Compile Include="ScriptHost.cs" />
     <Compile Include="ScriptHostFactory.cs" />
     <Compile Include="ScriptPackManager.cs" />

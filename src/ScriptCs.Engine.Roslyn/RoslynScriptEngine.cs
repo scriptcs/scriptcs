@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
@@ -21,20 +22,20 @@ namespace ScriptCs.Engine.Roslyn
             _scriptHostFactory = scriptHostFactory;
             _logger = logger;
         }
-        
+
         public string BaseDirectory
         {
-            get {  return _scriptEngine.BaseDirectory;  }
-            set {  _scriptEngine.BaseDirectory = value; }
+            get { return _scriptEngine.BaseDirectory; }
+            set { _scriptEngine.BaseDirectory = value; }
         }
 
-        public object Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptExecutionResult Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces,
+                                             ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
-            
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
             SessionState<Session> sessionState;
 
@@ -64,7 +65,9 @@ namespace ScriptCs.Engine.Roslyn
                 _logger.Debug("Reusing existing session");
                 sessionState = (SessionState<Session>) scriptPackSession.State[SessionKey];
 
-                var newReferences = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
+                var newReferences = sessionState.References == null || !sessionState.References.Any()
+                                        ? distinctReferences
+                                        : distinctReferences.Except(sessionState.References);
                 if (newReferences.Any())
                 {
                     foreach (var reference in newReferences)
@@ -82,11 +85,29 @@ namespace ScriptCs.Engine.Roslyn
             return result;
         }
 
-        protected virtual object Execute(string code, Session session)
+        protected virtual ScriptExecutionResult Execute(string code, Session session)
         {
             Guard.AgainstNullArgument("session", session);
 
-            return session.Execute(code);
+            var result = new ScriptExecutionResult();
+            try
+            {
+                var submission = session.CompileSubmission<object>(code);
+                try
+                {
+                    result.Result = submission.Execute();
+                }
+                catch (Exception runtimeException)
+                {
+                    result.RuntimeException = runtimeException;
+                }
+            }
+            catch (Exception compilationException)
+            {
+                result.CompilationException = compilationException;
+                result.UpdateClosingExpectation(compilationException);
+            }
+            return result;
         }
     }
 }
