@@ -65,6 +65,7 @@ namespace ScriptCs
         {
             Running = true;
 
+            Console.Write(InputCaret);
             while (Running)
             {
                 ExecuteChar();
@@ -77,13 +78,18 @@ namespace ScriptCs
             var c = keyInfo.KeyChar;
             var key = keyInfo.Key;
 
-            if (key == ConsoleKey.Backspace)
-                ProcessBackspace();
-            
-            if (key == ConsoleKey.Enter)
-                Execute();
-
-            Script.Append(c.ToString(CultureInfo.CurrentCulture));
+            switch (key)
+            {
+                case ConsoleKey.Backspace:
+                    ProcessBackspace();
+                    break;
+                case ConsoleKey.Enter:
+                    Execute();
+                    break;
+                default:
+                    Script.Append(c.ToString(CultureInfo.CurrentCulture));
+                    break;
+            }
         }
 
         private void ProcessBackspace()
@@ -108,7 +114,7 @@ namespace ScriptCs
             var command = ReplCommands.Get(script);
             if (command == CommandInfo.Empty)
             {
-                if (script == "")
+                if (script == null)
                 {
                     Running = false;
                     return;
@@ -131,7 +137,8 @@ namespace ScriptCs
                     }
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    var result = ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                    //var result = ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                    var result = Script.Execute();
 
                     if (result.Result != null)
                     {

@@ -14,7 +14,7 @@ namespace ScriptCs
         private IEnumerable<string> References;
         private IEnumerable<string> Namespaces; 
 
-        private int _lastExecutedLineIndex;
+        private int _lastExecutedLineIndex = -1;
 
         public ReplScript(string newLine, IEnumerable<string> references, IEnumerable<string> namespaces, IScriptEngine scriptEngine, ScriptPackSession scriptPackSession)
         {
@@ -52,6 +52,8 @@ namespace ScriptCs
             if (PendingLine.Length < charCount)
                 return false;
             PendingLine = PendingLine.Substring(0, PendingLine.Length - charCount);
+            if (PendingLine.Length == 0)
+                PendingLine = null;
             return true;
         }
 

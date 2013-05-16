@@ -122,6 +122,28 @@ namespace ScriptCs.Tests
             }
         }
 
+        public class TheRunMethod
+        {
+            private Mocks _mocks;
+            private Repl _repl;
+ 
+            public TheRunMethod()
+            {
+                _mocks = new Mocks();
+                _mocks.Console.Setup(x => x.ReadKey()).Returns(new ConsoleKeyInfo('\r', ConsoleKey.Enter, false, false, false));
+                _repl = GetRepl(_mocks);
+                _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
+                _repl.Initialize(new List<string>(), new[] {_mocks.ScriptPack.Object});
+                _repl.Run();
+            }
+
+            [Fact]
+            public void PrintsAnInitialInputCaret()
+            {
+                _mocks.Console.Verify(x => x.Write(Repl.InputCaret));
+            }
+        }
+
         public class TheExecuteMethod
         {
             private Mocks _mocks;
