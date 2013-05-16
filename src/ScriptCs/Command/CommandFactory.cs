@@ -36,6 +36,7 @@ namespace ScriptCs.Command
                     _scriptServiceRoot.FileSystem, 
                     _scriptServiceRoot.Executor,
                     _scriptServiceRoot.ScriptPackResolver,
+                    _scriptServiceRoot.Logger,
                     _scriptServiceRoot.AssemblyName);
 
                 if (args.Restore)

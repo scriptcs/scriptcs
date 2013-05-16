@@ -35,6 +35,7 @@ namespace ScriptCs.Tests
                     Mock.Of<IScriptPackResolver>(),
                     Mock.Of<IPackageInstaller>(),
                     Mock.Of<ILog>(),
+                    Mock.Of<IAssemblyName>(),
                     console);
 
                 var commandFactory = new CommandFactory(root);
