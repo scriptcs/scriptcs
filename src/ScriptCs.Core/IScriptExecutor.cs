@@ -5,6 +5,6 @@ namespace ScriptCs
 {
     public interface IScriptExecutor
     {
-        void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> recipes);
+        void Execute(string script, string args, IEnumerable<string> paths, IEnumerable<IScriptPack> recipes);
     }
 }
