@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>scriptcs</title>
+    <title>ScriptCS by scriptcs</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,10 +15,11 @@
   <body>
     <div class="wrapper">
       <header>
-        <div><img height="270" src="https://secure.gravatar.com/avatar/5c754f646971d8bc800b9d4057931938?s=420&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png" width="270"> </div>
-        <p>Write .Net apps with a text editor, NuGet, and the power of Roslyn!</p>
+        <h1>ScriptCS</h1>
+        <p>Unleash your C# from Visual Studio.</p>
 
         <p class="view"><a href="https://github.com/scriptcs/scriptcs">View the Project on GitHub <small>scriptcs/scriptcs</small></a></p>
+
 
         <ul>
           <li><a href="https://github.com/scriptcs/scriptcs/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -29,77 +30,215 @@
       <section>
         <h1>scriptcs</h1>
 
-<h1></h1>
+<h2>What is it?</h2>
 
-<h2>Why should you care?</h2>
+<p>scriptcs makes it easy to write and execute C# with a simple text editor.</p>
 
-<p>Write .NET apps with your favorite text editor, NuGet and the power of <a href="http://msdn.microsoft.com/en-us/vstudio/roslyn.aspx">Roslyn!</a></p>
+<p>While Visual Studio, and other IDEs, are powerful tools, they can sometimes hinder productivity more than they promote it. You don’t always need, or want, the overhead of a creating a new solution or project. Sometimes you want to just type away in your favorite text editor.</p>
 
-<ul>
-<li>More on why I developed this <a href="http://codebetter.com/glennblock/2013/02/28/scriptcs-living-on-the-edge-in-c-without-a-project-on-the-wings-of-roslyn-and-nuget/">here</a>
-</li>
-<li>Check out our goals and roadmap <a href="https://github.com/scriptcs/scriptcs/wiki/Goals-and-Roadmap">here</a>
-</li>
-</ul><h2>Pre-requisites</h2>
+<p>scriptcs frees you from Visual Studio, without sacrificing the advantages of a strongly-typed language. </p>
 
 <ul>
-<li>Install the <a href="http://nuget.codeplex.com/releases/view/58939">nuget cmdline bootstrapper</a>
-</li>
-<li>Build the project and put scriptcs.exe in your path.</li>
-</ul><h2>Quick start</h2>
+<li>Write C# in your favorite text editor.</li>
+<li>Use NuGet to manage your dependencies.</li>
+<li>The relaxed C# scripting syntax means you can write and execute an application with only one line of code. </li>
+<li>Script Packs allow you to bootstrap the environment for new scripts, further reduces the amount of code necessary to take advantage of your favorite C# frameworks.</li>
+</ul><h2>Getting scriptcs</h2>
+
+<p>Releases and nightly builds should be installed using <a href="http://chocolatey.org/">Chocolatey</a>. To install Chocolatey, execute the following command in your command prompt:</p>
+
+<pre><code>@powershell -NoProfile -ExecutionPolicy Unrestricted -Command "iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" &amp;&amp; SET PATH=%PATH%;%systemdrive%\chocolatey\bin
+</code></pre>
+
+<h3>Installing scriptcs</h3>
+
+<p>Once Chocolatey has been installed, you can install the latest stable version of scriptcs from your command prompt:</p>
+
+<pre><code>cinst scriptcs
+</code></pre>
+
+<p>Chocolatey will install scriptcs to <code>%APPDATA%\scriptcs\</code> and update your PATH accordingly.</p>
+
+<p><strong>Note:</strong> You may need to restart your command prompt after the installation completes.</p>
+
+<h3>Staying up-to-date</h3>
+
+<p>With Chocolatey, keeping scriptcs updated is just as easy:</p>
+
+<pre><code>cup scriptcs
+</code></pre>
+
+<h3>Nightly builds</h3>
+
+<p>Nightly builds are hosted on <a href="https://www.myget.org/">MyGet</a>, and can also be installed through with Chocolatey:</p>
+
+<pre><code>cinst scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
+</code></pre>
+
+<h3>Building from source</h3>
+
+<p>Execute <code>build.cmd</code> to start the build script.</p>
+
+<h2>Getting Started</h2>
+
+<h3>Using the REPL</h3>
+
+<p>The scriptcs REPL can be started by running scriptcs without any parameters. The REPL allows you to execute C# statements directly from your command prompt.</p>
+
+<div class="highlight"><pre>C:\<span class="p">&gt;</span> <span class="n">scriptcs</span>
+scriptcs (ctrl-c or blank to exit)
+
+<span class="p">&gt;</span> <span class="n">var</span> message <span class="o">=</span> <span class="s2">"Hello, world!"</span>;
+<span class="p">&gt;</span> <span class="n">Console</span>.WriteLine(message);
+Hello<span class="p">,</span> world!
+<span class="p">&gt;</span> 
+
+<span class="n">C</span>:\&gt;
+</pre></div>
+
+<h3>Writing a script</h3>
 
 <ul>
-<li>Open a command prompt</li>
-<li>Create a directory "c:\scriptcs_hello" and change to it.</li>
-<li>Run "nuget install Microsoft.AspNet.WebApi.SelfHost -o Packages"</li>
-<li>Create a server.csx with your favorite editor. Paste the text below into the file and save.</li>
-</ul><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
-<span class="k">using</span> <span class="nn">System.IO</span><span class="p">;</span>
-<span class="k">using</span> <span class="nn">System.Web.Http</span><span class="p">;</span>
-<span class="k">using</span> <span class="nn">System.Web.Http.SelfHost</span><span class="p">;</span>
+<li>In an empty directory, create a new file named <code>app.csx</code>:</li>
+</ul><div class="highlight"><pre><span class="k">using</span> <span class="nn">Raven.Client</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Raven.Client.Embedded</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Raven.Client.Indexes</span><span class="p">;</span>
 
-<span class="kt">var</span> <span class="n">address</span> <span class="p">=</span> <span class="s">"http://localhost:8080"</span><span class="p">;</span>
-<span class="kt">var</span> <span class="n">conf</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpSelfHostConfiguration</span><span class="p">(</span><span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="n">address</span><span class="p">));</span>
-<span class="n">conf</span><span class="p">.</span><span class="n">Routes</span><span class="p">.</span><span class="n">MapHttpRoute</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="s">"DefaultApi"</span><span class="p">,</span>
-   <span class="n">routeTemplate</span><span class="p">:</span> <span class="s">"api/{controller}/{id}"</span><span class="p">,</span>
-   <span class="n">defaults</span><span class="p">:</span> <span class="k">new</span> <span class="p">{</span> <span class="n">id</span> <span class="p">=</span> <span class="n">RouteParameter</span><span class="p">.</span><span class="n">Optional</span> <span class="p">}</span>
-<span class="p">);</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Starting RavenDB server..."</span><span class="p">);</span>
 
-<span class="kt">var</span> <span class="n">server</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpSelfHostServer</span><span class="p">(</span><span class="n">conf</span><span class="p">);</span>
-<span class="n">server</span><span class="p">.</span><span class="n">OpenAsync</span><span class="p">().</span><span class="n">Wait</span><span class="p">();</span>
-<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Listening..."</span><span class="p">);</span>
-<span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+<span class="n">EmbeddableDocumentStore</span> <span class="n">documentStore</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="k">try</span>
+<span class="p">{</span>
+    <span class="n">documentStore</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EmbeddableDocumentStore</span> <span class="p">{</span> <span class="n">UseEmbeddedHttpServer</span> <span class="p">=</span> <span class="k">true</span> <span class="p">};</span>
+    <span class="n">documentStore</span><span class="p">.</span><span class="n">Initialize</span><span class="p">();</span>
+
+    <span class="kt">var</span> <span class="n">url</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"http://localhost:{0}"</span><span class="p">,</span> <span class="n">documentStore</span><span class="p">.</span><span class="n">Configuration</span><span class="p">.</span><span class="n">Port</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"RavenDB started, listening on {0}."</span><span class="p">,</span> <span class="n">url</span><span class="p">);</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">finally</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">documentStore</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="n">documentStore</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+<span class="p">}</span>
 </pre></div>
 
 <ul>
-<li>Run the command <code>scriptcs server.csx</code>. This will launch a Web API host.</li>
-</ul><h2>How it works</h2>
-
-<p>ScriptCS relies on Rosyln for loading loose C# script files. It will automatically discover NuGet packages local to the app and load the binaries.</p>
-
-<h2>What's next</h2>
+<li>Install the <a href="https://nuget.org/packages/RavenDB.Embedded/">RavenDB.Embedded</a> package from NuGet using the <a href="https://github.com/scriptcs/scriptcs/wiki/Package-installation">install command</a>.</li>
+</ul><div class="highlight"><pre>scriptcs -install RavenDB.Embedded
+</pre></div>
 
 <ul>
-<li>Adding support for pluggable script "packs" for different frameworks.</li>
+<li>Execute your script. Note that listening on a port requires that the command prompt be launched using the <strong>Run as Administrator</strong> option.</li>
+</ul><div class="highlight"><pre><span class="p">&gt;</span> <span class="n">scriptcs</span> app.csx
+INFO : Starting to create execution components
+INFO : Starting execution
+Starting RavenDB server...
+.. snip ..
+RavenDB started<span class="p">,</span> listening <span class="k">on</span> http:<span class="n">//localhost:8080.</span>
+</pre></div>
+
+<ul>
+<li>Navigating to the URL that Raven is listening on will now bring up the RavenDB management studio.</li>
+</ul><h3>Bootstrap scripts with Script Packs</h3>
+
+<p>Script Packs can be used to further reduce the amount of code you need to write when working with common frameworks. </p>
+
+<ul>
+<li>In an empty directory, install the <a href="https://nuget.org/packages/ScriptCs.WebApi/">ScriptCs.WebApi</a> script pack from NuGet. The script pack will automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default <code>ControllerResolver</code> with a custom implementation that allows Web API to discover controllers declared in scripts.</li>
+</ul><div class="highlight"><pre>scriptcs -install ScriptCs.WebApi
+</pre></div>
+
+<ul>
+<li>Script packs can be imported into a script by calling <code>Require&lt;TScriptPack&gt;()</code>. Create a file named <code>server.csx</code> that contains the following code:</li>
+</ul><div class="highlight"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">TestController</span> <span class="p">:</span> <span class="n">ApiController</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="nf">Get</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">"Hello world!"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">var</span> <span class="n">webApi</span> <span class="p">=</span> <span class="n">Require</span><span class="p">&lt;</span><span class="n">WebApi</span><span class="p">&gt;();</span>
+<span class="kt">var</span> <span class="n">server</span> <span class="p">=</span> <span class="n">webApi</span><span class="p">.</span><span class="n">CreateServer</span><span class="p">(</span><span class="s">"http://localhost:8888"</span><span class="p">);</span>
+<span class="n">server</span><span class="p">.</span><span class="n">OpenAsync</span><span class="p">().</span><span class="n">Wait</span><span class="p">();</span>
+
+<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Listening..."</span><span class="p">);</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+<span class="n">server</span><span class="p">.</span><span class="n">CloseAsync</span><span class="p">().</span><span class="n">Wait</span><span class="p">();</span>
+</pre></div>
+
+<ul>
+<li>In a command prompt running as administrator, execute the <code>server.csx</code> file.</li>
+</ul><div class="highlight"><pre>scriptcs server.csx 
+</pre></div>
+
+<ul>
+<li>Browse to http://localhost:8888/test/ to see the result of the TestController.Get method.</li>
+</ul><div class="highlight"><pre><span class="nt">&lt;string</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/2003/10/Serialization/"</span><span class="nt">&gt;</span>Hello world!<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+
+<h3>Referencing scripts</h3>
+
+<ul>
+<li><p>Move the TestController class from the previous example into a new file named <code>controller.csx</code> with the following content.</p></li>
+<li><p>On the first line of <code>server.csx</code>, reference <code>controller.csx</code> using the <a href="https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#loading-referenced-scripts">#load directive</a>. <strong>Note:</strong> #load directives must be placed at the top of a script, otherwise they will be ignored.</p></li>
+</ul><div class="highlight"><pre><span class="err">#</span><span class="n">load</span> <span class="s">"controller.csx"</span>
+</pre></div>
+
+<ul>
+<li>In a command prompt running as administrator, execute the <code>server.csx</code> file.</li>
+</ul><div class="highlight"><pre>scriptcs server.csx 
+</pre></div>
+
+<ul>
+<li>Browse to http://localhost:8888/test/ to see the result of the TestController.Get method.</li>
+</ul><div class="highlight"><pre><span class="nt">&lt;string</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/2003/10/Serialization/"</span><span class="nt">&gt;</span>Hello world!<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+
+<h3>Referencing assemblies</h3>
+
+<p>You can reference additional assemblies from the GAC or from the bin folder in your script's directory using the <a href="https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#referencing-assemblies">#r directive</a>:</p>
+
+<div class="highlight"><pre><span class="err">#</span><span class="n">r</span> <span class="s">"nunit.core.dll"</span>
+<span class="err">#</span><span class="n">r</span> <span class="s">"nunit.core.interfaces.dll"</span>
+
+<span class="kt">var</span> <span class="n">path</span> <span class="p">=</span> <span class="s">"UnitTests.dll"</span><span class="p">;</span>
+<span class="kt">var</span> <span class="n">runner</span> <span class="p">=</span> <span class="n">TestSetup</span><span class="p">.</span><span class="n">GetRunner</span><span class="p">(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="n">path</span><span class="p">});</span>
+<span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">runner</span><span class="p">.</span><span class="n">Run</span><span class="p">(</span><span class="k">new</span> <span class="n">ConsoleListener</span><span class="p">(</span><span class="n">msg</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">msg</span><span class="p">)),</span> <span class="n">TestFilter</span><span class="p">.</span><span class="n">Empty</span><span class="p">,</span> <span class="k">true</span><span class="p">,</span>     <span class="n">LoggingThreshold</span><span class="p">.</span><span class="n">All</span><span class="p">);</span>
+
+<span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+</pre></div>
+
+<h2>Contributing</h2>
+
+<ul>
+<li>Read our <a href="https://github.com/scriptcs/scriptcs/blob/master/CONTRIBUTING.md">Contribution Guidelines</a>. </li>
+</ul><h2>Samples and Documentation</h2>
+
+<p>Additional samples can be contributed to our <a href="https://github.com/scriptcs/scriptcs-samples">samples repository</a>. Documentation can be found on our <a href="https://github.com/scriptcs/scriptcs/wiki">wiki</a>. </p>
+
+<h2>Community</h2>
+
+<p>Want to chat? In addition to Twitter, you can find us on <a href="https://groups.google.com/forum/?fromgroups#!forum/scriptcs">Google Groups</a> and <a href="https://jabbr.net/#/rooms/scriptcs">JabbR</a>!</p>
+
+<h2>Coordinators</h2>
+
+<ul>
+<li>
+<a href="https://github.com/glennblock">Glenn Block</a> (<a href="https://twitter.com/intent/user?screen_name=gblock">@gblock</a>)</li>
+<li>
+<a href="https://github.com/jrusbatch">Justin Rusbatch</a> (<a href="https://twitter.com/intent/user?screen_name=jrusbatch">@jrusbatch</a>)</li>
+<li>
+<a href="https://github.com/filipw">Filip Wojcieszyn</a> (<a href="https://twitter.com/intent/user?screen_name=filip_woj">@filip_woj</a>)</li>
+</ul><h2>Credits</h2>
+
+<ul>
+<li>Check out the <a href="https://github.com/scriptcs/scriptcs/wiki/Contributors">list of developers</a> responsible for getting scriptcs to where it is today! </li>
+<li>Special thanks to Filip Wojcieszyn for being the inspiration behind this with his Roslyn Web API posts.</li>
+<li>Thanks to the Roslyn team who helped point me in the right direction.</li>
 </ul><h2>License</h2>
 
-<p><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a></p>
-
-<h2>Credits</h2>
-
-<ul>
-<li>Special thanks to <a href="https://twitter.com/filip_woj">@filip_woj</a> for being the inspiration behind this with his Roslyn Web API posts.</li>
-<li>Thanks to the Roslyn team who helped point me in the right direction.</li>
-</ul><h2>Coordinators</h2>
-
-<ul>
-<li>Glenn Block <a href="https://twitter.com/gblock">@gblock</a>
-</li>
-<li>Justin Rusbatch <a href="https://twitter.com/jrusbatch">@jrusbatch</a>
-</li>
-<li>Filip Wojcieszyn <a href="https://twitter.com/filip_woj">@filip_woj</a>
-</li>
-</ul>
+<p><a href="https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md">Apache 2 License</a></p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/scriptcs">scriptcs</a></p>
