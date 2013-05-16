@@ -10,14 +10,15 @@ namespace ScriptCs.Command
     internal class ExecuteScriptCommand : IScriptCommand
     {
         private readonly string _script;
-        private readonly IFileSystem _fileSystem;
+	    private readonly string _args;
+	    private readonly IFileSystem _fileSystem;
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyName _assemblyName;
 
         private readonly ILog _logger;
 
-        public ExecuteScriptCommand(string script, 
+		public ExecuteScriptCommand(string script, string args, 
             IFileSystem fileSystem, 
             IScriptExecutor scriptExecutor, 
             IScriptPackResolver scriptPackResolver,
@@ -25,7 +26,8 @@ namespace ScriptCs.Command
             IAssemblyName assemblyName)
         {
             _script = script;
-            _fileSystem = fileSystem;
+			_args = args;
+			_fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
@@ -44,7 +46,7 @@ namespace ScriptCs.Command
                     assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
 
-                _scriptExecutor.Execute(_script, assemblyPaths, _scriptPackResolver.GetPacks());
+				_scriptExecutor.Execute(_script, _args, assemblyPaths, _scriptPackResolver.GetPacks());
                 return CommandResult.Success;
             }
             catch (Exception ex)

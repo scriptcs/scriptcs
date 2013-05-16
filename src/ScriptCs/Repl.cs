@@ -86,7 +86,7 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                var result = ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                var result = ScriptEngine.Execute(script, "", References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;

@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
+
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -28,7 +33,7 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public object Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public object Execute(string code, string args, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
@@ -40,10 +45,10 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
+                var host = _scriptHostFactory.CreateScriptHost(args, new ScriptPackManager(scriptPackSession.Contexts));
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
-
+				
                 foreach (var reference in distinctReferences)
                 {
                     _logger.DebugFormat("Adding reference to {0}", reference);
@@ -55,6 +60,9 @@ namespace ScriptCs.Engine.Roslyn
                     _logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
+
+				session.AddReference(new MetadataFileReference(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PowerArgs.dll")));
+				session.ImportNamespace("PowerArgs");
 
                 sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
                 scriptPackSession.State[SessionKey] = sessionState;
