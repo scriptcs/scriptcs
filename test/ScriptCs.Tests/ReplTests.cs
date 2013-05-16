@@ -183,6 +183,8 @@ namespace ScriptCs.Tests
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FilePreProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()))
+                     .Returns(new FilePreProcessorResult());
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
 
                 _repl = GetRepl(mocks);
