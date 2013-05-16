@@ -93,6 +93,12 @@ namespace ScriptCs.Tests
             {
                 _mocks.ScriptPack.Verify(x=>x.Initialize(It.IsAny<IScriptPackSession>()));
             }
+
+            [Fact]
+            public void CreatesTheScriptObject()
+            {
+                _repl.Script.ShouldNotBeNull();
+            }
         }
 
         public class TheTerminateMethod
@@ -124,22 +130,29 @@ namespace ScriptCs.Tests
             public TheExecuteMethod()
             {
                 _mocks = new Mocks();
+                _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
                 _repl = GetRepl(_mocks);
                 _repl.Console.ForegroundColor = ConsoleColor.White;
-                _repl.Script.Append("foo");
-                _repl.Execute();
+                var paths = new[] { @"c:\path" };
+                _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
             }
 
             [Fact]
             public void SetsTheForegroundColorToCyan()
             {
-                _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
+                _repl.Script.Append("foo");
+                _repl.Execute();
+
+                _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
             }
 
             [Fact]
             public void CallsExecuteOnTheScriptEngine()
             {
-                _mocks.ScriptEngine.Verify(x=>x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
+                _repl.Script.Append("foo");
+                _repl.Execute();
+
+                _mocks.ScriptEngine.Verify(x => x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
             }
 
             [Fact]
@@ -167,7 +180,11 @@ namespace ScriptCs.Tests
             public void ShouldProcessFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
                 _repl = GetRepl(mocks);
+                var paths = new[] { @"c:\path" };
+                _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
+
                 _repl.Script.Append("#load \"file.csx\"");
                 _repl.Execute();
                 
@@ -178,7 +195,11 @@ namespace ScriptCs.Tests
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
                 _repl = GetRepl(mocks);
+                var paths = new[] { @"c:\path" };
+                _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
+
                 _repl.Script.Append("#load \"file.csx\"");
                 _repl.Execute();
 

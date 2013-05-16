@@ -25,8 +25,8 @@ namespace ScriptCs
                 closingChar = ')';
             else if (message.Contains("CS1513: } expected"))
                 closingChar = '}';
-            else if (message.Contains("CS1002: ; expected"))
-                closingChar = ';';
+            //else if (message.Contains("CS1002: ; expected"))
+            //    closingChar = ';'; //don't think this method will work for detecting this...
             else if (message.Contains("CS1003: ] expected"))
                 closingChar = ']';
 
