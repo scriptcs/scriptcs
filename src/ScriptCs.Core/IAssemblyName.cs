@@ -1,8 +1,7 @@
-﻿using System.Reflection;
-namespace ScriptCs
+﻿namespace ScriptCs
 {
-    public interface IAssembly
+    public interface IAssemblyName
     {
-        AssemblyName GetAssemblyName(string path);
+        System.Reflection.AssemblyName GetAssemblyName(string path);
     }
 }

@@ -25,7 +25,7 @@ namespace ScriptCs.Command
                 var replCommand = new ExecuteReplCommand(
                     _scriptServiceRoot.FileSystem, _scriptServiceRoot.ScriptPackResolver,
                     _scriptServiceRoot.Engine, _scriptServiceRoot.FilePreProcessor, _scriptServiceRoot.Logger, _scriptServiceRoot.Console,
-                    _scriptServiceRoot.Assembly);
+                    _scriptServiceRoot.AssemblyName);
                 return replCommand;
             }
 
@@ -36,7 +36,7 @@ namespace ScriptCs.Command
                     _scriptServiceRoot.FileSystem, 
                     _scriptServiceRoot.Executor,
                     _scriptServiceRoot.ScriptPackResolver,
-                    _scriptServiceRoot.Assembly);
+                    _scriptServiceRoot.AssemblyName);
 
                 if (args.Restore)
                 {
