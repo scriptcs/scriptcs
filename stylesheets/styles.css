@@ -188,6 +188,10 @@ footer {
   height: 77px;
 }
 
+.tagline {
+  font-weight: 700;
+}
+
 @media print, screen and (max-width: 960px) {
   
   div.wrapper {
