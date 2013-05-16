@@ -114,6 +114,12 @@ namespace ScriptCs.Tests
             {
                 _mocks.ScriptPack.Verify(x => x.Terminate());
             }
+
+            [Fact]
+            public void ExitsTheConsole()
+            {
+                _mocks.Console.Verify(x => x.Exit());
+            }
         }
 
         public class TheExecuteMethod

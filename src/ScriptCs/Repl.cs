@@ -49,6 +49,8 @@ namespace ScriptCs
         {
             Logger.Debug("Terminating packs");
             ScriptPackSession.TerminatePacks();
+            Logger.Debug("Exiting console");
+            Console.Exit();
         }
 
         public void Execute(string script)
