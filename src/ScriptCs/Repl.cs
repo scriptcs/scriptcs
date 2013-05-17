@@ -11,7 +11,7 @@ namespace ScriptCs
     public class Repl
     {
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
+        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
         public IScriptEngine ScriptEngine { get; private set; }
