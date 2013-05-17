@@ -217,7 +217,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ExecutorShouldPassDefaultNamespacesToEngine()
             {
-                var expectedNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
+                var expectedNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");

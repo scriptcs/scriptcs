@@ -9,7 +9,7 @@ namespace ScriptCs
     public class ScriptExecutor : IScriptExecutor
     {
         private static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
+        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _filePreProcessor;
