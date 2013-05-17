@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
+using System.Reflection;
 
 namespace ScriptCs.Command
 {
@@ -14,6 +15,7 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IScriptEngine _scriptEngine;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly IAssemblyName _assemblyName;
 
         private readonly ILog _logger;
         private readonly IConsole _console;
@@ -24,7 +26,8 @@ namespace ScriptCs.Command
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
             ILog logger,
-            IConsole console
+            IConsole console,
+            IAssemblyName assemblyName
             )
         {
             _fileSystem = fileSystem;
@@ -33,6 +36,7 @@ namespace ScriptCs.Command
             _filePreProcessor = filePreProcessor;
             _logger = logger;
             _console = console;
+            _assemblyName = assemblyName;
         }
 
         public CommandResult Execute()
@@ -77,6 +81,7 @@ namespace ScriptCs.Command
             var assemblyPaths =
                 _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
+                .Where(IsManagedAssembly)
                 .ToList();
 
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
@@ -85,6 +90,19 @@ namespace ScriptCs.Command
             }
 
             return assemblyPaths;
+        }
+
+        private bool IsManagedAssembly(string path)
+        {
+            try
+            {
+                _assemblyName.GetAssemblyName(path);
+            }
+            catch (BadImageFormatException)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
