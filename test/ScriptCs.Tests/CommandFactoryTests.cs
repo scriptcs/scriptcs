@@ -206,6 +206,23 @@ namespace ScriptCs.Tests
 
                 result.ShouldImplement<IHelpCommand>();
             }
+
+            [Fact]
+            public void ShouldPassScriptArgsToExecuteCommandConstructor()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = null,
+                    ScriptName = "test.csx"
+                };
+
+                var scriptArgs = new string[0];
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, scriptArgs) as IScriptCommand;
+
+                result.ScriptArgs.ShouldEqual(scriptArgs);
+            }
         }
     }
 }

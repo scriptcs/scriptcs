@@ -29,7 +29,18 @@ namespace ScriptCs.Tests
             public void ShoulGetScriptPackFromScriptPackManagerWhenInvoked()
             {
                 var result = _scriptHost.Require<IScriptPackContext>();
-                _mockScriptPackManager.Verify(s=>s.Get<IScriptPackContext>());
+                _mockScriptPackManager.Verify(s => s.Get<IScriptPackContext>());
+            }
+        }
+
+        public class TheConstructor
+        {
+            [Fact]
+            public void ShouldSetScriptArgsWhenConstructed()
+            {
+                var scriptArgs = new string[0];
+                var scriptHost = new ScriptHost(null, scriptArgs);
+                scriptHost.ScriptArgs.ShouldEqual(scriptArgs);
             }
         }
     }
