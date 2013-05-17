@@ -14,6 +14,7 @@ namespace ScriptCs
         void Exit();
         void ResetColor();
         ConsoleColor ForegroundColor { get; set; }
+        ConsoleKeyInfo ReadKey(bool intercept);
     }
 }
 

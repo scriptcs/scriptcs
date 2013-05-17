@@ -61,6 +61,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="ReplCommandInfo.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
@@ -78,7 +79,9 @@
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Repl.cs" />
+    <Compile Include="ReplCommands.cs" />
     <Compile Include="ReplConsole.cs" />
+    <Compile Include="ReplScript.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

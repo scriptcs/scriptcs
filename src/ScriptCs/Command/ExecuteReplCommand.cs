@@ -42,9 +42,7 @@ namespace ScriptCs.Command
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
             {
-                while (ExecuteLine(repl))
-                {
-                }
+                repl.Run();
             }
             catch (Exception ex)
             {
@@ -54,18 +52,6 @@ namespace ScriptCs.Command
             repl.Terminate();
             return CommandResult.Success;
         }
-
-        private bool ExecuteLine(Repl repl)
-        {
-            _console.Write("> ");
-            var line = _console.ReadLine();
-            if (line == "")
-                return false;
-
-            repl.Execute(line);
-            return true;
-        }
-
 
         private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
         {
