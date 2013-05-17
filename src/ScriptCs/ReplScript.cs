@@ -8,11 +8,11 @@ namespace ScriptCs
 {
     public class ReplScript
     {
-        private readonly string NewLine;
-        private readonly IScriptEngine ScriptEngine;
-        private readonly ScriptPackSession ScriptPackSession;
-        private IEnumerable<string> References;
-        private IEnumerable<string> Namespaces; 
+        private readonly string _newLine;
+        private readonly IScriptEngine _scriptEngine;
+        private readonly ScriptPackSession _scriptPackSession;
+        private readonly IEnumerable<string> _references;
+        private readonly IEnumerable<string> Namespaces; 
 
         private int _lastExecutedLineIndex = -1;
 
@@ -21,10 +21,10 @@ namespace ScriptCs
             Guard.AgainstNullArgument("newLine", newLine);
             Guard.AgainstNullArgument("scriptEngine", scriptEngine);
 
-            NewLine = newLine;
-            ScriptEngine = scriptEngine;
-            ScriptPackSession = scriptPackSession;
-            References = references;
+            _newLine = newLine;
+            _scriptEngine = scriptEngine;
+            _scriptPackSession = scriptPackSession;
+            _references = references;
             Namespaces = namespaces;
 
             Lines = new List<string>();
@@ -36,9 +36,11 @@ namespace ScriptCs
 
         public ScriptExecutionResult LastResult { get; private set; }
 
+        public char? MissingClosingChar { get; set; }
+
         public void Append(string input)
         {
-            var lines = (PendingLine + input).Split(new[] {NewLine}, StringSplitOptions.None);
+            var lines = (PendingLine + input).Split(new[] {_newLine}, StringSplitOptions.None);
             if (lines.Length > 1)
                 throw new Exception("Can't add multiple lines of input");
 
@@ -52,8 +54,6 @@ namespace ScriptCs
             if (PendingLine.Length < charCount)
                 return false;
             PendingLine = PendingLine.Substring(0, PendingLine.Length - charCount);
-            if (PendingLine.Length == 0)
-                PendingLine = null;
             return true;
         }
 
@@ -65,13 +65,18 @@ namespace ScriptCs
                 PendingLine = null;
             }
 
-            string scriptChunk = string.Join(NewLine, Lines.Skip(_lastExecutedLineIndex + 1));
+            string scriptChunk = string.Join(_newLine, Lines.Skip(_lastExecutedLineIndex + 1));
 
-            var result = ScriptEngine.Execute(scriptChunk, References, Namespaces, ScriptPackSession);
+            var result = _scriptEngine.Execute(scriptChunk, _references, Namespaces, _scriptPackSession);
             if (!result.ScriptIsMissingClosingChar.HasValue)
                 _lastExecutedLineIndex = Lines.Count - 1;
 
             return result;
+        }
+
+        public void EmptyLine()
+        {
+            PendingLine = "";
         }
     }
 }

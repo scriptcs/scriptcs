@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Common.Logging;
@@ -24,7 +25,10 @@ namespace ScriptCs.Tests
                 var reader = new StringReader(Environment.NewLine);
                 var writer = new StringWriter(builder);
 
-                var console = new FakeConsole(writer, reader);
+                var keys = new Queue<ConsoleKeyInfo>();
+                var enterConsoleKey = new ConsoleKeyInfo('\n', ConsoleKey.Enter, false, false, false);
+                keys.Enqueue(enterConsoleKey);
+                var console = new FakeConsole(writer, reader, keys);
 
                 var root = new ScriptServiceRoot(
                     mockFileSystem.Object,
@@ -43,8 +47,9 @@ namespace ScriptCs.Tests
 
                 target.Execute();
 
-                Assert.True(builder.ToString().EndsWith("> "));
-                Assert.Equal(1, console.ReadLineCounter);
+                Assert.True(builder.ToString().EndsWith(Repl.InputCaret));
+                Assert.Equal(0, console.ReadLineCounter);
+                Assert.Equal(1, console.ReadKeyCounter);
             }
         }
 
@@ -52,17 +57,22 @@ namespace ScriptCs.Tests
         {
             private readonly TextWriter writer;
             private readonly TextReader reader;
+            private readonly Queue<ConsoleKeyInfo> _consoleKeysToBeRead;
 
-            public FakeConsole(TextWriter textWriter, TextReader textReader)
+            public FakeConsole(TextWriter textWriter, TextReader textReader, Queue<ConsoleKeyInfo> consoleKeysToBeRead)
             {
                 writer = textWriter;
                 reader = textReader;
+                _consoleKeysToBeRead = consoleKeysToBeRead;
                 ReadLineCounter = 0;
+                ReadKeyCounter = 0;
             }
 
             public ConsoleColor ForegroundColor { get; set; }
 
             public int ReadLineCounter { get; set; }
+
+            public int ReadKeyCounter { get; set; }
 
             public void Write(string value)
             {
@@ -78,6 +88,15 @@ namespace ScriptCs.Tests
             {
                 ReadLineCounter++;
                 return reader.ReadLine();
+            }
+
+            public ConsoleKeyInfo ReadKey(bool intercept)
+            {
+                ReadKeyCounter++;
+                var key = _consoleKeysToBeRead.Dequeue();
+                if (!intercept)
+                    writer.Write(key.KeyChar);
+                return key;
             }
 
             public void Exit()

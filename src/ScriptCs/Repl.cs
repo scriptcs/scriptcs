@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Text;
 using Common.Logging;
 using ScriptCs.Contracts;
 using ServiceStack.Text;
@@ -18,7 +17,7 @@ namespace ScriptCs
         public static readonly string NewLine = Environment.NewLine;
 
         public const string InputCaret = "> ";
-        public const string BackspaceChar = " \b";
+        public const string BackspaceChar = "\b \b";
 
         public IFileSystem FileSystem { get; private set; }
         public IScriptEngine ScriptEngine { get; private set; }
@@ -38,7 +37,7 @@ namespace ScriptCs
             Logger = logger;
             Console = console;
 
-            ReplCommands = new ReplCommands(this);
+            ReplCommands = new ReplCommands(this, NewLine);
         }
 
         public void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
@@ -65,16 +64,17 @@ namespace ScriptCs
         {
             Running = true;
 
-            Console.Write(InputCaret);
             while (Running)
             {
+                if (Script.PendingLine == null && !Script.MissingClosingChar.HasValue)
+                    Console.Write(InputCaret);
                 ExecuteChar();
             }
         }
 
         private void ExecuteChar()
         {
-            var keyInfo = Console.ReadKey();
+            var keyInfo = Console.ReadKey(true);
             var c = keyInfo.KeyChar;
             var key = keyInfo.Key;
 
@@ -87,7 +87,9 @@ namespace ScriptCs
                     Execute();
                     break;
                 default:
-                    Script.Append(c.ToString(CultureInfo.CurrentCulture));
+                    var s = new string(c, 1);
+                    Script.Append(s);
+                    Console.Write(s);
                     break;
             }
         }
@@ -107,19 +109,19 @@ namespace ScriptCs
 
         public void Execute()
         {
+            var script = Script.PendingLine;
+
+            if (script == null)
+            {
+                Running = false;
+                return;
+            }
+
             Console.Write(NewLine);
 
-            var script = Script.PendingLine;
-            
             var command = ReplCommands.Get(script);
-            if (command == CommandInfo.Empty)
+            if (command == null)
             {
-                if (script == null)
-                {
-                    Running = false;
-                    return;
-                }
-
                 var foregroundColor = Console.ForegroundColor;
 
                 try
@@ -127,13 +129,28 @@ namespace ScriptCs
                     if (PreProcessorUtil.IsLoadLine(script))
                     {
                         var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                        script = FilePreProcessor.ProcessFile(filepath);
+                        if (FileSystem.FileExists(filepath))
+                        {
+                            var processorResult = FilePreProcessor.ProcessFile(filepath);
+                            script = processorResult.Code;
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
+                        }
                     }
                     else if (PreProcessorUtil.IsRLine(script))
                     {
                         var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                        References = References.Union(new[] { assemblyPath });
-                        return;
+                        if (FileSystem.FileExists(assemblyPath))
+                        {
+                            References = References.Union(new[] {assemblyPath});
+                            return;
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
+                        }
                     }
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
@@ -144,6 +161,7 @@ namespace ScriptCs
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine(result.Result.ToJsv());
+                    }
                     else if (result.RuntimeException != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -155,111 +173,46 @@ namespace ScriptCs
                         Console.WriteLine(NewLine + result.CompilationException + NewLine);
                         if (result.CompilationException.Message.Contains("CS1024: Preprocessor directive expected"))
                         {
-                            Console.WriteLine("Try #help'...");
+                            Console.WriteLine("Try #help...");
                         }
-                        throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
                     }
 
                     Console.ForegroundColor = foregroundColor;
                     if (result.ScriptIsMissingClosingChar.HasValue)
+                    {
+                        Script.MissingClosingChar = result.ScriptIsMissingClosingChar;
                         Console.Write(new string(' ', InputCaret.Length));
+                    }
                     else
-                        Console.Write(InputCaret);
+                    {
+                        Script.MissingClosingChar = null;
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\r\n" + ex + "\r\n");
+                    Console.WriteLine(NewLine + ex + NewLine);
                 }
-                Console.ForegroundColor = foregroundColor;
             }
             else
             {
-                var output = command.Execute();
+                object output = null;
+                try
+                {
+                    output = command.Execute();
+                }
+                catch (Exception ex)
+                {
+                    output = ex;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                Script.EmptyLine();
+                Script.Execute();
                 if (output != null)
                     Console.WriteLine(output.ToJsv());
-                Console.Write(InputCaret);
             }
-            finally
-            {
-                Console.ResetColor();
-            }
-        }
-    }
 
-    public class ReplCommands
-    {
-        private readonly Repl _repl;
-
-        private readonly List<CommandInfo> _commands = new List<CommandInfo>(); 
-
-        public ReplCommands(Repl repl)
-        {
-            _repl = repl;
-
-            _commands.Add(new CommandInfo("exit", Exit));
-            _commands.Add(new CommandInfo("help", PrintHelp));
-        }
-
-        private object Exit(object parameter)
-        {
-            _repl.Terminate();
-            return null;
-        }
-
-        public CommandInfo Get(string line)
-        {
-            if (line == null)
-                return CommandInfo.Empty;
-
-            if (!line.StartsWith("#"))
-                return CommandInfo.Empty;
-
-            var name = line.Substring(1).ToLowerInvariant();
-
-            var info = _commands.FirstOrDefault(x => x.Name == name);
-
-            return info ?? CommandInfo.Empty;
-        }
-
-        private object PrintHelp(object parameter)
-        {
-            var help = new StringBuilder();
-            help.AppendLine("REPL commands:");
-            help.AppendLine("  help    Display all available REPL commands");
-            help.Append("  exit    Exit");
-            return help.ToString();
-        }
-    }
-
-    public class CommandInfo
-    {
-        public string Name { get; set; }
-        public Func<object, object> Command;
-        public object Parameter;
-        public static readonly CommandInfo Empty = new CommandInfo();
-
-        private CommandInfo()
-        {
-        }
-
-        public CommandInfo(string name, Func<object, object> command)
-            : this(command, null)
-        {
-            Name = name;
-        }
-
-        public CommandInfo(Func<object, object> command, object parameter)
-        {
-            if (command == null)
-                throw new ArgumentNullException("command");
-            Command = command;
-            Parameter = parameter;
-        }
-
-        public object Execute()
-        {
-            return Command(Parameter);
+            Console.ResetColor();
         }
     }
 }
