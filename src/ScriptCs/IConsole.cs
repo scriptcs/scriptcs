@@ -11,6 +11,8 @@ namespace ScriptCs
         void Write(string value);
         void WriteLine(string value);
         string ReadLine();
+        void Exit();
+        void ResetColor();
         ConsoleColor ForegroundColor { get; set; }
         ConsoleKeyInfo ReadKey();
     }

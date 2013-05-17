@@ -10,7 +10,7 @@ using ServiceStack.Text;
 
 namespace ScriptCs
 {
-    public class Repl 
+    public class Repl
     {
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
@@ -22,9 +22,9 @@ namespace ScriptCs
 
         public IFileSystem FileSystem { get; private set; }
         public IScriptEngine ScriptEngine { get; private set; }
-        public IFilePreProcessor FilePreProcessor { get; private set; } 
+        public IFilePreProcessor FilePreProcessor { get; private set; }
         public ILog Logger { get; private set; }
-        public IConsole Console { get; private set; } 
+        public IConsole Console { get; private set; }
         public ScriptPackSession ScriptPackSession { get; private set; }
         public IEnumerable<string> References { get; private set; }
 
@@ -144,7 +144,6 @@ namespace ScriptCs
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine(result.Result.ToJsv());
-                    }
                     else if (result.RuntimeException != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -158,6 +157,7 @@ namespace ScriptCs
                         {
                             Console.WriteLine("Try #help'...");
                         }
+                        throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
                     }
 
                     Console.ForegroundColor = foregroundColor;
@@ -179,6 +179,10 @@ namespace ScriptCs
                 if (output != null)
                     Console.WriteLine(output.ToJsv());
                 Console.Write(InputCaret);
+            }
+            finally
+            {
+                Console.ResetColor();
             }
         }
     }
