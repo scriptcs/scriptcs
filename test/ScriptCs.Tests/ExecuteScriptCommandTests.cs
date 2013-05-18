@@ -41,7 +41,7 @@ namespace ScriptCs.Tests
 
                 result.Execute();
 
-                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+				executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), null, It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
 
             [Fact]
@@ -111,7 +111,7 @@ namespace ScriptCs.Tests
 
                 result.Execute();
 
-                executor.Verify(i => i.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+				executor.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
         }
     }
