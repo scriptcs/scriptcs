@@ -126,9 +126,9 @@ namespace ScriptCs.Tests
                 var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var result = processor.ProcessFile("script1.csx");
 
-                result.Usings.Count.ShouldEqual(2);
-                result.Usings.ShouldContain("System");
-                result.Usings.ShouldContain("System.Core");
+                result.UsingStatements.Count.ShouldEqual(2);
+                result.UsingStatements.ShouldContain("System");
+                result.UsingStatements.ShouldContain("System.Core");
             }
 
             [Fact]
