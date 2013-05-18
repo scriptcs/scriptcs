@@ -4,5 +4,6 @@
     {
         void AddReference(string assemblyDisplayNameOrPath);
         void ImportNamespace(string @namespace);
+        void AddInitializeScript(string script);
     }
 }
