@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-using ScriptCs.Contracts;
-
-namespace ScriptCs
+﻿namespace ScriptCs
 {
-	public interface IScriptHostFactory
-	{
-		ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager);
-	}
+    public interface IScriptHostFactory
+    {
+        ScriptHost CreateScriptHost(string scriptArgs, IScriptPackManager scriptPackManager);
+    }
 }

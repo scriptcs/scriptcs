@@ -191,6 +191,48 @@ var result = runner.Run(new ConsoleListener(msg => Console.WriteLine(msg)), Test
 Console.ReadKey();
 ```
 
+### Passing arguments to the script
+
+You can pass any additional arguments to the script by using `-args` command-line switch:
+
+```batchfile
+scriptcs deploy.csx -args "Dev -label 'Next Week RC' -version 1110 -force"
+```
+
+Argument parsing is done by using excellent [PowerArgs](https://github.com/adamabdelhamed/PowerArgs) library, so you just need to declare class, similar to the one below (see [PowerArgs](https://github.com/adamabdelhamed/PowerArgs) documentation), to get your arguments inside the script:
+
+```c#
+public class DeployArgs
+{
+	[ArgPosition(0)]
+	[ArgDescription("Environment code")]
+	public string Environment { get; set; }
+
+	[ArgShortcut("label")]
+	[ArgDescription("Deployment label")]
+	public string Label { get; set; }
+
+	[ArgShortcut("version")]
+	[ArgDescription("Version to deploy")]
+	public int Version { get; set; }
+
+	[ArgShortcut("force")]
+	[ArgDescription("Forces re-deployment")]
+	public bool Force { get; set; }
+}
+
+var args = Args<DeployArgs>();
+Console.WriteLine(args.Environment);
+Console.WriteLine(args.Label);
+Console.WriteLine(args.Version);
+Console.WriteLine(args.Force);
+```
+You can also get raw command-line input if you'd like to parse script arguments yourself:
+
+```c#
+var args = Args();
+Console.WriteLine(args);
+```
 
 ## Contributing
 

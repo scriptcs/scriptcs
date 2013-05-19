@@ -12,9 +12,12 @@ namespace ScriptCs
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
-        [ArgDescription("Displays help")]
-        
+        [ArgShortcut("args")]
+        [ArgDescription("Passes specified argument string to the script")]
+        public string ScriptArgs { get; set; }
+
         [ArgShortcut("?")]
+        [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
         [ArgShortcut("debug")]

@@ -32,7 +32,7 @@ namespace ScriptCs.Command
             if (args.ScriptName != null)
             {
                 var executeCommand = new ExecuteScriptCommand(
-                    args.ScriptName, 
+                    args.ScriptName, args.ScriptArgs,
                     _scriptServiceRoot.FileSystem, 
                     _scriptServiceRoot.Executor,
                     _scriptServiceRoot.ScriptPackResolver,
