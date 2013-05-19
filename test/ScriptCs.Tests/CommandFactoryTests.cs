@@ -11,14 +11,16 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static ScriptServiceRoot CreateRoot(bool packagesFileExists = true)
+            private static ScriptServiceRoot CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
             {
                 const string CurrentDirectory = "C:\\";
                 const string PackagesFile = "C:\\packages.config";
+                const string PackagesFolder = "C:\\packages";
 
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
                 fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
+                fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
@@ -90,6 +92,29 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args);
 
                 result.ShouldImplement<IScriptCommand>();
+            }
+
+            [Fact]
+            public void ShouldInstallAndExecuteWhenScriptNameIsPassedAndPackagesFolderDoesNotExist()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = null,
+                    ScriptName = "test.csx"
+                };
+
+                var root = CreateRoot(packagesFileExists: true, packagesFolderExists: false);
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args);
+
+                var compositeCommand = result as ICompositeCommand;
+                compositeCommand.ShouldNotBeNull();
+
+                compositeCommand.Commands.Count.ShouldEqual(3);
+                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
+                compositeCommand.Commands[2].ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
