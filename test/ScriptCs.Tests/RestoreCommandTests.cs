@@ -37,6 +37,7 @@ namespace ScriptCs.Tests
                 var destWriteTime = sourceWriteTime;
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
@@ -78,6 +79,7 @@ namespace ScriptCs.Tests
                 var destWriteTime = new DateTime(2013, 2, 7);
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
@@ -114,6 +116,7 @@ namespace ScriptCs.Tests
                 const string BinFolder = @"C:\bin";
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 var binFolderCreated = false;
 

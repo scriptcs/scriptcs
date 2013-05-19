@@ -26,6 +26,8 @@ namespace ScriptCs.Tests
                     };
 
                 var fs = new Mock<IFileSystem>();
+                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
                 var engine = new Mock<IScriptEngine>();
@@ -55,6 +57,7 @@ namespace ScriptCs.Tests
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(WorkingDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(WorkingDirectory);
                 fs.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -88,6 +91,7 @@ namespace ScriptCs.Tests
                 };
 
                 var fs = new Mock<IFileSystem>();
+                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
                 fs.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] {
                     "managed.dll",
                     nonManaged

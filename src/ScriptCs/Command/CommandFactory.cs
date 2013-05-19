@@ -39,6 +39,30 @@ namespace ScriptCs.Command
                     _scriptServiceRoot.Logger,
                     _scriptServiceRoot.AssemblyName);
 
+                var fileSystem = _scriptServiceRoot.FileSystem;
+                var currentDirectory = _scriptServiceRoot.FileSystem.CurrentDirectory;
+                var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
+                var packagesFolder = Path.Combine(currentDirectory, Constants.PackagesFolder);
+
+                if (fileSystem.FileExists(packageFile) && !fileSystem.DirectoryExists(packagesFolder))
+                {
+                    var installCommand = new InstallCommand(
+                        null,
+                        false,
+                        fileSystem,
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.PackageInstaller,
+                        _scriptServiceRoot.Logger);
+
+                    var restoreCommand = new RestoreCommand(
+                        args.Install,
+                        _scriptServiceRoot.FileSystem,
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.Logger);
+
+                    return new CompositeCommand(installCommand, restoreCommand, executeCommand);
+                }
+
                 if (args.Restore)
                 {
                     var restoreCommand = new RestoreCommand(
