@@ -40,7 +40,7 @@ namespace ScriptCs.Command
                     _scriptServiceRoot.AssemblyName);
 
                 var fileSystem = _scriptServiceRoot.FileSystem;
-                var currentDirectory = _scriptServiceRoot.FileSystem.CurrentDirectory;
+                var currentDirectory = fileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
                 var packagesFolder = Path.Combine(currentDirectory, Constants.PackagesFolder);
 
