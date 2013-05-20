@@ -7,6 +7,7 @@
     <RootNamespace>ScriptCs</RootNamespace>
     <AssemblyName>ScriptCs.Core</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <CodeAnalysisRuleSet>..\..\build\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -38,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyName.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
@@ -48,7 +50,10 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
+    <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="Guard.cs" />
+    <Compile Include="IAssemblyName.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />

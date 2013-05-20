@@ -7,6 +7,7 @@
     <RootNamespace>ScriptCs</RootNamespace>
     <AssemblyName>scriptcs</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <CodeAnalysisRuleSet>..\..\build\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>..\..\common\Icon.ico</ApplicationIcon>
@@ -56,6 +57,9 @@
     </Compile>
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptCs.Core\Guard.cs">
+      <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />

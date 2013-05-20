@@ -30,6 +30,8 @@ namespace ScriptCs.Engine.Roslyn
 
         public object Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
+            Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
+
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
             
@@ -86,6 +88,8 @@ namespace ScriptCs.Engine.Roslyn
 
         protected virtual object Execute(string code, Session session)
         {
+            Guard.AgainstNullArgument("session", session);
+
             return session.Execute(code);
         }
     }

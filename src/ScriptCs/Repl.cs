@@ -8,18 +8,18 @@ using ServiceStack.Text;
 
 namespace ScriptCs
 {
-    public class Repl 
+    public class Repl
     {
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks" };
+        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
         public IScriptEngine ScriptEngine { get; private set; }
-        public IFilePreProcessor FilePreProcessor { get; private set; } 
+        public IFilePreProcessor FilePreProcessor { get; private set; }
         public ILog Logger { get; private set; }
-        public IConsole Console { get; private set; } 
+        public IConsole Console { get; private set; }
         public ScriptPackSession ScriptPackSession { get; private set; }
-        public IEnumerable<string> References { get; private set; } 
+        public IEnumerable<string> References { get; private set; }
 
         public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
         {
@@ -49,23 +49,39 @@ namespace ScriptCs
         {
             Logger.Debug("Terminating packs");
             ScriptPackSession.TerminatePacks();
+            Logger.Debug("Exiting console");
+            Console.Exit();
         }
 
         public void Execute(string script)
         {
-            var foregroundColor = Console.ForegroundColor;
-
             try
             {
                 if (PreProcessorUtil.IsLoadLine(script))
                 {
                     var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    script = FilePreProcessor.ProcessFile(filepath);
+                    if (FileSystem.FileExists(filepath))
+                    {
+                        var processorResult = FilePreProcessor.ProcessFile(filepath);
+                        script = processorResult.Code;
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
+                    }
                 }
                 else if (PreProcessorUtil.IsRLine(script))
                 {
                     var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                    References = References.Union(new[] { assemblyPath });
+                    if (FileSystem.FileExists(assemblyPath))
+                    {
+                        References = References.Union(new[] { assemblyPath });
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(string.Format("Could not find assembly '{0}'", assemblyPath), assemblyPath);
+                    }
+
                     return;
                 }
 
@@ -74,9 +90,7 @@ namespace ScriptCs
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ToJsv()
-                        
-                        );
+                    Console.WriteLine(result.ToJsv());
                 }
             }
             catch (Exception ex)
@@ -84,7 +98,10 @@ namespace ScriptCs
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
             }
-            Console.ForegroundColor = foregroundColor;
+            finally
+            {
+                Console.ResetColor();
+            }
         }
     }
 }

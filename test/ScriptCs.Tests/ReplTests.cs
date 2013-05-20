@@ -56,15 +56,15 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheInitializeMethod()
             {
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
                 _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
-                var paths = new []{@"c:\path"};
-                _repl.Initialize(paths, new[] {_mocks.ScriptPack.Object});
-            }    
+                var paths = new[] { @"c:\path" };
+                _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
+            }
 
             [Fact]
             public void PopulatesReferences()
@@ -79,7 +79,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void SetsTheScriptEngineBaseDirectory()
             {
-                _mocks.ScriptEngine.VerifySet(x=>x.BaseDirectory = @"c:\bin");   
+                _mocks.ScriptEngine.VerifySet(x => x.BaseDirectory = @"c:\bin");
             }
 
             [Fact]
@@ -91,7 +91,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void InitializesScriptPacks()
             {
-                _mocks.ScriptPack.Verify(x=>x.Initialize(It.IsAny<IScriptPackSession>()));
+                _mocks.ScriptPack.Verify(x => x.Initialize(It.IsAny<IScriptPackSession>()));
             }
         }
 
@@ -99,13 +99,13 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheTerminateMethod()
             {
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
                 _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
-                _repl.Initialize(new List<string>(), new[] {_mocks.ScriptPack.Object});
+                _repl.Initialize(new List<string>(), new[] { _mocks.ScriptPack.Object });
                 _repl.Terminate();
             }
 
@@ -114,13 +114,19 @@ namespace ScriptCs.Tests
             {
                 _mocks.ScriptPack.Verify(x => x.Terminate());
             }
+
+            [Fact]
+            public void ExitsTheConsole()
+            {
+                _mocks.Console.Verify(x => x.Exit());
+            }
         }
 
         public class TheExecuteMethod
         {
             private Mocks _mocks;
             private Repl _repl;
- 
+
             public TheExecuteMethod()
             {
                 _mocks = new Mocks();
@@ -132,13 +138,19 @@ namespace ScriptCs.Tests
             [Fact]
             public void SetsTheForegroundColorToCyan()
             {
-                _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
+                _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.Cyan, Times.Once());
+            }
+
+            [Fact]
+            public void ResetsColorAfterExecutingScript()
+            {
+                _mocks.Console.Verify(x => x.ResetColor());
             }
 
             [Fact]
             public void CallsExecuteOnTheScriptEngine()
             {
-                _mocks.ScriptEngine.Verify(x=>x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
+                _mocks.ScriptEngine.Verify(x => x.Execute("foo", _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
             }
 
             [Fact]
@@ -154,20 +166,22 @@ namespace ScriptCs.Tests
                 _mocks.Console.Verify(x => x.WriteLine(It.IsAny<string>()));
 
             }
-            
+
             [Fact]
             public void SetsTheForegroundColorBackToTheDefault()
             {
-                _mocks.Console.VerifySet(x=>x.ForegroundColor = ConsoleColor.White);
+                _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.White);
             }
 
             [Fact]
             public void ShouldProcessFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
-                
+
                 mocks.FilePreProcessor.Verify(i => i.ProcessFile(It.Is<string>(x => x == "file.csx")), Times.Once());
             }
 
@@ -175,6 +189,10 @@ namespace ScriptCs.Tests
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
+                mocks.FilePreProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()))
+                     .Returns(new FilePreProcessorResult());
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
@@ -182,16 +200,45 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldNotExecuteLoadedFileIfFileDoesNotExist()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Execute("#load \"file.csx\"");
+
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+            }
+
+            [Fact]
             public void ShouldReferenceAssemblyIfLineIsAReference()
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(true);
+
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
                 //default references = 6, + 1 we just added
                 _repl.References.Count().ShouldEqual(7);
+            }
+
+            [Fact]
+            public void ShouldNotReferenceAssemblyIfFileDoesNotExist()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                //default references = 6
+                _repl.References.Count().ShouldEqual(6);
             }
 
             [Fact]
