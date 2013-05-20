@@ -26,9 +26,10 @@ namespace ScriptCs
             AddScriptContextNamespace();
         }
 
-        public void AddInitializeScript(string script)
+        public void AddInitializationScripts(IEnumerable<string> scripts)
         {
-            _scripts.Add(script);
+            foreach(var script in scripts)
+                _scripts.Add(script);
         }
 
         private void AddScriptContextNamespace()

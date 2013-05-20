@@ -1,9 +1,10 @@
-﻿namespace ScriptCs.Contracts
+﻿using System.Collections.Generic;
+namespace ScriptCs.Contracts
 {
     public interface IScriptPackSession
     {
         void AddReference(string assemblyDisplayNameOrPath);
         void ImportNamespace(string @namespace);
-        void AddInitializeScript(string script);
+        void AddInitializationScripts(IEnumerable<string> scripts);
     }
 }
