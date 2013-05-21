@@ -36,6 +36,8 @@ namespace ScriptCs
 
         void FileDelete(string path);
 
+        IEnumerable<string> SplitLines(string value);
+        
         Stream CreateFileStream(string filePath, FileMode mode);
     }
 }

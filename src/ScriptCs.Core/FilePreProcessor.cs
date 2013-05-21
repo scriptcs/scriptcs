@@ -22,62 +22,77 @@ namespace ScriptCs
 
         public FilePreProcessorResult ProcessFile(string path)
         {
-            var context = new FilePreProcessContext();
+            return Parse(context => ParseFile(path, context));
+        }
+
+        public FilePreProcessorResult ProcessScript(string script)
+        {
+            var scriptLines = _fileSystem.SplitLines(script).ToList();
+            return Parse(context => ParseScript(scriptLines, context));
+        }
+
+        private FilePreProcessorResult Parse(Action<FilePreProcessorContext> parseAction)
+        {
+            var context = new FilePreProcessorContext();
 
             _logger.DebugFormat("Starting pre-processing");
 
-            ParseFile(path, context);
+            parseAction(context);
 
-            var code = GenerateScript(context);
+            var code = GenerateCode(context);
 
             _logger.DebugFormat("Pre-processing finished successfully");
 
             return new FilePreProcessorResult
             {
-                Usings = context.Usings,
+                UsingStatements = context.UsingStatements,
                 LoadedScripts = context.LoadedScripts,
                 References = context.References,
                 Code = code
             };
         }
 
-        private static string GenerateScript(FilePreProcessContext context)
+        private string GenerateCode(FilePreProcessorContext context)
         {
             var stringBuilder = new StringBuilder();
 
-            AppendUsings(stringBuilder, context.Usings);
+            var usingLines = context.UsingStatements
+                .Select(item => string.Format("using {0};", item))
+                .ToList();
 
-            stringBuilder.Append(string.Join(Environment.NewLine, context.Body));
+            if (usingLines.Count > 0)
+            {
+                stringBuilder.AppendLine(string.Join(_fileSystem.NewLine, usingLines));
+                stringBuilder.AppendLine(); // Insert a blank separator line
+            }
+
+            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.Body));
 
             return stringBuilder.ToString();
         }
 
-        private static void AppendUsings(StringBuilder stringBuilder, IEnumerable<string> items)
-        {
-            var lines = items.Distinct().Select(item => string.Format("using {0};", item)).ToList();
-
-            if (lines.Count == 0) return;
-
-            stringBuilder.AppendLine(string.Join(Environment.NewLine, lines));
-            stringBuilder.AppendLine(); // Insert a blank separator line
-        }
-
-        private void ParseFile(string path, FilePreProcessContext context)
+        private void ParseFile(string path, FilePreProcessorContext context)
         {
             _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
 
-            var fileLines = _fileSystem.ReadFileLines(path).ToList();
+            var scriptLines = _fileSystem.ReadFileLines(path).ToList();
 
-            InsertLineDirective(path, fileLines);
+            ParseScript(scriptLines, context, path);
+        }
 
-            var codeIndex = fileLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
+        private void ParseScript(List<string> scriptLines, FilePreProcessorContext context, string path = null)
+        {
+            // Insert line directive if there's a path
+            if (path != null) InsertLineDirective(path, scriptLines);
 
-            for (var index = 0; index < fileLines.Count; index++)
+            var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
+
+            for (var index = 0; index < scriptLines.Count; index++)
             {
-                ProcessLine(context, fileLines[index], index < codeIndex || codeIndex < 0);
+                ProcessLine(context, scriptLines[index], index < codeIndex || codeIndex < 0);
             }
 
-            context.LoadedScripts.Add(path);
+            if (path != null) context.LoadedScripts.Add(path);
         }
 
         private static void InsertLineDirective(string path, List<string> fileLines)
@@ -89,14 +104,14 @@ namespace ScriptCs
             fileLines.Insert(bodyIndex, directiveLine);
         }
 
-        private void ProcessLine(FilePreProcessContext context, string line, bool isBeforeCode)
+        private void ProcessLine(FilePreProcessorContext context, string line, bool isBeforeCode)
         {
             if (PreProcessorUtil.IsUsingLine(line))
             {
                 var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
-                if (!context.Usings.Contains(@using))
+                if (!context.UsingStatements.Contains(@using))
                 {
-                    context.Usings.Add(@using);
+                    context.UsingStatements.Add(@using);
                 }
 
                 return;
@@ -107,7 +122,7 @@ namespace ScriptCs
                 if (isBeforeCode)
                 {
                     var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
-                    if (!context.References.Contains(reference))
+                    if (!string.IsNullOrWhiteSpace(reference) && !context.References.Contains(reference))
                     {
                         context.References.Add(reference);
                     }
@@ -121,7 +136,7 @@ namespace ScriptCs
                 if (isBeforeCode)
                 {
                     var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
-                    if (!context.LoadedScripts.Contains(filePath))
+                    if (!string.IsNullOrWhiteSpace(filePath) && !context.LoadedScripts.Contains(filePath))
                     {
                         ParseFile(filePath, context);
                     }
@@ -134,17 +149,17 @@ namespace ScriptCs
             context.Body.Add(line);
         }
 
-        private class FilePreProcessContext
+        private class FilePreProcessorContext
         {
-            public FilePreProcessContext()
+            public FilePreProcessorContext()
             {
-                Usings = new List<string>();
+                UsingStatements = new List<string>();
                 References = new List<string>();
                 LoadedScripts = new List<string>();
                 Body = new List<string>();
             }
 
-            public List<string> Usings { get; private set; }
+            public List<string> UsingStatements { get; private set; }
 
             public List<string> References { get; private set; }
 
