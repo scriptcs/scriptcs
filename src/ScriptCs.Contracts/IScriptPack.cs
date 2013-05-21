@@ -6,7 +6,15 @@ namespace ScriptCs.Contracts
     public interface IScriptPack
     {
         void Initialize(IScriptPackSession session);
-        IScriptPackContext GetContext(); 
+
+        IScriptPackContext GetContext();
+
         void Terminate();
+    }
+
+    public interface IScriptPack<TContext> : IScriptPack where TContext : IScriptPackContext
+    {
+        [Import]
+        TContext Context { get; set; }
     }
 }
