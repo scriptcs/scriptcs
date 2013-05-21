@@ -52,7 +52,7 @@ namespace ScriptCs
             };
         }
 
-        private static string GenerateCode(FilePreProcessorContext context)
+        private string GenerateCode(FilePreProcessorContext context)
         {
             var stringBuilder = new StringBuilder();
 
@@ -62,11 +62,11 @@ namespace ScriptCs
 
             if (usingLines.Count > 0)
             {
-                stringBuilder.AppendLine(string.Join(Environment.NewLine, usingLines));
+                stringBuilder.AppendLine(string.Join(_fileSystem.NewLine, usingLines));
                 stringBuilder.AppendLine(); // Insert a blank separator line
             }
 
-            stringBuilder.Append(string.Join(Environment.NewLine, context.Body));
+            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.Body));
 
             return stringBuilder.ToString();
         }
