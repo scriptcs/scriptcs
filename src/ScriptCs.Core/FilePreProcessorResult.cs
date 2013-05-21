@@ -6,12 +6,12 @@ namespace ScriptCs
     {
         public FilePreProcessorResult()
         {
-            Usings = new List<string>();
+            UsingStatements = new List<string>();
             LoadedScripts = new List<string>();
             References = new List<string>();
         }
 
-        public List<string> Usings { get; set; }
+        public List<string> UsingStatements { get; set; }
 
         public List<string> LoadedScripts { get; set; }
 

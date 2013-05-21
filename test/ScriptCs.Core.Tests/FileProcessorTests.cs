@@ -126,9 +126,9 @@ namespace ScriptCs.Tests
                 var processor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
                 var result = processor.ProcessFile("script1.csx");
 
-                result.Usings.Count.ShouldEqual(2);
-                result.Usings.ShouldContain("System");
-                result.Usings.ShouldContain("System.Core");
+                result.UsingStatements.Count.ShouldEqual(2);
+                result.UsingStatements.ShouldContain("System");
+                result.UsingStatements.ShouldContain("System.Core");
             }
 
             [Fact]
@@ -398,6 +398,56 @@ namespace ScriptCs.Tests
 
                 fileLines[line++].ShouldEqual(@"#line 5 ""C:\f1.csx""");
                 fileLines[line].ShouldEqual(f1[4]);
+            }
+        }
+
+        public class ProcessScriptMethod
+        {
+            private readonly Mock<IFileSystem> _fileSystem;
+
+            public ProcessScriptMethod()
+            {
+                _fileSystem = new Mock<IFileSystem>();
+                _fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
+            }
+
+            [Fact]
+            public void ShouldSplitScriptIntoLines()
+            {
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>());
+                var script = @"Console.WriteLine(""Testing..."");";
+                
+                preProcessor.ProcessScript(script);
+
+                _fileSystem.Verify(x => x.SplitLines(script), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldNotReadFromFile()
+            {
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>());
+                var script = @"Console.WriteLine(""Testing..."");";
+                
+                preProcessor.ProcessScript(script);
+
+                _fileSystem.Verify(x => x.ReadFileLines(It.IsAny<string>()), Times.Never());
+            }
+
+            [Fact]
+            public void ShouldNotIncludeLineDirectiveForRootScript()
+            {
+                var script1 = new List<string> { @"Console.WriteLine(""Hello from script1.csx""" };
+                _fileSystem.Setup(x => x.ReadFileLines("script1.csx")).Returns(script1.ToArray());
+                _fileSystem.Setup(x => x.SplitLines(It.IsAny<string>()))
+                    .Returns<string>(x => x.Split(new[] { Environment.NewLine }, StringSplitOptions.None));
+
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>());
+                var script = @"#load script1.csx";
+                
+                var result = preProcessor.ProcessScript(script);
+                var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+                fileLines.Count(x => x.StartsWith("#line ")).ShouldEqual(1);
             }
         }
     }
