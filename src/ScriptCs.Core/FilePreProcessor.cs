@@ -92,7 +92,7 @@ namespace ScriptCs
                 ProcessLine(context, scriptLines[index], index < codeIndex || codeIndex < 0);
             }
 
-            context.LoadedScripts.Add(path);
+            if (path != null) context.LoadedScripts.Add(path);
         }
 
         private static void InsertLineDirective(string path, List<string> fileLines)
