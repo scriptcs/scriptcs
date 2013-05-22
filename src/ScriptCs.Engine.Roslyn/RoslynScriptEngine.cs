@@ -58,6 +58,10 @@ namespace ScriptCs.Engine.Roslyn
 
                 sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
                 scriptPackSession.State[SessionKey] = sessionState;
+                foreach (var script in scriptPackSession.Scripts)
+                {
+                    sessionState.Session.Execute(script);
+                }
             }
             else
             {
