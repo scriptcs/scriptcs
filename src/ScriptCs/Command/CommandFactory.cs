@@ -11,7 +11,7 @@ namespace ScriptCs.Command
             _scriptServiceRoot = scriptServiceRoot;
         }
 
-        public ICommand CreateCommand(ScriptCsArgs args)
+        public ICommand CreateCommand(ScriptCsArgs args, string[] scriptArgs)
         {
             Guard.AgainstNullArgument("args", args);
 
@@ -32,8 +32,9 @@ namespace ScriptCs.Command
             if (args.ScriptName != null)
             {
                 var executeCommand = new ExecuteScriptCommand(
-                    args.ScriptName, 
-                    _scriptServiceRoot.FileSystem, 
+                    args.ScriptName,
+                    scriptArgs,
+                    _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.Executor,
                     _scriptServiceRoot.ScriptPackResolver,
                     _scriptServiceRoot.Logger,

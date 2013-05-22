@@ -7,10 +7,12 @@ namespace ScriptCs
     public class ScriptHost
     {
         private IScriptPackManager _scriptPackManager;
+        public string[] ScriptArgs { get; private set; }
 
-        public ScriptHost(IScriptPackManager scriptPackManager)
+        public ScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {
             _scriptPackManager = scriptPackManager;
+            ScriptArgs = scriptArgs;
         }
 
         public T Require<T>() where T:IScriptPackContext
