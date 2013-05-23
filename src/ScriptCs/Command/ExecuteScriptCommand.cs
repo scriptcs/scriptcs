@@ -17,20 +17,24 @@ namespace ScriptCs.Command
 
         private readonly ILog _logger;
 
-        public ExecuteScriptCommand(string script, 
-            IFileSystem fileSystem, 
-            IScriptExecutor scriptExecutor, 
+        public ExecuteScriptCommand(string script,
+            string[] scriptArgs,
+            IFileSystem fileSystem,
+            IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
             ILog logger,
             IAssemblyName assemblyName)
         {
             _script = script;
+            ScriptArgs = scriptArgs;
             _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
             _assemblyName = assemblyName;
         }
+
+        public string[] ScriptArgs { get; private set; }
 
         public CommandResult Execute()
         {
@@ -44,7 +48,7 @@ namespace ScriptCs.Command
                     assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
 
-                _scriptExecutor.Execute(_script, assemblyPaths, _scriptPackResolver.GetPacks());
+                _scriptExecutor.Execute(_script, ScriptArgs, assemblyPaths, _scriptPackResolver.GetPacks());
                 return CommandResult.Success;
             }
             catch (Exception ex)

@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
                 var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 // clear the fake console output
                 _outputText.Clear();

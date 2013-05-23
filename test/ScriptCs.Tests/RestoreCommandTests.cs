@@ -45,7 +45,7 @@ namespace ScriptCs.Tests
                 resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -87,7 +87,7 @@ namespace ScriptCs.Tests
                 resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -124,7 +124,7 @@ namespace ScriptCs.Tests
                 fs.Setup(x => x.CreateDirectory(BinFolder)).Callback(() => binFolderCreated = true).Verifiable();
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 

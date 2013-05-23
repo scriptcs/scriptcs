@@ -20,6 +20,8 @@ namespace ScriptCs.Command
         private readonly ILog _logger;
         private readonly IConsole _console;
 
+        public string[] ScriptArgs { get; private set; }
+
         public ExecuteReplCommand(
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,

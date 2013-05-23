@@ -44,6 +44,7 @@
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="ExecuteReplCommandTests.cs" />
     <Compile Include="ReplTests.cs" />
+    <Compile Include="ScriptArgsTests.cs" />
     <Compile Include="VersionCommandTests.cs" />
     <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

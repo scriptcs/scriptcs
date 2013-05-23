@@ -39,11 +39,11 @@ namespace ScriptCs.Tests
                 var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
-                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
 
             [Fact]
@@ -71,7 +71,7 @@ namespace ScriptCs.Tests
                 var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -111,11 +111,11 @@ namespace ScriptCs.Tests
 
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
-                executor.Verify(i => i.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+                executor.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
         }
     }
