@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using Common.Logging;
@@ -8,52 +7,24 @@ using ServiceStack.Text;
 
 namespace ScriptCs
 {
-    public class Repl
+    public class Repl : ScriptExecutor
     {
-        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
-
-        public IFileSystem FileSystem { get; private set; }
-        public IScriptEngine ScriptEngine { get; private set; }
-        public IFilePreProcessor FilePreProcessor { get; private set; }
-        public ILog Logger { get; private set; }
         public IConsole Console { get; private set; }
-        public ScriptPackSession ScriptPackSession { get; private set; }
-        public IEnumerable<string> References { get; private set; }
 
         public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
-            FileSystem = fileSystem;
-            ScriptEngine = scriptEngine;
-            FilePreProcessor = filePreProcessor;
-            Logger = logger;
             Console = console;
         }
 
-        public void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
+        public override void Terminate()
         {
-            References = DefaultReferences.Union(paths);
-            var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
-
-            ScriptEngine.BaseDirectory = bin;
-
-            Logger.Debug("Initializing script packs");
-            var scriptPackSession = new ScriptPackSession(scriptPacks);
-
-            scriptPackSession.InitializePacks();
-            ScriptPackSession = scriptPackSession;
-
-        }
-
-        public void Terminate()
-        {
-            Logger.Debug("Terminating packs");
-            ScriptPackSession.TerminatePacks();
+            base.Terminate();
             Logger.Debug("Exiting console");
             Console.Exit();
         }
 
-        public void Execute(string script)
+        public override void Execute(string script)
         {
             try
             {
