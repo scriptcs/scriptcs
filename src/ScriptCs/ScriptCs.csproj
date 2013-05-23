@@ -74,7 +74,6 @@
     <Compile Include="Command\RestoreCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="IConsole.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Repl.cs" />
