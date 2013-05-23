@@ -50,7 +50,8 @@ namespace ScriptCs.Tests
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Execute("script.csx");
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
 
@@ -65,7 +66,8 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor);
-                executor.Execute(@"c:\my_script\script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Execute(@"c:\my_script\script.csx");
 
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
@@ -92,7 +94,8 @@ namespace ScriptCs.Tests
                 IEnumerable<IScriptPack> recipes = Enumerable.Empty<IScriptPack>();
 
                 // act
-                scriptExecutor.Execute(scriptName, paths, recipes);
+                scriptExecutor.Initialize(paths, recipes);
+                scriptExecutor.Execute(scriptName);
 
                 // assert
                 string expectedBaseDirectory = Path.Combine(currentDirectory, "bin");
@@ -126,7 +129,8 @@ namespace ScriptCs.Tests
                 scriptEngine.Setup(e => e.Execute(code, It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
-                scriptExecutor.Execute(scriptName, paths, recipes);
+                scriptExecutor.Initialize(paths, recipes);
+                scriptExecutor.Execute(scriptName);
 
                 // assert
                 preProcessor.Verify(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName)), Times.Once());
@@ -165,7 +169,8 @@ namespace ScriptCs.Tests
                 scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
-                scriptExecutor.Execute(scriptName, paths, Enumerable.Empty<IScriptPack>());
+                scriptExecutor.Initialize(paths, Enumerable.Empty<IScriptPack>());
+                scriptExecutor.Execute(scriptName);
 
                 // assert
                 scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
@@ -187,7 +192,8 @@ namespace ScriptCs.Tests
                 scriptPack1.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
                 scriptPack1.Setup(p => p.GetContext()).Returns(Mock.Of<IScriptPackContext>());
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), new[] { scriptPack1.Object });
+                executor.Initialize(Enumerable.Empty<string>(), new[] { scriptPack1.Object });
+                executor.Execute("script.csx");
 
                 scriptPack1.Verify(p => p.Initialize(It.IsAny<IScriptPackSession>()));
             }
@@ -209,7 +215,9 @@ namespace ScriptCs.Tests
                 scriptPack1.Setup(p => p.GetContext()).Returns(Mock.Of<IScriptPackContext>());
                 scriptPack1.Setup(p => p.Terminate());
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), new[] { scriptPack1.Object });
+                executor.Initialize(Enumerable.Empty<string>(), new[] { scriptPack1.Object });
+                executor.Execute("script.csx");
+                executor.Terminate();
 
                 scriptPack1.Verify(p => p.Terminate());
             }
@@ -217,7 +225,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ExecutorShouldPassDefaultNamespacesToEngine()
             {
-                var expectedNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
+                var expectedNamespaces = ScriptExecutor.DefaultNamespaces;
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
@@ -230,7 +238,8 @@ namespace ScriptCs.Tests
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor, scriptEngine: engine);
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Execute("script.csx");
 
                 engine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x => !x.Except(expectedNamespaces).Any()), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
             }
@@ -238,7 +247,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ExecutorShouldPassDefaultReferencesToEngine()
             {
-                var defaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
+                var defaultReferences = ScriptExecutor.DefaultReferences;
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
@@ -251,7 +260,8 @@ namespace ScriptCs.Tests
 
                 var executor = CreateScriptExecutor(fileSystem: fileSystem, fileProcessor: preProcessor, scriptEngine: engine);
 
-                executor.Execute("script.csx", Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                executor.Execute("script.csx");
 
                 engine.Verify(i => i.Execute(It.IsAny<string>(), It.Is<IEnumerable<string>>(x => !x.Except(defaultReferences).Any()), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
             }
