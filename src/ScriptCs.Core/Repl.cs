@@ -43,7 +43,7 @@ namespace ScriptCs
                 }
                 else if (PreProcessorUtil.IsRLine(script))
                 {
-                    var assemblyPath = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
+                    var assemblyPath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, PreProcessorUtil.GetPath(PreProcessorUtil.RString, script)));
                     if (FileSystem.FileExists(assemblyPath))
                     {
                         References = References.Union(new[] { assemblyPath });
