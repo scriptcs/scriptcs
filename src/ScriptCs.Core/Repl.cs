@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.IO;
-using Common.Logging;
+﻿using Common.Logging;
 using ScriptCs.Contracts;
 using ServiceStack.Text;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace ScriptCs
 {
@@ -57,7 +57,7 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                var result = ScriptEngine.Execute(script, References, DefaultNamespaces, ScriptPackSession);
+                var result = ScriptEngine.Execute(script, new string[0], References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;

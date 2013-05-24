@@ -2,6 +2,7 @@
 
 using PowerArgs;
 using ScriptCs.Command;
+using System.Linq;
 
 namespace ScriptCs
 {
@@ -9,6 +10,9 @@ namespace ScriptCs
     {
         private static int Main(string[] args) 
         {
+            string[] scriptArgs;
+            ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
+
             var commandArgs = ParseArguments(args) ?? new ScriptCsArgs { Repl = true };
 
             var compositionRoot = new CompositionRoot(commandArgs);
@@ -20,7 +24,8 @@ namespace ScriptCs
             var scriptServiceRoot = compositionRoot.GetServiceRoot();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand(commandArgs);
+            var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
+
             var result = command.Execute();
 
             return result == CommandResult.Success ? 0 : -1;

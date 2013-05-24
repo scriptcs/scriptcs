@@ -6,6 +6,6 @@ namespace ScriptCs
 {
 	public interface IScriptHostFactory
 	{
-		ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager);
+		ScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs);
 	}
 }

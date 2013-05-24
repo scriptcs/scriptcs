@@ -41,7 +41,7 @@ namespace ScriptCs.Tests
 
                 var commandFactory = new CommandFactory(root);
 
-                var target = commandFactory.CreateCommand(new ScriptCsArgs { Repl = true });
+                var target = commandFactory.CreateCommand(new ScriptCsArgs { Repl = true }, new string[0]);
 
                 target.Execute();
 

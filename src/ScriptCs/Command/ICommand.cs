@@ -2,7 +2,9 @@
 
 namespace ScriptCs.Command
 {
-    public interface IScriptCommand : ICommand { }
+    public interface IScriptCommand : ICommand {
+        string[] ScriptArgs { get; }
+    }
 
     public interface IRestoreCommand : ICommand { }
 

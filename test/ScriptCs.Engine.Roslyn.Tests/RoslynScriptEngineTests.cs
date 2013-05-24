@@ -54,7 +54,7 @@ namespace ScriptCs.Tests
             public void ShouldCreateScriptHostWithContexts()
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>())).Returns((IScriptPackManager p) => new ScriptHost(p));
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
 
                 var code = "var a = 0;";
 
@@ -66,16 +66,16 @@ namespace ScriptCs.Tests
 
                 var scriptPackSession = new ScriptPackSession(new[] { scriptPack1.Object });
     
-                engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
 
-                scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>()));
+                scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()));
             }
 
             [Fact]
             public void ShouldReuseExistingSessionIfProvided()
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>())).Returns((IScriptPackManager p) => new ScriptHost(p));
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
 
                 var code = "var a = 0;";
 
@@ -84,7 +84,7 @@ namespace ScriptCs.Tests
                 var roslynEngine = new ScriptEngine();
                 var session = new SessionState<Session> {Session = roslynEngine.CreateSession()};
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
                 engine.Session.ShouldEqual(session.Session);
             }
 
@@ -92,13 +92,13 @@ namespace ScriptCs.Tests
             public void ShouldCreateNewSessionIfNotProvided()
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>())).Returns((IScriptPackManager p) => new ScriptHost(p));
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
 
                 var code = "var a = 0;";
 
                 var engine = CreateTestScriptEngine(scriptHostFactory: scriptHostFactory);
                 var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
-                engine.Execute(code, Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
                 engine.Session.ShouldNotBeNull();
             }
 
@@ -106,7 +106,7 @@ namespace ScriptCs.Tests
             public void ShouldAddNewReferencesIfTheyAreProvided()
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>())).Returns((IScriptPackManager p) => new ScriptHost(p));
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
 
                 var code = "var a = 0;";
 
@@ -115,7 +115,7 @@ namespace ScriptCs.Tests
                 var roslynEngine = new ScriptEngine();
                 var session = new SessionState<Session> { Session = roslynEngine.CreateSession()};
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                engine.Execute(code, new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
                 
                 ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
             }

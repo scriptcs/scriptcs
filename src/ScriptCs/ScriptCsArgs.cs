@@ -1,4 +1,7 @@
-﻿using PowerArgs;
+﻿using System;
+using System.Linq;
+
+using PowerArgs;
 
 namespace ScriptCs
 {
@@ -50,5 +53,17 @@ namespace ScriptCs
         [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
+
+        public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
+        {
+            // Split the arguments list on "--".
+            // The arguments before the "--" (or all arguments if there is no "--") are
+            // for ScriptCs.exe, and the arguments after that are for the csx script.
+            int separatorLocation = Array.IndexOf(args, "--");
+            int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
+            scriptArgs = new string[scriptArgsCount];
+            Array.Copy(args, separatorLocation + 1, scriptArgs, 0, scriptArgsCount);
+            if (separatorLocation != -1) args = args.Take(separatorLocation).ToArray();
+        }
     }
 }

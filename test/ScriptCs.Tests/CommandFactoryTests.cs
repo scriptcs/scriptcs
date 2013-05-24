@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
                 };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
@@ -67,7 +67,7 @@ namespace ScriptCs.Tests
                 };
 
                 var factory = new CommandFactory(CreateRoot(packagesFileExists: false));
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
@@ -89,7 +89,7 @@ namespace ScriptCs.Tests
                 };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldImplement<IScriptCommand>();
             }
@@ -106,7 +106,7 @@ namespace ScriptCs.Tests
 
                 var root = CreateRoot(packagesFileExists: true, packagesFolderExists: false);
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
@@ -128,7 +128,7 @@ namespace ScriptCs.Tests
                 };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldImplement<IScriptCommand>();
             }
@@ -139,7 +139,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
@@ -155,7 +155,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Clean = true, ScriptName = null };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
@@ -171,7 +171,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Save = true, ScriptName = null };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldNotBeNull();
                 result.ShouldImplement<ISaveCommand>();
@@ -188,7 +188,7 @@ namespace ScriptCs.Tests
                 };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldImplement<IInvalidCommand>();
             }
@@ -202,9 +202,26 @@ namespace ScriptCs.Tests
                     };
 
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldImplement<IHelpCommand>();
+            }
+
+            [Fact]
+            public void ShouldPassScriptArgsToExecuteCommandConstructor()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = null,
+                    ScriptName = "test.csx"
+                };
+
+                var scriptArgs = new string[0];
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, scriptArgs) as IScriptCommand;
+
+                result.ScriptArgs.ShouldEqual(scriptArgs);
             }
         }
     }
