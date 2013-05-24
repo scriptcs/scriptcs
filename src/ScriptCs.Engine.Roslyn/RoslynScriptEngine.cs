@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
@@ -28,7 +29,7 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public object Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
@@ -82,11 +83,28 @@ namespace ScriptCs.Engine.Roslyn
             return result;
         }
 
-        protected virtual object Execute(string code, Session session)
+        protected virtual ScriptResult Execute(string code, Session session)
         {
             Guard.AgainstNullArgument("session", session);
 
-            return session.Execute(code);
+            var result = new ScriptResult();
+            try
+            {
+                var submission = session.CompileSubmission<object>(code);
+                try
+                {
+                    result.ReturnValue = submission.Execute();
+                }
+                catch (Exception ex)
+                {
+                    result.ExecuteException = ex;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.CompileException = ex;
+            }
+            return result;
         }
     }
 }
