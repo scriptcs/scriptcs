@@ -82,6 +82,7 @@
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptPackSession.cs" />
+    <Compile Include="ScriptResult.cs" />
     <Compile Include="SessionState.cs" />
   </ItemGroup>
   <ItemGroup>
