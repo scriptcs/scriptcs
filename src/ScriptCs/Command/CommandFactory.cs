@@ -56,7 +56,7 @@ namespace ScriptCs.Command
                         _scriptServiceRoot.Logger);
 
                     var restoreCommand = new RestoreCommand(
-                        args.Install,
+                        args.ScriptName,
                         _scriptServiceRoot.FileSystem,
                         _scriptServiceRoot.PackageAssemblyResolver,
                         _scriptServiceRoot.Logger);
