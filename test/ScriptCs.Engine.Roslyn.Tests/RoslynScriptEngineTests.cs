@@ -245,6 +245,82 @@ namespace ScriptCs.Tests
 
                 result.ReturnValue.ShouldBeNull();
             }
+
+            [Fact]
+            public void ShouldReturnIsPendingClosingParenIfCodeIsPendingAClosingParen()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "System.Console.WriteLine( //this is pending a closing paren";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual(')');
+            }
+
+            [Fact]
+            public void ShouldReturnIsPendingClosingBraceIfCodeIsPendingAClosingBrace()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "class Foo { //this is pending a closing brace";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual('}');
+            }
+
+            [Fact]
+            public void ShouldNotReturnCompileExceptionIfCodeIsPendingAClosingChar()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "class Foo { //this is pending a closing brace";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.CompileException .ShouldBeNull();
+            }
+
+            [Fact]
+            public void ShouldReturnIsPendingClosingBracketIfCodeIsPendingAClosingBracket()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>())).Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "\"abc\"[ //this is pending a closing bracket";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual(']');
+            }
         }
     }
 }

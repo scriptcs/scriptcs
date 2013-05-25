@@ -87,10 +87,20 @@ namespace ScriptCs
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 var result = ScriptEngine.Execute(script, new string[0], References, DefaultNamespaces, ScriptPackSession);
-                if (result != null)
+                if (result.CompileException != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\r\n" + result.CompileException + "\r\n");
+                }
+                else if (result.ExecuteException != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\r\n" + result.ExecuteException + "\r\n");
+                }
+                else if (result.ReturnValue != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ToJsv());
+                    Console.WriteLine(result.ReturnValue.ToJsv());
                 }
             }
             catch (Exception ex)
