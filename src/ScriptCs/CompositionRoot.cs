@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
+
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
@@ -66,16 +68,20 @@ namespace ScriptCs
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
-            if (_shouldInitDrirectoryCatalog) 
+            if (_shouldInitDrirectoryCatalog)
             {
-                var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin");
-                if (Directory.Exists(scriptPath)) 
-                {
-                    var catalog = new DirectoryCatalog(scriptPath);
-                    builder.RegisterComposablePartCatalog(catalog);
-                }
+                var directory = Environment.CurrentDirectory;
+
+                var directoryCatalogs = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories)
+                    .Union(Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
+                    .Select(Path.GetDirectoryName).Distinct()
+                    .Select(x => new DirectoryCatalog(x));
+
+                builder.RegisterComposablePartCatalog(new AggregateCatalog(directoryCatalogs));
             }
+
             _container = builder.Build();
+
             _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
         }
 
