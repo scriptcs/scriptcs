@@ -1,10 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+<<<<<<< HEAD
 using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Exceptions;
+=======
+using Common.Logging;
+using Roslyn.Scripting;
+>>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -14,7 +19,11 @@ namespace ScriptCs.Engine.Roslyn
         protected const string CompiledScriptMethod = "<Factory>";
         protected readonly ILog _logger;
 
+<<<<<<< HEAD
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+=======
+        public RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+>>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             : base(scriptHostFactory, logger)
         {
             _logger = logger;
@@ -62,6 +71,7 @@ namespace ScriptCs.Engine.Roslyn
 
             if (compileSuccess)
             {
+<<<<<<< HEAD
                 var assembly = this.LoadAssembly(exeBytes, pdbBytes);
                 _logger.Debug("Retrieving compiled script class (reflection).");
                 var type = assembly.GetType(CompiledScriptClass);
@@ -84,11 +94,18 @@ namespace ScriptCs.Engine.Roslyn
                         executeException.InnerException.StackTrace);
                     throw new ScriptExecutionException(message);
                 }
+=======
+                ExecuteScriptInSession(session, exeBytes, pdbBytes, scriptResult);
+>>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             }
 
             return scriptResult;
         }
 
+<<<<<<< HEAD
         protected abstract Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes);
+=======
+        protected abstract void ExecuteScriptInSession(Session session, byte[] exeBytes, byte[] pdbBytes, ScriptResult scriptResult);
+>>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
     }
 }

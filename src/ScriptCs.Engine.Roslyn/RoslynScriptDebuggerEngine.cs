@@ -16,8 +16,8 @@ namespace ScriptCs.Engine.Roslyn
             : base(scriptHostFactory, logger)
         {
         }
-        
-        protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
+
+        protected override void ExecuteScriptInSession(Session session, byte[] exeBytes, byte[] pdbBytes, ScriptResult scriptResult)
         {
             _logger.Debug("Loading assembly into appdomain.");
             var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
@@ -33,7 +33,15 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception executeException)
             {
-                scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
+                scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
+
+                this._logger.Error("An error occurred when executing the scripts.");
+                var message = string.Format(
+                    "Exception Message: {0} {1}Stack Trace:{2}",
+                    executeException.InnerException.Message,
+                    Environment.NewLine,
+                    executeException.InnerException.StackTrace);
+                throw new ScriptExecutionException(message);
             }
 
             var exeBytes = new byte[0];
