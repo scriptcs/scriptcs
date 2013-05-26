@@ -105,7 +105,7 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                compositeCommand.Commands.Count.ShouldEqual(1);
+                compositeCommand.Commands.Count.ShouldEqual(2);
                 compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
                 compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
             }
