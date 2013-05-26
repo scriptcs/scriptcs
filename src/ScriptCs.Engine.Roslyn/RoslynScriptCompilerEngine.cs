@@ -14,7 +14,7 @@ namespace ScriptCs.Engine.Roslyn
         protected const string CompiledScriptMethod = "<Factory>";
         protected readonly ILog _logger;
 
-        public RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
             _logger = logger;
