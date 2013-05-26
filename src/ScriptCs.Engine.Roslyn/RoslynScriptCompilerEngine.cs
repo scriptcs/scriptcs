@@ -14,10 +14,7 @@ namespace ScriptCs.Engine.Roslyn
         protected const string CompiledScriptMethod = "<Factory>";
         protected readonly ILog _logger;
 
-<<<<<<< HEAD
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-=======
-        public RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
 >>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             : base(scriptHostFactory, logger)
         {
