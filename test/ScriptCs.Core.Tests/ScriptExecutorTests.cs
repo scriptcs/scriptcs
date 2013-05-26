@@ -265,6 +265,36 @@ namespace ScriptCs.Tests
                 scriptEngine.Object.FileName.ShouldEqual(ScriptName);
             }
 
+            [Fact]
+            public void ExecutorShouldPassDefaultNamespacesToEngine()
+            {
+                // arrange
+                const string CurrentDirectory = @"c:\scriptcs";
+
+                var scriptEngine = new Mock<IScriptEngine>();
+                scriptEngine.SetupProperty(e => e.FileName);
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(CurrentDirectory);
+
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+
+                var scriptExecutor = CreateScriptExecutor(scriptEngine: scriptEngine, fileSystem: fileSystem, fileProcessor: preProcessor);
+
+                const string ScriptName = "script.csx";
+                var paths = new string[0];
+                var args = new string[0];
+                IEnumerable<IScriptPack> recipes = Enumerable.Empty<IScriptPack>();
+
+                // act
+                scriptExecutor.Execute(ScriptName, args, paths, recipes);
+
+                // assert
+                scriptEngine.Object.FileName.ShouldEqual(ScriptName);
+            }
+
             [Theory, ScriptCsAutoData]
             public void ExecutorShouldPassDefaultNamespacesToEngine([Frozen] Mock<IScriptEngine> engine, [Frozen] Mock<IFileSystem> fileSystem,
                                                                                                        [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor executor)

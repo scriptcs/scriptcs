@@ -6,7 +6,6 @@ namespace ScriptCs.Contracts
     {
         string BaseDirectory { get; set; }
         string FileName { get; set; }
-
         ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession);
     }
 }
