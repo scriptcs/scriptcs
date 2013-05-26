@@ -72,8 +72,10 @@ namespace ScriptCs
             {
                 var directory = Environment.CurrentDirectory;
 
-                var directoryCatalogs = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories)
-                    .Union(Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
+                var assemblies = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories)
+                    .Union(Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories));
+
+                var directoryCatalogs = assemblies
                     .Select(Path.GetDirectoryName).Distinct()
                     .Select(x => new DirectoryCatalog(x));
 
