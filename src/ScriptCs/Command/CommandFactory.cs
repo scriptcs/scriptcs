@@ -90,7 +90,6 @@ namespace ScriptCs.Command
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,
                     _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver,
                     _scriptServiceRoot.Logger);
 
                 return new CompositeCommand(saveCommand, cleanCommand);
