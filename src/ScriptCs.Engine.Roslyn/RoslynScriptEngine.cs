@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -32,6 +31,8 @@ namespace ScriptCs.Engine.Roslyn
             get {  return _scriptEngine.BaseDirectory;  }
             set {  _scriptEngine.BaseDirectory = value; }
         }
+
+        public string FileName { get; set; }
 
         public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
