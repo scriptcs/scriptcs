@@ -47,38 +47,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldCreateMissingBinFolder()
-            {
-                const string WorkingDirectory = @"C:\";
-
-                var binFolder = Path.Combine(WorkingDirectory, "bin");
-
-                var args = new ScriptCsArgs { ScriptName = "test.csx" };
-
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(WorkingDirectory);
-                fs.SetupGet(x => x.CurrentDirectory).Returns(WorkingDirectory);
-                fs.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
-
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyName>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(x => x.CreateDirectory(binFolder), Times.Once());
-            }
-
-            [Fact]
             public void NonManagedAssembliesAreExcluded()
             {
                 const string nonManaged = "non-managed.dll";

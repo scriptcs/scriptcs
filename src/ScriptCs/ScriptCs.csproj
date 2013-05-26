@@ -66,6 +66,7 @@
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
+    <Compile Include="Command\ScriptCommand.cs" />
     <Compile Include="Command\ShowUsageCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />

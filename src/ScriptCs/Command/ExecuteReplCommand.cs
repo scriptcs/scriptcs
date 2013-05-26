@@ -1,62 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Common.Logging;
-using System.Reflection;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteReplCommand : IScriptCommand
+    internal class ExecuteReplCommand : ScriptCommand
     {
-        private readonly IFileSystem _fileSystem;
         private readonly IScriptPackResolver _scriptPackResolver;
-        private readonly IScriptEngine _scriptEngine;
         private readonly IFilePreProcessor _filePreProcessor;
-        private readonly IAssemblyName _assemblyName;
-
-        private readonly ILog _logger;
+        private readonly IScriptEngine _scriptEngine;
         private readonly IConsole _console;
-
-        public string[] ScriptArgs { get; private set; }
 
         public ExecuteReplCommand(
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
+            IPackageAssemblyResolver packageAssemblyResolver,
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console,
-            IAssemblyName assemblyName
-            )
+            IAssemblyName assemblyName) : base(fileSystem, packageAssemblyResolver, assemblyName, logger)
         {
-            _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
             _filePreProcessor = filePreProcessor;
-            _logger = logger;
             _console = console;
-            _assemblyName = assemblyName;
         }
 
-        public CommandResult Execute()
+        public override CommandResult Execute()
         {
             _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
-            repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
+            var repl = new Repl(FileSystem, _scriptEngine, Logger, _console, _filePreProcessor);
+
+            var assemblies = GetAssemblyPaths(FileSystem.CurrentDirectory);
+            var scriptPacks = _scriptPackResolver.GetPacks();
+
+            repl.Initialize(assemblies, scriptPacks);
+
             try
             {
-                while (ExecuteLine(repl))
-                {
-                }
+                while (ExecuteLine(repl)) { }
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                Logger.Error(ex.Message);
                 return CommandResult.Error;              
             }
+
             repl.Terminate();
             return CommandResult.Success;
         }
@@ -64,46 +54,11 @@ namespace ScriptCs.Command
         private bool ExecuteLine(Repl repl)
         {
             _console.Write("> ");
+
             var line = _console.ReadLine();
-            if (line == "")
-                return false;
+            if (line == string.Empty) return false;
 
             repl.Execute(line);
-            return true;
-        }
-
-
-        private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
-        {
-            var binFolder = Path.Combine(workingDirectory, "bin");
-
-            if (!_fileSystem.DirectoryExists(binFolder))
-                _fileSystem.CreateDirectory(binFolder);
-
-            var assemblyPaths =
-                _fileSystem.EnumerateFiles(binFolder, "*.dll")
-                .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(IsManagedAssembly)
-                .ToList();
-
-            foreach (var path in assemblyPaths.Select(Path.GetFileName))
-            {
-                _logger.DebugFormat("Found assembly reference: {0}", path);
-            }
-
-            return assemblyPaths;
-        }
-
-        private bool IsManagedAssembly(string path)
-        {
-            try
-            {
-                _assemblyName.GetAssemblyName(path);
-            }
-            catch (BadImageFormatException)
-            {
-                return false;
-            }
             return true;
         }
     }
