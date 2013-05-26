@@ -55,24 +55,7 @@ namespace ScriptCs.Command
                         _scriptServiceRoot.PackageInstaller,
                         _scriptServiceRoot.Logger);
 
-                    var restoreCommand = new RestoreCommand(
-                        args.ScriptName,
-                        _scriptServiceRoot.FileSystem,
-                        _scriptServiceRoot.PackageAssemblyResolver,
-                        _scriptServiceRoot.Logger);
-
-                    return new CompositeCommand(installCommand, restoreCommand, executeCommand);
-                }
-
-                if (args.Restore)
-                {
-                    var restoreCommand = new RestoreCommand(
-                        args.ScriptName, 
-                        _scriptServiceRoot.FileSystem, 
-                        _scriptServiceRoot.PackageAssemblyResolver,
-                        _scriptServiceRoot.Logger);
-
-                    return new CompositeCommand(restoreCommand, executeCommand);
+                    return new CompositeCommand(installCommand, executeCommand);
                 }
 
                 return executeCommand;
@@ -88,22 +71,16 @@ namespace ScriptCs.Command
                     _scriptServiceRoot.PackageInstaller,
                     _scriptServiceRoot.Logger);
 
-                var restoreCommand = new RestoreCommand(
-                    args.Install,
-                    _scriptServiceRoot.FileSystem,
-                    _scriptServiceRoot.PackageAssemblyResolver,
-                    _scriptServiceRoot.Logger);
-
                 var currentDirectory = _scriptServiceRoot.FileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
 
                 if (!_scriptServiceRoot.FileSystem.FileExists(packageFile))
                 {
                     var saveCommand = new SaveCommand(_scriptServiceRoot.PackageAssemblyResolver);
-                    return new CompositeCommand(installCommand, restoreCommand, saveCommand);
+                    return new CompositeCommand(installCommand, saveCommand);
                 }
 
-                return new CompositeCommand(installCommand, restoreCommand);
+                return installCommand;
             }
 
             if (args.Clean)

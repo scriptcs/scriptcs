@@ -48,7 +48,6 @@
     <Compile Include="VersionCommandTests.cs" />
     <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestoreCommandTests.cs" />
     <Compile Include="ExecuteScriptCommandTests.cs" />
   </ItemGroup>
   <ItemGroup>
