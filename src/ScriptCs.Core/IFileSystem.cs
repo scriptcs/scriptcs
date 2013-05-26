@@ -6,7 +6,7 @@ namespace ScriptCs
 {
     public interface IFileSystem
     {
-        IEnumerable<string> EnumerateFiles(string dir, string search);
+        IEnumerable<string> EnumerateFiles(string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
 
         void Copy(string source, string dest, bool overwrite);
 

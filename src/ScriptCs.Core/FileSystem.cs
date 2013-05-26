@@ -6,9 +6,9 @@ namespace ScriptCs
 {
     public class FileSystem : IFileSystem
     {
-        public IEnumerable<string> EnumerateFiles(string dir, string searchPattern)
+        public IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFiles(dir, searchPattern, SearchOption.AllDirectories);
+            return Directory.EnumerateFiles(dir, searchPattern, searchOption);
         }
 
         public void Copy(string source, string dest, bool overwrite)
