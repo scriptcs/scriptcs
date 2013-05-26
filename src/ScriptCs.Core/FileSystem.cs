@@ -96,6 +96,11 @@ namespace ScriptCs
             return new FileStream(filePath, mode);
         }
 
+        public void WriteAllBytes(string filePath, byte[] bytes)
+        {
+            File.WriteAllBytes(filePath, bytes);
+        }
+
         public string ModulesFolder
         {
             get {

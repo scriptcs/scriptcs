@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using Common.Logging;
+using Roslyn.Scripting;
+using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Common.Logging;
@@ -11,31 +11,28 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public class RoslynScriptDebuggerEngine : RoslynScriptEngine
+    public class RoslynScriptDebuggerEngine : RoslynScriptCompilerEngine
     {
-        private const string CompiledScriptClass = "Submission#0";
-        private const string CompiledScriptMethod = "<Factory>";
-        private readonly ILog _logger;
-
         public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
-            this._logger = logger;
         }
 
-        protected override ScriptResult Execute(string code, Session session)
+        protected override void ExecuteScriptInSession(Session session, byte[] exeBytes, byte[] pdbBytes, ScriptResult scriptResult)
         {
-            Guard.AgainstNullArgument("session", session);
+            _logger.Debug("Loading assembly into appdomain.");
+            var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
+            _logger.Debug("Retrieving compiled script class (reflection).");
+            var type = assembly.GetType(CompiledScriptClass);
+            _logger.Debug("Retrieving compiled script method (reflection).");
+            var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
-            var scriptResult = new ScriptResult();
-            Submission<object> submission = null;
-
-            _logger.Debug("Compiling submission");
             try
             {
-                submission = session.CompileSubmission<object>(code);
+                this._logger.Debug("Invoking method.");
+                scriptResult.ReturnValue = method.Invoke(null, new[] { session });
             }
-            catch (Exception compileException)
+            catch (Exception executeException)
             {
                 scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
             }
