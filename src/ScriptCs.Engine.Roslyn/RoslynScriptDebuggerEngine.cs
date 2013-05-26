@@ -1,5 +1,4 @@
 ﻿using Common.Logging;
-using Roslyn.Scripting;
 using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -17,8 +16,8 @@ namespace ScriptCs.Engine.Roslyn
             : base(scriptHostFactory, logger)
         {
         }
-
-        protected override void ExecuteScriptInSession(Session session, byte[] exeBytes, byte[] pdbBytes, ScriptResult scriptResult)
+        
+        protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
             _logger.Debug("Loading assembly into appdomain.");
             var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);

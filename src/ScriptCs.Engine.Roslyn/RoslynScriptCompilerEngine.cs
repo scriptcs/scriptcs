@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
+using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -60,12 +62,33 @@ namespace ScriptCs.Engine.Roslyn
 
             if (compileSuccess)
             {
-                ExecuteScriptInSession(session, exeBytes, pdbBytes, scriptResult);
+                var assembly = this.LoadAssembly(exeBytes, pdbBytes);
+                _logger.Debug("Retrieving compiled script class (reflection).");
+                var type = assembly.GetType(CompiledScriptClass);
+                _logger.Debug("Retrieving compiled script method (reflection).");
+                var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
+
+                try
+                {
+                    this._logger.Debug("Invoking method.");
+                    scriptResult.ReturnValue = method.Invoke(null, new[] { session });
+                }
+                catch (Exception executeException)
+                {
+                    scriptResult.ExecuteException = executeException;
+                    this._logger.Error("An error occurred when executing the scripts.");
+                    var message = string.Format(
+                        "Exception Message: {0} {1}Stack Trace:{2}",
+                        executeException.InnerException.Message,
+                        Environment.NewLine,
+                        executeException.InnerException.StackTrace);
+                    throw new ScriptExecutionException(message);
+                }
             }
 
             return scriptResult;
         }
 
-        protected abstract void ExecuteScriptInSession(Session session, byte[] exeBytes, byte[] pdbBytes, ScriptResult scriptResult);
+        protected abstract Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes);
     }
 }
