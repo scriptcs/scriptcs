@@ -15,7 +15,7 @@ namespace ScriptCs
             IScriptPackResolver scriptPackResolver, 
             IPackageInstaller packageInstaller,
             ILog logger,
-            IAssemblyName assemblyName,
+            IAssemblyResolver assemblyResolver,
             IConsole console = null)
         {
             FileSystem = fileSystem;
@@ -27,7 +27,7 @@ namespace ScriptCs
             PackageInstaller = packageInstaller;
             Logger = logger;
             Console = console;
-            AssemblyName = assemblyName;
+            AssemblyResolver = assemblyResolver;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -39,6 +39,6 @@ namespace ScriptCs
         public IScriptEngine Engine { get; private set; }
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
-        public IAssemblyName AssemblyName { get; private set; }
+        public IAssemblyResolver AssemblyResolver { get; private set; }
     }
 }

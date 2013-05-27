@@ -5,35 +5,49 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteReplCommand : ScriptCommand
+    internal class ExecuteReplCommand : IScriptCommand
     {
         private readonly IScriptPackResolver _scriptPackResolver;
+
+        private readonly IAssemblyResolver _assemblyResolver;
+
         private readonly IFilePreProcessor _filePreProcessor;
+
         private readonly IScriptEngine _scriptEngine;
+
+        private readonly IFileSystem _fileSystem;
+
         private readonly IConsole _console;
+
+        private readonly ILog _logger;
 
         public ExecuteReplCommand(
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
-            IPackageAssemblyResolver packageAssemblyResolver,
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console,
-            IAssemblyName assemblyName) : base(fileSystem, packageAssemblyResolver, assemblyName, logger)
+            IAssemblyResolver assemblyResolver)
         {
+            _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
             _filePreProcessor = filePreProcessor;
+            _logger = logger;
             _console = console;
+            _assemblyResolver = assemblyResolver;
         }
 
-        public override CommandResult Execute()
+        public string[] ScriptArgs { get; private set; }
+
+        public CommandResult Execute()
         {
             _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(FileSystem, _scriptEngine, Logger, _console, _filePreProcessor);
+            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
 
-            var assemblies = GetAssemblyPaths(FileSystem.CurrentDirectory);
+            var workingDirectory = _fileSystem.CurrentDirectory;
+            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks);
@@ -44,7 +58,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return CommandResult.Error;              
             }
 

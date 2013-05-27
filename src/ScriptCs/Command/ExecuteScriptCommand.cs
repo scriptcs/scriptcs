@@ -4,37 +4,49 @@ using Common.Logging;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteScriptCommand : ScriptCommand
+    internal class ExecuteScriptCommand : IScriptCommand
     {
-        private readonly string _script;
-        private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
+
+        private readonly IAssemblyResolver _assemblyResolver;
+
+        private readonly IScriptExecutor _scriptExecutor;
+
+        private readonly IFileSystem _fileSystem;
+
+        private readonly string _script;
+
+        private readonly ILog _logger;
 
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
-            IPackageAssemblyResolver packageAssemblyResolver,
             ILog logger,
-            IAssemblyName assemblyName) : base(fileSystem, packageAssemblyResolver, assemblyName, logger)
+            IAssemblyResolver assemblyResolver)
         {
             _script = script;
+            _fileSystem = fileSystem;
             ScriptArgs = scriptArgs;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
+            _logger = logger;
+            _assemblyResolver = assemblyResolver;
         }
 
-        public override CommandResult Execute()
+        public string[] ScriptArgs { get; private set; }
+
+        public CommandResult Execute()
         {
             try
             {
                 var assemblyPaths = Enumerable.Empty<string>();
 
-                var workingDirectory = FileSystem.GetWorkingDirectory(_script);
+                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
                 _scriptExecutor.Execute(_script, ScriptArgs);
@@ -44,7 +56,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return CommandResult.Error;
             }
         }

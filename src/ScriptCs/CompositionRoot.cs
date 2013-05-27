@@ -50,7 +50,7 @@ namespace ScriptCs
                     typeof (NugetInstallationProvider),
                     typeof (PackageInstaller),
                     typeof (ReplConsole),
-                    typeof (AssemblyName)
+                    typeof (AssemblyResolver)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
