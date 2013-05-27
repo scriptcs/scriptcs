@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
 using System.Reflection;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
