@@ -71,6 +71,8 @@ namespace ScriptCs.Command
             manifest.PackageAssemblies.UnionWith(installedPackages);
 
             _fileSystem.WriteToFile(manifestPath, manifest.ToJson());
+
+            _logger.InfoFormat("{0} written to {1}.", Constants.ManifestFile, workingDirectory);
         }
 
         private ScriptManifest GetManifest(string manifestPath)

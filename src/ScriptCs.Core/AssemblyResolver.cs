@@ -29,14 +29,7 @@ namespace ScriptCs
             var manifestAssemblies = GetManifestAssemblies(path);
             var looseAssemblies = GetLooseAssemblies(path);
 
-            var assemblyPaths = manifestAssemblies.Union(looseAssemblies).ToList();
-            
-            foreach (var assemblyPath in assemblyPaths)
-            {
-                _logger.DebugFormat("Found assembly reference: {0}", Path.GetFileName(assemblyPath));
-            }
-
-            return assemblyPaths;
+            return manifestAssemblies.Union(looseAssemblies);
         }
 
         private IEnumerable<string> GetLooseAssemblies(string path)
@@ -47,7 +40,13 @@ namespace ScriptCs
 
             var looseAssemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(IsManagedAssembly);
+                .Where(IsManagedAssembly)
+                .ToList();
+
+            foreach (var looseAssembly in looseAssemblies)
+            {
+                _logger.DebugFormat("Found assembly in bin folder: {0}", Path.GetFileName(looseAssembly));
+            }
 
             return looseAssemblies;
         }
@@ -60,10 +59,15 @@ namespace ScriptCs
 
             var manifest = _fileSystem.ReadFile(manifestPath).FromJson<ScriptManifest>();
 
+            foreach (var packageAssembly in manifest.PackageAssemblies)
+            {
+                _logger.DebugFormat("Found package assembly: {0}", Path.GetFileName(packageAssembly));
+            }
+
             return manifest.PackageAssemblies;
         }
 
-        private static bool IsManagedAssembly(string path)
+        private bool IsManagedAssembly(string path)
         {
             try
             {
@@ -72,6 +76,7 @@ namespace ScriptCs
             }
             catch (BadImageFormatException)
             {
+                _logger.DebugFormat("Skipping non-managed assembly: {0}", Path.GetFileName(path));
                 return false;
             }
         }
