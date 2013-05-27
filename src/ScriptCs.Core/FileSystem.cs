@@ -81,6 +81,11 @@ namespace ScriptCs
             return value.Split(new[] { NewLine }, StringSplitOptions.None);
         }
 
+        public void WriteToFile(string path, string text)
+        {
+            File.WriteAllText(path, text);
+        }
+
         public Stream CreateFileStream(string filePath, FileMode mode)
         {
             return new FileStream(filePath, mode);

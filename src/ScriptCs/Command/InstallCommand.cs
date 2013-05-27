@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Versioning;
 using Common.Logging;
 using ScriptCs.Package;
+
+using ServiceStack.Text;
 
 namespace ScriptCs.Command
 {
@@ -47,6 +50,8 @@ namespace ScriptCs.Command
             {
                 _packageInstaller.InstallPackages(packages, _allowPre, _logger.Info);
 
+                UpdateManifest(workingDirectory);
+
                 _logger.Info("Installation completed successfully.");
                 return CommandResult.Success;
             }
@@ -55,6 +60,23 @@ namespace ScriptCs.Command
                 _logger.ErrorFormat("Installation failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
+        }
+
+        private void UpdateManifest(string workingDirectory)
+        {
+            var manifestPath = Path.Combine(workingDirectory, Constants.ManifestFile);
+            var manifest = GetManifest(manifestPath) ?? new ScriptManifest();
+
+            var installedPackages = _packageAssemblyResolver.GetAssemblyNames(workingDirectory);
+            manifest.PackageAssemblies.UnionWith(installedPackages);
+
+            _fileSystem.WriteToFile(manifestPath, manifest.ToJson());
+        }
+
+        private ScriptManifest GetManifest(string manifestPath)
+        {
+            if (!_fileSystem.FileExists(manifestPath)) return null;
+            return _fileSystem.ReadFile(manifestPath).To<ScriptManifest>();
         }
 
         private IEnumerable<IPackageReference> GetPackages(string workingDirectory)

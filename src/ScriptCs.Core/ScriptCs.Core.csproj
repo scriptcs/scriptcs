@@ -82,6 +82,7 @@
     <Compile Include="Repl.cs" />
     <Compile Include="ScriptHost.cs" />
     <Compile Include="ScriptHostFactory.cs" />
+    <Compile Include="ScriptManifest.cs" />
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
