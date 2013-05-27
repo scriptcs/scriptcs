@@ -76,7 +76,7 @@ namespace ScriptCs.Command
         private ScriptManifest GetManifest(string manifestPath)
         {
             if (!_fileSystem.FileExists(manifestPath)) return null;
-            return _fileSystem.ReadFile(manifestPath).To<ScriptManifest>();
+            return _fileSystem.ReadFile(manifestPath).FromJson<ScriptManifest>();
         }
 
         private IEnumerable<IPackageReference> GetPackages(string workingDirectory)
