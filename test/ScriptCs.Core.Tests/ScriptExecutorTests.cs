@@ -156,6 +156,14 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldResolveAssemblyReferencesCorrectlyWhenNotRunFromCSXFolder()
+            {
+                var fileSystem = new FileSystem();
+
+                Assert.Equal(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,@"..\my_script")), fileSystem.GetWorkingDirectory(@"..\my_script"));
+            }
+
+            [Fact]
             public void ShouldExecuteScriptReturnedFromFileProcessorInScriptEngineWhenExecuteIsInvoked()
             {
                 // arrange
