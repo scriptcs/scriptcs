@@ -36,8 +36,10 @@ namespace ScriptCs.Command
                 {
                     assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
+                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
+                _scriptExecutor.Execute(_script, ScriptArgs);
+                _scriptExecutor.Terminate();
 
-                _scriptExecutor.Execute(_script, ScriptArgs, assemblyPaths, _scriptPackResolver.GetPacks());
                 return CommandResult.Success;
             }
             catch (Exception ex)

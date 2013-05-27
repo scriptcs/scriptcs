@@ -90,5 +90,10 @@ namespace ScriptCs
         {
             return IsPathRooted(path) ? Path.GetDirectoryName(path) : CurrentDirectory;
         }
+
+        public string GetFullPath(string path)
+        {
+            return Path.GetFullPath(path);
+        }
     }
 }

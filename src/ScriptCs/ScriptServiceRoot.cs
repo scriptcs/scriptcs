@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 
 namespace ScriptCs

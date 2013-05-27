@@ -20,6 +20,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IConsole.cs" />
     <Compile Include="IScriptPack.cs" />
     <Compile Include="IScriptPackContext.cs" />
     <Compile Include="IScriptPackSession.cs" />

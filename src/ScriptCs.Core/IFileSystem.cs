@@ -24,6 +24,8 @@ namespace ScriptCs
         
         bool IsPathRooted(string path);
 
+        string GetFullPath(string path);
+
         string CurrentDirectory { get; }
 
         string NewLine { get; }
