@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
+    <Compile Include="AssemblyUtility.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="IAssemblyResolver.cs" />
+    <Compile Include="IAssemblyUtility.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 using Common.Logging;
 
@@ -16,10 +14,13 @@ namespace ScriptCs
 
         private readonly ILog _logger;
 
-        public AssemblyResolver(IFileSystem fileSystem, ILog logger)
+        private readonly IAssemblyUtility _assemblyUtility;
+
+        public AssemblyResolver(IFileSystem fileSystem, IAssemblyUtility assemblyUtility, ILog logger)
         {
             _fileSystem = fileSystem;
             _logger = logger;
+            _assemblyUtility = assemblyUtility;
         }
 
         public IEnumerable<string> GetAssemblyPaths(string path)
@@ -40,7 +41,7 @@ namespace ScriptCs
 
             var looseAssemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(IsManagedAssembly)
+                .Where(_assemblyUtility.IsManagedAssembly)
                 .ToList();
 
             foreach (var looseAssembly in looseAssemblies)
@@ -65,20 +66,6 @@ namespace ScriptCs
             }
 
             return manifest.PackageAssemblies;
-        }
-
-        private bool IsManagedAssembly(string path)
-        {
-            try
-            {
-                AssemblyName.GetAssemblyName(path);
-                return true;
-            }
-            catch (BadImageFormatException)
-            {
-                _logger.DebugFormat("Skipping non-managed assembly: {0}", Path.GetFileName(path));
-                return false;
-            }
         }
     }
 }
