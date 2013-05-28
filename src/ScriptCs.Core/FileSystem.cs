@@ -90,7 +90,12 @@ namespace ScriptCs
         {
             var realPath = GetFullPath(path);
 
-            return Path.GetFileName(realPath) == string.Empty ? realPath : Path.GetDirectoryName(realPath);
+            var attributes = File.GetAttributes(realPath);
+
+            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                return realPath;
+            else
+                return Path.GetDirectoryName(realPath);
         }
 
         public string GetFullPath(string path)

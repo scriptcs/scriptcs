@@ -158,9 +158,20 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldResolveAssemblyReferencesCorrectlyWhenNotRunFromCSXFolder()
             {
-                var fileSystem = new FileSystem();
+                const string pathToMyScriptFolder = @"..\my_script\";
 
-                Assert.Equal(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,@"..\my_script\")), fileSystem.GetWorkingDirectory(@"..\my_script\"));
+                try {
+                    Directory.CreateDirectory(pathToMyScriptFolder);
+
+                    var fileSystem = new FileSystem();
+
+                    fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
+                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
+                }
+                finally {
+                    if (Directory.Exists(pathToMyScriptFolder))
+                        Directory.Delete(pathToMyScriptFolder);
+                }
             }
 
             [Fact]
