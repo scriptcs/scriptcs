@@ -29,9 +29,19 @@ namespace ScriptCs.Package
                 return;
             }
 
-            var successful = packageIds.Select(packageId => _installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
-                .Aggregate(true, (current, result) => current && result);
-
+            bool successful = true;
+            foreach(var packageId in packageIds)
+            {
+                if(_installer.IsInstalled(packageId, allowPreRelease))
+                {
+                    continue;
+                }
+                if(!_installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
+                {
+                    successful = false;
+                }
+            }
+            
             if (packageInstalled != null && packageIds.Count() > 1)
             {
                 packageInstalled(successful ? "Installation successful." : "Installation unsuccessful.");
