@@ -22,9 +22,10 @@ namespace ScriptCs.Engine.Roslyn
         {
             _logger.DebugFormat("Writing assembly to {0}.", FileName);
             var dllName = FileName.Replace(Path.GetExtension(FileName), ".dll");
-            _fileSystem.WriteAllBytes(dllName, exeBytes);
+            var dllPath = Path.Combine(this.BaseDirectory, dllName);
+            _fileSystem.WriteAllBytes(dllPath, exeBytes);
             _logger.DebugFormat("Loading assembly {0}.", dllName);
-            return Assembly.LoadFrom(dllName);
+            return Assembly.LoadFrom(dllPath);
         }
     }
 }
