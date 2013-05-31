@@ -82,7 +82,7 @@ namespace ScriptCs
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult();
+                return new ScriptResult { ExecuteException = ex };
             }
             finally
             {
