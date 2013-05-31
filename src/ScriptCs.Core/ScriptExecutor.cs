@@ -46,19 +46,19 @@ namespace ScriptCs
             ScriptPackSession.TerminatePacks();
         }
 
-        public virtual void Execute(string script)
+        public virtual ScriptResult Execute(string script)
         {
-            Execute(script, new string[0]);
+            return Execute(script, new string[0]);
         }
 
-        public virtual void Execute(string script, string[] scriptArgs)
+        public virtual ScriptResult Execute(string script, string[] scriptArgs)
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
 
             Logger.Debug("Starting execution in engine");
-            ScriptEngine.Execute(result.Code, scriptArgs, references, DefaultNamespaces, ScriptPackSession);
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, DefaultNamespaces, ScriptPackSession);
         }
     }
 }
