@@ -216,7 +216,8 @@ namespace ScriptCs.Tests
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
-                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(true);
+                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"c:/my.dll");
+                mocks.FileSystem.Setup(x => x.FileExists("c:/my.dll")).Returns(true);
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -231,7 +232,8 @@ namespace ScriptCs.Tests
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
-                mocks.FileSystem.Setup(x => x.FileExists("my.dll")).Returns(false);
+                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"c:/my.dll");
+                mocks.FileSystem.Setup(x => x.FileExists("c:/my.dll")).Returns(false);
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -239,6 +241,20 @@ namespace ScriptCs.Tests
 
                 //default references = 6
                 _repl.References.Count().ShouldEqual(6);
+            }
+
+            [Fact]
+            public void ShouldReferenceAssemblyBasedOnFullPath()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                mocks.FileSystem.Verify(x => x.FileExists("C:/my.dll"), Times.Once());
             }
 
             [Fact]

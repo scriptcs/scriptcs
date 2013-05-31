@@ -12,6 +12,8 @@ namespace ScriptCs.Package.InstallationProvider
         private readonly PackageManager _manager;
         private readonly IEnumerable<string> _repositoryUrls;
 
+        private static readonly Version EmptyVersion = new Version();
+
         public NugetInstallationProvider(IFileSystem fileSystem)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
@@ -51,34 +53,39 @@ namespace ScriptCs.Package.InstallationProvider
         {
             Guard.AgainstNullArgument("packageId", packageId);
 
-            var useVersion = packageId.Version.CompareTo(new Version()) != 0;
+            var version = GetVersion(packageId);
+            var packageName = packageId.PackageId + " " + (version == null ? string.Empty : packageId.Version.ToString());
             try
             {
-                if (useVersion)
+                _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
+                if(packageInstalled != null)
                 {
-                    _manager.InstallPackage(packageId.PackageId,
-                                            new SemanticVersion(packageId.Version, packageId.SpecialVersion), false,
-                                            allowPreRelease);
+                    packageInstalled("Installed: " + packageName);
                 }
-                else
-                {
-                    _manager.InstallPackage(packageId.PackageId, null, false, allowPreRelease);
-                }
-
-                if (packageInstalled != null)
-                    packageInstalled("Installed: " + packageId.PackageId + " " + (useVersion ? packageId.Version.ToString() : ""));
-
                 return true;
             }
             catch (Exception e)
             {
                 if (packageInstalled != null)
                 {
-                    packageInstalled("Installation failed: " + packageId.PackageId + " " + (useVersion ? packageId.Version.ToString() : ""));
+                    packageInstalled("Installation failed: " + packageName);
                     packageInstalled(e.Message);
                 }
                 return false;
             }
+        }
+
+        private static SemanticVersion GetVersion(IPackageReference packageReference)
+        {
+            return packageReference.Version == EmptyVersion ? null : new SemanticVersion(packageReference.Version, packageReference.SpecialVersion);
+        }
+
+        public bool IsInstalled(IPackageReference packageReference, bool allowPreRelease = false)
+        {
+            Guard.AgainstNullArgument("packageReference", packageReference);
+
+            var version = GetVersion(packageReference);
+            return _manager.LocalRepository.FindPackage(packageReference.PackageId, version, allowPreRelease, allowUnlisted: false) != null;
         }
     }
 }

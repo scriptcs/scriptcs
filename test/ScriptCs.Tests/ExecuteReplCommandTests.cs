@@ -4,6 +4,7 @@ using System.Text;
 using Common.Logging;
 using Moq;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 using Xunit;
 
