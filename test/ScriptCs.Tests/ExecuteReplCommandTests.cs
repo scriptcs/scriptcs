@@ -1,16 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Text;
-using Common.Logging;
 using Moq;
 
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
+using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -18,74 +15,28 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
-            [Fact]
-            public void ShouldPromptForInput()
+            [Theory, ScriptCsAutoData]
+            public void ShouldPromptForInput(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IConsole> console,
+                CommandFactory factory)
             {
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
-
-                var mockFileSystem = new Mock<IFileSystem>();
-                mockFileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
-                fixture.Register(() => mockFileSystem.Object);
-
+                // Arrange
+                var readLines = 0;
                 var builder = new StringBuilder();
+                var args = new ScriptCsArgs { Repl = true };
 
-                var reader = new StringReader(Environment.NewLine);
-                var writer = new StringWriter(builder);
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
 
-                var console = new FakeConsole(writer, reader);
-                fixture.Register<IConsole>(() => console);
+                console.Setup(x => x.ReadLine()).Returns(() => string.Empty).Callback(() => readLines++);
+                console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
 
-                var root = fixture.Create<ScriptServiceRoot>();
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                var commandFactory = new CommandFactory(root);
-
-                var target = commandFactory.CreateCommand(new ScriptCsArgs { Repl = true }, new string[0]);
-
-                target.Execute();
-
+                // Assert
                 Assert.True(builder.ToString().EndsWith("> "));
-                Assert.Equal(1, console.ReadLineCounter);
-            }
-        }
-
-        public class FakeConsole : IConsole
-        {
-            private readonly TextWriter writer;
-            private readonly TextReader reader;
-
-            public FakeConsole(TextWriter textWriter, TextReader textReader)
-            {
-                writer = textWriter;
-                reader = textReader;
-                ReadLineCounter = 0;
-            }
-
-            public ConsoleColor ForegroundColor { get; set; }
-
-            public int ReadLineCounter { get; set; }
-
-            public void Write(string value)
-            {
-                writer.Write(value);
-            }
-
-            public void WriteLine(string value)
-            {
-                writer.WriteLine(value);
-            }
-
-            public string ReadLine()
-            {
-                ReadLineCounter++;
-                return reader.ReadLine();
-            }
-
-            public void Exit()
-            {
-            }
-
-            public void ResetColor()
-            {
+                Assert.Equal(1, readLines);
             }
         }
     }
