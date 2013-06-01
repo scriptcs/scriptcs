@@ -107,7 +107,7 @@ namespace ScriptCs.Command
 
             if (args.Version)
             {
-                return new VersionCommand();
+                return new VersionCommand(_scriptServiceRoot.Console);
             }
 
             return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: false);
