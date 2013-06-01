@@ -1,11 +1,11 @@
 ﻿using System;
 using Moq;
 
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
+using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
-using Xunit;
+
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -13,104 +13,77 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [Fact]
-            public void ShouldDeletePackagesFolder()
+            [Theory, ScriptCsAutoData]
+            public void ShouldDeletePackagesFolder([Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
             {
+                // Arrange
                 var args = new ScriptCsArgs { Clean = true };
 
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder)))).Returns(true);
+                fileSystem.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder)))).Returns(true);
-                fs.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                fixture.Register(() => fs.Object);
-
-                var root = fixture.Create<ScriptServiceRoot>();
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
-                fs.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
+                // Assert
+                fileSystem.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
+                fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
             }
 
-            [Fact]
-            public void ShouldDeleteBinFolder()
+            [Theory, ScriptCsAutoData]
+            public void ShouldDeleteBinFolder([Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
             {
+                // Arrange
                 var args = new ScriptCsArgs { Clean = true };
 
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
+                fileSystem.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
-                fs.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                fixture.Register(() => fs.Object);
-
-                var root = fixture.Create<ScriptServiceRoot>();
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Once());
-                fs.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Once());
+                // Assert
+                fileSystem.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Once());
+                fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Once());
             }
 
-            [Fact]
-            public void ShouldNotDeleteBinFolderIfDllsAreLeft()
+            [Theory, ScriptCsAutoData]
+            public void ShouldNotDeleteBinFolderIfDllsAreLeft([Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
             {
+                // Arrange
                 var args = new ScriptCsArgs { Clean = true };
 
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
+                fileSystem.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:/");
+                fileSystem.Setup(i => i.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] { "c:/file.dll", "c:/file2.dll" });
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
-                fs.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:/");
-                fs.Setup(i => i.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] { "c:/file.dll", "c:/file2.dll" });
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                fixture.Register(() => fs.Object);
-
-                var root = fixture.Create<ScriptServiceRoot>();
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Never());
+                // Assert
+                fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.BinFolder))), Times.Never());
             }
 
-            [Fact]
-            public void ShouldDeleteAllFilesResolvedFromPackages()
+            [Theory, ScriptCsAutoData]
+            public void ShouldDeleteAllFilesResolvedFromPackages(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IPackageAssemblyResolver> resolver,
+                CommandFactory factory)
             {
+                // Arrange
                 var args = new ScriptCsArgs { Clean = true };
 
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
+                fileSystem.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
+                fileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.BinFolder)))).Returns(true);
-                fs.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
-                fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
-
-                var resolver = new Mock<IPackageAssemblyResolver>();
                 resolver.Setup(i => i.GetAssemblyNames(It.IsAny<string>(), It.IsAny<Action<string>>())).Returns(new[] { "c:\\file.dll", "c:\\file2.dll" });
 
-                fixture.Register(() => fs.Object);
-                fixture.Register(() => resolver.Object);
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                var root = fixture.Create<ScriptServiceRoot>();
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(i => i.FileDelete(It.IsAny<string>()), Times.Exactly(2));
+                // Assert
+                fileSystem.Verify(i => i.FileDelete(It.IsAny<string>()), Times.Exactly(2));
             }
         }
     }
