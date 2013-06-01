@@ -1,7 +1,10 @@
-﻿using Common.Logging;
-using Moq;
+﻿using Moq;
+
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+
 using ScriptCs.Command;
-using ScriptCs.Package;
+
 using Should;
 using Xunit;
 
@@ -17,22 +20,16 @@ namespace ScriptCs.Tests
                 const string PackagesFile = "C:\\packages.config";
                 const string PackagesFolder = "C:\\packages";
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
                 fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
                 fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
+                fixture.Register(() => fs.Object);
 
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-                return root;
+                return fixture.Create<ScriptServiceRoot>();
             }
 
             [Fact]

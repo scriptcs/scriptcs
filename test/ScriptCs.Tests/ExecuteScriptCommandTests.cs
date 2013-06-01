@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Common.Logging;
+
 using Moq;
+
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
+
 using Xunit;
 using System.Linq;
 
@@ -25,18 +29,16 @@ namespace ScriptCs.Tests
                         ScriptName = "test.csx"
                     };
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                fixture.Register(() => fs.Object);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                fixture.Register(() => executor.Object);
+
+                var root = fixture.Create<ScriptServiceRoot>();
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
@@ -60,25 +62,15 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
-                fs.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new[] {
-                    "managed.dll",
-                    nonManaged
-                });
+                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(WorkingDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(WorkingDirectory);
+                fs.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
+                fixture.Register(() => fs.Object);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-
-
+                var root = fixture.Create<ScriptServiceRoot>();
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
 
@@ -134,21 +126,23 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                fixture.Register(() => fs.Object);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
                         .Returns(new ScriptResult { ExecuteException = new Exception("test") });
 
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                assemblyName.Setup(x => x.GetAssemblyName(It.Is<string>(y => y == nonManaged))).Throws(new BadImageFormatException());
+                fixture.Register(() => assemblyName.Object);
+
+                var executor = new Mock<IScriptExecutor>();
+                fixture.Register(() => executor.Object);
+
+                var root = fixture.Create<ScriptServiceRoot>();
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);

@@ -4,6 +4,10 @@ using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using Moq;
+
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+
 using ScriptCs.Command;
 using ScriptCs.Package;
 using Xunit;
@@ -26,19 +30,17 @@ namespace ScriptCs.Tests
 
                 const string CurrentDirectory = @"C:\";
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fixture.Register(() => fs.Object);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
                 var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                fixture.Register(() => packageInstaller.Object);
+
+                var root = fixture.Create<ScriptServiceRoot>();
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
@@ -60,25 +62,25 @@ namespace ScriptCs.Tests
 
                 const string CurrentDirectory = @"C:\";
 
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fixture.Register(() => fs.Object);
 
                 var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-
                 resolver.Setup(i => i.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference>
                     {
                         new PackageReference("a", new FrameworkName(".NETFramework,Version=v4.0"), new Version()),
                         new PackageReference("b", new FrameworkName(".NETFramework,Version=v4.0"), new Version())
                     });
+                fixture.Register(() => resolver.Object);
+
+                var packageInstaller = new Mock<IPackageInstaller>();
+                fixture.Register(() => packageInstaller.Object);
+
+                var root = fixture.Create<ScriptServiceRoot>();
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);

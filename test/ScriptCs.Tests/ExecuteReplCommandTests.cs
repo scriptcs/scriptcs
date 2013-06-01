@@ -3,6 +3,10 @@ using System.IO;
 using System.Text;
 using Common.Logging;
 using Moq;
+
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
@@ -17,8 +21,11 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldPromptForInput()
             {
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
                 var mockFileSystem = new Mock<IFileSystem>();
                 mockFileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                fixture.Register(() => mockFileSystem.Object);
 
                 var builder = new StringBuilder();
 
@@ -26,18 +33,9 @@ namespace ScriptCs.Tests
                 var writer = new StringWriter(builder);
 
                 var console = new FakeConsole(writer, reader);
+                fixture.Register<IConsole>(() => console);
 
-                var root = new ScriptServiceRoot(
-                    mockFileSystem.Object,
-                    Mock.Of<IPackageAssemblyResolver>(),
-                    Mock.Of<IScriptExecutor>(),
-                    Mock.Of<IScriptEngine>(),
-                    Mock.Of<IFilePreProcessor>(),
-                    Mock.Of<IScriptPackResolver>(),
-                    Mock.Of<IPackageInstaller>(),
-                    Mock.Of<ILog>(),
-                    Mock.Of<IAssemblyResolver>(),
-                    console);
+                var root = fixture.Create<ScriptServiceRoot>();
 
                 var commandFactory = new CommandFactory(root);
 
