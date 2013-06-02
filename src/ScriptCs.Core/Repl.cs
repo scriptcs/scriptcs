@@ -60,7 +60,7 @@ namespace ScriptCs
             }
             catch (FileNotFoundException fileEx)
             {
-                if (References.Any(i => i == fileEx.FileName))
+                if (References != null && References.Any(i => i == fileEx.FileName))
                 {
                     References = References.Except(new[] {fileEx.FileName});
                 }
