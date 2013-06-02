@@ -38,7 +38,7 @@ namespace ScriptCs
                     }
                     else
                     {
-                        throw new FileLoadException(string.Format("Could not find script '{0}'", filepath), filepath);
+                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
                     }
                 }
                 else if (PreProcessorUtil.IsRLine(script))
