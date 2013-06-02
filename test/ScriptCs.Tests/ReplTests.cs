@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -228,23 +229,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldNotReferenceAssemblyIfFileDoesNotExist()
-            {
-                var mocks = new Mocks();
-                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
-                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"c:/my.dll");
-                mocks.FileSystem.Setup(x => x.FileExists("c:/my.dll")).Returns(false);
-
-                _repl = GetRepl(mocks);
-                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
-
-                //default references = 6
-                _repl.References.Count().ShouldEqual(6);
-            }
-
-            [Fact]
-            public void ShouldReferenceAssemblyBasedOnFullPath()
+            public void ShouldReferenceAssemblyBasedOnFullPathIfFileExists()
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
@@ -255,6 +240,42 @@ namespace ScriptCs.Tests
                 _repl.Execute("#r \"my.dll\"");
 
                 mocks.FileSystem.Verify(x => x.FileExists("C:/my.dll"), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldReferenceAssemblyBasedOnNameIfFileDoesNotExistBecauseItLooksInGACThen()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
+                mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+
+                _repl.References.Contains("my.dll").ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldRemoveReferenceIfAssemblyIsNotFound()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
+                mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+                mocks.ScriptEngine.Setup(
+                    i =>
+                    i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Throws(new FileNotFoundException("error", "my.dll"));
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"my.dll\"");
+                _repl.References.Contains("my.dll").ShouldBeTrue();
+                _repl.Execute("var x=1;");
+                _repl.References.Contains("my.dll").ShouldBeFalse();
             }
 
             [Fact]
