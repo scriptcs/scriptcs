@@ -121,8 +121,6 @@ namespace ScriptCs.Tests
 
         public class TheExecuteMethod
         {
-            private readonly FileSystemTests FileSystemTests = new FileSystemTests();
-
             [Fact]
             public void ConstructsAbsolutePathBeforePreProcessingFile()
             {

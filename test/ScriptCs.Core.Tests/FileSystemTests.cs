@@ -7,22 +7,27 @@ namespace ScriptCs.Tests
 {
     public class FileSystemTests
     {
-        [Fact]
-        public void ShouldProperlyConstructWorkingDirectoryIfScriptIsRunFromRelativePath()
+        public class GetWorkingDirectoryMethod
         {
-            const string pathToMyScriptFolder = @"..\my_script\";
+            [Fact]
+            public void ShouldProperlyConstructWorkingDirectoryIfScriptIsRunFromRelativePath()
+            {
+                const string pathToMyScriptFolder = @"..\my_script\";
 
-            try {
-                Directory.CreateDirectory(pathToMyScriptFolder);
+                try
+                {
+                    Directory.CreateDirectory(pathToMyScriptFolder);
 
-                var fileSystem = new FileSystem();
+                    var fileSystem = new FileSystem();
 
-                fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
-                          .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
-            }
-            finally {
-                if (Directory.Exists(pathToMyScriptFolder))
-                    Directory.Delete(pathToMyScriptFolder);
+                    fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
+                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
+                }
+                finally
+                {
+                    if (Directory.Exists(pathToMyScriptFolder))
+                        Directory.Delete(pathToMyScriptFolder);
+                }
             }
         }
     }
