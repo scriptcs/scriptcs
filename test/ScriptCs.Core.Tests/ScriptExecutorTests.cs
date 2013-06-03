@@ -121,6 +121,8 @@ namespace ScriptCs.Tests
 
         public class TheExecuteMethod
         {
+            private readonly FileSystemTests FileSystemTests = new FileSystemTests();
+
             [Fact]
             public void ConstructsAbsolutePathBeforePreProcessingFile()
             {
@@ -153,25 +155,6 @@ namespace ScriptCs.Tests
                 executor.Execute("script.csx");
 
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
-            }
-
-            [Fact]
-            public void ShouldResolveAssemblyReferencesCorrectlyWhenNotRunFromCSXFolder()
-            {
-                const string pathToMyScriptFolder = @"..\my_script\";
-
-                try {
-                    Directory.CreateDirectory(pathToMyScriptFolder);
-
-                    var fileSystem = new FileSystem();
-
-                    fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
-                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
-                }
-                finally {
-                    if (Directory.Exists(pathToMyScriptFolder))
-                        Directory.Delete(pathToMyScriptFolder);
-                }
             }
 
             [Fact]
