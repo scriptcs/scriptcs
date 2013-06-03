@@ -88,7 +88,14 @@ namespace ScriptCs
 
         public string GetWorkingDirectory(string path)
         {
-            return IsPathRooted(path) ? Path.GetDirectoryName(path) : CurrentDirectory;
+            var realPath = GetFullPath(path);
+
+            var attributes = File.GetAttributes(realPath);
+
+            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                return realPath;
+            else
+                return Path.GetDirectoryName(realPath);
         }
 
         public string GetFullPath(string path)
