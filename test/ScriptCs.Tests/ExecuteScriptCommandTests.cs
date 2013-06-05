@@ -8,26 +8,53 @@ using ScriptCs.Package;
 using Xunit;
 using System;
 using System.Linq;
+using Moq.Language.Flow;
+using System.Linq.Expressions;
 
 namespace ScriptCs.Tests
 {
+    public static class MockExtesions
+    {
+        public static ISetupGetter<TMocked, TProperty> SetupGet<TMocked, TProperty>(this TMocked obj, Expression<Func<TMocked, TProperty>> expression) where TMocked : class
+        {
+            return Mock.Get(obj).SetupGet(expression);
+        }
+
+        public static ISetup<TMocked, TResult> Setup<TMocked, TResult>(this TMocked obj, Expression<Func<TMocked, TResult>> expression) where TMocked : class
+        {
+            return Mock.Get(obj).Setup(expression);
+        }
+
+        public static void Verify<TMocked>(this TMocked obj, Expression<Action<TMocked>> expression, Times times) where TMocked : class
+        {
+            Mock.Get(obj).Verify(expression, times);
+        }
+    }
+
     public class ExecuteScriptCommandTests
     {
         public class ExecuteMethod
         {
-            [Fact]
-            public void ScriptExecCommandShouldInvokeWithScriptPassedFromArgs()
+            public class CommandInfo
+            {
+                public ScriptServiceRoot Root { get; set; }
+                public ICommand Command { get; set; }
+
+                public CommandResult Execute()
+                {
+                    return Command.Execute();
+                }
+            }
+
+            public CommandInfo CreateCommand(Action<ScriptServiceRoot> setup)
             {
                 var args = new ScriptCsArgs
-                    {
-                        AllowPreRelease = false,
-                        Install = "",
-                        ScriptName = "test.csx"
-                    };
-
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
                 var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
-
                 var resolver = new Mock<IPackageAssemblyResolver>();
                 var executor = new Mock<IScriptExecutor>();
                 var engine = new Mock<IScriptEngine>();
@@ -38,12 +65,20 @@ namespace ScriptCs.Tests
                 var assemblyName = new Mock<IAssemblyName>();
                 var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
+                setup(root);
+
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
+                return new CommandInfo { Command = factory.CreateCommand(args, new string[0]), Root = root };
+            }
 
-                result.Execute();
+            [Fact]
+            public void ScriptExecCommandShouldInvokeWithScriptPassedFromArgs()
+            {
+                var commandInfo = CreateCommand(root => root.FileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\"));
 
-                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+                commandInfo.Execute();
+
+                commandInfo.Root.Executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
 
             [Fact]
@@ -53,29 +88,17 @@ namespace ScriptCs.Tests
 
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
 
-                var args = new ScriptCsArgs { ScriptName = "test.csx" };
+                var commandInfo = CreateCommand(root =>
+                {
+                    var fs = root.FileSystem;
+                    fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(WorkingDirectory);
+                    fs.SetupGet(x => x.CurrentDirectory).Returns(WorkingDirectory);
+                    fs.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
+                });
+                
+                commandInfo.Execute();
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(WorkingDirectory);
-                fs.SetupGet(x => x.CurrentDirectory).Returns(WorkingDirectory);
-                fs.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
-
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyName>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                fs.Verify(x => x.CreateDirectory(binFolder), Times.Once());
+                commandInfo.Root.FileSystem.Verify(x => x.CreateDirectory(binFolder), Times.Once());
             }
 
             [Fact]
@@ -83,39 +106,17 @@ namespace ScriptCs.Tests
             {
                 const string nonManaged = "non-managed.dll";
 
-                var args = new ScriptCsArgs
+                var commandInfo = CreateCommand(root =>
                 {
-                    AllowPreRelease = false,
-                    Install = "",
-                    ScriptName = "test.csx"
-                };
-
-                var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
-                fs.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] {
-                    "managed.dll",
-                    nonManaged
+                    var fs = root.FileSystem;
+                    fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                    fs.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(new[] {"managed.dll", nonManaged });
+                    root.AssemblyName.Setup(x => x.GetAssemblyName(It.Is<string>(y => y == nonManaged))).Throws(new BadImageFormatException());
                 });
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyName>();
-                assemblyName.Setup(x => x.GetAssemblyName(It.Is<string>(y => y == nonManaged))).Throws(new BadImageFormatException());
+                commandInfo.Execute();
 
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
-
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
-
-                result.Execute();
-
-                executor.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
+                commandInfo.Root.Executor.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => !x.Contains(nonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
             }
         }
     }
