@@ -6,6 +6,7 @@ using PowerArgs;
 namespace ScriptCs
 {
     [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
+    [Serializable]
     public class ScriptCsArgs
     {
         [ArgIgnore]
@@ -53,6 +54,10 @@ namespace ScriptCs
         [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
+
+        [ArgShortcut("isolated")]
+        [ArgDescription("Runs the script in an isolated AppDomain")]
+        public bool Isolated { get; set; }
 
         public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
         {

@@ -9,7 +9,7 @@ namespace ScriptCs.Command
 {
     internal class ExecuteScriptCommand : IScriptCommand
     {
-        private readonly string _script;
+        protected readonly string _script;
         private readonly IFileSystem _fileSystem;
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
@@ -40,7 +40,7 @@ namespace ScriptCs.Command
         {
             try
             {
-                var assemblyPaths = Enumerable.Empty<string>();
+                var assemblyPaths = new string[0];
 
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
                 if (workingDirectory != null)
@@ -48,7 +48,8 @@ namespace ScriptCs.Command
                     assemblyPaths = GetAssemblyPaths(workingDirectory);
                 }
 
-                _scriptExecutor.Execute(_script, ScriptArgs, assemblyPaths, _scriptPackResolver.GetPacks());
+                Execute(workingDirectory, assemblyPaths);
+
                 return CommandResult.Success;
             }
             catch (Exception ex)
@@ -58,7 +59,12 @@ namespace ScriptCs.Command
             }
         }
 
-        private IEnumerable<string> GetAssemblyPaths(string workingDirectory)
+        protected virtual void Execute(string workingDirectory, string[] assemblyPaths)
+        {
+            _scriptExecutor.Execute(_script, ScriptArgs, assemblyPaths, _scriptPackResolver.GetPacks());
+        }
+
+        private string[] GetAssemblyPaths(string workingDirectory)
         {
             var binFolder = Path.Combine(workingDirectory, "bin");
 
@@ -69,7 +75,7 @@ namespace ScriptCs.Command
                 _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
                 .Where(IsManagedAssembly)
-                .ToList();
+                .ToArray();
                         
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
             {
