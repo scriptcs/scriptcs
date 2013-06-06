@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
                 var assemblyFile = Path.Combine(packagesFolder, "MyAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
-                fileSystem.Setup(x => x.FileExists(packagesFolder)).Returns(true);
+                fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
 
                 var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
                 packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory, It.IsAny<Action<string>>())).Returns(new[] { assemblyFile });
