@@ -8,6 +8,8 @@ namespace ScriptCs
 {
     public class AssemblyResolver : IAssemblyResolver
     {
+        private static readonly Dictionary<string, List<string>> AssemblyPathCache = new Dictionary<string, List<string>>();
+ 
         private readonly IFileSystem _fileSystem;
 
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
@@ -32,10 +34,16 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("path", path);
 
+            List<string> assemblies;
+            if (AssemblyPathCache.TryGetValue(path, out assemblies)) return assemblies;
+
             var packageAssemblies = GetPackageAssemblies(path);
             var binAssemblies = GetBinAssemblies(path);
 
-            return packageAssemblies.Union(binAssemblies);
+            assemblies = packageAssemblies.Union(binAssemblies).ToList();
+            AssemblyPathCache.Add(path, assemblies);
+
+            return assemblies;
         }
 
         private IEnumerable<string> GetBinAssemblies(string path)
