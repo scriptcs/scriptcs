@@ -247,6 +247,20 @@ namespace ScriptCs.Tests
             {
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
+
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("#r \"PresentationCore\"");
+
+                _repl.References.Contains("PresentationCore").ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldReferenceAssemblyBasedOnNameWithExtensionIfFileDoesNotExistBecauseItLooksInGACThen()
+            {
+                var mocks = new Mocks();
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
 
