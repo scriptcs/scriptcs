@@ -4,21 +4,22 @@ using System.Linq;
 
 using Common.Logging;
 
-using ServiceStack.Text;
-
 namespace ScriptCs
 {
     public class AssemblyResolver : IAssemblyResolver
     {
         private readonly IFileSystem _fileSystem;
 
+        private readonly IPackageAssemblyResolver _packageAssemblyResolver;
+
         private readonly ILog _logger;
 
         private readonly IAssemblyUtility _assemblyUtility;
 
-        public AssemblyResolver(IFileSystem fileSystem, IAssemblyUtility assemblyUtility, ILog logger)
+        public AssemblyResolver(IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver, IAssemblyUtility assemblyUtility, ILog logger)
         {
             _fileSystem = fileSystem;
+            _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
             _assemblyUtility = assemblyUtility;
         }
@@ -27,10 +28,10 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("path", path);
 
-            var manifestAssemblies = GetManifestAssemblies(path);
+            var packageAssemblies = GetPackageAssemblies(path);
             var looseAssemblies = GetLooseAssemblies(path);
 
-            return manifestAssemblies.Union(looseAssemblies);
+            return packageAssemblies.Union(looseAssemblies);
         }
 
         private IEnumerable<string> GetLooseAssemblies(string path)
@@ -39,33 +40,33 @@ namespace ScriptCs
             if (!_fileSystem.DirectoryExists(binFolder)) 
                 return Enumerable.Empty<string>();
 
-            var looseAssemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
+            var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
                 .Where(_assemblyUtility.IsManagedAssembly)
                 .ToList();
 
-            foreach (var looseAssembly in looseAssemblies)
+            foreach (var assembly in assemblies)
             {
-                _logger.DebugFormat("Found assembly in bin folder: {0}", Path.GetFileName(looseAssembly));
+                _logger.DebugFormat("Found assembly in bin folder: {0}", Path.GetFileName(assembly));
             }
 
-            return looseAssemblies;
+            return assemblies;
         }
 
-        private IEnumerable<string> GetManifestAssemblies(string path)
+        private IEnumerable<string> GetPackageAssemblies(string path)
         {
-            var manifestPath = Path.Combine(path, Constants.ManifestFile);
-            if (!_fileSystem.FileExists(manifestPath))
+            var packagesFolder = Path.Combine(path, Constants.PackagesFolder);
+            if (!_fileSystem.DirectoryExists(packagesFolder)) 
                 return Enumerable.Empty<string>();
 
-            var manifest = _fileSystem.ReadFile(manifestPath).FromJson<ScriptManifest>();
+            var assemblies = _packageAssemblyResolver.GetAssemblyNames(path).ToList();
 
-            foreach (var packageAssembly in manifest.PackageAssemblies)
+            foreach (var packageAssembly in assemblies)
             {
                 _logger.DebugFormat("Found package assembly: {0}", Path.GetFileName(packageAssembly));
             }
 
-            return manifest.PackageAssemblies;
+            return assemblies;
         }
     }
 }

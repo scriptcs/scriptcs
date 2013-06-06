@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace ScriptCs
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
-            builder.RegisterInstance<ILog>(logger);
+            builder.RegisterInstance(logger).As<ILog>();
 
             var types = new[]
                 {
@@ -47,8 +48,6 @@ namespace ScriptCs
                     typeof (NugetInstallationProvider),
                     typeof (PackageInstaller),
                     typeof (ReplConsole),
-                    typeof (AssemblyResolver),
-                    typeof (AssemblyUtility)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
@@ -66,37 +65,28 @@ namespace ScriptCs
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
-            // Newing up these manually to get package assemblies
+            // Hack to resolve assemblies for MEF catalog before building Autofac container
             var fileSystem = new FileSystem();
+            var assemblyUtility = new AssemblyUtility();
             var packageContainer = new PackageContainer(fileSystem);
             var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);
+            var assemblyResolver = new AssemblyResolver(fileSystem, packageAssemblyResolver, assemblyUtility, logger);
 
             builder.RegisterInstance(fileSystem).As<IFileSystem>();
+            builder.RegisterInstance(assemblyUtility).As<IAssemblyUtility>();
             builder.RegisterInstance(packageContainer).As<IPackageContainer>();
             builder.RegisterInstance(packageAssemblyResolver).As<IPackageAssemblyResolver>();
+            builder.RegisterInstance(assemblyResolver).As<IAssemblyResolver>();
 
             if (_shouldInitDrirectoryCatalog)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                
-                var assemblies = packageAssemblyResolver.GetAssemblyNames(currentDirectory).ToList();
-
-                var binFolder = Path.Combine(currentDirectory, Constants.BinFolder);
-                if (Directory.Exists(binFolder))
-                {
-                    var binAssemblies = Directory.EnumerateFiles(binFolder, "*.dll")
-                        .Union(Directory.EnumerateFiles(binFolder, "*.exe"));
-
-                    assemblies.AddRange(binAssemblies);
-                }
+                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
 
                 var aggregateCatalog = new AggregateCatalog();
 
-                var assemblyCatalogs = assemblies.Select(x => new AssemblyCatalog(x));
-                foreach (var assemblyCatalog in assemblyCatalogs)
-                {
-                    aggregateCatalog.Catalogs.Add(assemblyCatalog);
-                }
+                assemblies.Select(x => new AssemblyCatalog(x)).ToList()
+                    .ForEach(catalog => aggregateCatalog.Catalogs.Add(catalog));
 
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 
 using Common.Logging;
@@ -16,18 +17,20 @@ namespace ScriptCs.Tests
         public class GetAssemblyPathsMethod
         {
             [Fact]
-            public void ShouldReturnAssembliesFromManifestFile()
+            public void ShouldReturnAssembliesFromPackagesFolder()
             {
                 const string WorkingDirectory = @"C:\";
 
-                var assemblyFile = Path.Combine(WorkingDirectory, @"C:\MyAssembly.dll");
-                var manifestFile = Path.Combine(WorkingDirectory, Constants.ManifestFile);
+                var packagesFolder = Path.Combine(WorkingDirectory, Constants.PackagesFolder);
+                var assemblyFile = Path.Combine(packagesFolder, "MyAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
-                fileSystem.Setup(x => x.FileExists(manifestFile)).Returns(true);
-                fileSystem.Setup(x => x.ReadFile(manifestFile)).Returns(@"{ ""PackageAssemblies"": [ " + assemblyFile + " ] }");
+                fileSystem.Setup(x => x.FileExists(packagesFolder)).Returns(true);
 
-                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
+                var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
+                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory, It.IsAny<Action<string>>())).Returns(new[] { assemblyFile });
+
+                var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
@@ -50,7 +53,7 @@ namespace ScriptCs.Tests
                 var assemblyUtility = new Mock<IAssemblyUtility>();
                 assemblyUtility.Setup(x => x.IsManagedAssembly(assemblyFile)).Returns(true);
 
-                var resolver = new AssemblyResolver(fileSystem.Object, assemblyUtility.Object, Mock.Of<ILog>());
+                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
@@ -75,7 +78,7 @@ namespace ScriptCs.Tests
                 var assemblyUtility = new Mock<IAssemblyUtility>();
                 assemblyUtility.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
 
-                var resolver = new AssemblyResolver(fileSystem.Object, assemblyUtility.Object, Mock.Of<ILog>());
+                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
