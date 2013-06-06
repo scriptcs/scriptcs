@@ -16,7 +16,11 @@ namespace ScriptCs
 
         private readonly IAssemblyUtility _assemblyUtility;
 
-        public AssemblyResolver(IFileSystem fileSystem, IPackageAssemblyResolver packageAssemblyResolver, IAssemblyUtility assemblyUtility, ILog logger)
+        public AssemblyResolver(
+            IFileSystem fileSystem,
+            IPackageAssemblyResolver packageAssemblyResolver,
+            IAssemblyUtility assemblyUtility,
+            ILog logger)
         {
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
@@ -29,12 +33,12 @@ namespace ScriptCs
             Guard.AgainstNullArgument("path", path);
 
             var packageAssemblies = GetPackageAssemblies(path);
-            var looseAssemblies = GetLooseAssemblies(path);
+            var binAssemblies = GetBinAssemblies(path);
 
-            return packageAssemblies.Union(looseAssemblies);
+            return packageAssemblies.Union(binAssemblies);
         }
 
-        private IEnumerable<string> GetLooseAssemblies(string path)
+        private IEnumerable<string> GetBinAssemblies(string path)
         {
             var binFolder = Path.Combine(path, Constants.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder)) 
