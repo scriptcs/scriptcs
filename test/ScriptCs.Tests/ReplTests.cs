@@ -268,6 +268,26 @@ namespace ScriptCs.Tests
 
                 mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
+
+            [Fact]
+            public void ShouldNotPrintAnythingIfLineIsFirstOfMultilineConstruct()
+            {
+                var mocks = new Mocks();
+                mocks.ScriptEngine.Setup(
+                    x =>
+                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Returns<ScriptResult>(x => new ScriptResult()
+                         {
+                             ExpectingClosingChar = ')',
+                             IsPendingClosingChar = true
+                         });
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                mocks.Console.Verify(x => x.WriteLine(It.IsAny<string>()), Times.Never());
+            }
         }
     }
 }

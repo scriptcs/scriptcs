@@ -102,7 +102,9 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception ex)
             {
-                result.CompileException = ex;
+                result.UpdateClosingExpectation(ex);
+                if (!result.IsPendingClosingChar)
+                    result.CompileException = ex;
             }
             return result;
         }
