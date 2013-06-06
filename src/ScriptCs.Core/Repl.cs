@@ -80,6 +80,7 @@ namespace ScriptCs
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + fileEx + "\r\n");
+                return new ScriptResult { CompileException = fileEx };
             }
             catch (Exception ex)
             {
