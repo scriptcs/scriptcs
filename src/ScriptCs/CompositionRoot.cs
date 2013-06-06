@@ -42,9 +42,6 @@ namespace ScriptCs
             var types = new[]
                 {
                     typeof (ScriptHostFactory),
-                    typeof (FileSystem),
-                    typeof (PackageAssemblyResolver),
-                    typeof (PackageContainer),
                     typeof (FilePreProcessor),
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
@@ -69,18 +66,39 @@ namespace ScriptCs
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
+            // Newing up these manually to get package assemblies
+            var fileSystem = new FileSystem();
+            var packageContainer = new PackageContainer(fileSystem);
+            var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);
+
+            builder.RegisterInstance(fileSystem).As<IFileSystem>();
+            builder.RegisterInstance(packageContainer).As<IPackageContainer>();
+            builder.RegisterInstance(packageAssemblyResolver).As<IPackageAssemblyResolver>();
+
             if (_shouldInitDrirectoryCatalog)
             {
-                var directory = Environment.CurrentDirectory;
+                var currentDirectory = Environment.CurrentDirectory;
+                
+                var assemblies = packageAssemblyResolver.GetAssemblyNames(currentDirectory).ToList();
 
-                var assemblies = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories)
-                    .Union(Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories));
+                var binFolder = Path.Combine(currentDirectory, Constants.BinFolder);
+                if (Directory.Exists(binFolder))
+                {
+                    var binAssemblies = Directory.EnumerateFiles(binFolder, "*.dll")
+                        .Union(Directory.EnumerateFiles(binFolder, "*.exe"));
 
-                var directoryCatalogs = assemblies
-                    .Select(Path.GetDirectoryName).Distinct()
-                    .Select(x => new DirectoryCatalog(x));
+                    assemblies.AddRange(binAssemblies);
+                }
 
-                builder.RegisterComposablePartCatalog(new AggregateCatalog(directoryCatalogs));
+                var aggregateCatalog = new AggregateCatalog();
+
+                var assemblyCatalogs = assemblies.Select(x => new AssemblyCatalog(x));
+                foreach (var assemblyCatalog in assemblyCatalogs)
+                {
+                    aggregateCatalog.Catalogs.Add(assemblyCatalog);
+                }
+
+                builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
 
             _container = builder.Build();
