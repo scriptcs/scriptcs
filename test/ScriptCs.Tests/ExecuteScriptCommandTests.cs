@@ -121,6 +121,76 @@ namespace ScriptCs.Tests
                 executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
                 executor.Verify(i => i.Terminate(), Times.Once());
             }
+
+            [Fact]
+            public void ShouldReturnErrorIfThereIsCompileException()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
+
+                var fs = new Mock<IFileSystem>();
+                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                        .Returns(new ScriptResult {CompileException = new Exception("test")});
+
+                var engine = new Mock<IScriptEngine>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args, new string[0]);
+
+                var commandResult = result.Execute();
+
+                Assert.Equal(CommandResult.Error, commandResult);
+                logger.Verify(i => i.Error(It.IsAny<object>()),Times.Once());
+            }
+
+            [Fact]
+            public void ShouldReturnErrorIfThereIsExecuteException()
+            {
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
+
+                var fs = new Mock<IFileSystem>();
+                fs.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                        .Returns(new ScriptResult { ExecuteException = new Exception("test") });
+
+                var engine = new Mock<IScriptEngine>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand(args, new string[0]);
+
+                var commandResult = result.Execute();
+
+                Assert.Equal(CommandResult.Error, commandResult);
+                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+            }
         }
     }
 }

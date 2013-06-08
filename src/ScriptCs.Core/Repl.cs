@@ -24,7 +24,7 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public override void Execute(string script)
+        public override ScriptResult Execute(string script)
         {
             try
             {
@@ -47,16 +47,30 @@ namespace ScriptCs
                     var assemblyPath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, assemblyName));
                     References = References.Union(FileSystem.FileExists(assemblyPath) ? new[] { assemblyPath } : new[] { assemblyName });
 
-                    return;
+                    return new ScriptResult();
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 var result = ScriptEngine.Execute(script, new string[0], References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
+                    if (result.CompileException != null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(result.CompileException.ToString());
+                    }
+
+                    if (result.ExecuteException != null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(result.ExecuteException.ToString());
+                    }
+
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine(result.ReturnValue.ToJsv());
                 }
+
+                return result;
             }
             catch (FileNotFoundException fileEx)
             {
@@ -66,11 +80,13 @@ namespace ScriptCs
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + fileEx + "\r\n");
+                return new ScriptResult { CompileException = fileEx };
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
+                return new ScriptResult { ExecuteException = ex };
             }
             finally
             {
