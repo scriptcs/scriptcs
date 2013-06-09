@@ -49,10 +49,27 @@ namespace ScriptCs.Command
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
-                _scriptExecutor.Execute(_script, ScriptArgs);
+                var result = _scriptExecutor.Execute(_script, ScriptArgs);
                 _scriptExecutor.Terminate();
 
-                return CommandResult.Success;
+                if (result != null)
+                {
+                    if (result.CompileException != null)
+                    {
+                        _logger.Error(result.CompileException);
+                        return CommandResult.Error;
+                    }
+
+                    if (result.ExecuteException != null)
+                    {
+                        _logger.Error(result.ExecuteException);
+                        return CommandResult.Error;
+                    }
+
+                    return CommandResult.Success;
+                }
+
+                return CommandResult.Error;
             }
             catch (Exception ex)
             {

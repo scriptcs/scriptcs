@@ -6,8 +6,8 @@ namespace ScriptCs
     public interface IScriptExecutor
     {
         void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks);
-        void Execute(string script, string[] scriptArgs);
-        void Execute(string script);
+        ScriptResult Execute(string script, string[] scriptArgs);
+        ScriptResult Execute(string script);
         void Terminate();
     }
 }

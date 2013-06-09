@@ -7,6 +7,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
+using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
@@ -38,7 +39,8 @@ namespace ScriptCs
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
-            builder.RegisterInstance(logger).As<ILog>();
+            builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
+            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var types = new[]
                 {
@@ -47,7 +49,6 @@ namespace ScriptCs
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
                     typeof (PackageInstaller),
-                    typeof (ReplConsole),
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
