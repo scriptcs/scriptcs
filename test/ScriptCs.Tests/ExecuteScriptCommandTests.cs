@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
+using Common.Logging;
+
 using Moq;
 
 using Ploeh.AutoFixture.Xunit;
@@ -11,6 +13,9 @@ using ScriptCs.Contracts;
 
 using System.Linq;
 
+using ScriptCs.Package;
+
+using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
