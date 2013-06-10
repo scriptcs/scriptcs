@@ -8,6 +8,7 @@ namespace ScriptCs
 {
     internal static class Program
     {
+        [LoaderOptimizationAttribute(LoaderOptimization.MultiDomain)]
         private static int Main(string[] args) 
         {
             string[] scriptArgs;
