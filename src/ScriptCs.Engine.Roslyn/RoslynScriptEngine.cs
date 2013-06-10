@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
@@ -28,8 +29,10 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public object Execute(string code, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
+            Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
+
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
             
@@ -38,7 +41,7 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts));
+                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
 
@@ -80,9 +83,28 @@ namespace ScriptCs.Engine.Roslyn
             return result;
         }
 
-        protected virtual object Execute(string code, Session session)
+        protected virtual ScriptResult Execute(string code, Session session)
         {
-            return session.Execute(code);
+            Guard.AgainstNullArgument("session", session);
+
+            var result = new ScriptResult();
+            try
+            {
+                var submission = session.CompileSubmission<object>(code);
+                try
+                {
+                    result.ReturnValue = submission.Execute();
+                }
+                catch (Exception ex)
+                {
+                    result.ExecuteException = ex;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.CompileException = ex;
+            }
+            return result;
         }
     }
 }

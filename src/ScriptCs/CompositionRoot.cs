@@ -4,6 +4,7 @@ using System.IO;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
+using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
@@ -20,6 +21,8 @@ namespace ScriptCs
 
         public CompositionRoot(ScriptCsArgs args)
         {
+            Guard.AgainstNullArgument("args", args);
+
             _debug = args.Debug;
             _logLevel = args.LogLevel;
             _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(args);
@@ -33,7 +36,8 @@ namespace ScriptCs
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
-            builder.RegisterInstance<ILog>(logger);
+            builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
+            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var types = new[]
                 {
@@ -45,7 +49,7 @@ namespace ScriptCs
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
                     typeof (PackageInstaller),
-                    typeof (ReplConsole)
+                    typeof (AssemblyName)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();

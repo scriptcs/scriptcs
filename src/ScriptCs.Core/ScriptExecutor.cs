@@ -8,45 +8,57 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
-        private static readonly string[] DefaultReferences = new[] {"System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
-        private static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks"};
+        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
+        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
-        private readonly IFileSystem _fileSystem;
-        private readonly IFilePreProcessor _filePreProcessor;
-        private readonly IScriptEngine _scriptEngine;
-        private readonly ILog _logger;
- 
+        public IFileSystem FileSystem { get; private set; }
+        public IFilePreProcessor FilePreProcessor { get; private set; }
+        public IScriptEngine ScriptEngine { get; private set; }
+        public ILog Logger { get; private set; }
+        public IEnumerable<string> References { get; protected set; }
+        public ScriptPackSession ScriptPackSession { get; protected set; }
+
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
         {
-            _fileSystem = fileSystem;
-            _filePreProcessor = filePreProcessor;
-            _scriptEngine = scriptEngine;
-            _logger = logger;
+            FileSystem = fileSystem;
+            FilePreProcessor = filePreProcessor;
+            ScriptEngine = scriptEngine;
+            Logger = logger;
         }
 
-        public void Execute(string script, IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
+        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            var bin = Path.Combine(_fileSystem.GetWorkingDirectory(script), "bin");
-    
-            var references = DefaultReferences.Union(paths);
+            References = DefaultReferences.Union(paths);
+            var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
-            _scriptEngine.BaseDirectory = bin;
+            ScriptEngine.BaseDirectory = bin;
 
-            _logger.Debug("Initializing script packs");
+            Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks);
-            
+
             scriptPackSession.InitializePacks();
+            ScriptPackSession = scriptPackSession;
+        }
 
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(_fileSystem.CurrentDirectory, script);
-            
-            _logger.DebugFormat("File to process: {0}", path);
-            var code = _filePreProcessor.ProcessFile(path);
+        public virtual void Terminate()
+        {
+            Logger.Debug("Terminating packs");
+            ScriptPackSession.TerminatePacks();
+        }
 
-            _logger.Debug("Starting execution in engine");
-            _scriptEngine.Execute(code, references, DefaultNamespaces, scriptPackSession);
+        public virtual ScriptResult Execute(string script)
+        {
+            return Execute(script, new string[0]);
+        }
 
-            _logger.Debug("Terminating packs");
-            scriptPackSession.TerminatePacks();
+        public virtual ScriptResult Execute(string script, string[] scriptArgs)
+        {
+            var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
+            var result = FilePreProcessor.ProcessFile(path);
+            var references = References.Union(result.References);
+
+            Logger.Debug("Starting execution in engine");
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, DefaultNamespaces, ScriptPackSession);
         }
     }
 }

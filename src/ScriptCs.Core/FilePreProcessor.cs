@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+
 using Common.Logging;
 
 namespace ScriptCs
@@ -7,8 +11,8 @@ namespace ScriptCs
     public class FilePreProcessor : IFilePreProcessor
     {
         private readonly ILog _logger;
-        
-        protected readonly IFileSystem _fileSystem;
+
+        private readonly IFileSystem _fileSystem;
 
         public FilePreProcessor(IFileSystem fileSystem, ILog logger)
         {
@@ -16,106 +20,152 @@ namespace ScriptCs
             _logger = logger;
         }
 
-        public string ProcessFile(string path)
+        public FilePreProcessorResult ProcessFile(string path)
         {
-            _logger.DebugFormat("{0} - Reading lines", path);
-            var entryFile = _fileSystem.ReadFileLines(path);
-            var usings = new List<string>();
-            var rs = new List<string>();
-            var loads = new List<string>();
-
-            _logger.DebugFormat("{0} - Parsing ", path);
-            var parsed = ParseFile(path, entryFile, ref usings, ref rs, ref loads);
-
-            _logger.DebugFormat("{0} - Generating references (#r)", path);
-            var result = GenerateRs(rs);
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                result += _fileSystem.NewLine;
-            }
-
-            _logger.DebugFormat("{0} - Generating using statements", path);
-            result += GenerateUsings(usings);
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                result += _fileSystem.NewLine;
-            }
-
-            result += parsed;
-
-            return result;
+            return Parse(context => ParseFile(path, context));
         }
 
-        protected virtual string GenerateUsings(ICollection<string> usingLines)
+        public FilePreProcessorResult ProcessScript(string script)
         {
-            return string.Join(_fileSystem.NewLine, usingLines.Distinct());
+            var scriptLines = _fileSystem.SplitLines(script).ToList();
+            return Parse(context => ParseScript(scriptLines, context));
         }
 
-        protected virtual string GenerateRs(ICollection<string> rLines)
+        private FilePreProcessorResult Parse(Action<FilePreProcessorContext> parseAction)
         {
-            return string.Join(_fileSystem.NewLine, rLines.Distinct());
-        }
+            var context = new FilePreProcessorContext();
 
-        private string ParseFile(string path, IEnumerable<string> file, ref List<string> usings, ref List<string> rs, ref List<string> loads)
-        {
-            var fileList = file.ToList();
-            var firstCode = fileList.FindIndex(l => PreProcessorUtil.IsNonDirectiveLine(l));
+            _logger.DebugFormat("Starting pre-processing");
 
-            var firstBody = fileList.FindIndex(l => PreProcessorUtil.IsNonDirectiveLine(l) && !PreProcessorUtil.IsUsingLine(l));
+            parseAction(context);
 
-            // add #line before the actual code begins
-            // +1 because we are in a zero indexed list, but line numbers are 1 indexed
-            // we need to keep the original position of the actual line 
-            if (firstBody != -1)
-            {   
-                _logger.DebugFormat("Added #line statement for file {0} at line {1}", path, firstBody);
-                fileList.Insert(firstBody, string.Format(@"#line {0} ""{1}""", firstBody + 1, path));
-            }
-            
-            for (var i = 0; i < fileList.Count; i++)
+            var code = GenerateCode(context);
+
+            _logger.DebugFormat("Pre-processing finished successfully");
+
+            return new FilePreProcessorResult
             {
-                var line = fileList[i];
-                if (PreProcessorUtil.IsUsingLine(line))
+                UsingStatements = context.UsingStatements,
+                LoadedScripts = context.LoadedScripts,
+                References = context.References,
+                Code = code
+            };
+        }
+
+        private string GenerateCode(FilePreProcessorContext context)
+        {
+            var stringBuilder = new StringBuilder();
+
+            var usingLines = context.UsingStatements
+                .Select(item => string.Format("using {0};", item))
+                .ToList();
+
+            if (usingLines.Count > 0)
+            {
+                stringBuilder.AppendLine(string.Join(_fileSystem.NewLine, usingLines));
+                stringBuilder.AppendLine(); // Insert a blank separator line
+            }
+
+            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.Body));
+
+            return stringBuilder.ToString();
+        }
+
+        private void ParseFile(string path, FilePreProcessorContext context)
+        {
+            _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
+
+            var scriptLines = _fileSystem.ReadFileLines(path).ToList();
+
+            ParseScript(scriptLines, context, path);
+        }
+
+        private void ParseScript(List<string> scriptLines, FilePreProcessorContext context, string path = null)
+        {
+            // Insert line directive if there's a path
+            if (path != null) InsertLineDirective(path, scriptLines);
+
+            var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
+
+            for (var index = 0; index < scriptLines.Count; index++)
+            {
+                ProcessLine(context, scriptLines[index], index < codeIndex || codeIndex < 0);
+            }
+
+            if (path != null) context.LoadedScripts.Add(path);
+        }
+
+        private static void InsertLineDirective(string path, List<string> fileLines)
+        {
+            var bodyIndex = fileLines.FindIndex(line => PreProcessorUtil.IsNonDirectiveLine(line) && !PreProcessorUtil.IsUsingLine(line));
+            if (bodyIndex == -1) return;
+
+            var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
+            fileLines.Insert(bodyIndex, directiveLine);
+        }
+
+        private void ProcessLine(FilePreProcessorContext context, string line, bool isBeforeCode)
+        {
+            if (PreProcessorUtil.IsUsingLine(line))
+            {
+                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
+                if (!context.UsingStatements.Contains(@using))
                 {
-                    usings.Add(line);
+                    context.UsingStatements.Add(@using);
                 }
-                else if (PreProcessorUtil.IsRLine(line))
-                {
-                    if (i < firstCode)
-                    {
-                        rs.Add(line);
-                    }
-                    else
-                    {
-                        fileList[i] = string.Empty;
-                    }
-                } 
-                else if (PreProcessorUtil.IsLoadLine(line))
-                {
-                    if ((i < firstCode || firstCode < 0) && !loads.Contains(line))
-                    {
-                        var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
-                        var filecontent = _fileSystem.IsPathRooted(filepath)
-                                              ? _fileSystem.ReadFileLines(filepath)
-                                              : _fileSystem.ReadFileLines(_fileSystem.CurrentDirectory + @"\" + filepath);
 
-                        if (filecontent != null)
-                        {
-                            loads.Add(line);
-                            _logger.DebugFormat("Parsing file {0}", path);
-                            var parsed = ParseFile(filepath, filecontent, ref usings, ref rs, ref loads);
-                            fileList[i] = parsed;
-                        }
-                    }
-                    else
-                    {
-                        fileList[i] = string.Empty;
-                    }
-                }
+                return;
             }
 
-            var result = string.Join(_fileSystem.NewLine, fileList.Where(line => !PreProcessorUtil.IsUsingLine(line) && !PreProcessorUtil.IsRLine(line)));
-            return result;
+            if (PreProcessorUtil.IsRLine(line))
+            {
+                if (isBeforeCode)
+                {
+                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
+                    if (!string.IsNullOrWhiteSpace(reference) && !context.References.Contains(reference))
+                    {
+                        context.References.Add(reference);
+                    }
+                }
+
+                return;
+            }
+
+            if (PreProcessorUtil.IsLoadLine(line))
+            {
+                if (isBeforeCode)
+                {
+                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
+                    if (!string.IsNullOrWhiteSpace(filePath) && !context.LoadedScripts.Contains(filePath))
+                    {
+                        ParseFile(filePath, context);
+                    }
+                }
+
+                return;
+            }
+
+            // If we've reached this, the line is part of the body...
+            context.Body.Add(line);
+        }
+
+        private class FilePreProcessorContext
+        {
+            public FilePreProcessorContext()
+            {
+                UsingStatements = new List<string>();
+                References = new List<string>();
+                LoadedScripts = new List<string>();
+                Body = new List<string>();
+            }
+
+            public List<string> UsingStatements { get; private set; }
+
+            public List<string> References { get; private set; }
+
+            public List<string> LoadedScripts { get; private set; }
+
+            public List<string> Body { get; private set; }
         }
     }
 }

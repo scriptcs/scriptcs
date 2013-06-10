@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
+using System.Reflection;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
@@ -14,9 +16,12 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IScriptEngine _scriptEngine;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly IAssemblyName _assemblyName;
 
         private readonly ILog _logger;
         private readonly IConsole _console;
+
+        public string[] ScriptArgs { get; private set; }
 
         public ExecuteReplCommand(
             IFileSystem fileSystem,
@@ -24,7 +29,8 @@ namespace ScriptCs.Command
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
             ILog logger,
-            IConsole console
+            IConsole console,
+            IAssemblyName assemblyName
             )
         {
             _fileSystem = fileSystem;
@@ -33,11 +39,12 @@ namespace ScriptCs.Command
             _filePreProcessor = filePreProcessor;
             _logger = logger;
             _console = console;
+            _assemblyName = assemblyName;
         }
 
         public CommandResult Execute()
         {
-            Console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
+            _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
             var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
             repl.Initialize(GetAssemblyPaths(_fileSystem.CurrentDirectory), _scriptPackResolver.GetPacks());
             try
@@ -57,8 +64,8 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            Console.Write("> ");
-            var line = Console.ReadLine();
+            _console.Write("> ");
+            var line = _console.ReadLine();
             if (line == "")
                 return false;
 
@@ -77,6 +84,7 @@ namespace ScriptCs.Command
             var assemblyPaths =
                 _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
+                .Where(IsManagedAssembly)
                 .ToList();
 
             foreach (var path in assemblyPaths.Select(Path.GetFileName))
@@ -85,6 +93,19 @@ namespace ScriptCs.Command
             }
 
             return assemblyPaths;
+        }
+
+        private bool IsManagedAssembly(string path)
+        {
+            try
+            {
+                _assemblyName.GetAssemblyName(path);
+            }
+            catch (BadImageFormatException)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

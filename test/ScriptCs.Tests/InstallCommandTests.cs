@@ -37,10 +37,11 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -70,7 +71,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 resolver.Setup(i => i.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference>
                     {
@@ -79,7 +81,7 @@ namespace ScriptCs.Tests
                     });
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 

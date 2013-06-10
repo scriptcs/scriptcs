@@ -20,10 +20,23 @@ namespace ScriptCs.Engine.Roslyn
             this._logger = logger;
         }
 
-        protected override object Execute(string code, Session session)
+        protected override ScriptResult Execute(string code, Session session)
         {
+            Guard.AgainstNullArgument("session", session);
+
+            var scriptResult = new ScriptResult();
+            Submission<object> submission = null;
+
             _logger.Debug("Compiling submission");
-            var submission = session.CompileSubmission<object>(code);
+            try
+            {
+                submission = session.CompileSubmission<object>(code);
+            }
+            catch (Exception compileException)
+            {
+                scriptResult.CompileException = compileException;
+            }
+
             var exeBytes = new byte[0];
             var pdbBytes = new byte[0];
             var compileSuccess = false;
@@ -59,21 +72,23 @@ namespace ScriptCs.Engine.Roslyn
                 try
                 {
                     _logger.Debug("Invoking method.");
-                    return method.Invoke(null, new[] { session });
+                    scriptResult.ReturnValue = method.Invoke(null, new[] { session });
                 }
-                catch (Exception e)
+                catch (Exception executeException)
                 {
+                    scriptResult.ExecuteException = executeException;
                     _logger.Error("An error occurred when executing the scripts.");
                     var message = 
                         string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
-                        e.InnerException.Message,
+                        executeException.InnerException.Message,
                         Environment.NewLine, 
-                        e.InnerException.StackTrace);
+                        executeException.InnerException.StackTrace);
                     throw new ScriptExecutionException(message);
                 }
             }
-            return null;
+
+            return scriptResult;
         }
     }
 }

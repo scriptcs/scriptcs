@@ -11,8 +11,10 @@ namespace ScriptCs.Command
             _scriptServiceRoot = scriptServiceRoot;
         }
 
-        public ICommand CreateCommand(ScriptCsArgs args)
+        public ICommand CreateCommand(ScriptCsArgs args, string[] scriptArgs)
         {
+            Guard.AgainstNullArgument("args", args);
+
             if (args.Help)
             {
                 return new ShowUsageCommand(_scriptServiceRoot.Logger, isValid: true);
@@ -22,18 +24,45 @@ namespace ScriptCs.Command
             {
                 var replCommand = new ExecuteReplCommand(
                     _scriptServiceRoot.FileSystem, _scriptServiceRoot.ScriptPackResolver,
-                    _scriptServiceRoot.Engine, _scriptServiceRoot.FilePreProcessor, _scriptServiceRoot.Logger, _scriptServiceRoot.Console);
+                    _scriptServiceRoot.Engine, _scriptServiceRoot.FilePreProcessor, _scriptServiceRoot.Logger, _scriptServiceRoot.Console,
+                    _scriptServiceRoot.AssemblyName);
                 return replCommand;
             }
 
             if (args.ScriptName != null)
             {
                 var executeCommand = new ExecuteScriptCommand(
-                    args.ScriptName, 
-                    _scriptServiceRoot.FileSystem, 
+                    args.ScriptName,
+                    scriptArgs,
+                    _scriptServiceRoot.FileSystem,
                     _scriptServiceRoot.Executor,
                     _scriptServiceRoot.ScriptPackResolver,
-                    _scriptServiceRoot.Logger);
+                    _scriptServiceRoot.Logger,
+                    _scriptServiceRoot.AssemblyName);
+
+                var fileSystem = _scriptServiceRoot.FileSystem;
+                var currentDirectory = fileSystem.CurrentDirectory;
+                var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
+                var packagesFolder = Path.Combine(currentDirectory, Constants.PackagesFolder);
+
+                if (fileSystem.FileExists(packageFile) && !fileSystem.DirectoryExists(packagesFolder))
+                {
+                    var installCommand = new InstallCommand(
+                        null,
+                        false,
+                        fileSystem,
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.PackageInstaller,
+                        _scriptServiceRoot.Logger);
+
+                    var restoreCommand = new RestoreCommand(
+                        args.ScriptName,
+                        _scriptServiceRoot.FileSystem,
+                        _scriptServiceRoot.PackageAssemblyResolver,
+                        _scriptServiceRoot.Logger);
+
+                    return new CompositeCommand(installCommand, restoreCommand, executeCommand);
+                }
 
                 if (args.Restore)
                 {

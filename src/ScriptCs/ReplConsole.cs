@@ -1,9 +1,15 @@
 ﻿using System;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public class ReplConsole : IConsole
     {
+        public ReplConsole()
+        {
+            Console.CancelKeyPress += HandleCancelKeyPress;
+        }
+
         public void Write(string value)
         {
             Console.Write(value);
@@ -17,6 +23,22 @@ namespace ScriptCs
         public string ReadLine()
         {
             return Console.ReadLine();
+        }
+
+        public void Exit()
+        {
+            ResetColor();
+            Console.CancelKeyPress -= HandleCancelKeyPress;
+        }
+
+        public void ResetColor()
+        {
+            Console.ResetColor();
+        }
+
+        private void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            ResetColor();
         }
 
         public ConsoleColor ForegroundColor

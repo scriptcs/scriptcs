@@ -76,6 +76,11 @@ namespace ScriptCs
             File.Delete(path);
         }
 
+        public IEnumerable<string> SplitLines(string value)
+        {
+            return value.Split(new[] { NewLine }, StringSplitOptions.None);
+        }
+
         public Stream CreateFileStream(string filePath, FileMode mode)
         {
             return new FileStream(filePath, mode);
@@ -83,7 +88,19 @@ namespace ScriptCs
 
         public string GetWorkingDirectory(string path)
         {
-            return IsPathRooted(path) ? Path.GetDirectoryName(path) : CurrentDirectory;
+            var realPath = GetFullPath(path);
+
+            var attributes = File.GetAttributes(realPath);
+
+            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                return realPath;
+            else
+                return Path.GetDirectoryName(realPath);
+        }
+
+        public string GetFullPath(string path)
+        {
+            return Path.GetFullPath(path);
         }
     }
 }

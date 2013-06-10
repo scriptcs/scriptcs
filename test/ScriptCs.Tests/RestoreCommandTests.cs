@@ -25,7 +25,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -36,6 +37,7 @@ namespace ScriptCs.Tests
                 var destWriteTime = sourceWriteTime;
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
@@ -43,7 +45,7 @@ namespace ScriptCs.Tests
                 resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -65,7 +67,8 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
 
@@ -76,6 +79,7 @@ namespace ScriptCs.Tests
                 var destWriteTime = new DateTime(2013, 2, 7);
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 fs.Setup(x => x.GetLastWriteTime(sourceFilePath)).Returns(sourceWriteTime).Verifiable();
                 fs.Setup(x => x.GetLastWriteTime(destFilePath)).Returns(destWriteTime).Verifiable();
@@ -83,7 +87,7 @@ namespace ScriptCs.Tests
                 resolver.Setup(i => i.GetAssemblyNames(CurrentDirectory, It.IsAny<Action<string>>())).Returns(new[] { sourceFilePath });
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 
@@ -105,12 +109,14 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object);
+                var assemblyName = new Mock<IAssemblyName>();
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 const string CurrentDirectory = @"C:\";
                 const string BinFolder = @"C:\bin";
 
                 fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 var binFolderCreated = false;
 
@@ -118,7 +124,7 @@ namespace ScriptCs.Tests
                 fs.Setup(x => x.CreateDirectory(BinFolder)).Callback(() => binFolderCreated = true).Verifiable();
 
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args);
+                var result = factory.CreateCommand(args, new string[0]);
 
                 result.Execute();
 

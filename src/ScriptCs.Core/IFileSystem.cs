@@ -24,6 +24,8 @@ namespace ScriptCs
         
         bool IsPathRooted(string path);
 
+        string GetFullPath(string path);
+
         string CurrentDirectory { get; }
 
         string NewLine { get; }
@@ -36,6 +38,8 @@ namespace ScriptCs
 
         void FileDelete(string path);
 
+        IEnumerable<string> SplitLines(string value);
+        
         Stream CreateFileStream(string filePath, FileMode mode);
     }
 }
