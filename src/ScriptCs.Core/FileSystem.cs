@@ -6,9 +6,9 @@ namespace ScriptCs
 {
     public class FileSystem : IFileSystem
     {
-        public IEnumerable<string> EnumerateFiles(string dir, string searchPattern)
+        public IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFiles(dir, searchPattern, SearchOption.AllDirectories);
+            return Directory.EnumerateFiles(dir, searchPattern, searchOption);
         }
 
         public void Copy(string source, string dest, bool overwrite)
@@ -79,6 +79,11 @@ namespace ScriptCs
         public IEnumerable<string> SplitLines(string value)
         {
             return value.Split(new[] { NewLine }, StringSplitOptions.None);
+        }
+
+        public void WriteToFile(string path, string text)
+        {
+            File.WriteAllText(path, text);
         }
 
         public Stream CreateFileStream(string filePath, FileMode mode)

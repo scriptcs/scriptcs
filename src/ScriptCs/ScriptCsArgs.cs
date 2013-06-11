@@ -34,10 +34,6 @@ namespace ScriptCs
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
 
-        [ArgShortcut("restore")]
-        [ArgDescription("Restores installed packages, making them ready for using by the script")]
-        public bool Restore { get; set; }
-
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }

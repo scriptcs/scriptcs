@@ -29,7 +29,7 @@ namespace ScriptCs.Tests
                 var packageInstaller = new Mock<IPackageInstaller>();
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyName>();
+                var assemblyName = new Mock<IAssemblyResolver>();
 
                 var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
                 return root;
@@ -48,16 +48,11 @@ namespace ScriptCs.Tests
                 var factory = new CommandFactory(CreateRoot());
                 var result = factory.CreateCommand(args, new string[0]);
 
-                var compositeCommand = result as ICompositeCommand;
-                compositeCommand.ShouldNotBeNull();
-
-                compositeCommand.Commands.Count.ShouldEqual(2);
-                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
+                result.ShouldImplement<IInstallCommand>();
             }
 
             [Fact]
-            public void ShouldInstallRestoreAndSaveWhenInstallFlagIsOnAndNoPackagesFileExists()
+            public void ShouldInstallAndSaveWhenInstallFlagIsOnAndNoPackagesFileExists()
             {
                 var args = new ScriptCsArgs
                 {
@@ -72,10 +67,9 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                compositeCommand.Commands.Count.ShouldEqual(3);
+                compositeCommand.Commands.Count.ShouldEqual(2);
                 compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
-                compositeCommand.Commands[2].ShouldImplement<ISaveCommand>();
+                compositeCommand.Commands[1].ShouldImplement<ISaveCommand>();
             }
 
             [Fact]
@@ -111,10 +105,9 @@ namespace ScriptCs.Tests
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
-                compositeCommand.Commands.Count.ShouldEqual(3);
+                compositeCommand.Commands.Count.ShouldEqual(2);
                 compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IRestoreCommand>();
-                compositeCommand.Commands[2].ShouldImplement<IScriptCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
@@ -131,22 +124,6 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 result.ShouldImplement<IScriptCommand>();
-            }
-
-            [Fact]
-            public void ShouldRestoreWhenBothNameAndRestoreArePassed()
-            {
-                var args = new ScriptCsArgs { Restore = true, ScriptName = "" };
-
-                var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args, new string[0]);
-
-                var compositeCommand = result as ICompositeCommand;
-                compositeCommand.ShouldNotBeNull();
-
-                compositeCommand.Commands.Count.ShouldEqual(2);
-                compositeCommand.Commands[0].ShouldImplement<IRestoreCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
