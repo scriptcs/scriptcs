@@ -6,8 +6,6 @@ namespace ScriptCs.Command
         string[] ScriptArgs { get; }
     }
 
-    public interface IRestoreCommand : ICommand { }
-
     public interface ISaveCommand : ICommand { }
 
     public interface ICleanCommand : ICommand { }

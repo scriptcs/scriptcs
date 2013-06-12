@@ -6,7 +6,7 @@ namespace ScriptCs
 {
     public interface IFileSystem
     {
-        IEnumerable<string> EnumerateFiles(string dir, string search);
+        IEnumerable<string> EnumerateFiles(string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
 
         void Copy(string source, string dest, bool overwrite);
 
@@ -39,6 +39,8 @@ namespace ScriptCs
         void FileDelete(string path);
 
         IEnumerable<string> SplitLines(string value);
+
+        void WriteToFile(string path, string text);
         
         Stream CreateFileStream(string filePath, FileMode mode);
     }
