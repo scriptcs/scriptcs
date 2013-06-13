@@ -37,10 +37,13 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="AssemblyResolverTests.cs" />
+    <Compile Include="FileSystemTests.cs" />
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="PackageAssemblyResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplTests.cs" />
     <Compile Include="ScriptExecutorTests.cs" />
     <Compile Include="ScriptHostTests.cs" />
     <Compile Include="ScriptPackResolverTests.cs" />

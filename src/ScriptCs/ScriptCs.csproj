@@ -12,6 +12,9 @@
   <PropertyGroup>
     <ApplicationIcon>..\..\common\Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -38,8 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\PowerArgs.1.6.0.0\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text">
-      <HintPath>..\..\packages\ServiceStack.Text.3.9.44\lib\net35\ServiceStack.Text.dll</HintPath>
+    <Reference Include="ServiceStack.Text, Version=3.9.45.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.47\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -72,13 +76,10 @@
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\SaveCommand.cs" />
     <Compile Include="Command\VersionCommand.cs" />
-    <Compile Include="Command\RestoreCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="IConsole.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="LogLevel.cs" />
-    <Compile Include="Repl.cs" />
     <Compile Include="ReplConsole.cs" />
     <Compile Include="ScriptServiceRoot.cs" />
     <Compile Include="Program.cs" />

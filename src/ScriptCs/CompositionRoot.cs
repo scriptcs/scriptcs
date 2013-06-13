@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
+
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
+using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
@@ -35,20 +39,16 @@ namespace ScriptCs
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
-            builder.RegisterInstance<ILog>(logger);
+            builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
+            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var types = new[]
                 {
                     typeof (ScriptHostFactory),
-                    typeof (FileSystem),
-                    typeof (PackageAssemblyResolver),
-                    typeof (PackageContainer),
                     typeof (FilePreProcessor),
                     typeof (ScriptPackResolver),
                     typeof (NugetInstallationProvider),
                     typeof (PackageInstaller),
-                    typeof (ReplConsole),
-                    typeof (AssemblyName)
                 };
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
@@ -66,16 +66,34 @@ namespace ScriptCs
 
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
-            if (_shouldInitDrirectoryCatalog) 
+            // Hack to resolve assemblies for MEF catalog before building Autofac container
+            var fileSystem = new FileSystem();
+            var assemblyUtility = new AssemblyUtility();
+            var packageContainer = new PackageContainer(fileSystem);
+            var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);
+            var assemblyResolver = new AssemblyResolver(fileSystem, packageAssemblyResolver, assemblyUtility, logger);
+
+            builder.RegisterInstance(fileSystem).As<IFileSystem>();
+            builder.RegisterInstance(assemblyUtility).As<IAssemblyUtility>();
+            builder.RegisterInstance(packageContainer).As<IPackageContainer>();
+            builder.RegisterInstance(packageAssemblyResolver).As<IPackageAssemblyResolver>();
+            builder.RegisterInstance(assemblyResolver).As<IAssemblyResolver>();
+
+            if (_shouldInitDrirectoryCatalog)
             {
-                var scriptPath = Path.Combine(Environment.CurrentDirectory, "bin");
-                if (Directory.Exists(scriptPath)) 
-                {
-                    var catalog = new DirectoryCatalog(scriptPath);
-                    builder.RegisterComposablePartCatalog(catalog);
-                }
+                var currentDirectory = Environment.CurrentDirectory;
+                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
+
+                var aggregateCatalog = new AggregateCatalog();
+
+                assemblies.Select(x => new AssemblyCatalog(x)).ToList()
+                    .ForEach(catalog => aggregateCatalog.Catalogs.Add(catalog));
+
+                builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
+
             _container = builder.Build();
+
             _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
         }
 

@@ -10,6 +10,7 @@ namespace ScriptCs.Command
         string[] AssemblyPaths { get; set; }
         string Script { get; set; }
         string[] ScriptArgs { get; set; }
+        ScriptResult Result { get; set; }
         
         void Execute();
     }
@@ -22,14 +23,14 @@ namespace ScriptCs.Command
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
             ILog logger,
-            IAssemblyName assemblyName)
-            : base(script, scriptArgs, fileSystem, scriptExecutor, scriptPackResolver, logger, assemblyName)
+            IAssemblyResolver assemblyResolver)
+            : base(script, scriptArgs, fileSystem, scriptExecutor, scriptPackResolver, logger, assemblyResolver)
         {
         }
 
         public IIsolatedHelper IsolatedHelper { get; set; }
 
-        protected override void Execute(string workingDirectory, string[] assemblyPaths)
+        protected override ScriptResult Execute(string workingDirectory, string[] assemblyPaths)
         {
             IsolatedHelper.AssemblyPaths = assemblyPaths;
             var appDomainName = Path.Combine(workingDirectory ?? string.Empty, _script).ToString();
@@ -43,6 +44,7 @@ namespace ScriptCs.Command
             {
                 AppDomain.Unload(appDomain);
             }
+            return IsolatedHelper.Result;
         }
     }
 }

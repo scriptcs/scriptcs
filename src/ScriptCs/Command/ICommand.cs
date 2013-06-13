@@ -10,9 +10,6 @@ namespace ScriptCs.Command
     {
         IIsolatedHelper IsolatedHelper { get; set; }
     }
-
-    public interface IRestoreCommand : ICommand { }
-
     public interface ISaveCommand : ICommand { }
 
     public interface ICleanCommand : ICommand { }

@@ -13,7 +13,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
-        private readonly IAssemblyName _assemblyName;
+        private readonly IAssemblyResolver _assemblyResolver;
 
         private readonly ILog _logger;
 
@@ -23,7 +23,7 @@ namespace ScriptCs.Command
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
             ILog logger,
-            IAssemblyName assemblyName)
+            IAssemblyResolver assemblyResolver)
         {
             _script = script;
             ScriptArgs = scriptArgs;
@@ -31,7 +31,7 @@ namespace ScriptCs.Command
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
-            _assemblyName = assemblyName;
+            _assemblyResolver = assemblyResolver;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -45,12 +45,28 @@ namespace ScriptCs.Command
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+                }
+                var result = Execute(workingDirectory, assemblyPaths);
+
+                if (result != null)
+                {
+                    if (result.CompileException != null)
+                    {
+                        _logger.Error(result.CompileException);
+                        return CommandResult.Error;
+                    }
+
+                    if (result.ExecuteException != null)
+                    {
+                        _logger.Error(result.ExecuteException);
+                        return CommandResult.Error;
+                    }
+
+                    return CommandResult.Success;
                 }
 
-                Execute(workingDirectory, assemblyPaths);
-
-                return CommandResult.Success;
+                return CommandResult.Error;
             }
             catch (Exception ex)
             {
@@ -59,43 +75,12 @@ namespace ScriptCs.Command
             }
         }
 
-        protected virtual void Execute(string workingDirectory, string[] assemblyPaths)
+        protected virtual ScriptResult Execute(string workingDirectory, string[] assemblyPaths)
         {
-            _scriptExecutor.Execute(_script, ScriptArgs, assemblyPaths, _scriptPackResolver.GetPacks());
-        }
-
-        private string[] GetAssemblyPaths(string workingDirectory)
-        {
-            var binFolder = Path.Combine(workingDirectory, "bin");
-
-            if (!_fileSystem.DirectoryExists(binFolder))
-                _fileSystem.CreateDirectory(binFolder);
-
-            var assemblyPaths = 
-                _fileSystem.EnumerateFiles(binFolder, "*.dll")
-                .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(IsManagedAssembly)
-                .ToArray();
-                        
-            foreach (var path in assemblyPaths.Select(Path.GetFileName))
-            {
-                _logger.DebugFormat("Found assembly reference: {0}", path);
-            }
-
-            return assemblyPaths;
-        }
-
-        private bool IsManagedAssembly(string path)
-        {
-            try
-            {
-                _assemblyName.GetAssemblyName(path);
-            }
-            catch (BadImageFormatException)
-            {
-                return false;
-            }
-            return true;
+            _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
+            var result = _scriptExecutor.Execute(_script, ScriptArgs);
+            _scriptExecutor.Terminate();
+            return result;
         }
     }
 }

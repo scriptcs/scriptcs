@@ -4,6 +4,7 @@ using System.Text;
 using Common.Logging;
 using Moq;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace ScriptCs.Tests
                     Mock.Of<IScriptPackResolver>(),
                     Mock.Of<IPackageInstaller>(),
                     Mock.Of<ILog>(),
-                    Mock.Of<IAssemblyName>(),
+                    Mock.Of<IAssemblyResolver>(),
                     console);
 
                 var commandFactory = new CommandFactory(root);
