@@ -37,13 +37,13 @@ namespace ScriptCs
             string[] assemblies;
             if (_assemblyPathCache.TryGetValue(path, out assemblies)) return assemblies;
 
-            //var packageAssemblies = GetPackageAssemblies(path);
+            var packageAssemblies = GetPackageAssemblies(path);
             var binAssemblies = GetBinAssemblies(path);
 
-            //assemblies = packageAssemblies.Union(binAssemblies).ToArray();
-            _assemblyPathCache.Add(path, binAssemblies);
+            assemblies = packageAssemblies.Union(binAssemblies).ToArray();
+            _assemblyPathCache.Add(path, assemblies);
 
-            return binAssemblies;
+            return assemblies;
         }
 
         private string[] GetBinAssemblies(string path)
