@@ -17,6 +17,8 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
+            Guard.AgainstNullArgument("logger", logger);
+
             this._logger = logger;
         }
 
@@ -32,9 +34,9 @@ namespace ScriptCs.Engine.Roslyn
             {
                 submission = session.CompileSubmission<object>(code);
             }
-            catch (Exception compileException)
+            catch (Exception ex)
             {
-                scriptResult.CompileException = compileException;
+                scriptResult.CompileException = ex;
             }
 
             var exeBytes = new byte[0];
@@ -42,25 +44,25 @@ namespace ScriptCs.Engine.Roslyn
             var compileSuccess = false;
 
             using (var exeStream = new MemoryStream())
-            using (var pdbStream = new MemoryStream()) 
+            using (var pdbStream = new MemoryStream())
             {
                 var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
                 compileSuccess = result.Success;
 
-                if (result.Success) 
+                if (result.Success)
                 {
                     _logger.Debug("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }
-                else 
+                else
                 {
-                    var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
+                    var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
                     _logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                 }
             }
 
-            if (compileSuccess) 
+            if (compileSuccess)
             {
                 _logger.Debug("Loading assembly into appdomain.");
                 var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
@@ -74,16 +76,16 @@ namespace ScriptCs.Engine.Roslyn
                     _logger.Debug("Invoking method.");
                     scriptResult.ReturnValue = method.Invoke(null, new[] { session });
                 }
-                catch (Exception executeException)
+                catch (Exception ex)
                 {
-                    scriptResult.ExecuteException = executeException;
-                    _logger.Error("An error occurred when executing the scripts.");
-                    var message = 
+                    scriptResult.ExecuteException = ex;
+                    _logger.Error("An error occurred when executing the scripts.", ex);
+                    var message =
                         string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
-                        executeException.InnerException.Message,
-                        Environment.NewLine, 
-                        executeException.InnerException.StackTrace);
+                        ex.InnerException.Message,
+                        Environment.NewLine,
+                        ex.InnerException.StackTrace);
                     throw new ScriptExecutionException(message);
                 }
             }

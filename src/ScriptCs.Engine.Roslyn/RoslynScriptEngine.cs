@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -17,16 +16,19 @@ namespace ScriptCs.Engine.Roslyn
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
+            Guard.AgainstNullArgument("scriptHostFactory", scriptHostFactory);
+            Guard.AgainstNullArgument("logger", logger);
+
             _scriptEngine = new ScriptEngine();
             _scriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
             _scriptHostFactory = scriptHostFactory;
             _logger = logger;
         }
-        
+
         public string BaseDirectory
         {
-            get {  return _scriptEngine.BaseDirectory;  }
-            set {  _scriptEngine.BaseDirectory = value; }
+            get { return _scriptEngine.BaseDirectory; }
+            set { _scriptEngine.BaseDirectory = value; }
         }
 
         public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
@@ -35,7 +37,7 @@ namespace ScriptCs.Engine.Roslyn
 
             _logger.Info("Starting to create execution components");
             _logger.Debug("Creating script host");
-            
+
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
             SessionState<Session> sessionState;
 
@@ -57,13 +59,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                sessionState = new SessionState<Session> { References = distinctReferences, Session = session };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
             {
                 _logger.Debug("Reusing existing session");
-                sessionState = (SessionState<Session>) scriptPackSession.State[SessionKey];
+                sessionState = (SessionState<Session>)scriptPackSession.State[SessionKey];
 
                 var newReferences = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
                 if (newReferences.Any())
@@ -73,6 +75,7 @@ namespace ScriptCs.Engine.Roslyn
                         _logger.DebugFormat("Adding reference to {0}", reference);
                         sessionState.Session.AddReference(reference);
                     }
+                    
                     sessionState.References = newReferences;
                 }
             }
@@ -88,22 +91,26 @@ namespace ScriptCs.Engine.Roslyn
             Guard.AgainstNullArgument("session", session);
 
             var result = new ScriptResult();
+            Submission<object> submission;
             try
             {
-                var submission = session.CompileSubmission<object>(code);
-                try
-                {
-                    result.ReturnValue = submission.Execute();
-                }
-                catch (Exception ex)
-                {
-                    result.ExecuteException = ex;
-                }
+                submission = session.CompileSubmission<object>(code);
             }
             catch (Exception ex)
             {
                 result.CompileException = ex;
+                return result;
             }
+
+            try
+            {
+                result.ReturnValue = submission.Execute();
+            }
+            catch (Exception ex)
+            {
+                result.ExecuteException = ex;
+            }
+
             return result;
         }
     }
