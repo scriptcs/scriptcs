@@ -18,8 +18,13 @@ namespace ScriptCs
 
         public void OnChanged(string path, string searchPattern, Action handler)
         {
-            const int Delay = 1000;
+            FileSystemWatcher watcher;
             var fullPath = Path.Combine(path, searchPattern).ToString();
+            if(watchers.TryGetValue(fullPath, out watcher))
+            {
+                _logger.Info("There is already a watcher for " + fullPath);
+                return;
+            }
             var timer = new Timer(state =>
             {
                 var self = (Timer) state;
@@ -34,21 +39,15 @@ namespace ScriptCs
                     _logger.Error(ex);
                 }
             });
-            FileSystemWatcher watcher;
-            var key = path + "?" + searchPattern;
-            if(watchers.TryGetValue(key, out watcher))
-            {
-                _logger.Info("There is already a watcher for " + fullPath);
-                return;
-            }
             watcher = new FileSystemWatcher(path, searchPattern) { NotifyFilter = NotifyFilters.LastWrite, EnableRaisingEvents = true };
             watcher.Error += (sender, args) => _logger.Error(args.GetException());
             watcher.Changed += (sender, args) =>
             {
                 _logger.Info("File changed notification for " + args.FullPath);
+                const int Delay = 1000;
                 timer.Change(Delay, Timeout.Infinite);
             };
-            watchers.Add(key, watcher);
+            watchers.Add(fullPath, watcher);
         }
 
         public IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
