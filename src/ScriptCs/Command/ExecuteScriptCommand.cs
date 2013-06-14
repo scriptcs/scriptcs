@@ -10,12 +10,12 @@ namespace ScriptCs.Command
     internal class ExecuteScriptCommand : IScriptCommand
     {
         protected readonly string _script;
-        private readonly IFileSystem _fileSystem;
+        protected readonly IFileSystem _fileSystem;
         private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyResolver _assemblyResolver;
 
-        private readonly ILog _logger;
+        protected readonly ILog _logger;
 
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,

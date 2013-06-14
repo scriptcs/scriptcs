@@ -67,7 +67,7 @@ namespace ScriptCs
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
             // Hack to resolve assemblies for MEF catalog before building Autofac container
-            var fileSystem = new FileSystem();
+            var fileSystem = new FileSystem(logger);
             var assemblyUtility = new AssemblyUtility();
             var packageContainer = new PackageContainer(fileSystem);
             var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);

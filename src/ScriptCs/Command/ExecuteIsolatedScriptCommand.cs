@@ -35,16 +35,61 @@ namespace ScriptCs.Command
             IsolatedHelper.AssemblyPaths = assemblyPaths;
             var appDomainName = Path.Combine(workingDirectory ?? string.Empty, _script).ToString();
             var setupInfo = new AppDomainSetup { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
-            var appDomain = AppDomain.CreateDomain(appDomainName, null, setupInfo);
+            bool mustRun;
+            AppDomain appDomain;
+            do
+            {
+                mustRun = false;
+                appDomain = AppDomain.CreateDomain(appDomainName, null, setupInfo);
+                try
+                {
+                    _fileSystem.OnChanged(GetScriptFolder(), _script, () =>
+                    {
+                        mustRun = true;
+                        Unload(appDomain);
+                    });
+                    appDomain.DoCallBack(IsolatedHelper.Execute);
+                }
+                catch(Exception ex)
+                {
+                    _logger.Error(ex);
+                }
+                finally
+                {
+                    if(!mustRun)
+                    {
+                        Unload(appDomain);
+                    }
+                }
+            }while(mustRun);
+            return IsolatedHelper.Result;
+        }
+
+        private void Unload(AppDomain appDomain)
+        {
             try
             {
-                appDomain.DoCallBack(IsolatedHelper.Execute);
-            }
-            finally
-            {
+                if(appDomain.IsFinalizingForUnload())
+                {
+                    _logger.Info("Domain already unloaded " + appDomain.FriendlyName);
+                    return;
+                }
                 AppDomain.Unload(appDomain);
             }
-            return IsolatedHelper.Result;
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+            }
+        }
+
+        private string GetScriptFolder()
+        {
+            var scriptFolder = Path.GetDirectoryName(_script);
+            if(string.IsNullOrEmpty(scriptFolder))
+            {
+                scriptFolder = _fileSystem.CurrentDirectory;
+            }
+            return scriptFolder;
         }
     }
 }
