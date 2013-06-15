@@ -7,7 +7,7 @@ We definitely want to soak up all that energy you have!
 ## The issue tracker and how you can contribute.
 
 * Bugs - For bugs, just go fix it. Don't ask UNLESS it starts to turn into a feature.
-* Features - By default all issues tagged as enhancements will be fixed by the core team. However if you'd like to take it, please socialize the idea in our new google group (https://groups.google.com/forum/?fromgroups#!forum/scriptcs) so we can discuss before you put in a potentially wasted effort.
+* Features - By default all issues tagged as enhancements which we file will be fixed by the core team. However if you'd like to take it, please comment in the issue that you'd like to implement it so we can discuss before you put in a potentially wasted effort.
 * YOU TAKE IT - These are items that are important, but which we'd available for the community to take. One place we use this is for investigations and prototyping for features that would be really awesome, but which the core team just don't have bandwith for. As an example @dschenkelman [investigated](https://github.com/scriptcs/scriptcs/issues/68?source=cc) a VS debugging story. This lead to him ultimately implementing the feature, however don't feel pressure that you have to that. It's extremely valuable if you can just show us how it might be done.
 
 A few other points:
