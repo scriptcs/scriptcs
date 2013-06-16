@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-
-using Common.Logging;
 
 using Moq;
 
@@ -13,9 +10,6 @@ using ScriptCs.Contracts;
 
 using System.Linq;
 
-using ScriptCs.Package;
-
-using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -47,28 +41,9 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldCreateMissingBinFolder([Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
-            {
-                // Arrange
-                var binFolder = Path.Combine(CurrentDirectory, Constants.BinFolder);
-
-                var args = new ScriptCsArgs { ScriptName = "test.csx" };
-
-                fileSystem.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
-                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(false);
-
-                // Act
-                factory.CreateCommand(args, new string[0]).Execute();
-
-                // Assert
-                fileSystem.Verify(x => x.CreateDirectory(binFolder), Times.Once());
-            }
-
-            [Theory, ScriptCsAutoData]
             public void NonManagedAssembliesAreExcluded(
                 [Frozen] Mock<IFileSystem> fileSystem,
-                [Frozen] Mock<IAssemblyName> assemblyName,
+                [Frozen] Mock<IAssemblyUtility> assemblyUtility,
                 [Frozen] Mock<IScriptExecutor> executor,
                 CommandFactory factory)
             {
@@ -78,10 +53,10 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx" };
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fileSystem.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>()))
+                fileSystem.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                           .Returns(new[] { "managed.dll", NonManaged });
 
-                assemblyName.Setup(x => x.GetAssemblyName(It.Is<string>(y => y == NonManaged))).Throws(new BadImageFormatException());
+                assemblyUtility.Setup(x => x.IsManagedAssembly(It.Is<string>(y => y == NonManaged))).Returns(false);
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
