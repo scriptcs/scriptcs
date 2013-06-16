@@ -12,5 +12,3 @@ namespace ScriptCs.Contracts
         ConsoleColor ForegroundColor { get; set; }
     }
 }
-
-
