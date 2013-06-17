@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+
+using Common.Logging;
 
 using Moq;
 
@@ -9,6 +12,10 @@ using ScriptCs.Command;
 using ScriptCs.Contracts;
 
 using System.Linq;
+
+using ScriptCs.Package;
+
+using Should;
 
 using Xunit.Extensions;
 
@@ -65,6 +72,62 @@ namespace ScriptCs.Tests
                 executor.Verify(i => i.Initialize(It.Is<IEnumerable<string>>(x => !x.Contains(NonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
                 executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
                 executor.Verify(i => i.Terminate(), Times.Once());
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnErrorIfThereIsCompileException(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IScriptExecutor> executor,
+                [Frozen] Mock<ILog> logger,
+                CommandFactory factory)
+            {
+                // Arrange
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
+
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+
+                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                        .Returns(new ScriptResult { CompileException = new Exception("test") });
+
+                // Act
+                var result = factory.CreateCommand(args, new string[0]).Execute();
+
+                // Assert
+                result.ShouldEqual(CommandResult.Error);
+                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnErrorIfThereIsExecuteException(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IScriptExecutor> executor,
+                [Frozen] Mock<ILog> logger,
+                CommandFactory factory)
+            {
+                // Arrange
+                var args = new ScriptCsArgs
+                {
+                    AllowPreRelease = false,
+                    Install = "",
+                    ScriptName = "test.csx"
+                };
+
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+
+                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                        .Returns(new ScriptResult { ExecuteException = new Exception("test") });
+
+                // Act
+                var result = factory.CreateCommand(args, new string[0]).Execute();
+
+                // Assert
+                result.ShouldEqual(CommandResult.Error);
+                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
             }
         }
     }
