@@ -78,6 +78,8 @@ namespace ScriptCs
 
         public IEnumerable<string> SplitLines(string value)
         {
+            Guard.AgainstNullArgument("value", value);
+
             return value.Split(new[] { NewLine }, StringSplitOptions.None);
         }
 
