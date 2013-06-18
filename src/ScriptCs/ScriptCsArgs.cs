@@ -52,6 +52,8 @@ namespace ScriptCs
 
         public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
         {
+            Guard.AgainstNullArgument("args", args);
+
             // Split the arguments list on "--".
             // The arguments before the "--" (or all arguments if there is no "--") are
             // for ScriptCs.exe, and the arguments after that are for the csx script.
