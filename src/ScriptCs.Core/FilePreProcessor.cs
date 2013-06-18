@@ -33,6 +33,8 @@ namespace ScriptCs
 
         protected virtual FilePreProcessorResult Parse(Action<FilePreProcessorContext> parseAction)
         {
+            Guard.AgainstNullArgument("parseAction", parseAction);
+
             var context = new FilePreProcessorContext();
 
             _logger.DebugFormat("Starting pre-processing");
@@ -54,6 +56,8 @@ namespace ScriptCs
 
         protected virtual string GenerateCode(FilePreProcessorContext context)
         {
+            Guard.AgainstNullArgument("context", context);
+
             var stringBuilder = new StringBuilder();
 
             var usingLines = context.UsingStatements
@@ -82,6 +86,9 @@ namespace ScriptCs
 
         protected virtual void ParseScript(List<string> scriptLines, FilePreProcessorContext context, string path = null)
         {
+            Guard.AgainstNullArgument("scriptLines", scriptLines);
+            Guard.AgainstNullArgument("context", context);
+
             // Insert line directive if there's a path
             if (path != null) InsertLineDirective(path, scriptLines);
 
@@ -97,6 +104,8 @@ namespace ScriptCs
 
         protected virtual void InsertLineDirective(string path, List<string> fileLines)
         {
+            Guard.AgainstNullArgument("fileLines", fileLines);
+
             var bodyIndex = fileLines.FindIndex(line => PreProcessorUtil.IsNonDirectiveLine(line) && !PreProcessorUtil.IsUsingLine(line));
             if (bodyIndex == -1) return;
 
@@ -106,6 +115,8 @@ namespace ScriptCs
 
         protected virtual void ProcessLine(FilePreProcessorContext context, string line, bool isBeforeCode)
         {
+            Guard.AgainstNullArgument("context", context);
+
             if (PreProcessorUtil.IsUsingLine(line))
             {
                 var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
