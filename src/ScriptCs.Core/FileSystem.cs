@@ -137,5 +137,10 @@ namespace ScriptCs
         {
             return Path.GetFullPath(path);
         }
+
+        public string PathCombine(string path1, string path2)
+        {
+            return Path.Combine(path1, path2);
+        }
     }
 }

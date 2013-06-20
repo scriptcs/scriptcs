@@ -44,8 +44,10 @@ namespace ScriptCs.Contracts
         
         Stream CreateFileStream(string filePath, FileMode mode);
 
-        void WriteAllBytes(string filePath, byte[] bytes);
-
+<<<<<<< HEAD
         string ModulesFolder { get; }
+=======
+        string PathCombine(string path1, string path2);
+>>>>>>> Initial config arguments implementation
     }
 }

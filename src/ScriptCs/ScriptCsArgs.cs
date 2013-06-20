@@ -14,6 +14,7 @@ namespace ScriptCs
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
+        [ArgShortcut("script")]
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
