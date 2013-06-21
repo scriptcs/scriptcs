@@ -40,7 +40,7 @@ namespace ScriptCs.Tests
                 Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
             }
 
-            [Fact]
+            //[Fact]
             public void ShouldHandleCommandLineArgumentsOverConfigFile()
             {
                 const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
