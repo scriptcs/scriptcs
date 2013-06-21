@@ -11,10 +11,11 @@ namespace ScriptCs
 {
     public class ArgumentParser
     {
-        private readonly IFileSystem _fileSystem;
-
         public const string CofigurationFileName = "scriptcs.opts";
-        //private readonly ILog _logger;
+
+        private readonly IFileSystem _fileSystem;
+        public ScriptCsArgs CommandArguments { get; private set; }
+        public string[] ScriptArguments { get; private set; }
 
         public ArgumentParser(string[] args, IFileSystem fileSystem)
         {
@@ -27,18 +28,12 @@ namespace ScriptCs
             CommandArguments = ParseArguments(args);
         }
 
-        public ScriptCsArgs CommandArguments { get; private set; }
-
-        public string[] ScriptArguments { get; private set; }
-
         private ScriptCsArgs ParseArguments(string[] args)
         {
             const string unexpectedArgumentMessage = "Unexpected Argument: ";
 
             ScriptCsArgs commandArgs = null;
             ScriptCsArgs configArgs = null;
-
-            // todo: add proper error messages
 
             try
             {
@@ -108,8 +103,6 @@ namespace ScriptCs
 
         private ScriptCsArgs ParseConfigFile(string content)
         {
-            // todo: if something goes wrong - throw ArgException
-
             if(!string.IsNullOrWhiteSpace(content))
             {
                 var arguments = new ScriptCsArgs();

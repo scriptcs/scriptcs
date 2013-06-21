@@ -5,35 +5,21 @@ namespace ScriptCs.Tests
 {
     public class ArgumentParserTests
     {
-        public class ExecuteMethod
+        public class ParseMethod
         {
-            private IFileSystem Setup(string fileContent, bool fileExists = true)
+            private static IFileSystem Setup(string fileContent, bool fileExists = true)
             {
-                const string CurrentDirectory = "C:\\test\\folder";
+                const string currentDirectory = "C:\\test\\folder";
                 
-                string filePath = CurrentDirectory + '\\' + ArgumentParser.CofigurationFileName;
+                string filePath = currentDirectory + '\\' + ArgumentParser.CofigurationFileName;
 
                 var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fs.Setup(x => x.PathCombine(CurrentDirectory, ArgumentParser.CofigurationFileName)).Returns(filePath);
+                fs.SetupGet(x => x.CurrentDirectory).Returns(currentDirectory);
+                fs.Setup(x => x.PathCombine(currentDirectory, ArgumentParser.CofigurationFileName)).Returns(filePath);
                 fs.Setup(x => x.FileExists(filePath)).Returns(fileExists);
                 fs.Setup(x => x.ReadFile(filePath)).Returns(fileContent);
 
                 return fs.Object;
-            }
-
-            [Fact]
-            public void ShouldHandleConfigFile()
-            {
-                const string file = "{\"Install\": \"install test value\" }";
-                var fileSystem = Setup(file);
-
-                string[] args = {};
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.Install, "install test value");
             }
 
             [Fact]
@@ -55,24 +41,25 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleConfigFileOverCommandLineArguments()
+            public void ShouldHandleCommandLineArgumentsOverConfigFile()
             {
-                const string file = "{\"Install\": \"config file arg\", }";
+                const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
                 var fileSystem = Setup(file);
 
-                string[] args = { "server.csx", "-Install", "command line arg", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-Install", "command line arg", "-debug", "false", "--", "-port", "8080" };
 
                 var parser = new ArgumentParser(args, fileSystem);
 
                 Assert.NotNull(parser.CommandArguments);
                 Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
                 Assert.Equal(parser.CommandArguments.Install, "command line arg");
+                Assert.Equal(parser.CommandArguments.Debug, false);
 
                 Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
             }
 
             [Fact]
-            public void ShouldHandleConfigFileOverCommandLineArgumentsWithPropertyName()
+            public void ShouldHandleCommandLineArgumentsOverConfigFileWithPropertyName()
             {
                 const string file = "{\"LogLevel\": \"info\", }";
                 var fileSystem = Setup(file);
