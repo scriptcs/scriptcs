@@ -34,13 +34,13 @@ namespace ScriptCs
         public void Initialize()
         {
             var builder = new ContainerBuilder();
+            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var loggerConfigurator = new LoggerConfigurator(_logLevel);
-            loggerConfigurator.Configure();
+            loggerConfigurator.Configure(new ReplConsole());
             var logger = loggerConfigurator.GetLogger();
 
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
-            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var types = new[]
                 {
