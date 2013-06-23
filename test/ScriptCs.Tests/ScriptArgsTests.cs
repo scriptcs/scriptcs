@@ -1,5 +1,8 @@
-﻿using Should;
-
+﻿using System;
+using Common.Logging;
+using Moq;
+using ScriptCs.Command;
+using ScriptCs.Package;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -11,106 +14,85 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleEmptyArgs()
             {
-                // Arrange
-                var args = new string[0];
-                
-                // Act
+                string[] args = new string[0];
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new string[0]);
-                scriptArgs.ShouldEqual(new string[0]);
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[0], args);
+                Assert.Equal(new string[0], scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleMissingDoubledash()
             {
-                // Arrange
-                var args = new[] { "scriptname.csx", "-restore" };
-
-                // Act
+                string[] args = new string[] { "scriptname.csx", "-restore" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new[] { "scriptname.csx", "-restore" });
-                scriptArgs.ShouldEqual(new string[0]);
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, args);
+                Assert.Equal(new string[0], scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleArgsAndScriptArgs()
             {
-                // Arrange
-                var args = new[] { "scriptname.csx", "-restore", "--", "-port", "8080" };
-
-                // Act
+                string[] args = new string[] { "scriptname.csx", "-restore", "--", "-port", "8080" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new[] { "scriptname.csx", "-restore" });
-                scriptArgs.ShouldEqual(new[] { "-port", "8080" });
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, args);
+                Assert.Equal(new string[] { "-port", "8080" }, scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleJustScriptArgs()
             {
-                // Arrange
-                var args = new[] { "--", "-port", "8080" };
-
-                // Act
+                string[] args = new string[] { "--", "-port", "8080" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new string[0]);
-                scriptArgs.ShouldEqual(new[] { "-port", "8080" });
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[0], args);
+                Assert.Equal(new string[] { "-port", "8080" }, scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleJustDoubledash()
             {
-                // Arrange
-                var args = new[] { "--" };
-
-                // Act
+                string[] args = new string[] { "--" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new string[0]);
-                scriptArgs.ShouldEqual(new string[0]);
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[0], args);
+                Assert.Equal(new string[0], scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleExtraDoubledash()
             {
-                // Arrange
-                var args = new[] { "scriptname.csx", "-restore", "--", "-port", "--", "8080" };
-
-                // Act
+                string[] args = new string[] { "scriptname.csx", "-restore", "--", "-port", "--", "8080" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new[] { "scriptname.csx", "-restore" });
-                scriptArgs.ShouldEqual(new[] { "-port", "--", "8080" });
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, args);
+                Assert.Equal(new string[] { "-port", "--", "8080" }, scriptArgs);
             }
 
             [Fact]
             public void ShouldHandleTrailingDoubledash()
             {
-                // Arrange
-                var args = new[] { "scriptname.csx", "-restore", "--" };
-
-                // Act
+                string[] args = new string[] { "scriptname.csx", "-restore", "--" };
                 string[] scriptArgs;
-                ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-                // Assert
-                args.ShouldEqual(new[] { "scriptname.csx", "-restore" });
-                scriptArgs.ShouldEqual(new string[0]);
+                ArgumentHandler.SplitScriptArgs(ref args, out scriptArgs);
+
+                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, args);
+                Assert.Equal(new string[0], scriptArgs);
             }
         }
     }

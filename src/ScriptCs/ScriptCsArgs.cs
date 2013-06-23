@@ -57,6 +57,7 @@ namespace ScriptCs
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
 
+<<<<<<< HEAD
         [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
@@ -77,5 +78,11 @@ namespace ScriptCs
                 args = args.Take(separatorLocation).ToArray();
             }
         }
+=======
+        [ArgShortcut("config")]
+        [DefaultValue("scriptcs.opts")]
+        [ArgDescription("Defines config file name")]
+        public string Config { get; set; }
+>>>>>>> little refactoring
     }
 }

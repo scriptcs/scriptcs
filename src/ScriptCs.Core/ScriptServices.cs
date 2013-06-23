@@ -4,9 +4,9 @@ using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class ScriptServices
+    public class ScriptServiceRoot
     {
-        public ScriptServices(
+        public ScriptServiceRoot(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
             IScriptExecutor executor,
@@ -17,7 +17,10 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
-            IInstallationProvider installationProvider = null)
+            IArgumentParser argumentParser = null, // todo: remove null
+            IConfigFileParser configParser = null, // todo: remove null
+            IArgumentHandler argumentHandler = null // todo: remove null
+            )
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -27,31 +30,25 @@ namespace ScriptCs
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
             Logger = logger;
-            Console = console;
             AssemblyResolver = assemblyResolver;
-            InstallationProvider = installationProvider;
+            ArgumentParser = argumentParser;
+            ConfigParser = configParser;
+            ArgumentHandler = argumentHandler;
+            Console = console;
         }
 
         public IFileSystem FileSystem { get; private set; }
-
         public IPackageAssemblyResolver PackageAssemblyResolver { get; private set; }
-
         public IScriptExecutor Executor { get; private set; }
-
         public IScriptPackResolver ScriptPackResolver { get; private set; }
-        
         public IPackageInstaller PackageInstaller { get; private set; }
-
         public ILog Logger { get; private set; }
-
         public IScriptEngine Engine { get; private set; }
-
         public IFilePreProcessor FilePreProcessor { get; private set; }
-
         public IConsole Console { get; private set; }
-
         public IAssemblyResolver AssemblyResolver { get; private set; }
-
-        public IInstallationProvider InstallationProvider { get; private set; }
+        public IArgumentParser ArgumentParser { get; private set; }
+        public IConfigFileParser ConfigParser { get; private set; }
+        public IArgumentHandler ArgumentHandler { get; private set; }
     }
 }

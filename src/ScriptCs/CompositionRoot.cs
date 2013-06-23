@@ -16,40 +16,44 @@ namespace ScriptCs
 {
     public class CompositionRoot
     {
-        private bool _debug;
-        private LogLevel _logLevel; 
         private bool _shouldInitDrirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
         private readonly string[] _args;
-        private readonly ArgumentParser _argumentParser;
-        private readonly IFileSystem _fileSystem;
 
         public CompositionRoot(string[] args)
         {
             Guard.AgainstNullArgument("args", args);
 
             _args = args;
-
-            // Hack to resolve assemblies for MEF catalog before building Autofac container
-            _fileSystem = new FileSystem();
-            _argumentParser = new ArgumentParser(_args, _fileSystem);
         }
 
         public void Initialize()
         {
-            _debug = _argumentParser.CommandArguments.Debug;
-            _logLevel = _argumentParser.CommandArguments.LogLevel;
-            _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(_argumentParser.CommandArguments);
+            // Hack to resolve assemblies for MEF catalog before building Autofac container
+            var fileSystem = new FileSystem();
+            var argumentParser = new ArgumentParser();
+            var configParser = new JsonConfigFileParser();
+            var argumentHaldler = new ArgumentHandler(argumentParser, configParser, fileSystem);
+
+            var parserResult = argumentHaldler.Parse(_args);
+
+            var debug = parserResult.CommandArguments.Debug;
+            var logLevel = parserResult.CommandArguments.LogLevel;
+            _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(parserResult.CommandArguments);
 
             var builder = new ContainerBuilder();
 
-            var loggerConfigurator = new LoggerConfigurator(_logLevel);
+            var loggerConfigurator = new LoggerConfigurator(logLevel);
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
             builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
+
+            builder.RegisterInstance<IArgumentParser>(argumentParser).Exported(x => x.As<IArgumentParser>());
+            builder.RegisterInstance<IConfigFileParser>(configParser).Exported(x => x.As<IConfigFileParser>());
+            builder.RegisterInstance<IArgumentHandler>(argumentHaldler).Exported(x => x.As<IArgumentHandler>());
 
             var types = new[]
                 {
@@ -62,7 +66,7 @@ namespace ScriptCs
 
             builder.RegisterTypes(types).AsImplementedInterfaces();
             
-            if (_debug)
+            if (debug)
             {
                 builder.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>();
                 builder.RegisterType<RoslynScriptDebuggerEngine>().As<IScriptEngine>();
@@ -76,11 +80,11 @@ namespace ScriptCs
             builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
 
             var assemblyUtility = new AssemblyUtility();
-            var packageContainer = new PackageContainer(_fileSystem);
-            var packageAssemblyResolver = new PackageAssemblyResolver(_fileSystem, packageContainer);
-            var assemblyResolver = new AssemblyResolver(_fileSystem, packageAssemblyResolver, assemblyUtility, logger);
+            var packageContainer = new PackageContainer(fileSystem);
+            var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);
+            var assemblyResolver = new AssemblyResolver(fileSystem, packageAssemblyResolver, assemblyUtility, logger);
 
-            builder.RegisterInstance(_fileSystem).As<IFileSystem>();
+            builder.RegisterInstance(fileSystem).As<IFileSystem>();
             builder.RegisterInstance(assemblyUtility).As<IAssemblyUtility>();
             builder.RegisterInstance(packageContainer).As<IPackageContainer>();
             builder.RegisterInstance(packageAssemblyResolver).As<IPackageAssemblyResolver>();
@@ -107,16 +111,6 @@ namespace ScriptCs
         public ScriptServiceRoot GetServiceRoot()
         {
             return _scriptServiceRoot;
-        }
-
-        public ILog GetLogger()
-        {
-            return _container.Resolve<ILog>();
-        }
-
-        public ArgumentParser GetArgumentParser()
-        {
-            return _argumentParser;
         }
 
         private static bool ShouldInitDrirectoryCatalog(ScriptCsArgs args)

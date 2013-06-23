@@ -12,15 +12,15 @@ namespace ScriptCs
         {
             var compositionRoot = new CompositionRoot(args);
             compositionRoot.Initialize();
-
-            var parser = compositionRoot.GetArgumentParser();
-            var logger = compositionRoot.GetLogger();
-            logger.Debug("Creating ScriptServiceRoot");
            
             var scriptServiceRoot = compositionRoot.GetServiceRoot();
+            scriptServiceRoot.Logger.Debug("ScriptServiceRoot created");
+
+            // todo: second parse?!
+            var parserResult = scriptServiceRoot.ArgumentHandler.Parse(args);
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand(parser.CommandArguments, parser.ScriptArguments);
+            var command = commandFactory.CreateCommand(parserResult.CommandArguments, parserResult.ScriptArguments);
 
             var result = command.Execute();
 
