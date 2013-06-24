@@ -7,6 +7,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
+using ScriptCs.Argument;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
@@ -33,7 +34,7 @@ namespace ScriptCs
             // Hack to resolve assemblies for MEF catalog before building Autofac container
             var fileSystem = new FileSystem();
             var argumentParser = new ArgumentParser();
-            var configParser = new JsonConfigFileParser();
+            var configParser = new ConfigFileParser();
             var argumentHaldler = new ArgumentHandler(argumentParser, configParser, fileSystem);
 
             var parserResult = argumentHaldler.Parse(_args);
@@ -44,16 +45,14 @@ namespace ScriptCs
 
             var builder = new ContainerBuilder();
 
+            builder.RegisterInstance<IArgumentHandler>(argumentHaldler).Exported(x => x.As<IArgumentHandler>());
+
             var loggerConfigurator = new LoggerConfigurator(logLevel);
             loggerConfigurator.Configure();
             var logger = loggerConfigurator.GetLogger();
 
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
             builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
-
-            builder.RegisterInstance<IArgumentParser>(argumentParser).Exported(x => x.As<IArgumentParser>());
-            builder.RegisterInstance<IConfigFileParser>(configParser).Exported(x => x.As<IConfigFileParser>());
-            builder.RegisterInstance<IArgumentHandler>(argumentHaldler).Exported(x => x.As<IArgumentHandler>());
 
             var types = new[]
                 {

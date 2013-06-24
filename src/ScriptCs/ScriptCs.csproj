@@ -60,7 +60,13 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
-    <Compile Include="ArgumentParser.cs" />
+    <Compile Include="Argument\ArgumentHandler.cs" />
+    <Compile Include="Argument\ArgumentParser.cs" />
+    <Compile Include="Argument\ArgumentParseResult.cs" />
+    <Compile Include="Argument\IArgumentHandler.cs" />
+    <Compile Include="Argument\IArgumentParser.cs" />
+    <Compile Include="Argument\IConfigFileParser.cs" />
+    <Compile Include="Argument\ConfigFileParser.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
@@ -132,6 +138,7 @@
       <Name>ScriptCs.Hosting</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

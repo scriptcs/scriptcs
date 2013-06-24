@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using ScriptCs.Argument;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
 
@@ -16,11 +17,8 @@ namespace ScriptCs
             IPackageInstaller packageInstaller,
             ILog logger,
             IAssemblyResolver assemblyResolver,
-            IConsole console = null,
-            IArgumentParser argumentParser = null, // todo: remove null
-            IConfigFileParser configParser = null, // todo: remove null
-            IArgumentHandler argumentHandler = null // todo: remove null
-            )
+            IArgumentHandler argumentHandler,
+            IConsole console = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -31,8 +29,6 @@ namespace ScriptCs
             PackageInstaller = packageInstaller;
             Logger = logger;
             AssemblyResolver = assemblyResolver;
-            ArgumentParser = argumentParser;
-            ConfigParser = configParser;
             ArgumentHandler = argumentHandler;
             Console = console;
         }
@@ -47,8 +43,6 @@ namespace ScriptCs
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
-        public IArgumentParser ArgumentParser { get; private set; }
-        public IConfigFileParser ConfigParser { get; private set; }
-        public IArgumentHandler ArgumentHandler { get; private set; }
+        public IArgumentHandler ArgumentHandler { get; set; }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-
+﻿using Common.Logging;
 using Moq;
-
-using Ploeh.AutoFixture.Xunit;
-
+using ScriptCs.Argument;
 using ScriptCs.Command;
-using ScriptCs.Contracts;
-
-using Xunit.Extensions;
+using ScriptCs.Package;
+using System.IO;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -16,20 +12,54 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [Theory, ScriptCsAutoData]
-            public void VersionCommandShouldOutputVersion([Frozen] Mock<IConsole> console, CommandFactory factory)
+            private readonly System.Version _currentVersion;
+
+            System.Text.StringBuilder _outputText;
+            StringWriter _mockConsole;
+            TextWriter _actualConsole;
+
+            public ExecuteMethod()
             {
-                // Arrange
-                var args = new ScriptCsArgs { Version = true };
+                _currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                _outputText = new System.Text.StringBuilder();
+                _mockConsole = new StringWriter(_outputText);
+                _actualConsole = System.Console.Out;
+                System.Console.SetOut(_mockConsole);
+            }
 
-                var assembly = typeof(ScriptCsArgs).Assembly;
-                var currentVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
+            [Fact]
+            public void VersionCommandShouldOutputVersion()
+            {
+                var args = new ScriptCsArgs
+                    {
+                        Version = true
+                    };
 
-                // Act
-                factory.CreateCommand(args, new string[0]).Execute();
+                var fs = new Mock<IFileSystem>();
+                var resolver = new Mock<IPackageAssemblyResolver>();
+                var executor = new Mock<IScriptExecutor>();
+                var engine = new Mock<IScriptEngine>();
+                var scriptpackResolver = new Mock<IScriptPackResolver>();
+                var packageInstaller = new Mock<IPackageInstaller>();
+                var logger = new Mock<ILog>();
+                var filePreProcessor = new Mock<IFilePreProcessor>();
+                var assemblyName = new Mock<IAssemblyResolver>();
+                var argumentHandler = new Mock<IArgumentHandler>();
 
-                // Assert
-                console.Verify(x => x.WriteLine(It.Is<string>(y => y.Contains(currentVersion.ToString()))));
+                var argsParseResult = new ArgumentParseResult(new string[0], args, new string[0]);
+                argumentHandler.Setup(i => i.GetParsedArguments()).Returns(argsParseResult);
+
+                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, argumentHandler.Object);
+
+                var factory = new CommandFactory(root);
+                var result = factory.CreateCommand();
+
+                // clear the fake console output
+                _outputText.Clear();
+
+                result.Execute();
+
+                Assert.Contains("scriptcs version " + _currentVersion.ToString(), _outputText.ToString());
             }
         }
     }

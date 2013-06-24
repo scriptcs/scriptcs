@@ -10,6 +10,12 @@ namespace ScriptCs
     [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
     public class ScriptCsArgs
     {
+        public ScriptCsArgs()
+        {
+            LogLevel = LogLevel.Info;
+            Config = "scriptcs.opts";
+        }
+
         [ArgIgnore]
         public bool Repl { get; set; }
 
@@ -18,9 +24,8 @@ namespace ScriptCs
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
-        [ArgDescription("Displays help")]
-        
         [ArgShortcut("?")]
+        [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
         [ArgShortcut("inMemory")]

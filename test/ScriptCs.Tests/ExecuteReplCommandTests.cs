@@ -1,14 +1,13 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Text;
+using Common.Logging;
 using Moq;
-
-using Ploeh.AutoFixture.Xunit;
-
+using ScriptCs.Argument;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
-using Should;
-
-using Xunit.Extensions;
+using ScriptCs.Package;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -16,28 +15,85 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
-            [Theory, ScriptCsAutoData]
-            public void ShouldPromptForInput(
-                [Frozen] Mock<IFileSystem> fileSystem,
-                [Frozen] Mock<IConsole> console,
-                CommandFactory factory)
+            [Fact]
+            public void ShouldPromptForInput()
             {
-                // Arrange
-                var readLines = 0;
+                var mockFileSystem = new Mock<IFileSystem>();
+                mockFileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+
+                var argumentHandler = new Mock<IArgumentHandler>();
+                var argsParseResult = new ArgumentParseResult(new string[0], new ScriptCsArgs() { Repl = true }, new string[0]);
+                argumentHandler.Setup(i => i.GetParsedArguments()).Returns(argsParseResult);
+
                 var builder = new StringBuilder();
-                var args = new ScriptCsArgs { Repl = true };
 
-                fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                var reader = new StringReader(Environment.NewLine);
+                var writer = new StringWriter(builder);
 
-                console.Setup(x => x.ReadLine()).Returns(() => string.Empty).Callback(() => readLines++);
-                console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
+                var console = new FakeConsole(writer, reader);
 
-                // Act
-                factory.CreateCommand(args, new string[0]).Execute();
+                var root = new ScriptServiceRoot(
+                    mockFileSystem.Object,
+                    Mock.Of<IPackageAssemblyResolver>(),
+                    Mock.Of<IScriptExecutor>(),
+                    Mock.Of<IScriptEngine>(),
+                    Mock.Of<IFilePreProcessor>(),
+                    Mock.Of<IScriptPackResolver>(),
+                    Mock.Of<IPackageInstaller>(),
+                    Mock.Of<ILog>(),
+                    Mock.Of<IAssemblyResolver>(),
+                    argumentHandler.Object,
+                    console);
 
-                // Assert
-                builder.ToString().EndsWith("> ").ShouldBeTrue();
-                readLines.ShouldEqual(1);
+                var commandFactory = new CommandFactory(root);
+
+                var target = commandFactory.CreateCommand();
+
+                target.Execute();
+
+                Assert.True(builder.ToString().EndsWith("> "));
+                Assert.Equal(1, console.ReadLineCounter);
+            }
+        }
+
+        public class FakeConsole : IConsole
+        {
+            private readonly TextWriter writer;
+            private readonly TextReader reader;
+
+            public FakeConsole(TextWriter textWriter, TextReader textReader)
+            {
+                writer = textWriter;
+                reader = textReader;
+                ReadLineCounter = 0;
+            }
+
+            public ConsoleColor ForegroundColor { get; set; }
+
+            public int ReadLineCounter { get; set; }
+
+            public void Write(string value)
+            {
+                writer.Write(value);
+            }
+
+            public void WriteLine(string value)
+            {
+                writer.WriteLine(value);
+            }
+
+            public string ReadLine()
+            {
+                ReadLineCounter++;
+                return reader.ReadLine();
+            }
+
+            public void Exit()
+            {
+            }
+
+            public void ResetColor()
+            {
             }
         }
     }

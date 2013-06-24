@@ -16,11 +16,8 @@ namespace ScriptCs
             var scriptServiceRoot = compositionRoot.GetServiceRoot();
             scriptServiceRoot.Logger.Debug("ScriptServiceRoot created");
 
-            // todo: second parse?!
-            var parserResult = scriptServiceRoot.ArgumentHandler.Parse(args);
-
             var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand(parserResult.CommandArguments, parserResult.ScriptArguments);
+            var command = commandFactory.CreateCommand();
 
             var result = command.Execute();
 

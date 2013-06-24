@@ -1,161 +1,49 @@
-﻿using Moq;
+﻿using ScriptCs.Argument;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    /*public class ArgumentParserTests
-    {
+    public class ArgumentParserTests
+    {        
         public class ParseMethod
         {
-            private static IFileSystem Setup(string fileContent, bool fileExists = true)
-            {
-                const string currentDirectory = "C:\\test\\folder";
-                
-                string filePath = currentDirectory + '\\' + ArgumentParser.ConfigurationFileName;
-
-                var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns(currentDirectory);
-                fs.Setup(x => x.PathCombine(currentDirectory, ArgumentParser.ConfigurationFileName)).Returns(filePath);
-                fs.Setup(x => x.FileExists(filePath)).Returns(fileExists);
-                fs.Setup(x => x.ReadFile(filePath)).Returns(fileContent);
-
-                return fs.Object;
-            }
-
             [Fact]
-            public void ShouldHandleConfigFileAndCommandLineArguments()
+            public void ShouldHandleCommandLineArguments()
             {
-                const string file = "{\"Install\": \"install test value\" }";
-                var fileSystem = Setup(file);
+                string[] args = { "server.csx", "-log", "error" };
 
-                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(fileSystem, null);
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
-                Assert.NotNull(result.CommandArguments);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.LogLevel, LogLevel.Error);
-                Assert.Equal(result.CommandArguments.Install, "install test value");
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
-            }
-
-            //[Fact]
-            public void ShouldHandleCommandLineArgumentsOverConfigFile()
-            {
-                const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
-                var fileSystem = Setup(file);
-
-                string[] args = { "server.csx", "-Install", "command line arg", "-debug", "false", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.Install, "command line arg");
-                Assert.Equal(parser.CommandArguments.Debug, false);
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
+                Assert.NotNull(result);
+                Assert.Equal(result.ScriptName, "server.csx");
+                Assert.Equal(result.LogLevel, LogLevel.Error);
             }
 
             [Fact]
-            public void ShouldHandleCommandLineArgumentsOverConfigFileWithPropertyName()
+            public void ShouldHandleEmptyAttray()
             {
-                const string file = "{\"LogLevel\": \"info\", }";
-                var fileSystem = Setup(file);
+                var parser = new ArgumentParser();
+                var result = parser.Parse(new string[0]);
 
-                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.LogLevel, LogLevel.Error);
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
+                Assert.NotNull(result);
+                Assert.Equal(result.Repl, true);
+                Assert.Equal(result.LogLevel, LogLevel.Info);
+                Assert.Equal(result.Config, "scriptcs.opts");
             }
 
             [Fact]
-            public void ShouldHanldeArgumentTypeConversionBool()
+            public void ShouldHandleNull()
             {
-                const string file = "{\"debug\": \"true\", }";
-                var fileSystem = Setup(file);
+                var parser = new ArgumentParser();
+                var result = parser.Parse(null);
 
-                string[] args = { "server.csx", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.Debug, true);
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
+                Assert.NotNull(result);
+                Assert.Equal(result.Repl, true);
+                Assert.Equal(result.LogLevel, LogLevel.Info);
+                Assert.Equal(result.Config, "scriptcs.opts");
             }
 
-            [Fact]
-            public void ShouldHanldeArgumentTypeConversionEnum()
-            {
-                const string file = "{\"log\": \"error\", }";
-                var fileSystem = Setup(file);
-
-                string[] args = { "server.csx", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.LogLevel, LogLevel.Error);
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
-            }
-
-            [Fact]
-            public void ShouldHandleOnlyCommandLineArguments()
-            {
-                var fileSystem = Setup(null, false);
-
-                string[] args = { "server.csx", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
-            }
-
-            [Fact]
-            public void ShouldHandleOnlyConfigFile()
-            {
-                const string file = "{\"log\": \"error\", \"script\": \"server.csx\" }";
-                var fileSystem = Setup(file);
-
-                var parser = new ArgumentParser(new string[] {}, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.LogLevel, LogLevel.Error);
-            }
-
-            [Fact]
-            public void ShouldHandleConfigArgumentsCaseInsensitive()
-            {
-                const string file = "{\"logLEVEL\": \"TRaCE\", }";
-                var fileSystem = Setup(file);
-
-                string[] args = { "server.csx", "-dEBUg", "FalsE", "--", "-port", "8080" };
-
-                var parser = new ArgumentParser(args, fileSystem);
-
-                Assert.NotNull(parser.CommandArguments);
-                Assert.Equal(parser.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(parser.CommandArguments.LogLevel, LogLevel.Trace);
-                Assert.Equal(parser.CommandArguments.Debug, false);
-
-                Assert.Equal(new string[] { "-port", "8080" }, parser.ScriptArguments);
-            }
-
-        }
-    }*/
+        }         
+    }
 }
