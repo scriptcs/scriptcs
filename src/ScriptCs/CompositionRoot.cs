@@ -41,7 +41,7 @@ namespace ScriptCs
             
             if (!typeof (IScriptEngine).IsAssignableFrom(scriptEngineType))
             {
-                throw new ArgumentException("scriptEgnine type must implement IScriptEngine", "scriptEngine");
+                throw new ArgumentException("scriptEngine type must implement IScriptEngine", "scriptEngine");
             }
 
             _scriptExecutorType = scriptExecutorType;
