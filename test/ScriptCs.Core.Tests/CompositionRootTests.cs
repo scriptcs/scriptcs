@@ -251,7 +251,6 @@ namespace ScriptCs.Tests
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
- 
             }
 
             public class TestFileSystem : FileSystem
@@ -275,7 +274,6 @@ namespace ScriptCs.Tests
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
- 
             }
 
             [Fact]
@@ -286,7 +284,6 @@ namespace ScriptCs.Tests
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
- 
             }
 
             [Fact]
@@ -297,7 +294,6 @@ namespace ScriptCs.Tests
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
- 
             }
 
             [Fact]
@@ -308,7 +304,6 @@ namespace ScriptCs.Tests
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
- 
             }
 
 
