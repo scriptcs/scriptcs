@@ -80,7 +80,7 @@ namespace ScriptCs
             }
         }
 
-        public void Initialize()
+        public IContainer Initialize()
         {
             var builder = new ContainerBuilder();
  
@@ -91,6 +91,7 @@ namespace ScriptCs
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>();
             builder.RegisterInstance(_console).As<IConsole>();
+            builder.RegisterType<ScriptServiceRoot>();
 
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
@@ -134,6 +135,7 @@ namespace ScriptCs
             _container = builder.Build();
 
             _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();
+            return _container;
         }
 
         public ScriptServiceRoot GetServiceRoot()
