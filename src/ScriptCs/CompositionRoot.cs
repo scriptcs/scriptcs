@@ -18,68 +18,95 @@ namespace ScriptCs
     {
         private readonly bool _debug;
         private readonly LogLevel _logLevel; 
-        private readonly bool _shouldInitDrirectoryCatalog;
+        private readonly bool _shouldInitDirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
+        private IDictionary<Type, object> _overrides;
 
-        public CompositionRoot(ScriptCsArgs args)
+        public CompositionRoot(ScriptCsArgs args) : this(args, new Dictionary<Type, object>())
+        {
+        }
+
+        public CompositionRoot(ScriptCsArgs args, IDictionary<Type, Object> overrides)
         {
             Guard.AgainstNullArgument("args", args);
-
+            _overrides = overrides;
+ 
             _debug = args.Debug;
             _logLevel = args.LogLevel;
-            _shouldInitDrirectoryCatalog = ShouldInitDrirectoryCatalog(args);
+            _shouldInitDirectoryCatalog = ShouldInitDirectoryCatalog(args);
+        }
+
+        public void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)
+        {
+            if (_overrides.ContainsKey(typeof (T)))
+            {
+                var reg = _overrides[typeof(T)];
+                if (reg.GetType().IsSubclassOf(typeof (Type)))
+                {
+                    builder.RegisterType((Type) reg).As<T>();
+                }
+                else
+                {
+                    builder.RegisterInstance(reg).As<T>();
+                }
+            }
+            else
+            {
+                registrationAction(builder);
+            }
         }
 
         public void Initialize()
-        {
+        {            
             var builder = new ContainerBuilder();
             builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
 
             var loggerConfigurator = new LoggerConfigurator(_logLevel);
             loggerConfigurator.Configure(new ReplConsole());
             var logger = loggerConfigurator.GetLogger();
-
+           
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
 
-            var types = new[]
-                {
-                    typeof (ScriptHostFactory),
-                    typeof (FilePreProcessor),
-                    typeof (ScriptPackResolver),
-                    typeof (NugetInstallationProvider),
-                    typeof (PackageInstaller),
-                };
+            RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
+            RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
+            RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>());
+            RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>());
+            RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>());
 
-            builder.RegisterTypes(types).AsImplementedInterfaces();
-            
             if (_debug)
             {
-                builder.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>();
-                builder.RegisterType<RoslynScriptDebuggerEngine>().As<IScriptEngine>();
+                RegisterOverrideOrDefault<IScriptExecutor>(builder, b => b.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>());
+                RegisterOverrideOrDefault<IScriptEngine>(builder, b => b.RegisterType<RoslynScriptDebuggerEngine>().As<IScriptEngine>());
             }
             else
             {
-                builder.RegisterType<ScriptExecutor>().As<IScriptExecutor>();
-                builder.RegisterType<RoslynScriptEngine>().As<IScriptEngine>();
+                RegisterOverrideOrDefault<IScriptExecutor>(builder, b => b.RegisterType<ScriptExecutor>().As<IScriptExecutor>());
+                RegisterOverrideOrDefault<IScriptEngine>(builder, b => b.RegisterType<RoslynScriptEngine>().As<IScriptEngine>());
             }
 
-            builder.RegisterType<ScriptServiceRoot>().As<ScriptServiceRoot>();
+            RegisterOverrideOrDefault<ScriptServiceRoot>(builder, b => b.RegisterType<ScriptServiceRoot>());
 
-            // Hack to resolve assemblies for MEF catalog before building Autofac container
-            var fileSystem = new FileSystem();
-            var assemblyUtility = new AssemblyUtility();
-            var packageContainer = new PackageContainer(fileSystem);
-            var packageAssemblyResolver = new PackageAssemblyResolver(fileSystem, packageContainer);
-            var assemblyResolver = new AssemblyResolver(fileSystem, packageAssemblyResolver, assemblyUtility, logger);
+            // Hack using a second container to resolve assemblies for MEF catalog before building Autofac container
+            var tempBuilder = new ContainerBuilder();
 
-            builder.RegisterInstance(fileSystem).As<IFileSystem>();
-            builder.RegisterInstance(assemblyUtility).As<IAssemblyUtility>();
-            builder.RegisterInstance(packageContainer).As<IPackageContainer>();
-            builder.RegisterInstance(packageAssemblyResolver).As<IPackageAssemblyResolver>();
+            tempBuilder.RegisterInstance<ILog>(logger);
+            RegisterOverrideOrDefault<IFileSystem>(tempBuilder, b => b.RegisterType<FileSystem>().As<IFileSystem>());
+            RegisterOverrideOrDefault<IAssemblyUtility>(tempBuilder, b=>b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>());
+            RegisterOverrideOrDefault<IPackageContainer>(tempBuilder, b=>b.RegisterType<PackageContainer>().As<IPackageContainer>());
+            RegisterOverrideOrDefault<IPackageAssemblyResolver>(tempBuilder, b=>b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>());
+            RegisterOverrideOrDefault<IAssemblyResolver>(tempBuilder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>());
+
+            var tempContainer = tempBuilder.Build();
+            var assemblyResolver = tempContainer.Resolve<IAssemblyResolver>();
+
+            builder.RegisterInstance(tempContainer.Resolve<IFileSystem>()).As<IFileSystem>();
+            builder.RegisterInstance(tempContainer.Resolve<IAssemblyUtility>()).As<IAssemblyUtility>();
+            builder.RegisterInstance(tempContainer.Resolve<IPackageContainer>()).As<IPackageContainer>();
+            builder.RegisterInstance(tempContainer.Resolve<IPackageAssemblyResolver>()).As<IPackageAssemblyResolver>();
             builder.RegisterInstance(assemblyResolver).As<IAssemblyResolver>();
 
-            if (_shouldInitDrirectoryCatalog)
+            if (_shouldInitDirectoryCatalog)
             {
                 var currentDirectory = Environment.CurrentDirectory;
                 var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
@@ -107,7 +134,7 @@ namespace ScriptCs
             return _container.Resolve<ILog>();
         }
 
-        private static bool ShouldInitDrirectoryCatalog(ScriptCsArgs args)
+        private static bool ShouldInitDirectoryCatalog(ScriptCsArgs args)
         {
             return args.Repl || !string.IsNullOrWhiteSpace(args.ScriptName);
         }
