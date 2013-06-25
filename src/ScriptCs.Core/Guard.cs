@@ -2,6 +2,7 @@ namespace ScriptCs
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
 
     /// <summary>
@@ -17,6 +18,7 @@ namespace ScriptCs
         /// <param name="argument">The argument.</param>
         /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
         /// <remarks><typeparamref name="TArgument"/> is restricted to reference types to avoid boxing of value type objects.</remarks>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Distributed as a source code package.")]
         [DebuggerStepThrough]
         public static void AgainstNullArgument<TArgument>(string parameterName, [ValidatedNotNull]TArgument argument) where TArgument : class
         {
@@ -36,6 +38,7 @@ namespace ScriptCs
         /// <remarks>
         /// Performs a type check to avoid boxing of value type objects.
         /// </remarks>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Distributed as a source code package.")]
         [DebuggerStepThrough]
         public static void AgainstNullArgumentIfNullable<TArgument>(string parameterName, [ValidatedNotNull]TArgument argument)
         {
@@ -54,6 +57,7 @@ namespace ScriptCs
         /// <param name="argumentProperty">The argument property.</param>
         /// <exception cref="System.ArgumentException"><paramref name="argumentProperty" /> is <c>null</c>.</exception>
         /// <remarks><typeparamref name="TProperty"/> is restricted to reference types to avoid boxing of value type objects.</remarks>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Distributed as a source code package.")]
         [DebuggerStepThrough]
         public static void AgainstNullArgumentProperty<TProperty>(string parameterName, string propertyName, [ValidatedNotNull]TProperty argumentProperty)
             where TProperty : class
@@ -75,6 +79,7 @@ namespace ScriptCs
         /// <remarks>
         /// Performs a type check to avoid boxing of value type objects.
         /// </remarks>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Distributed as a source code package.")]
         [DebuggerStepThrough]
         public static void AgainstNullArgumentPropertyIfNullable<TProperty>(
             string parameterName, string propertyName, [ValidatedNotNull]TProperty argumentProperty)
@@ -85,12 +90,22 @@ namespace ScriptCs
             }
         }
 
+        /// <summary>
+        /// Determines whether the specified type is a nullable type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified type is a nullable type; otherwise, <c>false</c>.
+        /// </returns>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Distributed as a source code package.")]
         private static bool IsNullableType(this Type type)
         {
             return !type.IsValueType || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
-        // NOTE: when applied to a parameter, this attribute provides an indication to code analysis that the argument has been null checked
+        /// <summary>
+        /// When applied to a parameter, this attribute provides an indication to code analysis that the argument has been null checked.
+        /// </summary>
         private sealed class ValidatedNotNullAttribute : Attribute
         {
         }

@@ -34,10 +34,6 @@ namespace ScriptCs
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
 
-        [ArgShortcut("restore")]
-        [ArgDescription("Restores installed packages, making them ready for using by the script")]
-        public bool Restore { get; set; }
-
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
@@ -56,6 +52,8 @@ namespace ScriptCs
 
         public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
         {
+            Guard.AgainstNullArgument("args", args);
+
             // Split the arguments list on "--".
             // The arguments before the "--" (or all arguments if there is no "--") are
             // for ScriptCs.exe, and the arguments after that are for the csx script.

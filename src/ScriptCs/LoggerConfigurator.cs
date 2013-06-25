@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using ScriptCs.Contracts;
 using log4net;
-using log4net.Appender;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
@@ -25,11 +25,11 @@ namespace ScriptCs
             _logLevel = logLevel;
         }
 
-        public void Configure()
+        public void Configure(IConsole console)
         {
             var hierarchy = (Hierarchy)LogManager.GetRepository();
             var logger = LogManager.GetLogger(LoggerName);
-            var consoleAppender = new ConsoleAppender
+            var consoleAppender = new ScriptcsConsoleAppender(console)
             {
                 Layout = new PatternLayout(GetLogPattern(_logLevel)),
                 Threshold = hierarchy.LevelMap[_logLevel.ToString().ToUpper(CultureInfo.CurrentCulture)]

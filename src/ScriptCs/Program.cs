@@ -13,7 +13,7 @@ namespace ScriptCs
             string[] scriptArgs;
             ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
 
-            var commandArgs = ParseArguments(args) ?? new ScriptCsArgs { Repl = true };
+            var commandArgs = ParseArguments(args);
 
             var compositionRoot = new CompositionRoot(commandArgs);
             compositionRoot.Initialize();
@@ -35,11 +35,20 @@ namespace ScriptCs
         {
             const string UnexpectedArgumentMessage = "Unexpected Argument: ";
 
-            if (args.Length <= 0) return null;
+            //no args initialized REPL
+            if (args.Length <= 0) return new ScriptCsArgs { Repl = true, LogLevel = LogLevel.Info};
 
             try
             {
-                return Args.Parse<ScriptCsArgs>(args);
+                var scriptcsArgs = Args.Parse<ScriptCsArgs>(args);
+                
+                //if there is only 1 arg and it is a loglevel, it's also REPL
+                if (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
+                {
+                    scriptcsArgs.Repl = true;
+                }
+
+                return scriptcsArgs;
             }
             catch (ArgException ex)
             {
