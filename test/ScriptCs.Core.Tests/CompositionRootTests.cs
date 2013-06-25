@@ -206,7 +206,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenScriptHostFactory()
             {
                 var mock = new Mock<IScriptHostFactory>();
-                _overrides[typeof (IScriptHostFactory)] = mock.Object;
+                _overrides[typeof (IScriptHostFactory)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
@@ -216,7 +216,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenFilePreProcessor()
             {
                 var mock = new Mock<IFilePreProcessor>();
-                _overrides[typeof(IFilePreProcessor)] = mock.Object;
+                _overrides[typeof(IFilePreProcessor)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IFilePreProcessor>().ShouldBeType(mock.Object.GetType());
@@ -227,7 +227,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenScriptPackResolver()
             {
                 var mock = new Mock<IScriptPackResolver>();
-                _overrides[typeof(IScriptPackResolver)] = mock.Object;
+                _overrides[typeof(IScriptPackResolver)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IScriptPackResolver>().ShouldBeType(mock.Object.GetType());
@@ -237,7 +237,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenInstallationProvider()
             {
                 var mock = new Mock<IInstallationProvider>();
-                _overrides[typeof(IInstallationProvider)] = mock.Object;
+                _overrides[typeof(IInstallationProvider)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IInstallationProvider>().ShouldBeType(mock.Object.GetType());
@@ -247,7 +247,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenPackageInstaller()
             {
                 var mock = new Mock<IPackageInstaller>();
-                _overrides[typeof(IPackageInstaller)] = mock.Object;
+                _overrides[typeof(IPackageInstaller)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
@@ -260,7 +260,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheOverriddenFileSystem()
             {
-                _overrides[typeof(IFileSystem)] = new TestFileSystem();
+                _overrides[typeof(IFileSystem)] = typeof(TestFileSystem);
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IFileSystem>().ShouldBeType<TestFileSystem>();
@@ -270,7 +270,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenAssemblyUtility()
             {
                 var mock = new Mock<IAssemblyUtility>();
-                _overrides[typeof(IAssemblyUtility)] = mock.Object;
+                _overrides[typeof(IAssemblyUtility)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
@@ -280,7 +280,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenPackageContainer()
             {
                 var mock = new Mock<IPackageContainer>();
-                _overrides[typeof(IPackageContainer)] = mock.Object;
+                _overrides[typeof(IPackageContainer)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
@@ -290,7 +290,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenPackageAssemblyResolver()
             {
                 var mock = new Mock<IPackageAssemblyResolver>();
-                _overrides[typeof(IPackageAssemblyResolver)] = mock.Object;
+                _overrides[typeof(IPackageAssemblyResolver)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
@@ -300,7 +300,7 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenAssemblyResolver()
             {
                 var mock = new Mock<IAssemblyResolver>();
-                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                _overrides[typeof(IAssemblyResolver)] = mock.Object.GetType();
                 var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
                 var container = root.Initialize();
                 container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
