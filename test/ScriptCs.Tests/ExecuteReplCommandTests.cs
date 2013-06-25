@@ -27,7 +27,7 @@ namespace ScriptCs.Tests
 
                 var console = new FakeConsole(writer, reader);
 
-                var root = new ScriptServiceRoot(
+                var root = new ScriptServices(
                     mockFileSystem.Object,
                     Mock.Of<IPackageAssemblyResolver>(),
                     Mock.Of<IScriptExecutor>(),

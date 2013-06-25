@@ -11,7 +11,7 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static ScriptServiceRoot CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
+            private static ScriptServices CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
             {
                 const string CurrentDirectory = "C:\\";
                 const string PackagesFile = "C:\\packages.config";
@@ -31,7 +31,7 @@ namespace ScriptCs.Tests
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
 
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
                 return root;
             }
 
