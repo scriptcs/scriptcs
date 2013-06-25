@@ -14,7 +14,10 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            var message = string.Format("scriptcs version {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            var assembly = typeof(Program).Assembly;
+            var productVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
+            var message = string.Format("scriptcs v{0}", productVersion);
+
             _console.WriteLine(message);
 
             return CommandResult.Success;

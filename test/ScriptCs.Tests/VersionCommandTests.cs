@@ -17,7 +17,7 @@ namespace ScriptCs.Tests
             public void VersionCommandShouldOutputVersion()
             {
                 var assembly = typeof(ScriptCsArgs).Assembly;
-                var version = assembly.GetName().Version.ToString();
+                var version = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
 
                 string actual = null;
 
