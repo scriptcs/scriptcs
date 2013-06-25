@@ -10,7 +10,7 @@ using ICommonLog = Common.Logging.ILog;
 
 namespace ScriptCs
 {
-    public class LoggerConfigurator
+    public class LoggerConfigurator : ILoggerConfigurator
     {
         private const string ThreadPattern = " Thread[%thread]";
         private const string Pattern = "%-5level{threadLevel}: %message%newline";

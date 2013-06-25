@@ -3,6 +3,7 @@
 using PowerArgs;
 using ScriptCs.Command;
 using System.Linq;
+using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs
 {
@@ -12,10 +13,25 @@ namespace ScriptCs
         {
             string[] scriptArgs;
             ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
+            Type scriptExecutorType;
+            Type scriptEngineType;
 
             var commandArgs = ParseArguments(args);
+   
+            if (commandArgs.Debug)
+            {
+                scriptExecutorType = typeof (DebugScriptExecutor);
+                scriptEngineType = typeof (RoslynScriptDebuggerEngine);
+            }
+            else
+            {
+                scriptExecutorType = typeof (ScriptExecutor);
+                scriptEngineType = typeof (RoslynScriptEngine);
+            }
 
-            var compositionRoot = new CompositionRoot(commandArgs);
+            var loggerConfigurator = new LoggerConfigurator(commandArgs.LogLevel);
+  
+            var compositionRoot = new CompositionRoot(commandArgs.ScriptName, commandArgs.Repl,loggerConfigurator,new ScriptConsole(), scriptExecutorType, scriptEngineType);
             compositionRoot.Initialize();
 
             var logger = compositionRoot.GetLogger();

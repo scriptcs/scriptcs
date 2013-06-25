@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "scriptcs", "src\ScriptCs\bin\Debug\scriptcs.exe", "{D797ABD7-8971-4227-B9C4-8ECC158FD12B}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\code\scriptcs\src\ScriptCs\bin\Debug\scriptcs.exe
+		RemoteMachine = GBLOCK-WIN8
+		StartingDirectory = C:\code\scriptcs-samples\wpf
+		Arguments = start.csx -debug
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39CDE834-543F-4352-AF43-F1CA3D6CCBFF}"
+	ProjectSection(SolutionItems) = preProject
+		..\scriptcs-samples\wpf\CalculatorView.xaml = ..\scriptcs-samples\wpf\CalculatorView.xaml
+		..\scriptcs-samples\wpf\mvvm.csx = ..\scriptcs-samples\wpf\mvvm.csx
+		..\scriptcs-samples\wpf\start.csx = ..\scriptcs-samples\wpf\start.csx
+		..\scriptcs-samples\wpf\utilities.csx = ..\scriptcs-samples\wpf\utilities.csx
+		..\scriptcs-samples\wpf\viewmodels.csx = ..\scriptcs-samples\wpf\viewmodels.csx
+		..\scriptcs-samples\wpf\views.csx = ..\scriptcs-samples\wpf\views.csx
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D797ABD7-8971-4227-B9C4-8ECC158FD12B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
