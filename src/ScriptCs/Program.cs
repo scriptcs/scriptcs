@@ -17,8 +17,7 @@ namespace ScriptCs
             Type scriptEngineType;
 
             var commandArgs = ParseArguments(args);
-            
-
+   
             if (commandArgs.Debug)
             {
                 scriptExecutorType = typeof (DebugScriptExecutor);
@@ -30,7 +29,9 @@ namespace ScriptCs
                 scriptEngineType = typeof (RoslynScriptEngine);
             }
 
-            var compositionRoot = new CompositionRoot(commandArgs, scriptExecutorType, scriptEngineType);
+            var loggerConfigurator = new LoggerConfigurator(commandArgs.LogLevel);
+  
+            var compositionRoot = new CompositionRoot(commandArgs.ScriptName, commandArgs.Repl,loggerConfigurator,new ScriptConsole(), scriptExecutorType, scriptEngineType);
             compositionRoot.Initialize();
 
             var logger = compositionRoot.GetLogger();

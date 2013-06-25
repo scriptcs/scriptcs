@@ -8,7 +8,6 @@ using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
 
@@ -16,50 +15,59 @@ namespace ScriptCs
 {
     public class CompositionRoot
     {
-        private readonly LogLevel _logLevel; 
         private readonly bool _shouldInitDirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
         private IDictionary<Type, object> _overrides;
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
+        private IConsole _console;
+        private string _scriptName;
+        private bool _repl;
+        private ILoggerConfigurator _loggerConfigurator;
 
-        public CompositionRoot(ScriptCsArgs args, Type scriptExecutorType, Type scriptEngineType) : this(args, scriptExecutorType, scriptEngineType, new Dictionary<Type, object>())
+        public CompositionRoot(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType)
+            : this(scriptName, repl, loggerConfigurator, console, scriptExecutorType, scriptEngineType, new Dictionary<Type, object>())
         {
         }
 
-        public CompositionRoot(ScriptCsArgs args, Type scriptExecutorType, Type scriptEngineType, IDictionary<Type, Object> overrides)
+        public CompositionRoot(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType, IDictionary<Type, Object> overrides)
         {
-            Guard.AgainstNullArgument("args", args);
             Guard.AgainstNullArgument("scriptExecutor", scriptExecutorType);
             Guard.AgainstNullArgument("scriptEngine", scriptEngineType);
+            Guard.AgainstNullArgument("console", console);
+            Guard.AgainstNullArgument("loggerConfigurator", loggerConfigurator);
+
+            _loggerConfigurator = loggerConfigurator;
+            _console = console;
+            _scriptName = scriptName;
+            _repl = repl;
 
             if (!typeof(IScriptExecutor).IsAssignableFrom(scriptExecutorType))
             {
                 throw new ArgumentException("scriptExecutor type must implement IScriptExecutor", "scriptExecutor");
             }
-            
-            if (!typeof (IScriptEngine).IsAssignableFrom(scriptEngineType))
+
+            if (!typeof(IScriptEngine).IsAssignableFrom(scriptEngineType))
             {
                 throw new ArgumentException("scriptEngine type must implement IScriptEngine", "scriptEngine");
             }
 
             _scriptExecutorType = scriptExecutorType;
             _scriptEngineType = scriptEngineType;
-            
+
             _overrides = overrides;
-            _logLevel = args.LogLevel;
-            _shouldInitDirectoryCatalog = ShouldInitDirectoryCatalog(args);
+            _shouldInitDirectoryCatalog = ShouldInitDirectoryCatalog(_repl, _scriptName);
         }
 
         public void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)
         {
-            if (_overrides.ContainsKey(typeof (T)))
+            if (_overrides.ContainsKey(typeof(T)))
             {
                 var reg = _overrides[typeof(T)];
-                if (reg.GetType().IsSubclassOf(typeof (Type)))
+                if (reg.GetType().IsSubclassOf(typeof(Type)))
                 {
-                    builder.RegisterType((Type) reg).As<T>();
+                    builder.RegisterType((Type)reg).As<T>();
                 }
                 else
                 {
@@ -73,17 +81,16 @@ namespace ScriptCs
         }
 
         public void Initialize()
-        {            
+        {
             var builder = new ContainerBuilder();
-            builder.RegisterType<ReplConsole>().As<IConsole>().Exported(x => x.As<IConsole>());
+ 
+            _loggerConfigurator.Configure(_console);
+            var logger = _loggerConfigurator.GetLogger();
 
-            var loggerConfigurator = new LoggerConfigurator(_logLevel);
-            loggerConfigurator.Configure(new ReplConsole());
-            var logger = loggerConfigurator.GetLogger();
-           
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>();
+            builder.RegisterInstance(_console).As<IConsole>();
 
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
@@ -97,9 +104,9 @@ namespace ScriptCs
 
             tempBuilder.RegisterInstance<ILog>(logger);
             RegisterOverrideOrDefault<IFileSystem>(tempBuilder, b => b.RegisterType<FileSystem>().As<IFileSystem>());
-            RegisterOverrideOrDefault<IAssemblyUtility>(tempBuilder, b=>b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>());
-            RegisterOverrideOrDefault<IPackageContainer>(tempBuilder, b=>b.RegisterType<PackageContainer>().As<IPackageContainer>());
-            RegisterOverrideOrDefault<IPackageAssemblyResolver>(tempBuilder, b=>b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>());
+            RegisterOverrideOrDefault<IAssemblyUtility>(tempBuilder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>());
+            RegisterOverrideOrDefault<IPackageContainer>(tempBuilder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>());
+            RegisterOverrideOrDefault<IPackageAssemblyResolver>(tempBuilder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>());
             RegisterOverrideOrDefault<IAssemblyResolver>(tempBuilder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>());
 
             var tempContainer = tempBuilder.Build();
@@ -126,7 +133,7 @@ namespace ScriptCs
 
             _container = builder.Build();
 
-            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();            
+            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();
         }
 
         public ScriptServiceRoot GetServiceRoot()
@@ -139,9 +146,10 @@ namespace ScriptCs
             return _container.Resolve<ILog>();
         }
 
-        private static bool ShouldInitDirectoryCatalog(ScriptCsArgs args)
+        private static bool ShouldInitDirectoryCatalog(bool repl, string scriptName)
         {
-            return args.Repl || !string.IsNullOrWhiteSpace(args.ScriptName);
+            return repl || !string.IsNullOrWhiteSpace(scriptName);
         }
     }
 }
+
