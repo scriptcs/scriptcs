@@ -16,23 +16,38 @@ namespace ScriptCs
 {
     public class CompositionRoot
     {
-        private readonly bool _debug;
         private readonly LogLevel _logLevel; 
         private readonly bool _shouldInitDirectoryCatalog;
         private IContainer _container;
         private ScriptServiceRoot _scriptServiceRoot;
         private IDictionary<Type, object> _overrides;
+        private Type _scriptExecutorType;
+        private Type _scriptEngineType;
 
-        public CompositionRoot(ScriptCsArgs args) : this(args, new Dictionary<Type, object>())
+        public CompositionRoot(ScriptCsArgs args, Type scriptExecutorType, Type scriptEngineType) : this(args, scriptExecutorType, scriptEngineType, new Dictionary<Type, object>())
         {
         }
 
-        public CompositionRoot(ScriptCsArgs args, IDictionary<Type, Object> overrides)
+        public CompositionRoot(ScriptCsArgs args, Type scriptExecutorType, Type scriptEngineType, IDictionary<Type, Object> overrides)
         {
             Guard.AgainstNullArgument("args", args);
+            Guard.AgainstNullArgument("scriptExecutor", scriptExecutorType);
+            Guard.AgainstNullArgument("scriptEngine", scriptEngineType);
+
+            if (!typeof(IScriptExecutor).IsAssignableFrom(scriptExecutorType))
+            {
+                throw new ArgumentException("scriptExecutor type must implement IScriptExecutor", "scriptExecutor");
+            }
+            
+            if (!typeof (IScriptEngine).IsAssignableFrom(scriptEngineType))
+            {
+                throw new ArgumentException("scriptEgnine type must implement IScriptEngine", "scriptEngine");
+            }
+
+            _scriptExecutorType = scriptExecutorType;
+            _scriptEngineType = scriptEngineType;
+            
             _overrides = overrides;
- 
-            _debug = args.Debug;
             _logLevel = args.LogLevel;
             _shouldInitDirectoryCatalog = ShouldInitDirectoryCatalog(args);
         }
@@ -67,24 +82,14 @@ namespace ScriptCs
             var logger = loggerConfigurator.GetLogger();
            
             builder.RegisterInstance<ILog>(logger).Exported(x => x.As<ILog>());
+            builder.RegisterType(_scriptEngineType).As<IScriptEngine>();
+            builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>();
 
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
             RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>());
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>());
-
-            if (_debug)
-            {
-                RegisterOverrideOrDefault<IScriptExecutor>(builder, b => b.RegisterType<DebugScriptExecutor>().As<IScriptExecutor>());
-                RegisterOverrideOrDefault<IScriptEngine>(builder, b => b.RegisterType<RoslynScriptDebuggerEngine>().As<IScriptEngine>());
-            }
-            else
-            {
-                RegisterOverrideOrDefault<IScriptExecutor>(builder, b => b.RegisterType<ScriptExecutor>().As<IScriptExecutor>());
-                RegisterOverrideOrDefault<IScriptEngine>(builder, b => b.RegisterType<RoslynScriptEngine>().As<IScriptEngine>());
-            }
-
             RegisterOverrideOrDefault<ScriptServiceRoot>(builder, b => b.RegisterType<ScriptServiceRoot>());
 
             // Hack using a second container to resolve assemblies for MEF catalog before building Autofac container
