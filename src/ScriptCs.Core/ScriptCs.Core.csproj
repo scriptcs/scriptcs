@@ -29,9 +29,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="PowerArgs">
-      <HintPath>..\..\packages\PowerArgs.1.6.0.0\lib\net40\PowerArgs.dll</HintPath>
-    </Reference>
     <Reference Include="ServiceStack.Text">
       <HintPath>..\..\packages\ServiceStack.Text.3.9.47\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
