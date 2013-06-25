@@ -306,6 +306,17 @@ namespace ScriptCs.Tests
                 container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
             }
 
+            [Fact]
+            public void ShouldRegisterTheOverriddenAssemblyResolverInstance()
+            {
+                var mock = new Mock<IAssemblyResolver>();
+                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = root.Initialize();
+                container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
+            }
+
+
 
 
         }
