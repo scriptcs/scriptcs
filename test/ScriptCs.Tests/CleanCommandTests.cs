@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
 
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
                 fs.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder)))).Returns(true);
                 fs.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
 
