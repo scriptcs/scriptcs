@@ -1,6 +1,8 @@
-﻿using Common.Logging;
+﻿using System.Diagnostics;
+using Common.Logging;
 using Moq;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 using System.IO;
 using Xunit;
@@ -11,28 +13,15 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            private readonly System.Version _currentVersion;
-
-            System.Text.StringBuilder _outputText;
-            StringWriter _mockConsole;
-            TextWriter _actualConsole;
-
-            public ExecuteMethod()
-            {
-                _currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                _outputText = new System.Text.StringBuilder();
-                _mockConsole = new StringWriter(_outputText);
-                _actualConsole = System.Console.Out;
-                System.Console.SetOut(_mockConsole);
-            }
-
             [Fact]
             public void VersionCommandShouldOutputVersion()
             {
-                var args = new ScriptCsArgs
-                    {
-                        Version = true
-                    };
+                var assembly = typeof(ScriptCsArgs).Assembly;
+                var version = assembly.GetName().Version.ToString();
+
+                string actual = null;
+
+                var args = new ScriptCsArgs { Version = true };
 
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -43,17 +32,16 @@ namespace ScriptCs.Tests
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var mockConsole = new Mock<IConsole>();
+                mockConsole.Setup(x => x.WriteLine(It.IsAny<string>())).Callback<string>(text => actual = text);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, mockConsole.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
 
-                // clear the fake console output
-                _outputText.Clear();
-
                 result.Execute();
 
-                Assert.Contains("scriptcs version " + _currentVersion.ToString(), _outputText.ToString());
+                Assert.Contains(version, actual);
             }
         }
     }
