@@ -45,7 +45,7 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyResolverTests.cs" />
-    <Compile Include="CompositionRootTests.cs" />
+    <Compile Include="ScriptRuntimeTests.cs" />
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="FileProcessorTests.cs" />

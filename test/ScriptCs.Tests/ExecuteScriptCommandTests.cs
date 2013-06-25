@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
@@ -76,7 +76,7 @@ namespace ScriptCs.Tests
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
 
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
 
                 var factory = new CommandFactory(root);
@@ -113,7 +113,7 @@ namespace ScriptCs.Tests
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);
@@ -148,7 +148,7 @@ namespace ScriptCs.Tests
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
 
                 var factory = new CommandFactory(root);
                 var result = factory.CreateCommand(args, new string[0]);

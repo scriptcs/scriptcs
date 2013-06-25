@@ -13,11 +13,11 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public class CompositionRoot
+    public class ScriptRuntime
     {
         private readonly bool _shouldInitDirectoryCatalog;
         private IContainer _container;
-        private ScriptServiceRoot _scriptServiceRoot;
+        private ScriptServices _scriptServices;
         private IDictionary<Type, object> _overrides;
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
@@ -26,12 +26,12 @@ namespace ScriptCs
         private bool _repl;
         private ILoggerConfigurator _loggerConfigurator;
 
-        public CompositionRoot(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType)
+        public ScriptRuntime(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType)
             : this(scriptName, repl, loggerConfigurator, console, scriptExecutorType, scriptEngineType, new Dictionary<Type, object>())
         {
         }
 
-        public CompositionRoot(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType, IDictionary<Type, Object> overrides)
+        public ScriptRuntime(string scriptName, bool repl, ILoggerConfigurator loggerConfigurator, IConsole console, Type scriptExecutorType, Type scriptEngineType, IDictionary<Type, Object> overrides)
         {
             Guard.AgainstNullArgument("scriptExecutor", scriptExecutorType);
             Guard.AgainstNullArgument("scriptEngine", scriptEngineType);
@@ -91,14 +91,14 @@ namespace ScriptCs
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>();
             builder.RegisterInstance(_console).As<IConsole>();
-            builder.RegisterType<ScriptServiceRoot>();
+            builder.RegisterType<ScriptServices>();
 
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
             RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>());
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>());
-            RegisterOverrideOrDefault<ScriptServiceRoot>(builder, b => b.RegisterType<ScriptServiceRoot>());
+            RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>());
 
             // Hack using a second container to resolve assemblies for MEF catalog before building Autofac container
             var tempBuilder = new ContainerBuilder();
@@ -134,13 +134,13 @@ namespace ScriptCs
 
             _container = builder.Build();
 
-            _scriptServiceRoot = _container.Resolve<ScriptServiceRoot>();
+            _scriptServices = _container.Resolve<ScriptServices>();
             return _container;
         }
 
-        public ScriptServiceRoot GetServiceRoot()
+        public ScriptServices GetScriptServices()
         {
-            return _scriptServiceRoot;
+            return _scriptServices;
         }
 
         public ILog GetLogger()

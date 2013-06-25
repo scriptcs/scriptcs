@@ -31,13 +31,13 @@ namespace ScriptCs
 
             var loggerConfigurator = new LoggerConfigurator(commandArgs.LogLevel);
   
-            var compositionRoot = new CompositionRoot(commandArgs.ScriptName, commandArgs.Repl,loggerConfigurator,new ScriptConsole(), scriptExecutorType, scriptEngineType);
+            var compositionRoot = new ScriptRuntime(commandArgs.ScriptName, commandArgs.Repl,loggerConfigurator,new ScriptConsole(), scriptExecutorType, scriptEngineType);
             compositionRoot.Initialize();
 
             var logger = compositionRoot.GetLogger();
-            logger.Debug("Creating ScriptServiceRoot");
+            logger.Debug("Creating ScriptServices");
            
-            var scriptServiceRoot = compositionRoot.GetServiceRoot();
+            var scriptServiceRoot = compositionRoot.GetScriptServices();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);

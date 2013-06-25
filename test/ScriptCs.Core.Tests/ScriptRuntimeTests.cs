@@ -14,7 +14,7 @@ using Should;
 
 namespace ScriptCs.Tests
 {
-    public class CompositionRootTests
+    public class ScriptRuntimeTests
     {
         public class TheInitializeMethod
         {
@@ -39,8 +39,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldInvokeTheConfigureMethod() 
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                runtime.Initialize();
                 _mockLoggerConfigurator.Verify(l=>l.Configure(It.IsAny<IConsole>()));
                 
             }
@@ -48,16 +48,16 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldGetTheLogger()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                runtime.Initialize();
                 _mockLoggerConfigurator.Verify(l=>l.GetLogger());
             }
 
             [Fact]
             public void ShouldRegisterTheLoggerInstance()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 var logger = container.Resolve<ILog>();
                 logger.ShouldEqual(_mockLogger.Object);
             }
@@ -65,8 +65,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheScriptEngine()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 var engine = container.Resolve<IScriptEngine>();
                 engine.GetType().ShouldEqual(_scriptEngineType);
             }
@@ -74,8 +74,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheExecutor()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 var executor = container.Resolve<IScriptExecutor>();
                 executor.GetType().ShouldEqual(_scriptExecutorType);
             }
@@ -83,122 +83,122 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheConsoleInstance()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IConsole>().ShouldNotBeNull();
             }
 
             [Fact]
-            public void ShouldRegisterTheServiceRoot()
+            public void ShouldRegisterTheScriptServices()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
-                container.Resolve<ScriptServiceRoot>().ShouldNotBeNull();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
+                container.Resolve<ScriptServices>().ShouldNotBeNull();
             }
 
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptHostFactoryIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IScriptHostFactory>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFilePreProcessorIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IFilePreProcessor>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptPackResolverIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IScriptPackResolver>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultInstallationProviderIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IInstallationProvider>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageInstallerIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageInstaller>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptServiceRootIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
-                container.Resolve<ScriptServiceRoot>().ShouldNotBeNull();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
+                container.Resolve<ScriptServices>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFileSystemIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IFileSystem>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyUtilityIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IAssemblyUtility>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageContainerIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageContainer>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageAssemblyResolverIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageAssemblyResolver>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyResolverIfNoOverride()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IAssemblyResolver>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldReturnTheLoggerWhenGetLoggerIsInvoked()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                root.Initialize();
-                root.GetLogger().ShouldEqual(_mockLogger.Object);
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                runtime.Initialize();
+                runtime.GetLogger().ShouldEqual(_mockLogger.Object);
             }
 
             [Fact]
             public void ShouldReturnTheScriptServiceRootWhenTheGetterIsInvoked()
             {
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
-                root.Initialize();
-                root.GetServiceRoot().ShouldNotBeNull();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType);
+                runtime.Initialize();
+                runtime.GetScriptServices().ShouldNotBeNull();
 
             }
 
@@ -207,8 +207,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IScriptHostFactory>();
                 _overrides[typeof (IScriptHostFactory)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -217,8 +217,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IFilePreProcessor>();
                 _overrides[typeof(IFilePreProcessor)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IFilePreProcessor>().ShouldBeType(mock.Object.GetType());
  
             }
@@ -228,8 +228,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IScriptPackResolver>();
                 _overrides[typeof(IScriptPackResolver)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IScriptPackResolver>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -238,8 +238,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IInstallationProvider>();
                 _overrides[typeof(IInstallationProvider)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IInstallationProvider>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -248,8 +248,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageInstaller>();
                 _overrides[typeof(IPackageInstaller)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -261,8 +261,8 @@ namespace ScriptCs.Tests
             public void ShouldRegisterTheOverriddenFileSystem()
             {
                 _overrides[typeof(IFileSystem)] = typeof(TestFileSystem);
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IFileSystem>().ShouldBeType<TestFileSystem>();
             }
 
@@ -271,8 +271,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyUtility>();
                 _overrides[typeof(IAssemblyUtility)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -281,8 +281,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageContainer>();
                 _overrides[typeof(IPackageContainer)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -291,8 +291,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageAssemblyResolver>();
                 _overrides[typeof(IPackageAssemblyResolver)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -301,8 +301,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyResolver>();
                 _overrides[typeof(IAssemblyResolver)] = mock.Object.GetType();
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
             }
 
@@ -311,8 +311,8 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyResolver>();
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
-                var root = new CompositionRoot(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
-                var container = root.Initialize();
+                var runtime = new ScriptRuntime(null, false, _mockLoggerConfigurator.Object, _mockConsole.Object, _scriptExecutorType, _scriptEngineType, _overrides);
+                var container = runtime.Initialize();
                 container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
             }
 

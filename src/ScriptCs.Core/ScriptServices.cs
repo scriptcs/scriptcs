@@ -4,9 +4,9 @@ using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class ScriptServiceRoot
+    public class ScriptServices
     {
-        public ScriptServiceRoot(
+        public ScriptServices(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
             IScriptExecutor executor,
