@@ -13,31 +13,22 @@ namespace ScriptCs
         {
             string[] scriptArgs;
             ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
-            Type scriptExecutorType;
-            Type scriptEngineType;
-
+ 
             var commandArgs = ParseArguments(args);
-   
-            if (commandArgs.Debug)
-            {
-                scriptExecutorType = typeof (DebugScriptExecutor);
-                scriptEngineType = typeof (RoslynScriptDebuggerEngine);
-            }
-            else
-            {
-                scriptExecutorType = typeof (ScriptExecutor);
-                scriptEngineType = typeof (RoslynScriptEngine);
-            }
 
-            var loggerConfigurator = new LoggerConfigurator(commandArgs.LogLevel);
-  
-            var compositionRoot = new ScriptRuntime(commandArgs.ScriptName, commandArgs.Repl,loggerConfigurator,new ScriptConsole(), scriptExecutorType, scriptEngineType);
-            compositionRoot.Initialize();
+            var runtime = new ScriptRuntimeBuilder().
+                Debug(commandArgs.Debug).
+                LogLevel(commandArgs.LogLevel).
+                ScriptName(commandArgs.ScriptName).
+                Repl(commandArgs.Repl).
+                Build();
 
-            var logger = compositionRoot.GetLogger();
+            runtime.Initialize();
+
+            var logger = runtime.GetLogger();
             logger.Debug("Creating ScriptServices");
            
-            var scriptServiceRoot = compositionRoot.GetScriptServices();
+            var scriptServiceRoot = runtime.GetScriptServices();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
