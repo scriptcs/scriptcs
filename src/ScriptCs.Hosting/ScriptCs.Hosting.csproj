@@ -33,13 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging.Log4Net">
-      <HintPath>..\packages\Common.Logging.Log4Net.2.0.1\lib\net20\Common.Logging.Log4Net.dll</HintPath>
+      <HintPath>..\..\packages\Common.Logging.Log4Net.2.0.1\lib\net20\Common.Logging.Log4Net.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,24 +50,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
+    <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
       <Project>{6049e205-8b5f-4080-b023-70600e51fd64}</Project>
       <Name>ScriptCs.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\ScriptCs.Core\ScriptCs.Core.csproj">
+    <ProjectReference Include="..\ScriptCs.Core\ScriptCs.Core.csproj">
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
+    <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
       <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
       <Name>ScriptCs.Engine.Roslyn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\common\CommonAssemblyInfo.cs">
+    <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\common\CommonVersionInfo.cs">
+    <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="LoggerConfigurator.cs" />
