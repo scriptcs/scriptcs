@@ -29,7 +29,7 @@ namespace ScriptCs
         {
             var hierarchy = (Hierarchy)LogManager.GetRepository();
             var logger = LogManager.GetLogger(LoggerName);
-            var consoleAppender = new ScriptcsConsoleAppender(console)
+            var consoleAppender = new ScriptConsoleAppender(console)
             {
                 Layout = new PatternLayout(GetLogPattern(_logLevel)),
                 Threshold = hierarchy.LevelMap[_logLevel.ToString().ToUpper(CultureInfo.CurrentCulture)]
