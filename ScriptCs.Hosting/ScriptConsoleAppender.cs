@@ -5,11 +5,11 @@ using log4net.Core;
 
 namespace ScriptCs
 {
-    public class ScriptcsConsoleAppender : AppenderSkeleton
+    public class ScriptConsoleAppender : AppenderSkeleton
     {
         private readonly IConsole _console;
 
-        public ScriptcsConsoleAppender(IConsole console)
+        public ScriptConsoleAppender(IConsole console)
         {
             _console = console;
         }

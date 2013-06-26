@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting", "ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
