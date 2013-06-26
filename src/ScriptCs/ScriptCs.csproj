@@ -85,7 +85,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
+    <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
       <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
       <Name>ScriptCs.Hosting</Name>
     </ProjectReference>
