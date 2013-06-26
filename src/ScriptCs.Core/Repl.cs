@@ -24,6 +24,8 @@ namespace ScriptCs
             Console.Exit();
         }
 
+        public string Buffer { get; set; }
+
         public override ScriptResult Execute(string script)
         {
             try
@@ -50,8 +52,17 @@ namespace ScriptCs
                     return new ScriptResult();
                 }
 
+                //if (!script.EndsWith(";"))
+                //{
+                //    Buffer += script;
+                //    return new ScriptResult();
+                //}
+
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                var result = ScriptEngine.Execute(script, new string[0], References, DefaultNamespaces, ScriptPackSession);
+
+                Buffer += script;
+
+                var result = ScriptEngine.Execute(Buffer, new string[0], References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
                     if (result.CompileException != null)
@@ -66,8 +77,16 @@ namespace ScriptCs
                         Console.Write(result.ExecuteException.ToString());
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ReturnValue.ToJsv());
+                    if (result.IsPendingClosingChar)
+                    {
+                        return result;
+                    }
+                    else
+                    {
+                        Buffer = null;
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine(result.ReturnValue.ToJsv());
+                    }
                 }
 
                 return result;
