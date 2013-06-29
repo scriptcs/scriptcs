@@ -67,7 +67,7 @@ namespace ScriptCs
                 var reg = _overrides[typeof(T)];
                 if (reg.GetType().IsSubclassOf(typeof(Type)))
                 {
-                    builder.RegisterType((Type)reg).As<T>();
+                    builder.RegisterType((Type)reg).As<T>().SingleInstance();
                 }
                 else
                 {
