@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="ScriptRuntime.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="IAssemblyUtility.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
+    <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptHostFactory.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptPackSession.cs" />
     <Compile Include="ScriptResult.cs" />
+    <Compile Include="ScriptServices.cs" />
     <Compile Include="SessionState.cs" />
   </ItemGroup>
   <ItemGroup>

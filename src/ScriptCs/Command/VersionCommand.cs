@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-
+﻿using System.Diagnostics;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -15,8 +14,11 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            _console.WriteLine(string.Format("scriptcs version {0}", version));
+            var assembly = typeof(Program).Assembly;
+            var productVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
+            var message = string.Format("scriptcs v{0}", productVersion);
+
+            _console.WriteLine(message);
 
             return CommandResult.Success;
         }

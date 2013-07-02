@@ -3,9 +3,9 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ReplConsole : IConsole
+    public class ScriptConsole : IConsole
     {
-        public ReplConsole()
+        public ScriptConsole()
         {
             Console.CancelKeyPress += HandleCancelKeyPress;
         }

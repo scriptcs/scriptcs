@@ -13,8 +13,6 @@ using ScriptCs.Contracts;
 
 using System.Linq;
 
-using ScriptCs.Package;
-
 using Should;
 
 using Xunit.Extensions;
@@ -92,7 +90,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult { CompileException = new Exception("test") });
+                        .Returns(new ScriptResult {CompileException = new Exception("test")});
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();

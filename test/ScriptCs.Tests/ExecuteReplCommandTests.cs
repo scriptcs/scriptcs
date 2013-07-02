@@ -1,12 +1,13 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Moq;
 
 using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-using Xunit;
+
+using Should;
+
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -35,8 +36,8 @@ namespace ScriptCs.Tests
                 factory.CreateCommand(args, new string[0]).Execute();
 
                 // Assert
-                Assert.True(builder.ToString().EndsWith("> "));
-                Assert.Equal(1, readLines);
+                builder.ToString().EndsWith("> ").ShouldBeTrue();
+                readLines.ShouldEqual(1);
             }
         }
     }

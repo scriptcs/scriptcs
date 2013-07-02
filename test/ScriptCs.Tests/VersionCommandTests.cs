@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 using Moq;
 
@@ -20,13 +21,15 @@ namespace ScriptCs.Tests
             {
                 // Arrange
                 var args = new ScriptCsArgs { Version = true };
-                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+                var assembly = typeof(ScriptCsArgs).Assembly;
+                var currentVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
 
                 // Assert
-                console.Verify(x => x.WriteLine("scriptcs version " + currentVersion));
+                console.Verify(x => x.WriteLine(It.Is<string>(y => y.Contains(currentVersion.ToString()))));
             }
         }
     }
