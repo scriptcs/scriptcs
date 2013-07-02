@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
-using Common.Logging;
+using System.Reflection;
+
 using Moq;
+
+using Ploeh.AutoFixture.Xunit;
+
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
-using System.IO;
-using Xunit;
+
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -13,35 +16,20 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [Fact]
-            public void VersionCommandShouldOutputVersion()
+            [Theory, ScriptCsAutoData]
+            public void VersionCommandShouldOutputVersion([Frozen] Mock<IConsole> console, CommandFactory factory)
             {
-                var assembly = typeof(ScriptCsArgs).Assembly;
-                var version = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
-
-                string actual = null;
-
+                // Arrange
                 var args = new ScriptCsArgs { Version = true };
 
-                var fs = new Mock<IFileSystem>();
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var mockConsole = new Mock<IConsole>();
-                mockConsole.Setup(x => x.WriteLine(It.IsAny<string>())).Callback<string>(text => actual = text);
-                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, mockConsole.Object);
+                var assembly = typeof(ScriptCsArgs).Assembly;
+                var currentVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
 
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand(args, new string[0]);
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                result.Execute();
-
-                Assert.Contains(version, actual);
+                // Assert
+                console.Verify(x => x.WriteLine(It.Is<string>(y => y.Contains(currentVersion.ToString()))));
             }
         }
     }
