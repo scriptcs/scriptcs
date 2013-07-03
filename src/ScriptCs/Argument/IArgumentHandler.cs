@@ -3,6 +3,5 @@
     public interface IArgumentHandler
     {
         ArgumentParseResult Parse(string[] args);
-        ArgumentParseResult GetParsedArguments();
     }
 }

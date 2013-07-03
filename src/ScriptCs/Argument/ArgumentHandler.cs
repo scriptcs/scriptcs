@@ -12,8 +12,6 @@ namespace ScriptCs.Argument
         private readonly IConfigFileParser _configFileParser;
         private readonly IFileSystem _fileSystem;
 
-        private ArgumentParseResult _parseResult;
-
         public ArgumentHandler(IArgumentParser argumentParser, IConfigFileParser configFileParser, IFileSystem fileSystem)
         {
             Guard.AgainstNullArgument("argumentParser", argumentParser);
@@ -33,14 +31,7 @@ namespace ScriptCs.Argument
             var configArgs = _configFileParser.Parse(GetFileContent(commandArgs.Config));
             var finalArguments = ReconcileArguments(configArgs, commandArgs, sr);
 
-            _parseResult = new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
-
-            return _parseResult;
-        }
-
-        public ArgumentParseResult GetParsedArguments()
-        {
-            return _parseResult;           
+            return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
         }
 
         private string GetFileContent(string fileName)
@@ -109,7 +100,7 @@ namespace ScriptCs.Argument
         {
             bool attributeFound = false;
 
-            var attribute = property.GetCustomAttributes(false).FirstOrDefault(a => a is ArgShortcut);
+            var attribute = property.GetCustomAttribute<ArgShortcut>();
 
             if(attribute != null)
                 attributeFound = args.Any(a => a.Contains((attribute as ArgShortcut).Shortcut));
@@ -120,7 +111,7 @@ namespace ScriptCs.Argument
 
         private static object GetPropertyDefaultValue(PropertyInfo property)
         {
-            var defaultAttribute = property.GetCustomAttributes(false).FirstOrDefault(a => a.GetType() == typeof(PowerArgs.DefaultValueAttribute));
+            var defaultAttribute = property.GetCustomAttributes<DefaultValueAttribute>();
 
             return defaultAttribute != null
                        ? ((PowerArgs.DefaultValueAttribute)defaultAttribute).Value
