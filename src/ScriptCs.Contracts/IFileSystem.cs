@@ -43,11 +43,14 @@ namespace ScriptCs.Contracts
         void WriteToFile(string path, string text);
         
         Stream CreateFileStream(string filePath, FileMode mode);
+<<<<<<< HEAD
 
 <<<<<<< HEAD
         string ModulesFolder { get; }
 =======
         string PathCombine(string path1, string path2);
 >>>>>>> Initial config arguments implementation
+=======
+>>>>>>> Remove Path.Combine from IFileSystem. Using IConsole in Parsing classes.
     }
 }

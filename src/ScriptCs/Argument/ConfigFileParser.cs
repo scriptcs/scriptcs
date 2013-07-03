@@ -4,12 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using PowerArgs;
+using ScriptCs.Contracts;
 using ServiceStack.Text;
 
 namespace ScriptCs.Argument
 {
     public class ConfigFileParser : IConfigFileParser
     {
+        private readonly IConsole _console;
+
+        public ConfigFileParser(IConsole console)
+        {
+            _console = console;
+        }
+
         public ScriptCsArgs Parse(string content)
         {
             if (!string.IsNullOrWhiteSpace(content))
@@ -66,7 +74,7 @@ namespace ScriptCs.Argument
             return null;
         }
 
-        private static Dictionary<string, string> ParseJson(string content)
+        private Dictionary<string, string> ParseJson(string content)
         {
             Dictionary<string, string> dict = null;
 
@@ -76,7 +84,7 @@ namespace ScriptCs.Argument
             }
             catch 
             {
-                Console.WriteLine("Error parsing configuration file.");
+                _console.WriteLine("Error parsing configuration file.");
             }
 
             return dict;

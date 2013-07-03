@@ -1,23 +1,34 @@
-﻿using System;
-
-using PowerArgs;
+﻿using ScriptCs.Argument;
 using ScriptCs.Command;
-using System.Linq;
 
 namespace ScriptCs
 {
     internal static class Program
     {
-        private static int Main(string[] args) 
+        private static int Main(string[] args)
         {
-            var compositionRoot = new CompositionRoot(args);
-            compositionRoot.Initialize();
+            var console = new ScriptConsole();
+            var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
+            var arguments = parser.Parse(args);
+            var commandArgs = arguments.CommandArguments;
+            var scriptArgs = arguments.ScriptArguments;
+
+            var runtime = new ScriptRuntimeBuilder().
+                Debug(commandArgs.Debug).
+                LogLevel(commandArgs.LogLevel).
+                ScriptName(commandArgs.ScriptName).
+                Repl(commandArgs.Repl).
+                Build();
+
+            runtime.Initialize();
+
+            var logger = runtime.GetLogger();
+            logger.Debug("Creating ScriptServices");
            
-            var scriptServiceRoot = compositionRoot.GetServiceRoot();
-            scriptServiceRoot.Logger.Debug("ScriptServiceRoot created");
+            var scriptServiceRoot = runtime.GetScriptServices();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand();
+            var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
 
             var result = command.Execute();
 

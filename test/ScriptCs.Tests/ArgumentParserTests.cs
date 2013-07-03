@@ -12,7 +12,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "server.csx", "-log", "error" };
 
-                var parser = new ArgumentParser();
+                var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(args);
 
                 Assert.NotNull(result);
@@ -23,7 +23,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleEmptyAttray()
             {
-                var parser = new ArgumentParser();
+                var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(new string[0]);
 
                 Assert.NotNull(result);

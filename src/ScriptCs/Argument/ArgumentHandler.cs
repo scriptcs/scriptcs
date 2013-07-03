@@ -36,7 +36,7 @@ namespace ScriptCs.Argument
 
         private string GetFileContent(string fileName)
         {
-            string filePath = _fileSystem.PathCombine(_fileSystem.CurrentDirectory, fileName);
+            string filePath = _fileSystem.CurrentDirectory + '\\' + fileName;
             if (_fileSystem.FileExists(filePath))
             {
                 return _fileSystem.ReadFile(filePath);
@@ -111,7 +111,7 @@ namespace ScriptCs.Argument
 
         private static object GetPropertyDefaultValue(PropertyInfo property)
         {
-            var defaultAttribute = property.GetCustomAttributes<DefaultValueAttribute>();
+            var defaultAttribute = property.GetCustomAttribute<DefaultValueAttribute>();
 
             return defaultAttribute != null
                        ? ((PowerArgs.DefaultValueAttribute)defaultAttribute).Value

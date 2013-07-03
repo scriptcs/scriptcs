@@ -12,7 +12,7 @@ namespace ScriptCs.Tests
             {
                 const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\" }";
 
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
                 Assert.NotNull(result);
@@ -23,7 +23,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleNull()
             {
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(null);
 
                 Assert.Null(result);
@@ -32,7 +32,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleEmptyString()
             {
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse("");
 
                 Assert.Null(result);
@@ -43,7 +43,7 @@ namespace ScriptCs.Tests
             {
                 const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"debug\": \"true\" }";
 
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
                 Assert.NotNull(result);
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
             {
                 const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"debug\": \"true\", \"log\": \"error\" }";
 
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
                 Assert.NotNull(result);
@@ -72,7 +72,7 @@ namespace ScriptCs.Tests
             {
                 const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"deBUg\": \"tRUe\", \"logLEVEL\": \"TRaCE\" }";
 
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
                 Assert.NotNull(result);
@@ -87,7 +87,7 @@ namespace ScriptCs.Tests
             {
                 const string file = "{\"Install\": \"install ";
 
-                var parser = new ConfigFileParser();
+                var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
                 Assert.Null(result);

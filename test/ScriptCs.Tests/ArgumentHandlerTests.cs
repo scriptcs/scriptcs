@@ -16,11 +16,11 @@ namespace ScriptCs.Tests
 
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(currentDirectory);
-                fs.Setup(x => x.PathCombine(currentDirectory, fileName)).Returns(filePath);
                 fs.Setup(x => x.FileExists(filePath)).Returns(fileExists);
                 fs.Setup(x => x.ReadFile(filePath)).Returns(fileContent);
+                var console = new ScriptConsole();
 
-                return new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(), fs.Object);
+                return new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), fs.Object);
             }
 
             [Fact]
