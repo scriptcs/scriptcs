@@ -33,7 +33,7 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
-            _logger.Info("Starting to create execution components");
+            _logger.Debug("Starting to create execution components");
             _logger.Debug("Creating script host");
             
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
@@ -77,9 +77,9 @@ namespace ScriptCs.Engine.Roslyn
                 }
             }
 
-            _logger.Info("Starting execution");
+            _logger.Debug("Starting execution");
             var result = Execute(code, sessionState.Session);
-            _logger.Info("Finished execution");
+            _logger.Debug("Finished execution");
             return result;
         }
 

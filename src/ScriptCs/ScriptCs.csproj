@@ -73,14 +73,9 @@
     <Compile Include="Command\SaveCommand.cs" />
     <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
-    <Compile Include="CompositionRoot.cs" />
-    <Compile Include="LoggerConfigurator.cs" />
-    <Compile Include="LogLevel.cs" />
-    <Compile Include="ReplConsole.cs" />
-    <Compile Include="ScriptServiceRoot.cs" />
+    <Compile Include="ScriptCsArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptCsArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -90,6 +85,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
+      <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
+      <Name>ScriptCs.Hosting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
       <Project>{6049e205-8b5f-4080-b023-70600e51fd64}</Project>
       <Name>ScriptCs.Contracts</Name>
