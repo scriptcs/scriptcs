@@ -326,7 +326,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldResetSetBufferIFLineIsBoLongerMultilineConstruct()
+            public void ShouldResetBufferIfLineIsNoLongerMultilineConstruct()
             {
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
@@ -344,6 +344,27 @@ namespace ScriptCs.Tests
                 _repl.Execute("}");
 
                 _repl.Buffer.ShouldBeNull();
+            }
+
+            [Fact]
+            public void ShouldResubmitEverytingIfLineIsNoLongerMultilineConstruct()
+            {
+                var mocks = new Mocks();
+                mocks.ScriptEngine.Setup(
+                    x =>
+                    x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Returns(new ScriptResult
+                     {
+                         IsPendingClosingChar = false
+                     });
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Buffer = "class test {";
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("}");
+
+                mocks.ScriptEngine.Verify();
             }
         }
     }
