@@ -52,12 +52,6 @@ namespace ScriptCs
                     return new ScriptResult();
                 }
 
-                //if (!script.EndsWith(";"))
-                //{
-                //    Buffer += script;
-                //    return new ScriptResult();
-                //}
-
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
                 Buffer += script;

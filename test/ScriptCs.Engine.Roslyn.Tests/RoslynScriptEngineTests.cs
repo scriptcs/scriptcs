@@ -245,6 +245,69 @@ namespace ScriptCs.Tests
 
                 result.ReturnValue.ShouldBeNull();
             }
+
+            [Fact]
+            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingCurlyBracket()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                                 .Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "class test {";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> {Session = roslynEngine.CreateSession()};
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] {"System"}, Enumerable.Empty<string>(),
+                                            scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual('}');
+            }
+
+            [Fact]
+            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingSquareBracket()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                                 .Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "var x = new[1] { 1}; var y = x[0";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(),
+                                            scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual(']');
+            }
+
+            [Fact]
+            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingParenthesis()
+            {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                                 .Returns((IScriptPackManager p, string[] q) => new ScriptHost(p, q));
+
+                var code = "System.Diagnostics.Debug.WriteLine(\"a\"";
+
+                var engine = CreateScriptEngine(scriptHostFactory: scriptHostFactory);
+                var scriptPackSession = new ScriptPackSession(new List<IScriptPack>());
+                var roslynEngine = new ScriptEngine();
+                var session = new SessionState<Session> { Session = roslynEngine.CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(),
+                                            scriptPackSession);
+
+                result.IsPendingClosingChar.ShouldBeTrue();
+                result.ExpectingClosingChar.ShouldEqual(')');
+            }
         }
     }
 }
