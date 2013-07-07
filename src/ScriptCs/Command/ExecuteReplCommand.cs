@@ -68,10 +68,11 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            _console.Write("> ");
+            if (string.IsNullOrWhiteSpace(repl.Buffer))
+                _console.Write("> ");
 
             var line = _console.ReadLine();
-            if (line == string.Empty) return false;
+            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer)) return false;
 
             repl.Execute(line);
             return true;

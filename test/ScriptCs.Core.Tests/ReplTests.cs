@@ -303,6 +303,69 @@ namespace ScriptCs.Tests
 
                 mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
+
+            [Fact]
+            public void ShouldSetBufferIFLineIsFirstOfMultilineConstruct()
+            {
+                var mocks = new Mocks();
+                mocks.ScriptEngine.Setup(
+                    x =>
+                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Returns<ScriptResult>(x => new ScriptResult()
+                     {
+                         ExpectingClosingChar = ')',
+                         IsPendingClosingChar = true
+                     });
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("var x = 1;");
+
+                _repl.Buffer.ShouldNotBeNull();
+            }
+
+            [Fact]
+            public void ShouldResetBufferIfLineIsNoLongerMultilineConstruct()
+            {
+                var mocks = new Mocks();
+                mocks.ScriptEngine.Setup(
+                    x =>
+                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Returns(new ScriptResult
+                     {
+                         IsPendingClosingChar = false
+                     });
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Buffer = "class test {";
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("}");
+
+                _repl.Buffer.ShouldBeNull();
+            }
+
+            [Fact]
+            public void ShouldResubmitEverytingIfLineIsNoLongerMultilineConstruct()
+            {
+                var mocks = new Mocks();
+                mocks.ScriptEngine.Setup(
+                    x =>
+                    x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                     .Returns(new ScriptResult
+                     {
+                         IsPendingClosingChar = false
+                     });
+                mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
+                _repl = GetRepl(mocks);
+                _repl.Buffer = "class test {";
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                _repl.Execute("}");
+
+                mocks.ScriptEngine.Verify();
+            }
         }
     }
 }
