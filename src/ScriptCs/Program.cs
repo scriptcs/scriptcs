@@ -1,9 +1,9 @@
 ﻿using System;
-
+using System.Linq;
 using PowerArgs;
 using ScriptCs.Command;
-using System.Linq;
-using ScriptCs.Engine.Roslyn;
+using ScriptCs.Package;
+using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
@@ -21,6 +21,8 @@ namespace ScriptCs
                 LogLevel(commandArgs.LogLevel).
                 ScriptName(commandArgs.ScriptName).
                 Repl(commandArgs.Repl).
+                InstallationProvider<NugetInstallationProvider>().
+                PackageContainer<PackageContainer>().
                 Build();
 
             runtime.Initialize();

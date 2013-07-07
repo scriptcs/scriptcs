@@ -25,10 +25,6 @@
     <Reference Include="Common.Logging">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Core, Version=2.2.31210.9045, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
-    </Reference>
     <Reference Include="ServiceStack.Text">
       <HintPath>..\..\packages\ServiceStack.Text.3.9.47\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
@@ -44,6 +40,8 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="Package\InstallationProvider\NullInstallationProvider.cs" />
+    <Compile Include="Package\NullPackageContainer.cs" />
     <Compile Include="ScriptRuntime.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
@@ -73,13 +71,10 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Package\PackageInstaller.cs" />
     <Compile Include="Package\InstallationProvider\IInstallationProvider.cs" />
-    <Compile Include="Package\InstallationProvider\NugetInstallationProvider.cs" />
     <Compile Include="Package\IPackageContainer.cs" />
     <Compile Include="Package\IPackageInstaller.cs" />
     <Compile Include="Package\IPackageObject.cs" />
     <Compile Include="Package\IPackageReference.cs" />
-    <Compile Include="Package\PackageContainer.cs" />
-    <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="PreProcessorUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

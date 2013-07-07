@@ -96,7 +96,7 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>());
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>());
             RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>());
-            RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>());
+            RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NullInstallationProvider>().As<IInstallationProvider>());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>());
 
@@ -106,7 +106,7 @@ namespace ScriptCs
             tempBuilder.RegisterInstance<ILog>(logger);
             RegisterOverrideOrDefault<IFileSystem>(tempBuilder, b => b.RegisterType<FileSystem>().As<IFileSystem>());
             RegisterOverrideOrDefault<IAssemblyUtility>(tempBuilder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>());
-            RegisterOverrideOrDefault<IPackageContainer>(tempBuilder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>());
+            RegisterOverrideOrDefault<IPackageContainer>(tempBuilder, b => b.RegisterType<NullPackageContainer>().As<IPackageContainer>());
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(tempBuilder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>());
             RegisterOverrideOrDefault<IAssemblyResolver>(tempBuilder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>());
 
