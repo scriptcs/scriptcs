@@ -42,8 +42,10 @@ namespace ScriptCs.Command
             try
             {
                 var assemblyPaths = Enumerable.Empty<string>();
-
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                var workingDirectory = Uri.IsWellFormedUriString(_script, UriKind.Absolute)
+                    ? _fileSystem.CurrentDirectory
+                    : _fileSystem.GetWorkingDirectory(_script);
+                
                 if (workingDirectory != null)
                 {
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);

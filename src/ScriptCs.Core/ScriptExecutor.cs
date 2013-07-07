@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -53,7 +55,27 @@ namespace ScriptCs
 
         public virtual ScriptResult Execute(string script, string[] scriptArgs)
         {
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
+            string path;
+            Uri uri;
+            if (Uri.TryCreate(script, UriKind.Absolute, out uri))
+            {
+                path = Path.GetTempFileName();
+                var request = WebRequest.Create(uri);
+
+                Logger.DebugFormat("Downloading script from {0}", uri.ToString());
+                using (var response = request.GetResponse())
+                using (var responseStream = response.GetResponseStream())
+                using (var fileStream = File.OpenWrite(path))
+                {
+                    Logger.DebugFormat("Writing to temporary script file {0}", path);
+                    responseStream.CopyTo(fileStream);
+                }
+            }
+            else
+            {
+                path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
+            }
+
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
 
