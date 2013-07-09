@@ -51,7 +51,7 @@ namespace ScriptCs.Command
             var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
-            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks);
