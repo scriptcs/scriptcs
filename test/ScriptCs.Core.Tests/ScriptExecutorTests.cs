@@ -219,14 +219,53 @@ namespace ScriptCs.Tests
 
                 var destPaths = new string[] { "System", "System.Core", destinationFilePath1, destinationFilePath2, destinationFilePath3, destinationFilePath4 };
 
-                scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+                scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
+                scriptExecutor.AddReference("a");
+                scriptExecutor.AddReferences(new[]{"b", "c", "d"});
+                scriptExecutor.AddReferenceByType<FactAttribute>();
+                scriptExecutor.AddReferenceByType(typeof(TheInitializeMethod));
+                var explicitReferences = new[] { "a", "b", "c", "d", typeof(FactAttribute).Assembly.Location, typeof(TheInitializeMethod).Assembly.Location };
                 // act
-                scriptExecutor.Initialize(paths, Enumerable.Empty<IScriptPack>());
+                scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
                 scriptExecutor.Execute(scriptName);
 
                 // assert
-                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(destPaths))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldAddNamespaces()
+            {
+                // arrange
+                var defaultReferences = ScriptExecutor.DefaultReferences;
+                var fileSystem = new Mock<IFileSystem>();
+                var scriptEngine = new Mock<IScriptEngine>();
+                var preProcessor = new Mock<IFilePreProcessor>();
+                preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+
+                var scriptExecutor = CreateScriptExecutor(fileSystem, preProcessor, scriptEngine);
+
+                var currentDirectory = @"C:\";
+
+                var scriptName = "script.csx";
+
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
+
+                scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+
+                scriptExecutor.AddNamespace("a");
+                scriptExecutor.AddNamespaces(new[] { "b", "c", "d" });
+                scriptExecutor.AddNamespaceByType<FactAttribute>();
+                scriptExecutor.AddNamespaceByType(typeof(TheInitializeMethod));
+                var explicitNamespaces = new[] { "a", "b", "c", "d", typeof(FactAttribute).Namespace, typeof(TheInitializeMethod).Namespace };
+                // act
+                scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());
+                scriptExecutor.Execute(scriptName);
+
+                // assert
+                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x=>x.SequenceEqual(ScriptExecutor.DefaultNamespaces.Union(explicitNamespaces))), It.IsAny<ScriptPackSession>()), Times.Once());
             }
 
             [Fact]
