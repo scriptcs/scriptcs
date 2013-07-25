@@ -20,6 +20,17 @@ namespace ScriptCs.Command
                 return new ShowUsageCommand(_scriptServices.Logger, isValid: true);
             }
 
+            if (args.Global)
+            {
+                var currentDir = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                if (!_scriptServices.FileSystem.DirectoryExists(currentDir))
+                    _scriptServices.FileSystem.CreateDirectory(currentDir);
+                
+                _scriptServices.FileSystem.CurrentDirectory = currentDir;
+            }
+
+            _scriptServices.InstallationProvider.Initialize();
+
             if (args.Repl)
             {
                 var replCommand = new ExecuteReplCommand(
@@ -74,9 +85,13 @@ namespace ScriptCs.Command
                     _scriptServices.FileSystem,
                     _scriptServices.PackageAssemblyResolver,
                     _scriptServices.PackageInstaller,
-                    _scriptServices.Logger);
+                    _scriptServices.Logger
+                    );
 
-                var currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
+                string currentDirectory = null;
+
+                currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
+
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
 
                 if (!_scriptServices.FileSystem.FileExists(packageFile))
@@ -91,6 +106,14 @@ namespace ScriptCs.Command
             if (args.Clean)
             {
                 var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
+
+                if (args.Global)
+                {
+                    var currentDirectory = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                    _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
+                    if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
+                        _scriptServices.FileSystem.CreateDirectory(currentDirectory);
+                }
 
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,

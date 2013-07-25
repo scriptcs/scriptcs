@@ -73,6 +73,7 @@
     <Compile Include="Command\SaveCommand.cs" />
     <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
+    <Compile Include="ModuleAttribute.cs" />
     <Compile Include="ScriptCsArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
