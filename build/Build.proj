@@ -80,6 +80,7 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.NuGet\ScriptCs.NuGet.csproj" />
     </ItemGroup>
 
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />

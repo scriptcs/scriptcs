@@ -101,6 +101,10 @@
       <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
       <Name>ScriptCs.Engine.Roslyn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.NuGet\ScriptCs.NuGet.csproj">
+      <Project>{a864bdbb-0d4f-4db0-960a-27aff62fca1b}</Project>
+      <Name>ScriptCs.NuGet</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\common\Icon.ico">
