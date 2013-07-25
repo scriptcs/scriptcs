@@ -56,7 +56,7 @@ namespace ScriptCs.Hosting.Tests
                 loader.Load(null, null, "ext1", false, false);
                 _mockModule1.Verify(m=>m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Once());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
-                _mockModule3.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
+                _mockModule3.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());g
             }
 
             [Fact]

@@ -23,11 +23,10 @@ namespace ScriptCs.Command
             if (args.Global)
             {
                 var currentDir = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
-                _scriptServices.FileSystem.CurrentDirectory = currentDir;
-
                 if (!_scriptServices.FileSystem.DirectoryExists(currentDir))
                     _scriptServices.FileSystem.CreateDirectory(currentDir);
-
+                
+                _scriptServices.FileSystem.CurrentDirectory = currentDir;
             }
 
             _scriptServices.InstallationProvider.Initialize();
