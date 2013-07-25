@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="IScriptContainerFactory.cs" />
+    <Compile Include="ScriptContainerFactory.cs" />
     <Compile Include="ScriptRuntime.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />

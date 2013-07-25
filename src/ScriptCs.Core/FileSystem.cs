@@ -49,6 +49,7 @@ namespace ScriptCs
         public string CurrentDirectory
         {
             get { return Environment.CurrentDirectory; }
+            set { Environment.CurrentDirectory = value; }
         }
 
         public string NewLine
@@ -91,6 +92,11 @@ namespace ScriptCs
         public Stream CreateFileStream(string filePath, FileMode mode)
         {
             return new FileStream(filePath, mode);
+        }
+
+        public string LocalApplicationData
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); }
         }
 
         public string GetWorkingDirectory(string path)

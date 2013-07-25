@@ -8,9 +8,9 @@ namespace ScriptCs.Package.InstallationProvider
 {
     public class NugetInstallationProvider : IInstallationProvider
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly PackageManager _manager;
-        private readonly IEnumerable<string> _repositoryUrls;
+        private IFileSystem _fileSystem;
+        private PackageManager _manager;
+        private IEnumerable<string> _repositoryUrls;
 
         private static readonly Version EmptyVersion = new Version();
 
@@ -19,7 +19,11 @@ namespace ScriptCs.Package.InstallationProvider
             Guard.AgainstNullArgument("fileSystem", fileSystem);
 
             _fileSystem = fileSystem;
-            var path = Path.Combine(fileSystem.CurrentDirectory, Constants.PackagesFolder);
+        }
+
+        public void Initialize()
+        {
+            var path = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
             var remoteRepository = new AggregateRepository(PackageRepositoryFactory.Default, _repositoryUrls, true);
             _manager = new PackageManager(remoteRepository, path);

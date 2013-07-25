@@ -9,7 +9,7 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public class ScriptRuntimeBuilder
+    public class ScriptRuntimeBuilder : IScriptRuntimeBuilder
     {
         private bool _debug = false;
         private bool _repl = false;
@@ -39,102 +39,105 @@ namespace ScriptCs
             }
 
             var loggerConfigurator = new LoggerConfigurator(_logLevel);
-
-            var runtime = new ScriptRuntime(_scriptName, _repl, loggerConfigurator, new ScriptConsole(), _scriptExecutorType, _scriptEngineType, _overrides);
+            var console = new ScriptConsole();
+            loggerConfigurator.Configure(console);
+            var initDirectoryCatalog = _scriptName != null || _repl;
+            var factory = new ScriptContainerFactory(loggerConfigurator.GetLogger(), console, _scriptEngineType, _scriptExecutorType, initDirectoryCatalog, _overrides);
+            var runtime = new ScriptRuntime(factory);
             return runtime;
         }
 
-        public ScriptRuntimeBuilder Debug(bool debug = true)
+        public IScriptRuntimeBuilder Debug(bool debug = true)
         {
             _debug = debug;
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptName(string name)
+        public IScriptRuntimeBuilder ScriptName(string name)
         {
             _scriptName = name;
             return this;
         }
 
-        public ScriptRuntimeBuilder Repl(bool repl = true)
+        public IScriptRuntimeBuilder Repl(bool repl = true)
         {
             _repl = repl;
             return this;
         }
 
-        public ScriptRuntimeBuilder LogLevel(LogLevel level)
+        public IScriptRuntimeBuilder LogLevel(LogLevel level)
         {
             _logLevel = level;
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptExecutor<T>() where T : IScriptExecutor
+        public IScriptRuntimeBuilder ScriptExecutor<T>() where T : IScriptExecutor
         {
             _scriptExecutorType = typeof (T);
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptEngine<T>() where T : IScriptEngine
+        public IScriptRuntimeBuilder ScriptEngine<T>() where T : IScriptEngine
         {
             _scriptEngineType = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptHostFactory<T>() where T : IScriptHostFactory
+        public IScriptRuntimeBuilder ScriptHostFactory<T>() where T : IScriptHostFactory
         {
             _overrides[typeof(IScriptHostFactory)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptPackManager<T>() where T : IScriptPackManager
+        public IScriptRuntimeBuilder ScriptPackManager<T>() where T : IScriptPackManager
         {
             _overrides[typeof(IScriptPackManager)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder ScriptPackResolver<T>() where T : IScriptPackResolver
+        public IScriptRuntimeBuilder ScriptPackResolver<T>() where T : IScriptPackResolver
         {
             _overrides[typeof(IScriptPackResolver)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder InstallationProvider<T>() where T : IInstallationProvider
+        public IScriptRuntimeBuilder InstallationProvider<T>() where T : IInstallationProvider
         {
             _overrides[typeof(IInstallationProvider)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder FileSystem<T>() where T : IFileSystem
+        public IScriptRuntimeBuilder FileSystem<T>() where T : IFileSystem
         {
             _overrides[typeof(IFileSystem)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder AssemblyUtility<T>() where T : IAssemblyUtility
+        public IScriptRuntimeBuilder AssemblyUtility<T>() where T : IAssemblyUtility
         {
             _overrides[typeof(IAssemblyUtility)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder PackageContainer<T>() where T : IPackageContainer
+        public IScriptRuntimeBuilder PackageContainer<T>() where T : IPackageContainer
         {
             _overrides[typeof(IPackageContainer)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder FilePreProcessor<T>() where T : IFilePreProcessor
+        public IScriptRuntimeBuilder FilePreProcessor<T>() where T : IFilePreProcessor
         {
             _overrides[typeof(IFilePreProcessor)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder PackageAssemblyResolver<T>() where T : IPackageAssemblyResolver
+        public IScriptRuntimeBuilder PackageAssemblyResolver<T>() where T : IPackageAssemblyResolver
         {
             _overrides[typeof(IPackageAssemblyResolver)] = typeof(T);
             return this;
         }
 
-        public ScriptRuntimeBuilder AssemblyResolver<T>() where T : IFilePreProcessor
+        public IScriptRuntimeBuilder AssemblyResolver<T>() where T : IFilePreProcessor
         {
             _overrides[typeof(IAssemblyResolver)] = typeof(T);
             return this;
