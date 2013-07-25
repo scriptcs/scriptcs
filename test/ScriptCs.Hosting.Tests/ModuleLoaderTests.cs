@@ -57,13 +57,6 @@ namespace ScriptCs.Hosting.Tests
                 _mockModule1.Verify(m=>m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Once());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
                 _mockModule3.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
-
-                loader = new ModuleLoader(_mockAssemblyResolver.Object, (p, c) => _paths.Add(p), _getModules);
-                loader.Load(null, null, "ext3", false, false);
-                _mockModule1.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
-                _mockModule2.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Once());
-                _mockModule3.Verify(m => m.Initialize(It.IsAny<IScriptRuntimeBuilder>(), false, false), Times.Never());
-
             }
 
             [Fact]

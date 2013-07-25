@@ -20,6 +20,18 @@ namespace ScriptCs.Command
                 return new ShowUsageCommand(_scriptServices.Logger, isValid: true);
             }
 
+            if (args.Global)
+            {
+                var currentDir = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                _scriptServices.FileSystem.CurrentDirectory = currentDir;
+
+                if (!_scriptServices.FileSystem.DirectoryExists(currentDir))
+                    _scriptServices.FileSystem.CreateDirectory(currentDir);
+
+            }
+
+            _scriptServices.InstallationProvider.Initialize();
+
             if (args.Repl)
             {
                 var replCommand = new ExecuteReplCommand(
@@ -79,17 +91,8 @@ namespace ScriptCs.Command
 
                 string currentDirectory = null;
 
-                if (args.Global)
-                {
-                    currentDirectory = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
-                    _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
-                    if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
-                        _scriptServices.FileSystem.CreateDirectory(currentDirectory);
-                }
-                else
-                    currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
+                currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
 
-                _scriptServices.InstallationProvider.Initialize();
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
 
                 if (!_scriptServices.FileSystem.FileExists(packageFile))

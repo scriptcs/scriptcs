@@ -11,7 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Moq">
-      <HintPath>..\ScriptCs.Tests\bin\Debug\Moq.dll</HintPath>
+      <HintPath>..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Should">
       <HintPath>..\..\packages\Should.1.1.12.0\lib\Should.dll</HintPath>
