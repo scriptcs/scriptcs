@@ -2,6 +2,7 @@ using System.ComponentModel.Composition;
 
 namespace ScriptCs.Hosting
 {
+    [MetadataAttribute]
     public class ModuleAttribute : ExportAttribute, IModuleMetadata
     {
         public ModuleAttribute(string name) : base(typeof (IModule))
