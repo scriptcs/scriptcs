@@ -78,7 +78,7 @@ namespace ScriptCs
 
         public IEnumerable<string> SplitLines(string value)
         {
-            return value.Split(new[] { NewLine }, StringSplitOptions.None);
+            return value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
         }
 
         public Stream CreateFileStream(string filePath, FileMode mode)
