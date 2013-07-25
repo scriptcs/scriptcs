@@ -39,8 +39,10 @@ namespace ScriptCs
             }
 
             var loggerConfigurator = new LoggerConfigurator(_logLevel);
-            var initDirectoryCatalog = _scriptName.Length > 0 || _repl;
-            var factory = new ScriptContainerFactory(loggerConfigurator.GetLogger(), new ScriptConsole(), _scriptEngineType, _scriptExecutorType, initDirectoryCatalog, _overrides);
+            var console = new ScriptConsole();
+            loggerConfigurator.Configure(console);
+            var initDirectoryCatalog = _scriptName != null || _repl;
+            var factory = new ScriptContainerFactory(loggerConfigurator.GetLogger(), console, _scriptEngineType, _scriptExecutorType, initDirectoryCatalog, _overrides);
             var runtime = new ScriptRuntime(factory);
             return runtime;
         }

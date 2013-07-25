@@ -74,9 +74,22 @@ namespace ScriptCs.Command
                     _scriptServices.FileSystem,
                     _scriptServices.PackageAssemblyResolver,
                     _scriptServices.PackageInstaller,
-                    _scriptServices.Logger);
+                    _scriptServices.Logger
+                    );
 
-                var currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
+                string currentDirectory = null;
+
+                if (args.Global)
+                {
+                    currentDirectory = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                    _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
+                    if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
+                        _scriptServices.FileSystem.CreateDirectory(currentDirectory);
+                }
+                else
+                    currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
+
+                _scriptServices.InstallationProvider.Initialize();
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
 
                 if (!_scriptServices.FileSystem.FileExists(packageFile))
@@ -91,6 +104,14 @@ namespace ScriptCs.Command
             if (args.Clean)
             {
                 var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
+
+                if (args.Global)
+                {
+                    var currentDirectory = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                    _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
+                    if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
+                        _scriptServices.FileSystem.CreateDirectory(currentDirectory);
+                }
 
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,

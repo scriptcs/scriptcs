@@ -26,7 +26,7 @@ namespace ScriptCs
 
         string GetFullPath(string path);
 
-        string CurrentDirectory { get; }
+        string CurrentDirectory { get; set; }
 
         string NewLine { get; }
 
@@ -43,5 +43,7 @@ namespace ScriptCs
         void WriteToFile(string path, string text);
         
         Stream CreateFileStream(string filePath, FileMode mode);
+
+        string LocalApplicationData { get; }
     }
 }

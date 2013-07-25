@@ -34,6 +34,11 @@ namespace ScriptCs
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
 
+        [ArgShortcut("g")]
+        [ArgDescription("Installs and restores global packages which are specified in packages.config")]
+        public bool Global { get; set; }
+
+
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
