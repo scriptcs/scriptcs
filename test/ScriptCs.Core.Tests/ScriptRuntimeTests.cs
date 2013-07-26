@@ -21,7 +21,7 @@ namespace ScriptCs.Tests
         {
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private ScriptServices _scriptServices = new ScriptServices(null, null, null, null,null,null,null,null,null,null);
-            private Mock<IScriptContainerFactory> _mockFactory = new Mock<IScriptContainerFactory>();
+            private Mock<IRuntimeContainerFactory> _mockFactory = new Mock<IRuntimeContainerFactory>();
             private ScriptRuntime _runtime = null;
 
             public TheInitializeMethod()
@@ -30,7 +30,7 @@ namespace ScriptCs.Tests
                 builder.RegisterInstance<ILog>(_mockLogger.Object);
                 builder.RegisterInstance<ScriptServices>(_scriptServices);
                 var container = builder.Build();
-                _mockFactory.SetupGet(f => f.RuntimeContainer).Returns(container);
+                _mockFactory.SetupGet(f => f.Container).Returns(container);
                 _runtime = new ScriptRuntime(_mockFactory.Object);
             }
 

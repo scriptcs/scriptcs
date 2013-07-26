@@ -44,7 +44,9 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
-    <Compile Include="IScriptContainerFactory.cs" />
+    <Compile Include="InitializationContainerFactory.cs" />
+    <Compile Include="IRuntimeContainerFactory.cs" />
+    <Compile Include="RuntimeContainerFactory.cs" />
     <Compile Include="ScriptContainerFactory.cs" />
     <Compile Include="ScriptRuntime.cs" />
     <Compile Include="DebugScriptExecutor.cs" />

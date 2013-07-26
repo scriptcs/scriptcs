@@ -1,6 +1,6 @@
 using System.ComponentModel.Composition;
 
-namespace ScriptCs.Hosting
+namespace ScriptCs
 {
     [MetadataAttribute]
     public class ModuleAttribute : ExportAttribute, IModuleMetadata

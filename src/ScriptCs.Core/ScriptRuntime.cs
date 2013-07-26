@@ -15,15 +15,17 @@ namespace ScriptCs
 {
     public class ScriptRuntime
     {
+        /*
         public ScriptRuntime(ILog logger, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IDictionary<Type, object> overrides)
-            : this(new ScriptContainerFactory(logger, console, scriptEngineType, scriptExecutorType, initDirectoryCatalog, overrides))
+            : this(new RuntimeContainerFactory(logger, console, scriptEngineType, scriptExecutorType, initDirectoryCatalog))
         {
             
         }
-
-        public ScriptRuntime(IScriptContainerFactory containerFactory)
+        */
+         
+        public ScriptRuntime(IRuntimeContainerFactory containerFactory)
         {
-            var container = containerFactory.RuntimeContainer;
+            var container = containerFactory.Container;
             ScriptServices = container.Resolve<ScriptServices>();
             Logger = container.Resolve<ILog>();
         }

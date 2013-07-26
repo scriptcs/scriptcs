@@ -22,10 +22,6 @@ namespace ScriptCs
                 ScriptName(commandArgs.ScriptName).
                 Repl(commandArgs.Repl);
 
-            var containerBuilder = new ContainerBuilder();
-            
-
-
             var runtime = runtimeBuilder.Build();
 
             var logger = runtime.Logger;
