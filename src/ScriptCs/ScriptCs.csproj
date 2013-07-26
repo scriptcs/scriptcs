@@ -36,26 +36,57 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Autofac.3.0.2\lib\net40\Autofac.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Autofac.Integration.Mef">
+    <Reference Include="Autofac.Integration.Mef, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Autofac.Mef.3.0.1\lib\net40\Autofac.Integration.Mef.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging">
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging.Log4Net">
+    <Reference Include="Common.Logging.Log4Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.Log4Net.2.0.1\lib\net20\Common.Logging.Log4Net.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="NuGet.Core, Version=2.2.31210.9045, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NuGet.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
+    </Reference>
     <Reference Include="PowerArgs, Version=1.6.0.0, Culture=neutral, PublicKeyToken=54832990a0812961, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\PowerArgs.1.6.0.0\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.45.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
+    </Reference>
+    <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Contracts, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Text.3.9.47\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\packages\ScriptCs.Contracts.0.6.0-alpha\lib\net45\ScriptCs.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Core, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ScriptCs.Core.0.6.0-alpha\lib\net45\ScriptCs.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Engine.Roslyn, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ScriptCs.Engine.Roslyn.0.6.0-alpha\lib\net45\ScriptCs.Engine.Roslyn.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptCs.Hosting, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ScriptCs.Hosting.0.6.0-alpha\lib\net45\ScriptCs.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.56.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.56\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -107,24 +138,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
-      <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
-      <Name>ScriptCs.Hosting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
-      <Project>{6049e205-8b5f-4080-b023-70600e51fd64}</Project>
-      <Name>ScriptCs.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Core\ScriptCs.Core.csproj">
-      <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
-      <Name>ScriptCs.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
-      <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
-      <Name>ScriptCs.Engine.Roslyn</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\common\Icon.ico">
