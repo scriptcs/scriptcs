@@ -46,14 +46,10 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
-            var initializationContainer = _initializationContainerFactory.Container;
-            var assemblyResolver = initializationContainer.Resolve<IAssemblyResolver>();
 
-            builder.RegisterInstance(initializationContainer.Resolve<IFileSystem>()).As<IFileSystem>();
-            builder.RegisterInstance(initializationContainer.Resolve<IAssemblyUtility>()).As<IAssemblyUtility>();
-            builder.RegisterInstance(initializationContainer.Resolve<IPackageContainer>()).As<IPackageContainer>();
-            builder.RegisterInstance(initializationContainer.Resolve<IPackageAssemblyResolver>()).As<IPackageAssemblyResolver>();
-            builder.RegisterInstance(assemblyResolver).As<IAssemblyResolver>();
+            _initializationContainerFactory.RegisterServices(builder);
+
+            var assemblyResolver = _initializationContainerFactory.GetAssemblyResolver();
 
             if (_initDirectoryCatalog)
             {

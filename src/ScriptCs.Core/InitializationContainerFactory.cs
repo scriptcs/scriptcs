@@ -11,7 +11,8 @@ namespace ScriptCs
 {
     public interface IInitializationContainerFactory
     {
-        IContainer Container { get; }
+        IAssemblyResolver GetAssemblyResolver();
+        void RegisterServices(ContainerBuilder builder);
     }
 
     public class InitializationContainerFactory : ScriptContainerFactory, IInitializationContainerFactory
@@ -20,6 +21,8 @@ namespace ScriptCs
             : base(logger, overrides)
         {
         }
+
+
 
         protected override IContainer CreateContainer()
         {
@@ -31,6 +34,23 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyResolver>(builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
             return builder.Build();
+        }
+
+        public IAssemblyResolver GetAssemblyResolver()
+        {
+            return Container.Resolve<IAssemblyResolver>();
+        }
+
+        public void RegisterServices(ContainerBuilder builder)
+        {
+            var initializationContainer = Container;
+
+            builder.RegisterInstance(initializationContainer.Resolve<IFileSystem>()).As<IFileSystem>();
+            builder.RegisterInstance(initializationContainer.Resolve<IAssemblyUtility>()).As<IAssemblyUtility>();
+            builder.RegisterInstance(initializationContainer.Resolve<IPackageContainer>()).As<IPackageContainer>();
+            builder.RegisterInstance(initializationContainer.Resolve<IPackageAssemblyResolver>()).As<IPackageAssemblyResolver>();
+            builder.RegisterInstance(initializationContainer.Resolve<IAssemblyResolver>()).As<IAssemblyResolver>();
+
         }
     }
 }
