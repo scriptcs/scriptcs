@@ -35,10 +35,8 @@
 
   <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
 
-  <Target Name="Clean">
-    <MSBuild Projects="$(Root)ScriptCs.sln" Targets="Clean" />
-    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') "/>
-    <MakeDir Directories="$(ArtifactsPath)" />
+  <Target Name="Clean" DependsOnTargets="_CleanSolution; _CleanArtifacts">
+    <MakeDir Directories="$(ArtifactsPath)" Condition=" !Exists('$(ArtifactsPath)') " />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages; UpdateProjectVersions">
@@ -100,5 +98,26 @@
     
     <MSBuild Projects="$(NuGetProjectPath)" Targets="RestorePackages"
              Properties="SolutionDir=$(Root); RestorePackages=true; PackagesConfig=$(BaseArtifactsPath)packages.config" />
+  </Target>
+
+  <Target Name="_CleanSolution">
+    <MSBuild Projects="@(Solution)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  
+  <Target Name="_CleanArtifacts">
+    <ItemGroup>
+      <ArtifactsToDelete Include="$(ArtifactsPath)**\*" />
+    </ItemGroup>
+    
+    <Delete Files="@(ArtifactsToDelete)" />
+    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') " ContinueOnError="true"/>
+  </Target>
+
+  <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
+    <ItemGroup>
+      <FilesToCopy Include="$(Root)src\**\bin\$(Configuration)\*"/>
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
   </Target>
 </Project>
