@@ -12,7 +12,10 @@
     <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
     <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
     <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
-    <NuGetExePath>$(Root).nuget\nuget.exe</NuGetExePath>
+    
+    <NuGetPath>$(Root).nuget\</NuGetPath>
+    <NuGetExePath>$(NuGetPath)NuGet.exe</NuGetExePath>
+    <NuGetProjectPath>$(NuGetPath)NuGet.targets</NuGetProjectPath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
@@ -21,7 +24,8 @@
     <Solution Include="$(Root)*.sln">
       <AdditionalProperties>
         Configuration=$(Configuration);
-        ArtifactsPath=$(ArtifactsPath)
+        ArtifactsPath=$(ArtifactsPath);
+        RestorePackages=false
       </AdditionalProperties>
     </Solution>
 
@@ -37,7 +41,7 @@
     <MakeDir Directories="$(ArtifactsPath)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="UpdateProjectVersions">
+  <Target Name="Build" DependsOnTargets="RestorePackages; UpdateProjectVersions">
     <MSBuild Projects="@(Solution)" Targets="Build">
       <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
     </MSBuild>
@@ -83,5 +87,18 @@
     </ItemGroup>
 
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
+  </Target>
+
+  <Target Name="RestorePackages">
+    <Message Text="Restoring NuGet packages..." Importance="high" />
+    
+    <ItemGroup>
+      <PackageConfigs Include="$(Root)**\packages.config" Exclude="$(BaseArtifactsPath)**\packages.config" />
+    </ItemGroup>
+
+    <CombinePackageConfigs PackageConfigFiles="@(PackageConfigs)" OutputPath="$(BaseArtifactsPath)packages.config" />
+    
+    <MSBuild Projects="$(NuGetProjectPath)" Targets="RestorePackages"
+             Properties="SolutionDir=$(Root); RestorePackages=true; PackagesConfig=$(BaseArtifactsPath)packages.config" />
   </Target>
 </Project>
