@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using Should;
 using Xunit;
@@ -78,6 +79,21 @@ namespace ScriptCs.Tests
                 const string nonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
 
                 _fileSystem.GetWorkingDirectory(nonExistantFilePath).ShouldEqual(@"C:\working_dir");
+            }
+        }
+
+        public class SplitLinesMethod
+        {
+            private readonly FileSystem _fileSystem = new FileSystem();
+
+            [Fact]
+            public void ReturnsCorrectLines()
+            {
+                var fileContentsLin = "using System;\nusing System.IO;";
+                var fileContentsWin = "using System;\r\nusing System.IO;";
+
+                _fileSystem.SplitLines(fileContentsLin).Count().ShouldEqual(2);
+                _fileSystem.SplitLines(fileContentsWin).Count().ShouldEqual(2);
             }
         }
     }
