@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using Autofac;
 using PowerArgs;
 using ScriptCs.Command;
 using System.Linq;
+using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs
@@ -15,19 +17,19 @@ namespace ScriptCs
             ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
  
             var commandArgs = ParseArguments(args);
-
-            var runtimeBuilder = new ScriptRuntimeBuilder().
+            var configurator = new LoggerConfigurator(commandArgs.LogLevel);
+            var console = new ScriptConsole();
+            configurator.Configure(console);
+            var logger = configurator.GetLogger();
+ 
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)   .
                 Debug(commandArgs.Debug).
                 LogLevel(commandArgs.LogLevel).
                 ScriptName(commandArgs.ScriptName).
                 Repl(commandArgs.Repl);
-
-            var runtime = runtimeBuilder.Build();
-
-            var logger = runtime.Logger;
-            logger.Debug("Creating ScriptServices");
-           
-            var scriptServiceRoot = runtime.ScriptServices;
+            
+            scriptServicesBuilder.LoadModules(Path.GetExtension(commandArgs.ScriptName), commandArgs.Modules);
+            var scriptServiceRoot = scriptServicesBuilder.Build();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);

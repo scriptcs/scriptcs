@@ -6,24 +6,27 @@ using System.ComponentModel.Composition.Primitives;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
 
 namespace ScriptCs
 {
-    public class ModuleLoader
+    public class ModuleLoader : IModuleLoader
     {
         private readonly IAssemblyResolver _resolver;
+        private readonly ILog _logger;
         private readonly Action<string, AggregateCatalog> _addToCatalog;
         private readonly Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> _getModules;
 
         [ImportingConstructor]
-        public ModuleLoader(IAssemblyResolver resolver) :
-            this(resolver, null, null)
+        public ModuleLoader(IAssemblyResolver resolver, ILog logger) :
+            this(resolver, logger, null, null)
         {         
         }
 
-        public ModuleLoader(IAssemblyResolver resolver, Action<string, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getModules)
+        public ModuleLoader(IAssemblyResolver resolver, ILog logger, Action<string, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getModules)
         {
             _resolver = resolver;
+            _logger = logger;
             if (addToCatalog == null)
                 addToCatalog = (p, catalog) => catalog.Catalogs.Add(new AssemblyCatalog(p));
 
@@ -36,9 +39,12 @@ namespace ScriptCs
 
         }
 
-        public void Load(IScriptRuntimeBuilder builder, string modulePackagesPath, string extension, bool repl, bool debug, params string[] moduleNames)
+        public void Load(IModuleConfiguration config, string modulePackagesPath, string extension, params string[] moduleNames)
         {
+            _logger.Debug("Loading modules from: " + modulePackagesPath);
             var paths = _resolver.GetAssemblyPaths(modulePackagesPath);
+            _logger.Debug("Discovered the following package binaries:");
+            _logger.Debug(paths);
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
             {
@@ -52,10 +58,13 @@ namespace ScriptCs
                     (extension != null && m.Metadata.Extensions != null && (m.Metadata.Extensions.Equals(extension) || m.Metadata.Extensions.Split(',').Contains(extension))))
                 .Select(m => m.Value);
 
+            _logger.Debug("Initializing modules");
             foreach (var module in modules)
             {
-                module.Initialize(builder, repl, debug);
+                _logger.Debug(string.Format("Initializing module:{0}", module.GetType().FullName));
+                module.Initialize(config);
             }
+            _logger.Debug("Modules initialized");
         }
     }
 }

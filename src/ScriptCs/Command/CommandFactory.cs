@@ -22,7 +22,7 @@ namespace ScriptCs.Command
 
             if (args.Global)
             {
-                var currentDir = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                var currentDir = _scriptServices.FileSystem.ModulesFolder;
                 if (!_scriptServices.FileSystem.DirectoryExists(currentDir))
                     _scriptServices.FileSystem.CreateDirectory(currentDir);
                 
@@ -109,7 +109,7 @@ namespace ScriptCs.Command
 
                 if (args.Global)
                 {
-                    var currentDirectory = Path.Combine(_scriptServices.FileSystem.LocalApplicationData, "scriptcs");
+                    var currentDirectory = _scriptServices.FileSystem.ModulesFolder;
                     _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
                     if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
                         _scriptServices.FileSystem.CreateDirectory(currentDirectory);

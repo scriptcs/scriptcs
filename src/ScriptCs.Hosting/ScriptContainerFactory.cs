@@ -21,12 +21,16 @@ namespace ScriptCs
 
         public ScriptContainerFactory(ILog logger, IDictionary<Type, object> overrides)
         {
+            if (overrides == null)
+                overrides = new Dictionary<Type, object>();
+
             _overrides = overrides;
             _logger = logger;
         }
 
         protected void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)
         {
+            _logger.Debug(string.Format("Registering {0}", typeof(T)));
             if (_overrides.ContainsKey(typeof(T)))
             {
                 var reg = _overrides[typeof(T)];

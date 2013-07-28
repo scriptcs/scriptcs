@@ -15,35 +15,26 @@ using Should;
 
 namespace ScriptCs.Tests
 {
-    public class ScriptRuntimeTests
+    public class ScriptServicesBuilderTests
     {
-        public class TheInitializeMethod
+        public class TheBuildMethod
         {
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private ScriptServices _scriptServices = new ScriptServices(null, null, null, null,null,null,null,null,null,null);
             private Mock<IRuntimeContainerFactory> _mockFactory = new Mock<IRuntimeContainerFactory>();
-            private ScriptRuntime _runtime = null;
+            private Mock<IConsole> _mockConsole = new Mock<IConsole>();
+            private ScriptServicesBuilder _builder = null;
 
-            public TheInitializeMethod()
+            public void TheScriptServicesProperty()
             {
-                var builder = new ContainerBuilder();
-                builder.RegisterInstance<ILog>(_mockLogger.Object);
-                builder.RegisterInstance<ScriptServices>(_scriptServices);
-                var container = builder.Build();
-                _mockFactory.SetupGet(f => f.Container).Returns(container);
-                _runtime = new ScriptRuntime(_mockFactory.Object);
-            }
-
-            [Fact]
-            public void ShouldResolveLogger()
-            {
-                _runtime.Logger.ShouldEqual(_mockLogger.Object);
+                _mockFactory.Setup(f => f.GetScriptServices()).Returns(_scriptServices);
+                _builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object, _mockFactory.Object);
             }
 
             [Fact]
             public void ShouldResolveScriptServices()
             {
-                _runtime.ScriptServices.ShouldEqual(_scriptServices);
+                _builder.Build().ShouldEqual(_scriptServices);
 
             }
 

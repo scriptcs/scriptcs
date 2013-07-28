@@ -28,7 +28,7 @@ namespace ScriptCs.Tests
             private Type _scriptEngineType = null;
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
-            private IRuntimeContainerFactory _runtimeContainerFactory = null;
+            private RuntimeContainerFactory _runtimeContainerFactory = null;
 
             public TheCreateRuntimeContainerMethod()
             {

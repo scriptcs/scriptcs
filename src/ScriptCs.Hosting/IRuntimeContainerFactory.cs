@@ -4,6 +4,6 @@ namespace ScriptCs
 {
     public interface IRuntimeContainerFactory
     {
-        IContainer Container { get; }
+        ScriptServices GetScriptServices();
     }
 }

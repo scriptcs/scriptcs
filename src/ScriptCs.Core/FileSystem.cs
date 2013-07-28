@@ -94,9 +94,11 @@ namespace ScriptCs
             return new FileStream(filePath, mode);
         }
 
-        public string LocalApplicationData
+        public string ModulesFolder
         {
-            get { return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); }
+            get {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
+            }
         }
 
         public string GetWorkingDirectory(string path)
