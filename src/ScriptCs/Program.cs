@@ -29,8 +29,11 @@ namespace ScriptCs
                 Repl(commandArgs.Repl);
 
             var modules = GetModuleList(commandArgs.Modules);
+            var extension = Path.GetExtension(commandArgs.ScriptName);
+            if (extension != null)
+                extension = extension.Substring(1);
 
-            scriptServicesBuilder.LoadModules(Path.GetExtension(commandArgs.ScriptName), modules);
+            scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
@@ -66,9 +69,9 @@ namespace ScriptCs
             try
             {
                 var scriptcsArgs = Args.Parse<ScriptCsArgs>(args);
-                
+
                 //if there is only 1 arg and it is a loglevel, it's also REPL
-                if (scriptcsArgs.ScriptName == null)
+                if (scriptcsArgs.ScriptName == null && scriptcsArgs.Install == null && !scriptcsArgs.Clean && !scriptcsArgs.Help && !scriptcsArgs.Version)
                 {
                     scriptcsArgs.Repl = true;
                 }
