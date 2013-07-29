@@ -33,16 +33,11 @@ namespace ScriptCs
 
         public ScriptServices Build()
         {
-            if (_debug)
-            {
-                _scriptExecutorType = (Type) _overrides[typeof (IScriptExecutor)] ?? typeof (DebugScriptExecutor);
-                _scriptEngineType = (Type) _overrides[typeof (IScriptEngine)] ?? typeof (RoslynScriptDebuggerEngine);
-            }
-            else
-            {
-                _scriptExecutorType = (Type)_overrides[typeof(IScriptExecutor)] ?? typeof(ScriptExecutor);
-                _scriptEngineType = (Type)_overrides[typeof(IScriptEngine)] ?? typeof(RoslynScriptEngine);
-            }
+            var defaultExecutorType = _debug ? typeof (DebugScriptExecutor) : typeof (ScriptExecutor);
+            var defaultEngineType = _debug ? typeof (RoslynScriptDebuggerEngine) : typeof (RoslynScriptEngine);
+
+            _scriptExecutorType = _overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)_overrides[typeof(IScriptExecutor)] : defaultExecutorType;
+            _scriptEngineType = _overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) _overrides[typeof(IScriptEngine)] : defaultEngineType;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 

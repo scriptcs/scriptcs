@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
             private Mock<IConsole> _mockConsole = new Mock<IConsole>();
             private ScriptServicesBuilder _builder = null;
 
-            public void TheScriptServicesProperty()
+            public TheBuildMethod()
             {
                 _mockFactory.Setup(f => f.GetScriptServices()).Returns(_scriptServices);
                 _builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object, _mockFactory.Object);

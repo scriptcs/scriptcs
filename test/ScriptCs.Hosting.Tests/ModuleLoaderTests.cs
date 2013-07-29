@@ -65,7 +65,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldInitializeModulesTheMatchBasedOnName()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
-                loader.Load(null, null, "module3");
+                loader.Load(null, null, null, "module3");
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule3.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
