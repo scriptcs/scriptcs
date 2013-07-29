@@ -39,7 +39,7 @@
     
     <PropertyGroup>
         <!-- NuGet command -->
-        <NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)\nuget.exe</NuGetExePath>
+        <NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)\NuGet.exe</NuGetExePath>
         <PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
         
         <NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
@@ -48,9 +48,11 @@
         <PackageOutputDir Condition="$(PackageOutputDir) == ''">$(TargetDir.Trim('\\'))</PackageOutputDir>
         
         <RequireConsentSwitch Condition=" $(RequireRestoreConsent) == 'true' ">-RequireConsent</RequireConsentSwitch>
+        <NonInteractiveSwitch Condition=" '$(VisualStudioVersion)' != '' AND '$(OS)' == 'Windows_NT' ">-NonInteractive</NonInteractiveSwitch>
+        
         <!-- Commands -->
-        <RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(RequireConsentSwitch) -solutionDir "$(SolutionDir) "</RestoreCommand>
-        <BuildCommand>$(NuGetCommand) pack "$(ProjectPath)" -p Configuration=$(Configuration) -o "$(PackageOutputDir)" -symbols</BuildCommand>
+        <RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDir "$(SolutionDir) " </RestoreCommand>
+        <BuildCommand>$(NuGetCommand) pack "$(ProjectPath)" -Properties Configuration=$(Configuration) $(NonInteractiveSwitch) -OutputDirectory "$(PackageOutputDir)" -symbols</BuildCommand>
 
         <!-- We need to ensure packages are restored prior to assembly resolve -->
         <BuildDependsOn Condition="$(RestorePackages) == 'true'">
@@ -68,13 +70,12 @@
     <Target Name="CheckPrerequisites">
         <!-- Raise an error if we're unable to locate nuget.exe  -->
         <Error Condition="'$(DownloadNuGetExe)' != 'true' AND !Exists('$(NuGetExePath)')" Text="Unable to locate '$(NuGetExePath)'" />
-        <SetEnvironmentVariable EnvKey="VisualStudioVersion" EnvValue="$(VisualStudioVersion)" Condition=" '$(VisualStudioVersion)' != '' AND '$(OS)' == 'Windows_NT' " />
         <!--
         Take advantage of MsBuild's build dependency tracking to make sure that we only ever download nuget.exe once.
         This effectively acts as a lock that makes sure that the download operation will only happen once and all
         parallel builds will have to wait for it to complete.
         -->
-        <MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT" />
+        <MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;DownloadNuGetExe=$(DownloadNuGetExe)" />
     </Target>
 
     <Target Name="_DownloadNuGet">
@@ -124,25 +125,6 @@
                 catch (Exception ex) {
                     Log.LogErrorFromException(ex);
                     return false;
-                }
-            ]]>
-            </Code>
-        </Task>
-    </UsingTask>
-    
-     <UsingTask TaskName="SetEnvironmentVariable" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-        <ParameterGroup>
-            <EnvKey ParameterType="System.String" Required="true" />
-            <EnvValue ParameterType="System.String" Required="true" />
-        </ParameterGroup>
-        <Task>
-            <Using Namespace="System" />
-            <Code Type="Fragment" Language="cs">
-                <![CDATA[
-                try {
-                    Environment.SetEnvironmentVariable(EnvKey, EnvValue, System.EnvironmentVariableTarget.Process);
-                }
-                catch  {
                 }
             ]]>
             </Code>

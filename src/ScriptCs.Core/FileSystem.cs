@@ -81,7 +81,7 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("value", value);
 
-            return value.Split(new[] { NewLine }, StringSplitOptions.None);
+            return value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
         }
 
         public void WriteToFile(string path, string text)
