@@ -43,8 +43,6 @@ namespace ScriptCs
         {
             _logger.Debug("Loading modules from: " + modulePackagesPath);
             var paths = _resolver.GetAssemblyPaths(modulePackagesPath);
-            _logger.Debug("Discovered the following package binaries:");
-            _logger.Debug(paths);
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
             {
