@@ -13,22 +13,22 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public class RuntimeContainerFactory : ScriptContainerFactory, IRuntimeContainerFactory
+    public class RuntimeServices : ScriptContainerFactory, IRuntimeServices
     {
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
         private readonly bool _initDirectoryCatalog;
-        private readonly IInitializationContainerFactory _initializationContainerFactory;
+        private readonly IInitializationServices _initializationServices;
 
-        public RuntimeContainerFactory(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationContainerFactory initializationContainerFactory) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices) : 
             base(logger, overrides)
         {
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
             _initDirectoryCatalog = initDirectoryCatalog;
-            _initializationContainerFactory = initializationContainerFactory;
+            _initializationServices = initializationServices;
         }
 
         protected override IContainer CreateContainer()
@@ -55,7 +55,7 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
 
-            var assemblyResolver = _initializationContainerFactory.GetAssemblyResolver();
+            var assemblyResolver = _initializationServices.GetAssemblyResolver();
 
             if (_initDirectoryCatalog)
             {

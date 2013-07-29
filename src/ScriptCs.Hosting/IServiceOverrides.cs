@@ -3,12 +3,12 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public interface IScriptServiceConfiguration
+    public interface IServiceOverrides
     {
         
     }
 
-    public interface IScriptServiceConfiguration<out TConfig> : IScriptServiceConfiguration where TConfig : IScriptServiceConfiguration<TConfig>
+    public interface IServiceOverrides<out TConfig> : IServiceOverrides where TConfig : IServiceOverrides<TConfig>
     {
         TConfig ScriptExecutor<T>() where T : IScriptExecutor;
         TConfig ScriptEngine<T>() where T : IScriptEngine;

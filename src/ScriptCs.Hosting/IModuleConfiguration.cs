@@ -1,6 +1,6 @@
 ﻿namespace ScriptCs
 {
-    public interface IModuleConfiguration : IScriptServiceConfiguration<IModuleConfiguration>
+    public interface IModuleConfiguration : IServiceOverrides<IModuleConfiguration>
     {
         bool Debug { get; }
         string ScriptName { get; }

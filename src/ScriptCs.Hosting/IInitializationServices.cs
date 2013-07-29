@@ -2,7 +2,7 @@
 
 namespace ScriptCs
 {
-    public interface IInitializationContainerFactory
+    public interface IInitializationServices
     {
         IAssemblyResolver GetAssemblyResolver();
         IModuleLoader GetModuleLoader();

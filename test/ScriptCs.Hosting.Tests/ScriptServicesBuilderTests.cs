@@ -21,7 +21,7 @@ namespace ScriptCs.Tests
         {
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private ScriptServices _scriptServices = new ScriptServices(null, null, null, null,null,null,null,null,null,null);
-            private Mock<IRuntimeContainerFactory> _mockFactory = new Mock<IRuntimeContainerFactory>();
+            private Mock<IRuntimeServices> _mockFactory = new Mock<IRuntimeServices>();
             private Mock<IConsole> _mockConsole = new Mock<IConsole>();
             private ScriptServicesBuilder _builder = null;
 

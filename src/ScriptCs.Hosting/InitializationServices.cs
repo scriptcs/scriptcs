@@ -9,9 +9,9 @@ using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class InitializationContainerFactory : ScriptContainerFactory, IInitializationContainerFactory
+    public class InitializationServices : ScriptContainerFactory, IInitializationServices
     {
-        public InitializationContainerFactory(ILog logger, IDictionary<Type, object> overrides = null)
+        public InitializationServices(ILog logger, IDictionary<Type, object> overrides = null)
             : base(logger, overrides)
         {
         }

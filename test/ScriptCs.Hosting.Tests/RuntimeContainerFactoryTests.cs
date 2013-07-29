@@ -28,7 +28,7 @@ namespace ScriptCs.Tests
             private Type _scriptEngineType = null;
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
-            private RuntimeContainerFactory _runtimeContainerFactory = null;
+            private RuntimeServices _runtimeServices = null;
 
             public TheCreateRuntimeContainerMethod()
             {
@@ -38,107 +38,107 @@ namespace ScriptCs.Tests
                 var mockScriptEngineType = new Mock<IScriptEngine>();
                 _scriptEngineType = mockScriptEngineType.Object.GetType();
 
-                var initializationContainerFactory = new InitializationContainerFactory(_mockLogger.Object, _overrides);
-                _runtimeContainerFactory = new RuntimeContainerFactory(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationContainerFactory);
+                var initializationContainerFactory = new InitializationServices(_mockLogger.Object, _overrides);
+                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationContainerFactory);
             }
 
             [Fact]
             public void ShouldRegisterTheLoggerInstance()
             {
-                var logger = _runtimeContainerFactory.Container.Resolve<ILog>();
+                var logger = _runtimeServices.Container.Resolve<ILog>();
                 logger.ShouldEqual(_mockLogger.Object);
             }
 
             [Fact]
             public void ShouldRegisterTheScriptEngine()
             {
-                var engine = _runtimeContainerFactory.Container.Resolve<IScriptEngine>();
+                var engine = _runtimeServices.Container.Resolve<IScriptEngine>();
                 engine.GetType().ShouldEqual(_scriptEngineType);
             }
 
             [Fact]
             public void ShouldRegisterTheExecutor()
             {
-                var executor = _runtimeContainerFactory.Container.Resolve<IScriptExecutor>();
+                var executor = _runtimeServices.Container.Resolve<IScriptExecutor>();
                 executor.GetType().ShouldEqual(_scriptExecutorType);
             }
 
             [Fact]
             public void ShouldRegisterTheConsoleInstance()
             {
-                _runtimeContainerFactory.Container.Resolve<IConsole>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IConsole>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheScriptServices()
             {
-                _runtimeContainerFactory.Container.Resolve<ScriptServices>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<ScriptServices>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptHostFactoryIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IScriptHostFactory>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFilePreProcessorIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IFilePreProcessor>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IFilePreProcessor>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptPackResolverIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IScriptPackResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IScriptPackResolver>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultInstallationProviderIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IInstallationProvider>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IInstallationProvider>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageInstallerIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IPackageInstaller>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IPackageInstaller>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptServiceRootIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<ScriptServices>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<ScriptServices>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFileSystemIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IFileSystem>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IFileSystem>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyUtilityIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IAssemblyUtility>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IAssemblyUtility>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageContainerIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IPackageContainer>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IPackageContainer>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageAssemblyResolverIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IPackageAssemblyResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IPackageAssemblyResolver>().ShouldNotBeNull();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyResolverIfNoOverride()
             {
-                _runtimeContainerFactory.Container.Resolve<IAssemblyResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldNotBeNull();
             }
 
             [Fact]
@@ -146,7 +146,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IScriptHostFactory>();
                 _overrides[typeof(IScriptHostFactory)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -154,7 +154,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IFilePreProcessor>();
                 _overrides[typeof(IFilePreProcessor)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IFilePreProcessor>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IFilePreProcessor>().ShouldBeType(mock.Object.GetType());
 
             }
 
@@ -163,7 +163,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IScriptPackResolver>();
                 _overrides[typeof(IScriptPackResolver)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IScriptPackResolver>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IScriptPackResolver>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -171,7 +171,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IInstallationProvider>();
                 _overrides[typeof(IInstallationProvider)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IInstallationProvider>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IInstallationProvider>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -179,7 +179,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageInstaller>();
                 _overrides[typeof(IPackageInstaller)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -187,7 +187,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IFileSystem>();
                 _overrides[typeof(IFileSystem)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IFileSystem>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IFileSystem>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -195,7 +195,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyUtility>();
                 _overrides[typeof(IAssemblyUtility)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -203,7 +203,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageContainer>();
                 _overrides[typeof(IPackageContainer)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -211,7 +211,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IPackageAssemblyResolver>();
                 _overrides[typeof(IPackageAssemblyResolver)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -219,7 +219,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyResolver>();
                 _overrides[typeof(IAssemblyResolver)] = mock.Object.GetType();
-                _runtimeContainerFactory.Container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
+                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -227,7 +227,7 @@ namespace ScriptCs.Tests
             {
                 var mock = new Mock<IAssemblyResolver>();
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
-                _runtimeContainerFactory.Container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
+                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
             }
         }
     }

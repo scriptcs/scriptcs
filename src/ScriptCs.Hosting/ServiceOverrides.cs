@@ -5,17 +5,17 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public abstract class ScriptServiceConfiguration<TConfig> : IScriptServiceConfiguration<TConfig> where TConfig:class,IScriptServiceConfiguration<TConfig>
+    public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig> where TConfig:class,IServiceOverrides<TConfig>
     {
         protected readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
         private readonly TConfig _this;
 
-        public ScriptServiceConfiguration()
+        public ServiceOverrides()
         {
             _this = this as TConfig;
         }
 
-        public ScriptServiceConfiguration(IDictionary<Type, object> overrides)
+        public ServiceOverrides(IDictionary<Type, object> overrides)
         {
             _overrides = overrides;
         } 

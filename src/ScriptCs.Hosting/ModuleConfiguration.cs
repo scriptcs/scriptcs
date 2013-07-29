@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptCs.Hosting
 {
-    public class ModuleConfiguration : ScriptServiceConfiguration<IModuleConfiguration>, IModuleConfiguration
+    public class ModuleConfiguration : ServiceOverrides<IModuleConfiguration>, IModuleConfiguration
     {
         public ModuleConfiguration(bool debug, string scriptName, bool repl, LogLevel logLevel, IDictionary<Type,Object> overrides)
             :base(overrides)

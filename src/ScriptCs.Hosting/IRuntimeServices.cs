@@ -2,7 +2,7 @@
 
 namespace ScriptCs
 {
-    public interface IRuntimeContainerFactory
+    public interface IRuntimeServices
     {
         ScriptServices GetScriptServices();
     }

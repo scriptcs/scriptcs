@@ -46,27 +46,27 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="IInitializationContainerFactory.cs" />
+    <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModule.cs" />
     <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleLoader.cs" />
     <Compile Include="IModuleMetadata.cs" />
-    <Compile Include="InitializationContainerFactory.cs" />
-    <Compile Include="IRuntimeContainerFactory.cs" />
+    <Compile Include="InitializationServices.cs" />
+    <Compile Include="IRuntimeServices.cs" />
     <Compile Include="IScriptServicesBuilder.cs" />
-    <Compile Include="IScriptServiceConfiguration.cs" />
+    <Compile Include="IServiceOverrides.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuntimeContainerFactory.cs" />
+    <Compile Include="RuntimeServices.cs" />
     <Compile Include="ScriptConsole.cs" />
     <Compile Include="ScriptConsoleAppender.cs" />
     <Compile Include="ScriptContainerFactory.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
-    <Compile Include="ScriptServiceConfiguration.cs" />
+    <Compile Include="ServiceOverrides.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

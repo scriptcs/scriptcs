@@ -1,6 +1,6 @@
 ﻿namespace ScriptCs
 {
-    public interface IScriptServicesBuilder : IScriptServiceConfiguration<IScriptServicesBuilder>
+    public interface IScriptServicesBuilder : IServiceOverrides<IScriptServicesBuilder>
     {
         ScriptServices Build();
         IScriptServicesBuilder Debug(bool debug = true);

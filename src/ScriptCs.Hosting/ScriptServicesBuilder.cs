@@ -10,10 +10,10 @@ using log4net.Core;
 
 namespace ScriptCs
 {
-    public class ScriptServicesBuilder : ScriptServiceConfiguration<IScriptServicesBuilder>, IScriptServicesBuilder
+    public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
-        private readonly IInitializationContainerFactory _initializationContainerFactory;
-        private IRuntimeContainerFactory _runtimeContainerFactory;
+        private readonly IInitializationServices _initializationServices;
+        private IRuntimeServices _runtimeServices;
         private readonly IConsole _console;
         private bool _debug = false;
         private bool _repl = false;
@@ -23,10 +23,10 @@ namespace ScriptCs
         private Type _scriptEngineType;
         private ILog _logger;
 
-        public ScriptServicesBuilder (IConsole console, ILog logger, IRuntimeContainerFactory runtimeContainerFactory = null)
+        public ScriptServicesBuilder (IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
-            _initializationContainerFactory = new InitializationContainerFactory(logger);
-            _runtimeContainerFactory = runtimeContainerFactory;
+            _initializationServices = new InitializationServices(logger);
+            _runtimeServices = runtimeServices;
             _console = console;
             _logger = logger;
         }
@@ -41,21 +41,21 @@ namespace ScriptCs
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
-            if (_runtimeContainerFactory == null)
+            if (_runtimeServices == null)
             {
-                _runtimeContainerFactory = new RuntimeContainerFactory(_logger, _overrides, _console,
+                _runtimeServices = new RuntimeServices(_logger, _overrides, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
-                                                                       _initializationContainerFactory);
+                                                                       _initializationServices);
             }
-            return _runtimeContainerFactory.GetScriptServices();
+            return _runtimeServices.GetScriptServices();
         }
 
         public void LoadModules(string extension, params string[] moduleNames)
         {
             var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, _overrides);
-            var loader = _initializationContainerFactory.GetModuleLoader();
-            loader.Load(config, _initializationContainerFactory.GetFileSystem().ModulesFolder, extension, moduleNames);
+            var loader = _initializationServices.GetModuleLoader();
+            loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
         }
 
         public IScriptServicesBuilder Debug(bool debug = true)
