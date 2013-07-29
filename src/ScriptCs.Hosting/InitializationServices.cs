@@ -9,7 +9,7 @@ using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class InitializationServices : ScriptContainerFactory, IInitializationServices
+    public class InitializationServices : ScriptServicesRegistration, IInitializationServices
     {
         public InitializationServices(ILog logger, IDictionary<Type, object> overrides = null)
             : base(logger, overrides)
@@ -27,7 +27,7 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IPackageContainer>(builder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>().SingleInstance());
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyResolver>(builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
-            RegisterOverrideOrDefault<ModuleLoader>(builder, b => b.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance());
+            RegisterOverrideOrDefault<IModuleLoader>(builder, b => b.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance());
             return builder.Build();
         }
 

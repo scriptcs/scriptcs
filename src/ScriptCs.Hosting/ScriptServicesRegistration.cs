@@ -14,12 +14,12 @@ using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
-    public abstract class ScriptContainerFactory 
+    public abstract class ScriptServicesRegistration 
     {
         private readonly IDictionary<Type, object> _overrides = null;
         protected readonly ILog _logger;
 
-        public ScriptContainerFactory(ILog logger, IDictionary<Type, object> overrides)
+        public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
         {
             if (overrides == null)
                 overrides = new Dictionary<Type, object>();
@@ -34,6 +34,8 @@ namespace ScriptCs
             if (_overrides.ContainsKey(typeof(T)))
             {
                 var reg = _overrides[typeof(T)];
+                _logger.Debug(string.Format("Registering 1 {0}", reg));
+
                 if (reg.GetType().IsSubclassOf(typeof(Type)))
                 {
                     builder.RegisterType((Type)reg).As<T>().SingleInstance();

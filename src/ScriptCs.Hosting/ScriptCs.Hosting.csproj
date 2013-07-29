@@ -64,7 +64,7 @@
     <Compile Include="RuntimeServices.cs" />
     <Compile Include="ScriptConsole.cs" />
     <Compile Include="ScriptConsoleAppender.cs" />
-    <Compile Include="ScriptContainerFactory.cs" />
+    <Compile Include="ScriptServicesRegistration.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
   </ItemGroup>
