@@ -27,8 +27,10 @@ namespace ScriptCs
                 LogLevel(commandArgs.LogLevel).
                 ScriptName(commandArgs.ScriptName).
                 Repl(commandArgs.Repl);
-            
-            scriptServicesBuilder.LoadModules(Path.GetExtension(commandArgs.ScriptName), commandArgs.Modules);
+
+            var modules = GetModuleList(commandArgs.Modules);
+
+            scriptServicesBuilder.LoadModules(Path.GetExtension(commandArgs.ScriptName), modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
@@ -37,6 +39,21 @@ namespace ScriptCs
             var result = command.Execute();
 
             return result == CommandResult.Success ? 0 : -1;
+        }
+
+        private static string[] GetModuleList(string modulesArg)
+        {
+            string[] modules = new string[0];
+
+            if (modulesArg != null)
+            {
+                modules = modulesArg.Split(',');
+                if (modules.Length == 0)
+                {
+                    modules = new[] {modulesArg};
+                }
+            }
+            return modules;
         }
 
         private static ScriptCsArgs ParseArguments(string[] args)
@@ -51,7 +68,7 @@ namespace ScriptCs
                 var scriptcsArgs = Args.Parse<ScriptCsArgs>(args);
                 
                 //if there is only 1 arg and it is a loglevel, it's also REPL
-                if (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
+                if (scriptcsArgs.ScriptName == null)
                 {
                     scriptcsArgs.Repl = true;
                 }

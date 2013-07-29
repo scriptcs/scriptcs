@@ -30,11 +30,10 @@ namespace ScriptCs
 
         protected void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)
         {
-            _logger.Debug(string.Format("Registering {0}", typeof(T)));
             if (_overrides.ContainsKey(typeof(T)))
             {
                 var reg = _overrides[typeof(T)];
-                _logger.Debug(string.Format("Registering 1 {0}", reg));
+                _logger.Debug(string.Format("Registering override: {0}", reg));
 
                 if (reg.GetType().IsSubclassOf(typeof(Type)))
                 {
@@ -47,6 +46,7 @@ namespace ScriptCs
             }
             else
             {
+                _logger.Debug(string.Format("Registering default: {0}", typeof(T)));
                 registrationAction(builder);
             }
         }
