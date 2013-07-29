@@ -35,9 +35,7 @@ namespace ScriptCs.Tests
             public void ShouldResolveScriptServices()
             {
                 _builder.Build().ShouldEqual(_scriptServices);
-
             }
-
         }
     }
 }
