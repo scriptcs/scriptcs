@@ -21,10 +21,7 @@ namespace ScriptCs
 
         public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
         {
-            if (overrides == null)
-                overrides = new Dictionary<Type, object>();
-
-            _overrides = overrides;
+            _overrides = overrides ?? new Dictionary<Type, object>();
             _logger = logger;
         }
 

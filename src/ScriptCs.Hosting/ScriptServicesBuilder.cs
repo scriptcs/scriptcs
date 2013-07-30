@@ -51,11 +51,12 @@ namespace ScriptCs
             return _runtimeServices.GetScriptServices();
         }
 
-        public void LoadModules(string extension, params string[] moduleNames)
+        public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
             var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, _overrides);
             var loader = _initializationServices.GetModuleLoader();
             loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
+            return this;
         }
 
         public IScriptServicesBuilder Debug(bool debug = true)

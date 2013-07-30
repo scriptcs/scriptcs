@@ -46,16 +46,11 @@ namespace ScriptCs
 
         private static string[] GetModuleList(string modulesArg)
         {
-            string[] modules = new string[0];
+            var modules = new string[0];
 
             if (modulesArg != null)
-            {
                 modules = modulesArg.Split(',');
-                if (modules.Length == 0)
-                {
-                    modules = new[] {modulesArg};
-                }
-            }
+
             return modules;
         }
 

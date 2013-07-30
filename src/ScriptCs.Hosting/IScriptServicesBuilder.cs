@@ -7,6 +7,6 @@
         IScriptServicesBuilder ScriptName(string name);
         IScriptServicesBuilder Repl(bool repl = true);
         IScriptServicesBuilder LogLevel(LogLevel level);
-        void LoadModules(string extension, params string[] moduleNames);
+        IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
     }
 }
