@@ -3,7 +3,7 @@ using ScriptCs.Contracts;
 using ServiceStack.Text;
 using System;
 using System.IO;
-using System.Linq;
+using System.Runtime.ExceptionServices;
 
 namespace ScriptCs
 {
@@ -59,16 +59,16 @@ namespace ScriptCs
                 var result = ScriptEngine.Execute(Buffer, new string[0], References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
-                    if (result.CompileException != null)
+                    if (result.CompileExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(result.CompileException.ToString());
+                        Console.Write(result.CompileExceptionInfo.ToString());
                     }
 
-                    if (result.ExecuteException != null)
+                    if (result.ExecuteExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(result.ExecuteException.ToString());
+                        Console.Write(result.ExecuteExceptionInfo.SourceException.ToString());
                     }
 
                     if (result.IsPendingClosingChar)
@@ -90,13 +90,13 @@ namespace ScriptCs
                 RemoveReference(fileEx.FileName);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + fileEx + "\r\n");
-                return new ScriptResult { CompileException = fileEx };
+                return new ScriptResult { CompileExceptionInfo = ExceptionDispatchInfo.Capture(fileEx) };
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult { ExecuteException = ex };
+                return new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex) };
             }
             finally
             {

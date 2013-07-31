@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 
 namespace ScriptCs
 {
@@ -6,9 +7,9 @@ namespace ScriptCs
     {
         public object ReturnValue { get; set; }
 
-        public Exception ExecuteException { get; set; }
+        public ExceptionDispatchInfo ExecuteExceptionInfo { get; set; }
 
-        public Exception CompileException { get; set; }
+        public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
 
         public bool ContinueBuffering { get; set; }
 

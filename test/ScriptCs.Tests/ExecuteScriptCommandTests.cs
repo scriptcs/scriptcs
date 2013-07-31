@@ -12,6 +12,7 @@ using ScriptCs.Command;
 using ScriptCs.Contracts;
 
 using System.Linq;
+using System.Runtime.ExceptionServices;
 
 using Should;
 
@@ -90,7 +91,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult {CompileException = new Exception("test")});
+                        .Returns(new ScriptResult {CompileExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test"))});
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();
@@ -118,7 +119,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult { ExecuteException = new Exception("test") });
+                        .Returns(new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test")) });
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();

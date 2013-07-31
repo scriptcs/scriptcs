@@ -42,7 +42,7 @@ namespace ScriptCs.Tests
 
                 Console.WriteLine(exception.Message);
 
-                exception.Message.ShouldContain("line 2");
+                exception.Message.ShouldContain("at Submission#0");
                 exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
             }
         }
