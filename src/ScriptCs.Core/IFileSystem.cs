@@ -44,6 +44,6 @@ namespace ScriptCs
         
         Stream CreateFileStream(string filePath, FileMode mode);
 
-        string LocalApplicationData { get; }
+        string ModulesFolder { get; }
     }
 }
