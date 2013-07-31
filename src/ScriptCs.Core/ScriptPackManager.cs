@@ -6,7 +6,7 @@ namespace ScriptCs
 {
     public class ScriptPackManager : IScriptPackManager
     {
-        private IDictionary<Type, IScriptPackContext> _contexts = new Dictionary<Type, IScriptPackContext>(); 
+        private readonly IDictionary<Type, IScriptPackContext> _contexts = new Dictionary<Type, IScriptPackContext>(); 
 
         public ScriptPackManager(IEnumerable<IScriptPackContext> contexts)
         {
@@ -14,13 +14,13 @@ namespace ScriptCs
 
             foreach (var context in contexts)
             {
-                _contexts.Add(context.GetType(), context);
+                _contexts[context.GetType()] = context;
             }
         }
 
         public TContext Get<TContext>() where TContext : IScriptPackContext
         {
-            return (TContext) _contexts[typeof (TContext)];
+            return (TContext) _contexts[typeof(TContext)];
         }
     }
 }

@@ -1,47 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Common.Logging;
-using Moq;
+
+using Ploeh.AutoFixture.Xunit;
+
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
 using Should;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
     public class RoslynScriptDebuggerEngineTests
     {
-        private static RoslynScriptDebuggerEngine CreateScriptEngine(
-            Mock<IScriptHostFactory> scriptHostFactory = null)
-        {
-            scriptHostFactory = scriptHostFactory ?? new Mock<IScriptHostFactory>();
-
-            var logger = new Mock<ILog>();
-
-            return new RoslynScriptDebuggerEngine(scriptHostFactory.Object, logger.Object);
-        }
-
         public class TheExecuteMethod
         {
-            [Fact]
-            public void ShouldThrowExceptionThrownByScriptWhenErrorOccurs()
+            [Theory, ScriptCsAutoData]
+            public void ShouldThrowExceptionThrownByScriptWhenErrorOccurs(
+                [NoAutoProperties] RoslynScriptDebuggerEngine scriptEngine)
             {
-                var code = string.Format(
-                    "{0}{1}{2}", 
+                // Arrange
+                var lines = new List<string>
+                {
                     "using System;",
-                    Environment.NewLine,
-                    @"throw new InvalidOperationException(""InvalidOperationExceptionMessage."");");
+                    @"throw new InvalidOperationException(""InvalidOperationExceptionMessage."");"
+                };
 
-                var scriptEngine = CreateScriptEngine();
+                var code = string.Join(Environment.NewLine, lines);
+                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
 
-                var exception = Assert.Throws<ScriptExecutionException>(
-                    () =>
+                // Act
+                var exception = Assert.Throws<ScriptExecutionException>(() =>
                     scriptEngine.Execute(
-                        code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), new ScriptPackSession(Enumerable.Empty<IScriptPack>())));
+                        code,
+                        new string[0],
+                        Enumerable.Empty<string>(),
+                        Enumerable.Empty<string>(),
+                        session));
 
-                Console.WriteLine(exception.Message);
-
+                // Assert
                 exception.Message.ShouldContain("at Submission#0");
                 exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
             }
