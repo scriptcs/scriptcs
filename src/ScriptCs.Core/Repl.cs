@@ -3,12 +3,10 @@ using ScriptCs.Contracts;
 using ServiceStack.Text;
 using System;
 using System.IO;
-using System.Linq;
+using System.Runtime.ExceptionServices;
 
 namespace ScriptCs
 {
-    using System.Runtime.ExceptionServices;
-
     public class Repl : ScriptExecutor
     {
         public IConsole Console { get; private set; }

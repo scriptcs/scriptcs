@@ -12,6 +12,7 @@ using ScriptCs.Command;
 using ScriptCs.Contracts;
 
 using System.Linq;
+using System.Runtime.ExceptionServices;
 
 using Should;
 
@@ -19,8 +20,6 @@ using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
-    using System.Runtime.ExceptionServices;
-
     public class ExecuteScriptCommandTests
     {
         public class ExecuteMethod

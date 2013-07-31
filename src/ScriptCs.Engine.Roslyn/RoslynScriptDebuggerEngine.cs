@@ -2,14 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
     public class RoslynScriptDebuggerEngine : RoslynScriptEngine
     {
         private const string CompiledScriptClass = "Submission#0";
