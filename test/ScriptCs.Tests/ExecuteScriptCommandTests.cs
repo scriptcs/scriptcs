@@ -19,6 +19,8 @@ using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
+    using System.Runtime.ExceptionServices;
+
     public class ExecuteScriptCommandTests
     {
         public class ExecuteMethod
@@ -90,7 +92,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult {CompileException = new Exception("test")});
+                        .Returns(new ScriptResult {CompileException = ExceptionDispatchInfo.Capture(new Exception("test"))});
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();
@@ -118,7 +120,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult { ExecuteException = new Exception("test") });
+                        .Returns(new ScriptResult { ExecuteException = ExceptionDispatchInfo.Capture(new Exception("test")) });
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();

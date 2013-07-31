@@ -8,6 +8,8 @@ using Roslyn.Scripting.CSharp;
 
 namespace ScriptCs.Engine.Roslyn
 {
+    using System.Runtime.ExceptionServices;
+
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
@@ -97,14 +99,14 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteException = ex;
+                    result.ExecuteException = ExceptionDispatchInfo.Capture(ex);
                 }
             }
             catch (Exception ex)
             {
                  result.UpdateClosingExpectation(ex);
                 if (!result.IsPendingClosingChar)
-                    result.CompileException = ex;
+                    result.CompileException = ExceptionDispatchInfo.Capture(ex);
             }
             return result;
         }

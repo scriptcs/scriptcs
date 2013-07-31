@@ -56,13 +56,13 @@ namespace ScriptCs.Command
                 {
                     if (result.CompileException != null)
                     {
-                        _logger.Error(result.CompileException);
+                        _logger.Error(result.CompileException.SourceException);
                         return CommandResult.Error;
                     }
 
                     if (result.ExecuteException != null)
                     {
-                        _logger.Error(result.ExecuteException);
+                        _logger.Error(result.ExecuteException.SourceException);
                         return CommandResult.Error;
                     }
 

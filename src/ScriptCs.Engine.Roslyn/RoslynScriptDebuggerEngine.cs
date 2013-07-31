@@ -8,6 +8,8 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
+    using System.Runtime.ExceptionServices;
+
     public class RoslynScriptDebuggerEngine : RoslynScriptEngine
     {
         private const string CompiledScriptClass = "Submission#0";
@@ -34,7 +36,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception compileException)
             {
-                scriptResult.CompileException = compileException;
+                scriptResult.CompileException = ExceptionDispatchInfo.Capture(compileException);
             }
 
             var exeBytes = new byte[0];
@@ -76,7 +78,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception executeException)
                 {
-                    scriptResult.ExecuteException = executeException;
+                    scriptResult.ExecuteException = ExceptionDispatchInfo.Capture(executeException);
                     _logger.Error("An error occurred when executing the scripts.");
                     var message = 
                         string.Format(
