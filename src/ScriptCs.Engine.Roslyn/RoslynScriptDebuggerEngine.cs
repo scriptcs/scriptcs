@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Exceptions;
@@ -34,7 +35,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception compileException)
             {
-                scriptResult.CompileException = compileException;
+                scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
             }
 
             var exeBytes = new byte[0];
@@ -76,7 +77,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception executeException)
                 {
-                    scriptResult.ExecuteException = executeException;
+                    scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
                     _logger.Error("An error occurred when executing the scripts.");
                     var message = 
                         string.Format(
@@ -84,7 +85,7 @@ namespace ScriptCs.Engine.Roslyn
                         executeException.InnerException.Message,
                         Environment.NewLine, 
                         executeException.InnerException.StackTrace);
-                    throw new ScriptExecutionException(message);
+                    throw new ScriptExecutionException(message, executeException);
                 }
             }
 
