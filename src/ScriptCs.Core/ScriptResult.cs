@@ -7,9 +7,9 @@ namespace ScriptCs
     {
         public object ReturnValue { get; set; }
 
-        public ExceptionDispatchInfo ExecuteException { get; set; }
+        public ExceptionDispatchInfo ExecuteExceptionInfo { get; set; }
 
-        public ExceptionDispatchInfo CompileException { get; set; }
+        public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
 
         public bool ContinueBuffering { get; set; }
 

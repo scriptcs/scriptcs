@@ -99,14 +99,14 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteException = ExceptionDispatchInfo.Capture(ex);
+                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
                 }
             }
             catch (Exception ex)
             {
                  result.UpdateClosingExpectation(ex);
                 if (!result.IsPendingClosingChar)
-                    result.CompileException = ExceptionDispatchInfo.Capture(ex);
+                    result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
             }
             return result;
         }

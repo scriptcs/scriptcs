@@ -153,7 +153,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
-                result.CompileException.ShouldNotBeNull();
+                result.CompileExceptionInfo.ShouldNotBeNull();
             }
 
             [Fact]
@@ -171,7 +171,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
-                result.CompileException.ShouldBeNull();
+                result.CompileExceptionInfo.ShouldBeNull();
             }
 
             [Fact]
@@ -189,7 +189,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
-                result.ExecuteException.ShouldNotBeNull();
+                result.ExecuteExceptionInfo.ShouldNotBeNull();
             }
 
             [Fact]
@@ -207,7 +207,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
-                result.ExecuteException.ShouldBeNull();
+                result.ExecuteExceptionInfo.ShouldBeNull();
             }
 
             [Fact]

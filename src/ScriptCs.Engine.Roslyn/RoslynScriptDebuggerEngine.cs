@@ -35,7 +35,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception compileException)
             {
-                scriptResult.CompileException = ExceptionDispatchInfo.Capture(compileException);
+                scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
             }
 
             var exeBytes = new byte[0];
@@ -77,7 +77,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
                 catch (Exception executeException)
                 {
-                    scriptResult.ExecuteException = ExceptionDispatchInfo.Capture(executeException);
+                    scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
                     _logger.Error("An error occurred when executing the scripts.");
                     var message = 
                         string.Format(
