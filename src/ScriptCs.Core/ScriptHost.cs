@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptHost
+    public class ScriptHost : IScriptHost
     {
-        private IScriptPackManager _scriptPackManager;
-        public string[] ScriptArgs { get; private set; }
+        private readonly IScriptPackManager _scriptPackManager;
 
         public ScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {
@@ -15,10 +12,11 @@ namespace ScriptCs
             ScriptArgs = scriptArgs;
         }
 
-        public T Require<T>() where T:IScriptPackContext
+        public string[] ScriptArgs { get; private set; }
+
+        public T Require<T>() where T : IScriptPackContext
         {
             return _scriptPackManager.Get<T>();
         }
-
     }
 }
