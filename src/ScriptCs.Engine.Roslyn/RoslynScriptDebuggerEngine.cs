@@ -86,7 +86,7 @@ namespace ScriptCs.Engine.Roslyn
                         executeException.InnerException.Message,
                         Environment.NewLine, 
                         executeException.InnerException.StackTrace);
-                    throw new ScriptExecutionException(message);
+                    throw new ScriptExecutionException(message, executeException);
                 }
             }
 
