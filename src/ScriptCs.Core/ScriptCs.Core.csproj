@@ -55,6 +55,7 @@
     <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
+    <Compile Include="IScriptHost.cs" />
     <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPackManager.cs" />
     <Compile Include="IScriptPackResolver.cs" />
