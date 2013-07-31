@@ -212,6 +212,8 @@ Want to chat? In addition to Twitter, you can find us on [Google Groups](https:/
 * [Glenn Block](https://github.com/glennblock) ([@gblock](https://twitter.com/intent/user?screen_name=gblock))
 * [Justin Rusbatch](https://github.com/jrusbatch) ([@jrusbatch](https://twitter.com/intent/user?screen_name=jrusbatch))
 * [Filip Wojcieszyn](https://github.com/filipw) ([@filip_woj](https://twitter.com/intent/user?screen_name=filip_woj))
+* [Damian Schenkelman](http://github.com/dschenkelman) ([@dschenkelman](https://twitter.com/intent/user?screen_name=dschenkelman))
+* [Kristian Hellang](http://github.com/khellang) ([@khellang](https://twitter.com/intent/user?screen_name=khellang))
 
 
 ## Credits 
