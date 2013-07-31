@@ -61,7 +61,7 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptCs.Tests\ScriptCsAutoDataAttribute.cs">
+    <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
     <Compile Include="AssemblyResolverTests.cs" />

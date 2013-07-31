@@ -8,6 +8,7 @@ namespace ScriptCs.Tests
     {
         public ScriptCsAutoDataAttribute() : this(new Fixture()) { }
 
-        private ScriptCsAutoDataAttribute(IFixture fixture) : base(fixture.Customize(new AutoMoqCustomization())) { }
+        private ScriptCsAutoDataAttribute(IFixture fixture) 
+            : base(fixture.Customize(new AutoMoqCustomization())) { }
     }
 }
