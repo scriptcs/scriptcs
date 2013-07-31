@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using Autofac;
 using PowerArgs;
 using ScriptCs.Command;
 using System.Linq;
+using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs
@@ -15,23 +17,24 @@ namespace ScriptCs
             ScriptCsArgs.SplitScriptArgs(ref args, out scriptArgs);
  
             var commandArgs = ParseArguments(args);
-
-            var runtimeBuilder = new ScriptRuntimeBuilder().
+            var configurator = new LoggerConfigurator(commandArgs.LogLevel);
+            var console = new ScriptConsole();
+            configurator.Configure(console);
+            var logger = configurator.GetLogger();
+ 
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)   .
                 Debug(commandArgs.Debug).
                 LogLevel(commandArgs.LogLevel).
                 ScriptName(commandArgs.ScriptName).
                 Repl(commandArgs.Repl);
 
-            var containerBuilder = new ContainerBuilder();
-            
+            var modules = GetModuleList(commandArgs.Modules);
+            var extension = Path.GetExtension(commandArgs.ScriptName);
+            if (extension != null)
+                extension = extension.Substring(1);
 
-
-            var runtime = runtimeBuilder.Build();
-
-            var logger = runtime.Logger;
-            logger.Debug("Creating ScriptServices");
-           
-            var scriptServiceRoot = runtime.ScriptServices;
+            scriptServicesBuilder.LoadModules(extension, modules);
+            var scriptServiceRoot = scriptServicesBuilder.Build();
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
@@ -39,6 +42,16 @@ namespace ScriptCs
             var result = command.Execute();
 
             return result == CommandResult.Success ? 0 : -1;
+        }
+
+        private static string[] GetModuleList(string modulesArg)
+        {
+            var modules = new string[0];
+
+            if (modulesArg != null)
+                modules = modulesArg.Split(',');
+
+            return modules;
         }
 
         private static ScriptCsArgs ParseArguments(string[] args)
@@ -51,9 +64,9 @@ namespace ScriptCs
             try
             {
                 var scriptcsArgs = Args.Parse<ScriptCsArgs>(args);
-                
+
                 //if there is only 1 arg and it is a loglevel, it's also REPL
-                if (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
+                if (scriptcsArgs.ScriptName == null && scriptcsArgs.Install == null && !scriptcsArgs.Clean && !scriptcsArgs.Help && !scriptcsArgs.Version)
                 {
                     scriptcsArgs.Repl = true;
                 }

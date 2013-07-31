@@ -8,6 +8,6 @@ namespace ScriptCs
 {
     public interface IModule
     {
-        void Initialize(IScriptRuntimeBuilder builder, bool repl, bool debug);
+        void Initialize(IModuleConfiguration config);
     }
 }

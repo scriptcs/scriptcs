@@ -55,6 +55,10 @@ namespace ScriptCs
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
 
+        [ArgShortcut("modules")]
+        [ArgDescription("Specify modules to load")]
+        public string Modules { get; set; }
+
         public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
         {
             Guard.AgainstNullArgument("args", args);
