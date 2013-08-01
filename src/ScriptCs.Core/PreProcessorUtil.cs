@@ -1,3 +1,6 @@
+using System;
+using System.Text.RegularExpressions;
+
 namespace ScriptCs
 {
     public static class PreProcessorUtil
@@ -5,6 +8,7 @@ namespace ScriptCs
         public const string LoadString = "#load ";
         public const string UsingString = "using ";
         public const string RString = "#r ";
+        private static Regex EnvironmentRegex = new Regex("%.+?%");
 
         public static bool IsNonDirectiveLine(string line)
         {
@@ -36,8 +40,25 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("line", line);
 
-            var filepath = line.Trim(' ').Replace(replaceString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
+            var trimedFilePath = line.Replace(replaceString, string.Empty).Trim(' ').Replace("\"", string.Empty).Replace(";", string.Empty);
+            var filepath = ReplaceEnvironmentVariables(trimedFilePath);
             return filepath;
+        }
+
+        private static string ReplaceEnvironmentVariables(string filePath)
+        {
+            var matches = EnvironmentRegex.Matches(filePath);
+            var result = filePath;
+            foreach (var match in matches)
+            {
+                var matchString = match.ToString();
+                var envVariable = Environment.GetEnvironmentVariable(matchString.Replace("%", string.Empty));
+                if (!string.IsNullOrEmpty(envVariable))
+                {
+                    result = result.Replace(matchString, envVariable);
+                }
+            }
+            return result;
         }
     }
 }
