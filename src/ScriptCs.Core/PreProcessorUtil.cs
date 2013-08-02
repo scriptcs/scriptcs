@@ -41,24 +41,8 @@ namespace ScriptCs
             Guard.AgainstNullArgument("line", line);
 
             var trimedFilePath = line.Replace(replaceString, string.Empty).Trim(' ').Replace("\"", string.Empty).Replace(";", string.Empty);
-            var filepath = ReplaceEnvironmentVariables(trimedFilePath);
+            var filepath = Environment.ExpandEnvironmentVariables(trimedFilePath);
             return filepath;
-        }
-
-        private static string ReplaceEnvironmentVariables(string filePath)
-        {
-            var matches = EnvironmentRegex.Matches(filePath);
-            var result = filePath;
-            foreach (var match in matches)
-            {
-                var matchString = match.ToString();
-                var envVariable = Environment.GetEnvironmentVariable(matchString.Replace("%", string.Empty));
-                if (!string.IsNullOrEmpty(envVariable))
-                {
-                    result = result.Replace(matchString, envVariable);
-                }
-            }
-            return result;
         }
     }
 }
