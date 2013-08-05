@@ -62,7 +62,7 @@ namespace ScriptCs
                     if (result.CompileExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(result.CompileExceptionInfo.ToString());
+                        Console.Write(result.CompileExceptionInfo.SourceException.ToString());
                     }
 
                     if (result.ExecuteExceptionInfo != null)
