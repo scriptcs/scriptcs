@@ -79,9 +79,16 @@ namespace ScriptCs
         {
             _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
 
+            var currentDirectory = Environment.CurrentDirectory;
+            var fileToLoad = new FileInfo(path);
+
             var scriptLines = _fileSystem.ReadFileLines(path).ToList();
 
+            Environment.CurrentDirectory = fileToLoad.DirectoryName;
+
             ParseScript(scriptLines, context, path);
+
+            Environment.CurrentDirectory = currentDirectory;
         }
 
         protected virtual void ParseScript(List<string> scriptLines, FilePreProcessorContext context, string path = null)
