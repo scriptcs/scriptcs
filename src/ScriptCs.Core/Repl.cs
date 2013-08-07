@@ -9,11 +9,14 @@ namespace ScriptCs
 {
     public class Repl : ScriptExecutor
     {
+        private readonly string[] _scriptArgs;
+
         public IConsole Console { get; private set; }
 
-        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
+        public Repl(string[] scriptArgs, IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
             : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
+            _scriptArgs = scriptArgs;
             Console = console;
         }
 
@@ -56,7 +59,7 @@ namespace ScriptCs
 
                 Buffer += script;
 
-                var result = ScriptEngine.Execute(Buffer, new string[0], References, DefaultNamespaces, ScriptPackSession);
+                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
                     if (result.CompileExceptionInfo != null)

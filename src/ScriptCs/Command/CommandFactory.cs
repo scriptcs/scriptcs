@@ -34,6 +34,7 @@ namespace ScriptCs.Command
             if (args.Repl)
             {
                 var replCommand = new ExecuteReplCommand(
+                    scriptArgs,
                     _scriptServices.FileSystem,
                     _scriptServices.ScriptPackResolver,
                     _scriptServices.Engine,
