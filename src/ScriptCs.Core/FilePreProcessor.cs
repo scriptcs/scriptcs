@@ -125,7 +125,7 @@ namespace ScriptCs
 
             if (PreProcessorUtil.IsUsingLine(line))
             {
-                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line, _fileSystem);
+                var @using = GetFullPathFromLine(PreProcessorUtil.UsingString, line);
                 if (!context.UsingStatements.Contains(@using))
                 {
                     context.UsingStatements.Add(@using);
@@ -138,7 +138,7 @@ namespace ScriptCs
             {
                 if (isBeforeCode)
                 {
-                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line, _fileSystem);
+                    var reference = GetFullPathFromLine(PreProcessorUtil.RString, line);
                     if (!string.IsNullOrWhiteSpace(reference) && !context.References.Contains(reference))
                     {
                         context.References.Add(reference);
@@ -152,7 +152,7 @@ namespace ScriptCs
             {
                 if (isBeforeCode)
                 {
-                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line, _fileSystem);
+                    var filePath = GetFullPathFromLine(PreProcessorUtil.LoadString, line);
                     if (!string.IsNullOrWhiteSpace(filePath) && !context.LoadedScripts.Contains(filePath))
                     {
                         ParseFile(filePath, context);
@@ -164,6 +164,12 @@ namespace ScriptCs
 
             // If we've reached this, the line is part of the body...
             context.Body.Add(line);
+        }
+
+        private string GetFullPathFromLine(string replaceString, string line)
+        {
+            var path = PreProcessorUtil.GetPath(replaceString, line);
+            return _fileSystem.GetFullPath(path);
         }
 
         public class FilePreProcessorContext
