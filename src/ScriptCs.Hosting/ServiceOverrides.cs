@@ -7,6 +7,7 @@ namespace ScriptCs
 {
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig> where TConfig:class,IServiceOverrides<TConfig>
     {
+        protected readonly IList<Type> _lineProcessors = new List<Type>(); 
         protected readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
         private readonly TConfig _this;
 
@@ -89,6 +90,12 @@ namespace ScriptCs
         public TConfig AssemblyResolver<T>() where T : IFilePreProcessor
         {
             _overrides[typeof(IAssemblyResolver)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig AddLineProcessor<T>() where T : ILineProcessor
+        {
+            _lineProcessors.Add(typeof(T));
             return _this;
         }
     }

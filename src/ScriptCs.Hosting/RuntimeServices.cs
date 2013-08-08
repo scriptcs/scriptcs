@@ -15,15 +15,17 @@ namespace ScriptCs
 {
     public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
     {
+        private readonly IList<Type> _lineProcessors;
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices) : 
             base(logger, overrides)
         {
+            _lineProcessors = lineProcessors;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -41,6 +43,15 @@ namespace ScriptCs
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterInstance(_console).As<IConsole>();
             builder.RegisterType<ScriptServices>().SingleInstance();
+
+            var lineProcessors = new[]
+            {
+                typeof(ReferenceLineProcessor),
+                typeof(UsingLineProcessor),
+                typeof(LoadLineProcessor)
+            }.Union(_lineProcessors);
+
+            builder.RegisterTypes(lineProcessors.ToArray()).As<ILineProcessor>();
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());

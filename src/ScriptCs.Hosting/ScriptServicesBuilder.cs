@@ -43,7 +43,7 @@ namespace ScriptCs
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, _overrides, _console,
+                _runtimeServices = new RuntimeServices(_logger, _overrides, _lineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices);

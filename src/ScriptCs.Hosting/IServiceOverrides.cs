@@ -22,6 +22,7 @@ namespace ScriptCs
         TConfig FilePreProcessor<T>() where T : IFilePreProcessor;
         TConfig PackageAssemblyResolver<T>() where T : IPackageAssemblyResolver;
         TConfig AssemblyResolver<T>() where T : IFilePreProcessor;
+        TConfig AddLineProcessor<T>() where T : ILineProcessor;
     }
 
 }
