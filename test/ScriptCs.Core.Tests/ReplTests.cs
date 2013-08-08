@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
 
         public static Repl GetRepl(Mocks mocks)
         {
-            return new Repl(mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object);
+            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object);
         }
 
         public class TheConstructor
