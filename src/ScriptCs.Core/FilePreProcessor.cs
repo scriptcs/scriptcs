@@ -85,7 +85,7 @@ namespace ScriptCs
 
             _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(fileToLoad);
 
-            ParseScript(scriptLines, context, path);
+            ParseScript(scriptLines, context, fileToLoad);
 
             _fileSystem.CurrentDirectory = currentDirectory;
         }
@@ -125,7 +125,7 @@ namespace ScriptCs
 
             if (PreProcessorUtil.IsUsingLine(line))
             {
-                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
+                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line, _fileSystem);
                 if (!context.UsingStatements.Contains(@using))
                 {
                     context.UsingStatements.Add(@using);
@@ -138,7 +138,7 @@ namespace ScriptCs
             {
                 if (isBeforeCode)
                 {
-                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
+                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line, _fileSystem);
                     if (!string.IsNullOrWhiteSpace(reference) && !context.References.Contains(reference))
                     {
                         context.References.Add(reference);
@@ -152,7 +152,7 @@ namespace ScriptCs
             {
                 if (isBeforeCode)
                 {
-                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
+                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line, _fileSystem);
                     if (!string.IsNullOrWhiteSpace(filePath) && !context.LoadedScripts.Contains(filePath))
                     {
                         ParseFile(filePath, context);

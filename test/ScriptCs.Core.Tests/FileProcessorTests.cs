@@ -68,6 +68,8 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script4.csx")))
                            .Returns(_file4.ToArray());
 
+                _fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
+
                 _logger = new Mock<ILog>();
             }
 
@@ -457,7 +459,7 @@ namespace ScriptCs.Tests
 
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\f1.csx"), Times.Once());
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"), Times.Once());
-                _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"), Times.Exactly(2));
+                _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"), Times.Once());
             }
         }
         
@@ -469,6 +471,7 @@ namespace ScriptCs.Tests
             {
                 _fileSystem = new Mock<IFileSystem>();
                 _fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
+                _fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
             }
 
             [Fact]

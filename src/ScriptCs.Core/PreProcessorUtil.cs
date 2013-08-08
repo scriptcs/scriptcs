@@ -44,5 +44,11 @@ namespace ScriptCs
             var filepath = Environment.ExpandEnvironmentVariables(trimedFilePath);
             return filepath;
         }
+
+        public static string GetPath(string replaceString, string line, IFileSystem fileSystem)
+        {
+            var path = GetPath(replaceString, line);
+            return fileSystem.GetFullPath(path);
+        }
     }
 }
