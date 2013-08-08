@@ -461,6 +461,39 @@ namespace ScriptCs.Tests
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"), Times.Once());
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"), Times.Once());
             }
+
+            [Fact]
+            public void ShouldResetTheCurrentDirectoryWhenLoadingScript()
+            {
+                // f1 has usings and then loads
+                var f1 = new List<string>
+                    {
+                        @"using System;",
+                        @"Console.WriteLine(""First line of f1"");"
+                    };
+
+                var startingDirectory = "c:\\";
+                var currentDirectory = startingDirectory;
+                var lastCurrentDirectory = "";
+                _fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
+                _fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
+                           .Callback<string>((newCurrentDirectory) =>
+                           {
+                               lastCurrentDirectory = newCurrentDirectory;
+                               currentDirectory = newCurrentDirectory;
+                           });
+
+                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f1.csx"))
+                    .Returns(f1.ToArray());
+                _fileSystem.Setup(fs => fs.GetFullPath(@"C:\SubFolder\f1.csx")).Returns(@"C:\SubFolder\f1.csx");
+                _fileSystem.Setup(fs => fs.GetWorkingDirectory(@"C:\SubFolder\f1.csx")).Returns(@"C:\SubFolder\");
+
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+
+                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+
+                lastCurrentDirectory.ShouldBeSameAs(startingDirectory);
+            }
         }
         
         public class ProcessScriptMethod
