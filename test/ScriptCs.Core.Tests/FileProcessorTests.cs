@@ -68,6 +68,8 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script4.csx")))
                            .Returns(_file4.ToArray());
 
+                _fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
+
                 _logger = new Mock<ILog>();
             }
 
@@ -399,8 +401,68 @@ namespace ScriptCs.Tests
                 fileLines[line++].ShouldEqual(@"#line 5 ""C:\f1.csx""");
                 fileLines[line].ShouldEqual(f1[4]);
             }
-        }
 
+            [Fact]
+            public void ShouldLoadNestedScriptcsRelativeToScriptLocation()
+            {
+                // f1 has usings and then loads
+                var f1 = new List<string>
+                    {
+                        @"#load ""SubFolder\f2.csx"";",
+                        @"#load ""SubFolder\f3.csx"";",
+                        @"using System;",
+                        @"Console.WriteLine(""First line of f1"");"
+                    };
+
+                // f2 has no usings and multiple loads
+                var f2 = new List<string>
+                    {
+                        @"#load ""f3.csx"";",
+                        @"using System;",
+                        @"Console.WriteLine(""First line of f2"");"
+                    };
+
+                // f3 has usings and no loads
+                var f3 = new List<string>
+                    {
+                        @"using System;",
+                        @"Console.WriteLine(""First line of f3"");"
+                    };
+
+                var currentDirectory = "c:\\";
+                _fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
+                _fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
+                           .Callback<string>((newCurrentDirectory) =>
+                           {
+                               currentDirectory = newCurrentDirectory;
+                           });
+
+                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx"))
+                    .Returns(f1.ToArray());
+                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"))
+                    .Returns(f2.ToArray());
+                _fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"))
+                    .Returns(f3.ToArray());
+
+                _fileSystem.Setup(fs => fs.GetFullPath(@"C:\f1.csx")).Returns(@"C:\f1.csx");
+                _fileSystem.Setup(fs => fs.GetFullPath(@"SubFolder\f2.csx")).Returns(@"C:\SubFolder\f2.csx");
+                _fileSystem.Setup(fs => fs.GetFullPath(@"f3.csx")).Returns(@"C:\SubFolder\f3.csx");
+                _fileSystem.Setup(fs => fs.GetFullPath(@"SubFolder\f3.csx")).Returns(@"C:\SubFolder\f3.csx");
+
+                _fileSystem.Setup(fs => fs.GetWorkingDirectory(@"C:\f1.csx")).Returns(@"C:\");
+                _fileSystem.Setup(fs => fs.GetWorkingDirectory(@"C:\SubFolder\f2.csx")).Returns(@"C:\SubFolder\");
+                _fileSystem.Setup(fs => fs.GetWorkingDirectory(@"C:\SubFolder\f3.csx")).Returns(@"C:\SubFolder\");
+
+                var preProcessor = new FilePreProcessor(_fileSystem.Object, _logger.Object);
+
+                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+
+                _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\f1.csx"), Times.Once());
+                _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"), Times.Once());
+                _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"), Times.Once());
+            }
+        }
+        
         public class ProcessScriptMethod
         {
             private readonly Mock<IFileSystem> _fileSystem;
@@ -409,6 +471,7 @@ namespace ScriptCs.Tests
             {
                 _fileSystem = new Mock<IFileSystem>();
                 _fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
+                _fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
             }
 
             [Fact]
