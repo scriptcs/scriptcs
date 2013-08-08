@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace ScriptCs
+﻿namespace ScriptCs
 {
-    public interface IFilePreProcessor
+    public interface IFilePreProcessor : IFileParser
     {
         FilePreProcessorResult ProcessFile(string path);
 
