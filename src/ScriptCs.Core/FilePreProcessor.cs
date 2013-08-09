@@ -108,7 +108,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("scriptLines", scriptLines);
             Guard.AgainstNullArgument("context", context);
 
-            var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
+            var codeIndex = scriptLines.FindIndex(IsNonDirectiveLine);
 
             for (var index = 0; index < scriptLines.Count; index++)
             {
@@ -125,7 +125,7 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("fileLines", fileLines);
 
-            var bodyIndex = fileLines.FindIndex(line => PreProcessorUtil.IsNonDirectiveLine(line) && !PreProcessorUtil.IsUsingLine(line));
+            var bodyIndex = fileLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
             if (bodyIndex == -1) return;
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
@@ -140,6 +140,17 @@ namespace ScriptCs
             action();
 
             _fileSystem.CurrentDirectory = oldCurrentDirectory;
+        }
+
+        private static bool IsNonDirectiveLine(string line)
+        {
+            var trimmedLine = line.TrimStart(' ');
+            return !trimmedLine.StartsWith("#r ") && !trimmedLine.StartsWith("#load ") && line.Trim() != string.Empty;
+        }
+
+        private static bool IsUsingLine(string line)
+        {
+            return line.TrimStart(' ').StartsWith("using ") && !line.Contains("{") && line.Contains(";");
         }
     }
 }
