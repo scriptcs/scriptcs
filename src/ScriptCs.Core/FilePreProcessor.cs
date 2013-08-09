@@ -81,30 +81,26 @@ namespace ScriptCs
 
         public virtual void ParseFile(string path, FileParserContext context)
         {
-            _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
+            Guard.AgainstNullArgument("path", path);
+            Guard.AgainstNullArgument("context", context);
 
             var fullPath = _fileSystem.GetFullPath(path);
-            if (context.LoadedScripts.Contains(fullPath)) return;
+            var filename = Path.GetFileName(path);
 
-            var oldCurrentDirectory = _fileSystem.CurrentDirectory;
+            if (context.LoadedScripts.Contains(fullPath))
+            {
+                _logger.DebugFormat("Skipping {0} because it's already been loaded.", filename);
+                return;
+            }
+
+            _logger.DebugFormat("Processing {0}...", filename);
+
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
+            
+            InsertLineDirective(fullPath, scriptLines);
+            InDirectory(fullPath, () => ParseScript(scriptLines, context));
 
-            _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(fullPath);
-
-            ParseScript(scriptLines, context, fullPath);
-
-            _fileSystem.CurrentDirectory = oldCurrentDirectory;
-        }
-
-        protected virtual void ParseScript(List<string> scriptLines, FileParserContext context, string path)
-        {
-            Guard.AgainstNullArgument("path", path);
-
-            InsertLineDirective(path, scriptLines);
-
-            ParseScript(scriptLines, context);
-
-            context.LoadedScripts.Add(path);
+            context.LoadedScripts.Add(fullPath);
         }
 
         public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
@@ -134,6 +130,16 @@ namespace ScriptCs
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
             fileLines.Insert(bodyIndex, directiveLine);
+        }
+
+        private void InDirectory(string path, Action action)
+        {
+            var oldCurrentDirectory = _fileSystem.CurrentDirectory;
+            _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(path);
+
+            action();
+
+            _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
     }
 }
