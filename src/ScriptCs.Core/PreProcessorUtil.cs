@@ -1,14 +1,14 @@
 using System;
-using System.Text.RegularExpressions;
 
 namespace ScriptCs
 {
     public static class PreProcessorUtil
     {
         public const string LoadString = "#load ";
+
         public const string UsingString = "using ";
+
         public const string RString = "#r ";
-        private static Regex EnvironmentRegex = new Regex("%.+?%");
 
         public static bool IsNonDirectiveLine(string line)
         {
@@ -40,9 +40,12 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("line", line);
 
-            var trimedFilePath = line.Replace(replaceString, string.Empty).Trim(' ').Replace("\"", string.Empty).Replace(";", string.Empty);
-            var filepath = Environment.ExpandEnvironmentVariables(trimedFilePath);
-            return filepath;
+            var filePath = line.Replace(replaceString, string.Empty)
+                .Trim(' ')
+                .Replace("\"", string.Empty)
+                .Replace(";", string.Empty);
+
+            return Environment.ExpandEnvironmentVariables(filePath);
         }
     }
 }

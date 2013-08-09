@@ -36,6 +36,7 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
+    <Compile Include="DirectiveLineProcessor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
@@ -45,13 +46,16 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="FilePreProcessor.cs" />
+    <Compile Include="FileParserContext.cs" />
     <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="IAssemblyResolver.cs" />
     <Compile Include="IAssemblyUtility.cs" />
+    <Compile Include="IFileParser.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
+    <Compile Include="ILineProcessor.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IScriptEngine.cs" />
@@ -60,6 +64,7 @@
     <Compile Include="IScriptPackManager.cs" />
     <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptExecutor.cs" />
+    <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Package\PackageInstaller.cs" />
@@ -74,6 +79,7 @@
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="PreProcessorUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceLineProcessor.cs" />
     <Compile Include="Repl.cs" />
     <Compile Include="ScriptHost.cs" />
     <Compile Include="ScriptHostFactory.cs" />
@@ -84,6 +90,7 @@
     <Compile Include="ScriptResult.cs" />
     <Compile Include="ScriptServices.cs" />
     <Compile Include="SessionState.cs" />
+    <Compile Include="UsingLineProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
