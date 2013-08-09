@@ -39,11 +39,14 @@ namespace ScriptCs.Engine.Roslyn
             _logger.Debug("Creating script host");
             
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
-            SessionState<Session> sessionState;
+            var distinctNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct().ToList();
 
+            var environment = new ScriptEnvironment(distinctReferences, scriptArgs, code, distinctNamespaces);
+
+            SessionState<Session> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), environment);
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
 
@@ -53,7 +56,7 @@ namespace ScriptCs.Engine.Roslyn
                     session.AddReference(reference);
                 }
 
-                foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
+                foreach (var @namespace in distinctNamespaces)
                 {
                     _logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);

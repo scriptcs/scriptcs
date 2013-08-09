@@ -71,6 +71,7 @@
     <Compile Include="ReferenceLineProcessor.cs" />
     <Compile Include="Repl.cs" />
     <Compile Include="ScriptExecutorExtensions.cs" />
+    <Compile Include="ScriptEnvironment.cs" />
     <Compile Include="ScriptHost.cs" />
     <Compile Include="ScriptHostFactory.cs" />
     <Compile Include="ScriptPackManager.cs" />

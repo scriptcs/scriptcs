@@ -4,7 +4,7 @@ namespace ScriptCs
 {
     public interface IScriptHost 
     {
-        string[] ScriptArgs { get; }
+        ScriptEnvironment Env { get; }
 
         T Require<T>() where T : IScriptPackContext;
     }

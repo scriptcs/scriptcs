@@ -2,9 +2,9 @@
 {
     public class ScriptHostFactory : IScriptHostFactory
     {
-        public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
+        public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment)
         {
-            return new ScriptHost(scriptPackManager, scriptArgs);
+            return new ScriptHost(scriptPackManager, environment);
         }
     }
 }
