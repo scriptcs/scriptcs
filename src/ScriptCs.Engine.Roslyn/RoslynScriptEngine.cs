@@ -41,11 +41,11 @@ namespace ScriptCs.Engine.Roslyn
             var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
             var distinctNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct().ToList();
 
-            var environment = new ScriptEnvironment(distinctReferences, scriptArgs, code, distinctNamespaces);
-
             SessionState<Session> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
+                var environment = new ScriptEnvironment(distinctReferences, scriptArgs, code, distinctNamespaces);
+
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), environment);
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
