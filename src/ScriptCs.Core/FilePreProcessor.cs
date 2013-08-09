@@ -83,15 +83,17 @@ namespace ScriptCs
         {
             _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
 
-            var currentDirectory = _fileSystem.CurrentDirectory;
-            var fileToLoad = _fileSystem.GetFullPath(path);
-            var scriptLines = _fileSystem.ReadFileLines(fileToLoad).ToList();
+            var fullPath = _fileSystem.GetFullPath(path);
+            if (context.LoadedScripts.Contains(fullPath)) return;
 
-            _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(fileToLoad);
+            var oldCurrentDirectory = _fileSystem.CurrentDirectory;
+            var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
 
-            ParseScript(scriptLines, context, fileToLoad);
+            _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(fullPath);
 
-            _fileSystem.CurrentDirectory = currentDirectory;
+            ParseScript(scriptLines, context, fullPath);
+
+            _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
 
         protected virtual void ParseScript(List<string> scriptLines, FileParserContext context, string path)

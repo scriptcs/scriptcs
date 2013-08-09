@@ -27,7 +27,7 @@ namespace ScriptCs
             var filePath = Environment.ExpandEnvironmentVariables(argument);
 
             var fullPath = _fileSystem.GetFullPath(filePath);
-            if (!string.IsNullOrWhiteSpace(fullPath) && !context.LoadedScripts.Contains(fullPath))
+            if (!string.IsNullOrWhiteSpace(fullPath))
             {
                 parser.ParseFile(fullPath, context);
             }
