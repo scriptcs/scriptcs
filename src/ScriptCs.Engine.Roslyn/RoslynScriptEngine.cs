@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -13,8 +12,11 @@ namespace ScriptCs.Engine.Roslyn
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
+
         private readonly IScriptHostFactory _scriptHostFactory;
+
         private readonly ILog _logger;
+
         public const string SessionKey = "Session";
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
@@ -31,21 +33,19 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptResult Execute(ScriptEnvironment environment, ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
             _logger.Debug("Starting to create execution components");
             _logger.Debug("Creating script host");
             
-            var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
-            var distinctNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct().ToList();
+            var distinctReferences = environment.References.Union(scriptPackSession.References).Distinct().ToList();
+            var distinctNamespaces = environment.Namespaces.Union(scriptPackSession.Namespaces).Distinct().ToList();
 
             SessionState<Session> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var environment = new ScriptEnvironment(distinctReferences, scriptArgs, code, distinctNamespaces);
-
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), environment);
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
@@ -83,7 +83,7 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             _logger.Debug("Starting execution");
-            var result = Execute(code, sessionState.Session);
+            var result = Execute(environment.Script, sessionState.Session);
             _logger.Debug("Finished execution");
             return result;
         }

@@ -107,7 +107,9 @@ namespace ScriptCs
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+
+            var environment = new ScriptEnvironment(references, namespaces, new FileInfo(path), scriptArgs, result.Code);
+            return ScriptEngine.Execute(environment, ScriptPackSession);
         }
     }
 }

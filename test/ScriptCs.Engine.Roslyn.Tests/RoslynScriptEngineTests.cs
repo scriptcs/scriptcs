@@ -27,6 +27,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var a = 0;";
 
+                var environment = new ScriptEnvironment(Enumerable.Empty<string>(), Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -34,7 +36,7 @@ namespace ScriptCs.Tests
                 scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext) null);
 
                 // Act
-                engine.Execute(Code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()));
@@ -49,6 +51,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var a = 0;";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -56,7 +60,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                engine.Execute(Code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 engine.Session.ShouldEqual(session.Session);
@@ -71,11 +75,13 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var a = 0;";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
                 // Act
-                engine.Execute(Code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 engine.Session.ShouldNotBeNull();
@@ -90,6 +96,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var a = 0;";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -97,7 +105,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                engine.Execute(Code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(environment, scriptPackSession);
                 
                 // Assert
                 ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
@@ -112,6 +120,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 var code = string.Empty;
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -119,7 +129,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.ShouldBeType<ScriptResult>();
@@ -134,6 +144,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "this shold not compile";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -141,7 +153,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.CompileExceptionInfo.ShouldNotBeNull();
@@ -154,7 +166,9 @@ namespace ScriptCs.Tests
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
-                const string Code = "var theNumber = 42; //this should compile";
+                const string Code = "var theNumber = 42; // this should compile";
+
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
@@ -163,7 +177,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.CompileExceptionInfo.ShouldBeNull();
@@ -176,7 +190,9 @@ namespace ScriptCs.Tests
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
-                const string Code = "throw new System.Exception(); //this should throw an Exception";
+                const string Code = "throw new System.Exception(); // this should throw an Exception";
+
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
@@ -185,7 +201,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.ExecuteExceptionInfo.ShouldNotBeNull();
@@ -198,7 +214,9 @@ namespace ScriptCs.Tests
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
-                const string Code = "var theNumber = 42; //this should not throw an Exception";
+                const string Code = "var theNumber = 42; // this should not throw an Exception";
+
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
@@ -207,7 +225,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.ExecuteExceptionInfo.ShouldBeNull();
@@ -221,6 +239,8 @@ namespace ScriptCs.Tests
             {
                 const string Code = "\"Hello\" //this should return \"Hello\"";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 // Arrange
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
@@ -230,7 +250,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.ReturnValue.ShouldEqual("Hello");
@@ -245,6 +265,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var theNumber = 42; //this should not return a value";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -252,7 +274,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
                 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.ReturnValue.ShouldBeNull();
@@ -267,6 +289,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "class test {";
 
+                var environment = new ScriptEnvironment(new[] {"System"}, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -274,7 +298,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.IsPendingClosingChar.ShouldBeTrue();
@@ -290,6 +314,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var x = new[1] { 1 }; var y = x[0";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -297,7 +323,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.IsPendingClosingChar.ShouldBeTrue();
@@ -313,6 +339,8 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "System.Diagnostics.Debug.WriteLine(\"a\"";
 
+                var environment = new ScriptEnvironment(new[] { "System" }, Enumerable.Empty<string>(), null, new string[0], Code);
+
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<ScriptEnvironment>()))
                     .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
@@ -320,7 +348,7 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(environment, scriptPackSession);
 
                 // Assert
                 result.IsPendingClosingChar.ShouldBeTrue();

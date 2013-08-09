@@ -29,16 +29,11 @@ namespace ScriptCs.Tests
                 };
 
                 var code = string.Join(Environment.NewLine, lines);
+                var environment = new ScriptEnvironment(Enumerable.Empty<string>(), Enumerable.Empty<string>(), null, new string[0], code);
                 var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
 
                 // Act
-                var exception = Assert.Throws<ScriptExecutionException>(() =>
-                    scriptEngine.Execute(
-                        code,
-                        new string[0],
-                        Enumerable.Empty<string>(),
-                        Enumerable.Empty<string>(),
-                        session));
+                var exception = Assert.Throws<ScriptExecutionException>(() => scriptEngine.Execute(environment, session));
 
                 // Assert
                 exception.Message.ShouldContain("at Submission#0");

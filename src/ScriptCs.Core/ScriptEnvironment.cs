@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ScriptCs
 {
@@ -8,22 +9,26 @@ namespace ScriptCs
 
         public ScriptEnvironment(
             IEnumerable<string> references,
+            IEnumerable<string> namespaces,
+            FileInfo rootScriptInfo,
             string[] scriptArgs,
-            string script,
-            IEnumerable<string> namespaces)
+            string script)
         {
             References = references;
+            Namespaces = namespaces;
+            RootScriptInfo = rootScriptInfo;
             ScriptArgs = scriptArgs;
             Script = script;
-            Namespaces = namespaces;
         }
 
         public IEnumerable<string> References { get; private set; }
 
+        public IEnumerable<string> Namespaces { get; private set; }
+
+        public FileInfo RootScriptInfo { get; private set; }
+
         public string[] ScriptArgs { get; private set; }
 
         public string Script { get; private set; }
-
-        public IEnumerable<string> Namespaces { get; private set; }
     }
 }
