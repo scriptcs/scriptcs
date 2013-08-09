@@ -34,7 +34,7 @@ namespace ScriptCs.Tests
                 _scriptEngineType = mockScriptEngineType.Object.GetType();
 
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices);
+                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(),  _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices);
             }
 
             [Fact]

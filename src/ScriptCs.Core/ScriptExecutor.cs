@@ -128,7 +128,7 @@ namespace ScriptCs
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
-            var namespaces = Namespaces.Union(result.UsingStatements);
+            var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);

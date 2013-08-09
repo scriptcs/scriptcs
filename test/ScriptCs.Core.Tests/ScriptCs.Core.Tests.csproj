@@ -65,6 +65,8 @@
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
     <Compile Include="AssemblyResolverTests.cs" />
+    <Compile Include="ReferenceLineProcessorTests.cs" />
+    <Compile Include="LoadLineProcessorTests.cs" />
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="ScriptHostTests.cs" />
     <Compile Include="ScriptPackResolverTests.cs" />
     <Compile Include="ScriptPackSessionTests.cs" />
+    <Compile Include="UsingLineProcessorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
