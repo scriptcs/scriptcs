@@ -6,6 +6,6 @@ namespace ScriptCs
     {
         void ParseFile(string path, FileParserContext context);
 
-        void ParseScript(List<string> scriptLines, FileParserContext context, string path = null);
+        void ParseScript(List<string> scriptLines, FileParserContext context);
     }
 }

@@ -93,14 +93,21 @@ namespace ScriptCs
             _fileSystem.CurrentDirectory = currentDirectory;
         }
 
-        public virtual void ParseScript(List<string> scriptLines, FileParserContext context, string path = null)
+        protected virtual void ParseScript(List<string> scriptLines, FileParserContext context, string path)
         {
             Guard.AgainstNullArgument("scriptLines", scriptLines);
             Guard.AgainstNullArgument("context", context);
+            Guard.AgainstNullArgument("path", path);
 
-            // Insert line directive if there's a path
-            if (path != null) InsertLineDirective(path, scriptLines);
+            InsertLineDirective(path, scriptLines);
 
+            ParseScript(scriptLines, context);
+
+            context.LoadedScripts.Add(path);
+        }
+
+        public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
+        {
             var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
 
             for (var index = 0; index < scriptLines.Count; index++)
@@ -112,8 +119,6 @@ namespace ScriptCs
 
                 if (!wasProcessed) context.Body.Add(line);
             }
-
-            if (path != null) context.LoadedScripts.Add(path);
         }
 
         protected virtual void InsertLineDirective(string path, List<string> fileLines)
