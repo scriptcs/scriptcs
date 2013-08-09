@@ -19,9 +19,6 @@
     <Reference Include="Common.Logging">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.XmlTransform">
-      <HintPath>..\..\packages\Microsoft.Web.Xdt.1.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
-    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
@@ -68,7 +65,6 @@
     <Compile Include="ReferenceLineProcessorTests.cs" />
     <Compile Include="LoadLineProcessorTests.cs" />
     <Compile Include="FileSystemTests.cs" />
-    <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="PackageAssemblyResolverTests.cs" />
     <Compile Include="PreProcessorUtilTests.cs" />
