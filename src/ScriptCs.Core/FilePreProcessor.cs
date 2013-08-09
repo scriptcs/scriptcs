@@ -64,7 +64,8 @@ namespace ScriptCs
             var stringBuilder = new StringBuilder();
 
             var usingLines = context.Namespaces
-                .Select(item => string.Format("using {0};", item))
+                .Where(ns => !string.IsNullOrWhiteSpace(ns))
+                .Select(ns => string.Format("using {0};", ns))
                 .ToList();
 
             if (usingLines.Count > 0)
