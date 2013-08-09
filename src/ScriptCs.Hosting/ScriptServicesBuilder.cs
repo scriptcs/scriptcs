@@ -36,14 +36,14 @@ namespace ScriptCs
             var defaultExecutorType = _debug ? typeof (DebugScriptExecutor) : typeof (ScriptExecutor);
             var defaultEngineType = _debug ? typeof (RoslynScriptDebuggerEngine) : typeof (RoslynScriptEngine);
 
-            _scriptExecutorType = _overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)_overrides[typeof(IScriptExecutor)] : defaultExecutorType;
-            _scriptEngineType = _overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) _overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
+            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) Overrides[typeof(IScriptEngine)] : defaultEngineType;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, _overrides, _lineProcessors, _console,
+                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices);
@@ -53,7 +53,7 @@ namespace ScriptCs
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, _overrides);
+            var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
             loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
             return this;

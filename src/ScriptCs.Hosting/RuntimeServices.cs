@@ -44,14 +44,7 @@ namespace ScriptCs
             builder.RegisterInstance(_console).As<IConsole>();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
-            var lineProcessors = new[]
-            {
-                typeof(ReferenceLineProcessor),
-                typeof(UsingLineProcessor),
-                typeof(LoadLineProcessor)
-            }.Union(_lineProcessors);
-
-            builder.RegisterTypes(lineProcessors.ToArray()).As<ILineProcessor>();
+            RegisterLineProcessors(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
@@ -81,6 +74,25 @@ namespace ScriptCs
             }
 
             return builder.Build();
+        }
+
+        private void RegisterLineProcessors(ContainerBuilder builder)
+        {
+            var loadProcessorType = _lineProcessors
+                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x)) 
+                ?? typeof(LoadLineProcessor);
+
+            var usingProcessorType = _lineProcessors
+                .FirstOrDefault(x => typeof(IUsingLineProcessor).IsAssignableFrom(x))
+                ?? typeof(UsingLineProcessor);
+
+            var referenceProcessorType = _lineProcessors
+                .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
+                ?? typeof(ReferenceLineProcessor);
+
+            var lineProcessors = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(_lineProcessors);
+
+            builder.RegisterTypes(lineProcessors.ToArray()).As<ILineProcessor>();
         }
 
         public ScriptServices GetScriptServices()
