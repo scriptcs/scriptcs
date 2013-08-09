@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using NuGet;
+using ScriptCs.Package;
 
-namespace ScriptCs.Package
+namespace ScriptCs.Hosting.Package
 {
     internal class PackageObject : IPackageObject
     {

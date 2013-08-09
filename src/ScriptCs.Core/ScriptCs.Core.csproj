@@ -67,15 +67,11 @@
     <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Package\PackageInstaller.cs" />
     <Compile Include="Package\InstallationProvider\IInstallationProvider.cs" />
-    <Compile Include="Package\InstallationProvider\NugetInstallationProvider.cs" />
     <Compile Include="Package\IPackageContainer.cs" />
     <Compile Include="Package\IPackageInstaller.cs" />
     <Compile Include="Package\IPackageObject.cs" />
     <Compile Include="Package\IPackageReference.cs" />
-    <Compile Include="Package\PackageContainer.cs" />
-    <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Package\PackageReference.cs" />
     <Compile Include="PreProcessorUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
 
-namespace ScriptCs.Package
+namespace ScriptCs.Hosting.Package
 {
     public class PackageInstaller : IPackageInstaller
     {

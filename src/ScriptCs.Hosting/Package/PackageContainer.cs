@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-
 using NuGet;
+using ScriptCs.Package;
+using PackageReference = ScriptCs.Package.PackageReference;
 
-namespace ScriptCs.Package
+namespace ScriptCs.Hosting.Package
 {
     public class PackageContainer : IPackageContainer
     {
