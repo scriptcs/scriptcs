@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Common.Logging;
+using ScriptCs.Hosting.Package;
 using ScriptCs.Package;
 
 namespace ScriptCs

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NuGet;
+using ScriptCs.Package;
+using ScriptCs.Package.InstallationProvider;
 
-namespace ScriptCs.Package.InstallationProvider
+namespace ScriptCs.Hosting.Package
 {
     public class NugetInstallationProvider : IInstallationProvider
     {

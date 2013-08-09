@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using NuGet;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
 using Should;
-using NuGet;
 using Xunit;
 using Moq;
 using PackageReference = ScriptCs.Package.PackageReference;

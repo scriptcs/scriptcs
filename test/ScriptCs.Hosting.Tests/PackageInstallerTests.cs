@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NuGet;
+using ScriptCs.Hosting.Package;
 using ScriptCs.Package;
 using ScriptCs.Package.InstallationProvider;
 using Should;
@@ -94,7 +95,6 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldNotInstallExistingPackages()
             {
-                var callbacks = new List<string>();
                 var provider = new Mock<IInstallationProvider>();
                 provider.Setup(
                     i => i.IsInstalled(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()))
