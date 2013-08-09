@@ -96,8 +96,6 @@ namespace ScriptCs
 
         protected virtual void ParseScript(List<string> scriptLines, FileParserContext context, string path)
         {
-            Guard.AgainstNullArgument("scriptLines", scriptLines);
-            Guard.AgainstNullArgument("context", context);
             Guard.AgainstNullArgument("path", path);
 
             InsertLineDirective(path, scriptLines);
@@ -109,6 +107,9 @@ namespace ScriptCs
 
         public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
         {
+            Guard.AgainstNullArgument("scriptLines", scriptLines);
+            Guard.AgainstNullArgument("context", context);
+
             var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
 
             for (var index = 0; index < scriptLines.Count; index++)
