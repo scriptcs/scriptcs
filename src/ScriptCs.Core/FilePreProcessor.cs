@@ -50,7 +50,7 @@ namespace ScriptCs
 
             return new FilePreProcessorResult
             {
-                UsingStatements = context.Namespaces,
+                Namespaces = context.Namespaces,
                 LoadedScripts = context.LoadedScripts,
                 References = context.References,
                 Code = code
@@ -74,7 +74,7 @@ namespace ScriptCs
                 stringBuilder.AppendLine(); // Insert a blank separator line
             }
 
-            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.Body));
+            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.BodyLines));
 
             return stringBuilder.ToString();
         }
@@ -121,7 +121,7 @@ namespace ScriptCs
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
 
-                if (!wasProcessed) context.Body.Add(line);
+                if (!wasProcessed) context.BodyLines.Add(line);
             }
         }
 

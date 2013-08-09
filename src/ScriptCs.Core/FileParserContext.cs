@@ -9,7 +9,7 @@ namespace ScriptCs
             Namespaces = new List<string>();
             References = new List<string>();
             LoadedScripts = new List<string>();
-            Body = new List<string>();
+            BodyLines = new List<string>();
         }
 
         public List<string> Namespaces { get; private set; }
@@ -18,6 +18,6 @@ namespace ScriptCs
 
         public List<string> LoadedScripts { get; private set; }
 
-        public List<string> Body { get; private set; }
+        public List<string> BodyLines { get; private set; }
     }
 }
