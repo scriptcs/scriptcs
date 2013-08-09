@@ -2,7 +2,9 @@
 
 namespace ScriptCs
 {
-    public class ReferenceLineProcessor : DirectiveLineProcessor
+    public interface IReferenceLineProcessor : ILineProcessor { }
+
+    public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
     {
         private readonly IFileSystem _fileSystem;
 
