@@ -11,14 +11,21 @@ namespace ScriptCs
     {
         private readonly string[] _scriptArgs;
 
-        public IConsole Console { get; private set; }
-
-        public Repl(string[] scriptArgs, IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger)
+        public Repl(
+            string[] scriptArgs,
+            IFileSystem fileSystem,
+            IScriptEngine scriptEngine,
+            ILog logger,
+            IConsole console,
+            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             Console = console;
         }
+
+        public string Buffer { get; set; }
+
+        public IConsole Console { get; private set; }
 
         public override void Terminate()
         {
@@ -27,41 +34,22 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public string Buffer { get; set; }
-
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             try
             {
-                if (PreProcessorUtil.IsLoadLine(script))
-                {
-                    var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    if (FileSystem.FileExists(filepath))
-                    {
-                        var processorResult = FilePreProcessor.ProcessFile(filepath);
-                        script = processorResult.Code;
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
-                    }
-                }
-                else if (PreProcessorUtil.IsRLine(script))
-                {
-                    var assemblyName = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                    var assemblyPath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, assemblyName));
-                    AddReferences(FileSystem.FileExists(assemblyPath) ? assemblyPath : assemblyName);
+                var preProcessResult = FilePreProcessor.ProcessScript(script);
 
-                    return new ScriptResult();
-                }
+                AddNamespaces(preProcessResult.Namespaces);
+                AddReferences(preProcessResult.References);
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
-                Buffer += script;
+                Buffer += preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
-                if (result != null)
-                {
+                if (result == null) return null;
+
                     if (result.CompileExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -80,13 +68,11 @@ namespace ScriptCs
                     }
 
                     if (result.ReturnValue != null)
-                    {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine(result.ReturnValue.ToJsv());
                     }
 
                     Buffer = null;
-                }
 
                 return result;
             }
