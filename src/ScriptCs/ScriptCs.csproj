@@ -7,7 +7,6 @@
     <RootNamespace>ScriptCs</RootNamespace>
     <AssemblyName>scriptcs</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <CodeAnalysisRuleSet>..\..\build\ScriptCs.ruleset</CodeAnalysisRuleSet>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>

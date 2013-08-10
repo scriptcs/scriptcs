@@ -22,6 +22,9 @@
     <DebugSymbols>true</DebugSymbols>
     
     <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
+
+    <CodeAnalysisRuleSet>$(SolutionDir)ScriptCs.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis Condition=" '$(RunCodeAnalysis)' == '' " >false</RunCodeAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
