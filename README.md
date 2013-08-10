@@ -191,6 +191,10 @@ var result = runner.Run(new ConsoleListener(msg => Console.WriteLine(msg)), Test
 Console.ReadKey();
 ```
 
+### Debugging
+
+Instructions for debugging scripts using Visual Studio can be found on the [wiki](https://github.com/scriptcs/scriptcs/wiki/Debugging-a-script).
+
 
 ## Contributing
 
