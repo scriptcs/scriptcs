@@ -109,7 +109,7 @@
   </Target>
 
   <PropertyGroup>
-    <NuGetParameters>-Version $(PackageVersion) -Symbols -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
+    <NuGetParameters>-Version $(PackageVersion) -Symbols -Verbosity quiet -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
   </PropertyGroup>
 
   <Target Name="BuildChocolateyPackage">
@@ -123,7 +123,7 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
     </ItemGroup>
-
+    <Message Text="Building NuGet packages..." Importance="high" />
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
   </Target>
 
