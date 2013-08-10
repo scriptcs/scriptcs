@@ -165,10 +165,10 @@ namespace ScriptCs.Tests
 
                 scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
-                scriptExecutor.AddReference("a");
+                scriptExecutor.AddReferences("a");
                 scriptExecutor.AddReferences(new[]{"a", "a", "b", "c", "d"});
-                scriptExecutor.AddReferenceByType<FactAttribute>();
-                scriptExecutor.AddReferenceByType(typeof(TheInitializeMethod));
+                scriptExecutor.AddReference<FactAttribute>();
+                scriptExecutor.AddReferences(typeof(TheInitializeMethod));
                 var explicitReferences = new[] { "a", "b", "c", "d", typeof(FactAttribute).Assembly.Location, typeof(TheInitializeMethod).Assembly.Location };
                 // act
                 scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
@@ -183,7 +183,6 @@ namespace ScriptCs.Tests
                                                                 [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor scriptExecutor)
             {
                 // arrange
-                var defaultReferences = ScriptExecutor.DefaultReferences;
                 preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
                 var currentDirectory = @"C:\";
@@ -195,10 +194,10 @@ namespace ScriptCs.Tests
 
                 scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
-                scriptExecutor.AddNamespace("a");
-                scriptExecutor.AddNamespaces(new[] {"a", "a", "b", "c", "d" });
-                scriptExecutor.AddNamespaceByType<FactAttribute>();
-                scriptExecutor.AddNamespaceByType(typeof(TheInitializeMethod));
+                scriptExecutor.ImportNamespaces("a");
+                scriptExecutor.ImportNamespaces(new[] {"a", "a", "b", "c", "d" }.ToArray());
+                scriptExecutor.ImportNamespace<FactAttribute>();
+                scriptExecutor.ImportNamespaces(typeof(TheInitializeMethod));
                 var explicitNamespaces = new[] { "a", "b", "c", "d", typeof(FactAttribute).Namespace, typeof(TheInitializeMethod).Namespace };
                 // act
                 scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());

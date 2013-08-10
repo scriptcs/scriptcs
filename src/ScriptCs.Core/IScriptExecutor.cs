@@ -15,15 +15,10 @@ namespace ScriptCs
         Collection<string> References { get; }
         Collection<string> Namespaces { get; }
         ScriptPackSession ScriptPackSession { get; }
-        void AddNamespaces(IEnumerable<string> namespaces);
-        void AddNamespace(string @namespace);
-        void AddNamespaceByType(Type typeFromReferencedAssembly);
-        void AddNamespaceByType<T>();
-        void AddReferences(IEnumerable<string> paths);
-        void AddReferenceByType(Type typeFromReferencedAssembly);
-        void AddReferenceByType<T>();
-        void AddReference(string path);
-        void RemoveReference(string path);
+        void ImportNamespaces(params string[] namespaces);
+        void AddReferences(params string[] references);
+        void RemoveReferences(params string[] references);
+        void RemoveNamespaces(params string[] namespaces);
         void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks);
         void Terminate();
         ScriptResult Execute(string script);
