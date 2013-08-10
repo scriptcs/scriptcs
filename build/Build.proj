@@ -6,7 +6,7 @@
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
   
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 
     <Root>$(MSBuildThisFileDirectory)..\</Root>
     <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
