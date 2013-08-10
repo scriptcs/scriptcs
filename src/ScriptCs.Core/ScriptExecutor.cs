@@ -26,81 +26,57 @@ namespace ScriptCs
             References = new Collection<string>();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
-            AddNamespaces(DefaultNamespaces);
+            ImportNamespaces(DefaultNamespaces);
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             Logger = logger;
         }
 
-        public void AddNamespaces(IEnumerable<string> namespaces)
+        public void ImportNamespaces(params string[] namespaces)
         {
             Guard.AgainstNullArgument("namespaces", namespaces);
 
-            foreach(var @namespace in namespaces)
+            foreach (var @namespace in namespaces)
             {
-                AddNamespace(@namespace);
+                Namespaces.Add(@namespace);
             }
         }
 
-        public void AddNamespace(string @namespace)
-        {
-            Guard.AgainstNullArgument("namespace", @namespace);
 
-            Namespaces.Add(@namespace);
-        }
-
-        public void AddNamespaceByType(Type typeFromReferencedAssembly)
-        {
-            Guard.AgainstNullArgument("typeFromReferencedAssembly", typeFromReferencedAssembly);
-
-            AddNamespace(typeFromReferencedAssembly.Namespace);
-        }
-
-        public void AddNamespaceByType<T>()
-        {
-            AddNamespaceByType(typeof(T));
-        }
-
-        public void AddReferences(IEnumerable<string> paths)
+        public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
             foreach(var path in paths)
             {
-                AddReference(path);
+                References.Add(path);
             }
         }
 
-        public void AddReferenceByType(Type typeFromReferencedAssembly)
+        public void RemoveReferences(params string[] paths)
         {
-            Guard.AgainstNullArgument("typeFromReferencedAssembly", typeFromReferencedAssembly);
-
-            AddReference(typeFromReferencedAssembly.Assembly.Location);
+            Guard.AgainstNullArgument("paths", paths);
+            
+            foreach (var path in paths)
+            {
+                References.Remove(path);
+            }
         }
 
-        public void AddReferenceByType<T>()
+        public void RemoveNamespaces(params string[] namespaces)
         {
-            AddReferenceByType(typeof(T));
-        }
+            Guard.AgainstNullArgument("namespaces", namespaces);
 
-        public void AddReference(string path)
-        {
-            Guard.AgainstNullArgument("path", path);
-
-            References.Add(path);
-        }
-
-        public void RemoveReference(string path)
-        {
-            Guard.AgainstNullArgument("path", path);
-
-            References.Remove(path);
+            foreach (var @namespace in namespaces)
+            {
+                Namespaces.Remove(@namespace);
+            }
         }
 
         public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            AddReferences(paths);
+            AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
             ScriptEngine.BaseDirectory = bin;
