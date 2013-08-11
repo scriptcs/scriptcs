@@ -94,15 +94,20 @@ namespace ScriptCs
             ScriptPackSession.TerminatePacks();
         }
 
-        public virtual ScriptResult Execute(string script)
-        {
-            return Execute(script, new string[0]);
-        }
-
-        public virtual ScriptResult Execute(string script, string[] scriptArgs)
+        public virtual ScriptResult Execute(string script, params string[] scriptArgs)
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
+            var references = References.Union(result.References);
+            var namespaces = Namespaces.Union(result.Namespaces);
+
+            Logger.Debug("Starting execution in engine");
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+        }
+
+        public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
+        {
+            var result = FilePreProcessor.ProcessScript(script);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 

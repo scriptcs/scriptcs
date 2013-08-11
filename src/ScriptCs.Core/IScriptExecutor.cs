@@ -21,7 +21,7 @@ namespace ScriptCs
         void RemoveNamespaces(params string[] namespaces);
         void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks);
         void Terminate();
-        ScriptResult Execute(string script);
-        ScriptResult Execute(string script, string[] scriptArgs);
+        ScriptResult Execute(string script, params string[] scriptArgs);
+        ScriptResult ExecuteScript(string script, params string[] scriptArgs);
     }
 }
