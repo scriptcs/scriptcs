@@ -41,7 +41,12 @@ namespace ScriptCs
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
 
                 AddNamespaces(preProcessResult.Namespaces);
-                AddReferences(preProcessResult.References);
+
+                foreach (var reference in preProcessResult.References)
+                {
+                    var referencePath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, reference));
+                    AddReference(FileSystem.FileExists(referencePath) ? referencePath : reference);
+                }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
