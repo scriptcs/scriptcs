@@ -239,6 +239,18 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldNotThrowStackOverflowExceptionOnLoadLoop()
+            {
+                var a = new List<string> { "#load B.csx" };
+                var b = new List<string> { "#load A.csx" };
+
+                _fileSystem.Setup(x => x.ReadFileLines("A.csx")).Returns(a.ToArray());
+                _fileSystem.Setup(x => x.ReadFileLines("B.csx")).Returns(b.ToArray());
+
+                Assert.DoesNotThrow(() => GetFilePreProcessor().ProcessFile("A.csx"));
+            }
+
+            [Fact]
             public void ShouldNotBeAllowedToLoadAfterUsing()
             {
                 var file = new List<string>
