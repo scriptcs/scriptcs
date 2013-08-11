@@ -45,6 +45,7 @@
         <![CDATA[
         var packages = 
           PackageConfigFiles.AsParallel()
+                            .Where(x => File.Exists(x.GetMetadata("FullPath")))
                             .Select(x => XDocument.Load(x.GetMetadata("FullPath")))
                             .SelectMany(x => x.Root.Elements("package"))
                             .Select(x => new { Id = x.Attribute("id").Value, Version = x.Attribute("version").Value })

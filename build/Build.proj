@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
-  <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
+  <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
   
   <PropertyGroup>
@@ -93,7 +93,7 @@
     <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
   </Target>
 
-  <Target Name="Package" DependsOnTargets="Test; BuildNuGetPackages; BuildChocolateyPackage"></Target>
+  <Target Name="Package" DependsOnTargets="Test; BuildNuGetPackages; BuildChocolateyPackage" />
 
   <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
     <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
