@@ -53,7 +53,7 @@ namespace ScriptCs
                 Buffer += preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
-                if (result == null) return null;
+                if (result == null) return new ScriptResult();
 
                     if (result.CompileExceptionInfo != null)
                     {
@@ -67,12 +67,19 @@ namespace ScriptCs
                         Console.WriteLine(result.ExecuteExceptionInfo.SourceException.ToString());
                     }
 
+                if (result.IsPendingClosingChar)
+                {
+                    return result;
+                }
+                else
+                {
                     if (result.IsPendingClosingChar)
                     {
                         return result;
                     }
 
                     if (result.ReturnValue != null)
+					{
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine(result.ReturnValue.ToJsv());
                     }
