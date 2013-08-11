@@ -141,6 +141,34 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
+            public void ShouldExecuteScriptWhenExecuteScriptIsInvoked([Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,
+                                                                                                                                     [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor scriptExecutor)
+            {
+                string code = Guid.NewGuid().ToString();
+
+                var currentDirectory = @"C:\";
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+
+                var paths = new string[0];
+                var recipes = Enumerable.Empty<IScriptPack>();
+                var script = "var a=1;";
+                preProcessor.Setup(fs => fs.ProcessScript(script)).Returns(new FilePreProcessorResult {Code=script}).Verifiable();
+                scriptEngine.Setup(e => e.Execute(code, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+
+                // act
+                scriptExecutor.Initialize(paths, recipes);
+                scriptExecutor.ExecuteScript(script);
+
+                // assert
+                preProcessor.Verify(fs => fs.ProcessScript(script), Times.Once());
+
+                scriptEngine.Verify(s => s.Execute(script, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+            }
+
+
+
+            [Theory, ScriptCsAutoData]
             public void ShouldAddReferenceToEachDestinationFile([Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,
                                                                                             [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor scriptExecutor)
             {
