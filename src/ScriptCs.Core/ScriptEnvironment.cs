@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -33,5 +34,7 @@ namespace ScriptCs
         public string Script { get; private set; }
 
         public Assembly Assembly { get; set; }
+
+        public Exception LastException { get; set; }
     }
 }

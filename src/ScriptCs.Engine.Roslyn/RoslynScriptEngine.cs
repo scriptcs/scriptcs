@@ -64,7 +64,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                sessionState = new SessionState<Session>
+                {
+                    References = distinctReferences, 
+                    Session = session,
+                    Environment = environment
+                };
+
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -88,10 +94,17 @@ namespace ScriptCs.Engine.Roslyn
 
             Assembly currentAssembly;
             var result = Execute(environment.Script, sessionState.Session, out currentAssembly);
+
+            var sessionEnvironment = sessionState.Environment;
+            
             if (currentAssembly != null)
-            {
-                environment.Assembly = currentAssembly;
-            }
+                sessionEnvironment.Assembly = currentAssembly;
+
+            if (result.ExecuteExceptionInfo != null)
+                sessionEnvironment.LastException = result.ExecuteExceptionInfo.SourceException;
+
+            if (result.CompileExceptionInfo != null)
+                sessionEnvironment.LastException = result.CompileExceptionInfo.SourceException;
 
             _logger.Debug("Finished execution");
             return result;
