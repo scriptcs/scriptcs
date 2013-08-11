@@ -2,11 +2,11 @@
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
-  <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
+  <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
   
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 
     <Root>$(MSBuildThisFileDirectory)..\</Root>
     <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
@@ -18,22 +18,34 @@
     <NuGetProjectPath>$(NuGetPath)NuGet.targets</NuGetProjectPath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
+
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' " >11.0</VisualStudioVersion>
+    <CodeAnalysisToolPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeAnalysis\</CodeAnalysisToolPath>
+    <CodeAnalysisTargetsPath>$(CodeAnalysisToolPath)Microsoft.CodeAnalysis.targets</CodeAnalysisTargetsPath>
+    <CodeAnalysisRuleSetDirectories>$(Root)</CodeAnalysisRuleSetDirectories>
+
+    <StyleCopForceFullAnalysis Condition=" '$(StyleCopForceFullAnalysis)' == '' ">true</StyleCopForceFullAnalysis>
   </PropertyGroup>
+
+  <Import Project="$(CodeAnalysisTargetsPath)" Condition=" Exists('$(CodeAnalysisTargetsPath)') " />
 
   <ItemGroup>
     <Solution Include="$(Root)*.sln">
       <AdditionalProperties>
         Configuration=$(Configuration);
         ArtifactsPath=$(ArtifactsPath);
+        RunCodeAnalysis=false;
+        RunStyleAnalysis=false;
         RestorePackages=false
       </AdditionalProperties>
     </Solution>
 
-    <CoreProjects Include="$(Root)src\**\*.csproj" />
-    <TestProjects Include="$(Root)test\**\*.csproj" />
+    <Projects Include="$(Root)**\*.csproj">
+      <AdditionalProperties>StyleCopForceFullAnalysis=$(StyleCopForceFullAnalysis)</AdditionalProperties>
+    </Projects>
   </ItemGroup>
 
-  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Test; Package"></Target>
+  <Target Name="FullBuild" DependsOnTargets="Clean; StyleAnalysis; Build; CodeAnalysis; Test; Package" />
 
   <Target Name="Clean" DependsOnTargets="_CleanSolution; _CleanArtifacts">
     <MakeDir Directories="$(ArtifactsPath)" Condition=" !Exists('$(ArtifactsPath)') " />
@@ -45,6 +57,34 @@
     </MSBuild>
   </Target>
 
+  <Target Name="CodeAnalysis" DependsOnTargets="Build; _CopyBinariesToArtifactsDirectory">
+    <Warning Text="Code Analysis could not be performed because the code analysis tools were not found."
+             Condition=" !Exists('$(CodeAnalysisTargetsPath)') Or !Exists('$(CodeAnalysisPath)') " />
+    
+    <ItemGroup>
+      <ReferenceAssemblies Include="$(Root)packages\**\lib\**\*.dll" />
+      <ReferenceDirectories Include="%(ReferenceAssemblies.RootDir)%(ReferenceAssemblies.Directory)\" />
+    </ItemGroup>
+
+    <CodeAnalysis Assemblies="@(ProjectAssemblies)" 
+                  ToolPath="$(CodeAnalysisPath)"
+                  RuleSet="ScriptCs.ruleset" 
+                  RuleSetDirectories="$(CodeAnalysisRuleSetDirectories)"
+                  DependentAssemblyPaths="@(ReferenceDirectories)" 
+                  SearchGlobalAssemblyCache="false" 
+                  AdditionalOptions="/assemblyCompareMode:StrongNameIgnoringVersion"
+                  LogFile="$(ArtifactsPath)CodeAnalysisResults.xml" ForceOutput="true"
+                  FailOnMissingRules="true" IgnoreMissingIndirectReferences="false"
+                  Condition=" Exists('$(CodeAnalysisTargetsPath)') And Exists('$(CodeAnalysisPath)') ">
+      <Output ItemName="CodeAnalysisResults" TaskParameter="FilesWritten" />
+    </CodeAnalysis>
+  </Target>
+
+  <Target Name="StyleAnalysis" DependsOnTargets="RestorePackages">
+    <Message Text="Running Style Analysis..." Importance="high" />
+    <MSBuild Projects="@(Projects)" Targets="StyleCop" BuildInParallel="true" />
+  </Target>
+
   <Target Name="Test" DependsOnTargets="Build">
     <ItemGroup>
       <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
@@ -53,7 +93,7 @@
     <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
   </Target>
 
-  <Target Name="Package" DependsOnTargets="Test; BuildNuGetPackages; BuildChocolateyPackage"></Target>
+  <Target Name="Package" DependsOnTargets="Test; BuildNuGetPackages; BuildChocolateyPackage" />
 
   <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
     <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
@@ -69,7 +109,7 @@
   </Target>
 
   <PropertyGroup>
-    <NuGetParameters>-Version $(PackageVersion) -Symbols -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
+    <NuGetParameters>-Version $(PackageVersion) -Symbols -Verbosity quiet -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
   </PropertyGroup>
 
   <Target Name="BuildChocolateyPackage">
@@ -83,7 +123,7 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
     </ItemGroup>
-
+    <Message Text="Building NuGet packages..." Importance="high" />
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
   </Target>
 
@@ -119,5 +159,10 @@
     </ItemGroup>
     
     <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
+  </Target>
+
+  <Target Name="_PublishCodeAnalysisResults" AfterTargets="CodeAnalysis" Condition=" '$(TeamCity)' == 'true' ">
+    <Message Text="##teamcity[importData type='FxCop' path='%(CodeAnalysisResults.FullPath)']" 
+             Condition=" Exists('%(CodeAnalysisResults.FullPath)') " />
   </Target>
 </Project>
