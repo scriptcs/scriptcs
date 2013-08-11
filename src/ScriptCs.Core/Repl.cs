@@ -29,7 +29,7 @@ namespace ScriptCs
 
         public string Buffer { get; set; }
 
-        public override ScriptResult Execute(string script)
+        public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             try
             {
