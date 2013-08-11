@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace ScriptCs
 {
@@ -30,5 +31,7 @@ namespace ScriptCs
         public string[] ScriptArgs { get; private set; }
 
         public string Script { get; private set; }
+
+        public Assembly Assembly { get; set; }
     }
 }

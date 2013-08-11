@@ -18,10 +18,10 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
-            this._logger = logger;
+            _logger = logger;
         }
 
-        protected override ScriptResult Execute(string code, Session session)
+        protected override ScriptResult Execute(string code, Session session, out Assembly currentAssembly)
         {
             Guard.AgainstNullArgument("session", session);
 
@@ -38,9 +38,10 @@ namespace ScriptCs.Engine.Roslyn
                 scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
             }
 
+            bool compileSuccess;
+
             var exeBytes = new byte[0];
             var pdbBytes = new byte[0];
-            var compileSuccess = false;
 
             using (var exeStream = new MemoryStream())
             using (var pdbStream = new MemoryStream()) 
@@ -61,32 +62,38 @@ namespace ScriptCs.Engine.Roslyn
                 }
             }
 
-            if (compileSuccess) 
+            if (!compileSuccess)
             {
-                _logger.Debug("Loading assembly into appdomain.");
-                var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
-                _logger.Debug("Retrieving compiled script class (reflection).");
-                var type = assembly.GetType(CompiledScriptClass);
-                _logger.Debug("Retrieving compiled script method (reflection).");
-                var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
+                currentAssembly = null;
+                return scriptResult;
+            }
 
-                try
-                {
-                    _logger.Debug("Invoking method.");
-                    scriptResult.ReturnValue = method.Invoke(null, new[] { session });
-                }
-                catch (Exception executeException)
-                {
-                    scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
-                    _logger.Error("An error occurred when executing the scripts.");
-                    var message = 
-                        string.Format(
+            _logger.Debug("Loading assembly into appdomain.");
+            var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
+            currentAssembly = assembly;
+
+            _logger.Debug("Retrieving compiled script class (reflection).");
+            var type = assembly.GetType(CompiledScriptClass);
+
+            _logger.Debug("Retrieving compiled script method (reflection).");
+            var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
+
+            try
+            {
+                _logger.Debug("Invoking method.");
+                scriptResult.ReturnValue = method.Invoke(null, new object[] { session });
+            }
+            catch (Exception executeException)
+            {
+                scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
+                _logger.Error("An error occurred when executing the scripts.");
+                var message = 
+                    string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
                         executeException.InnerException.Message,
                         Environment.NewLine, 
                         executeException.InnerException.StackTrace);
-                    throw new ScriptExecutionException(message, executeException);
-                }
+                throw new ScriptExecutionException(message, executeException);
             }
 
             return scriptResult;

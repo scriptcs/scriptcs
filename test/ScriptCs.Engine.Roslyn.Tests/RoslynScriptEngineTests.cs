@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Reflection;
+
 using Common.Logging;
 using Moq;
 
@@ -363,9 +365,10 @@ namespace ScriptCs.Tests
 
             public Session Session { get; private set; }
 
-            protected override ScriptResult Execute(string code, Session session)
+            protected override ScriptResult Execute(string code, Session session, out Assembly currentAssebly)
             {
                 Session = session;
+                currentAssebly = null;
                 return new ScriptResult();
             }
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using System.Xml.Schema;
 
 using Common.Logging;
 using Roslyn.Scripting;
@@ -83,35 +85,69 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             _logger.Debug("Starting execution");
-            var result = Execute(environment.Script, sessionState.Session);
+
+            Assembly currentAssembly;
+            var result = Execute(environment.Script, sessionState.Session, out currentAssembly);
+            if (currentAssembly != null)
+            {
+                environment.Assembly = currentAssembly;
+            }
+
             _logger.Debug("Finished execution");
             return result;
         }
 
-        protected virtual ScriptResult Execute(string code, Session session)
+        protected virtual ScriptResult Execute(string code, Session session, out Assembly currentAssembly)
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
             try
             {
-                var submission = session.CompileSubmission<object>(code);
-                try
-                {
-                    result.ReturnValue = submission.Execute();
-                }
-                catch (Exception ex)
-                {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                var submission = CompileSubmission(code, session, out currentAssembly);
+                return ExecuteSubmission(submission);
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
+                var result = new ScriptResult();
+
+                result.UpdateClosingExpectation(ex);
                 if (!result.IsPendingClosingChar)
+                {
                     result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                }
+
+                currentAssembly = null;
+                return result;
             }
+        }
+
+        private static ScriptResult ExecuteSubmission(Submission<object> submission)
+        {
+            var result = new ScriptResult();
+
+            try
+            {
+                result.ReturnValue = submission.Execute();
+            }
+            catch (Exception ex)
+            {
+                result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+            }
+
             return result;
+        }
+
+        protected static Submission<object> CompileSubmission(string code, Session session, out Assembly currentAssembly)
+        {
+            var oldAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var submission = session.CompileSubmission<object>(code);
+
+            var newAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            currentAssembly = newAssemblies.Except(oldAssemblies).SingleOrDefault();
+
+            return submission;
         }
     }
 }
