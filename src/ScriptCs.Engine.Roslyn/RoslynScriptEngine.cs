@@ -96,15 +96,17 @@ namespace ScriptCs.Engine.Roslyn
             var result = Execute(environment.Script, sessionState.Session, out currentAssembly);
 
             var sessionEnvironment = sessionState.Environment;
-            
-            if (currentAssembly != null)
-                sessionEnvironment.Assembly = currentAssembly;
+            if (sessionEnvironment != null)
+            {
+                if (currentAssembly != null)
+                    sessionEnvironment.Assembly = currentAssembly;
 
-            if (result.ExecuteExceptionInfo != null)
-                sessionEnvironment.LastException = result.ExecuteExceptionInfo.SourceException;
+                if (result.ExecuteExceptionInfo != null)
+                    sessionEnvironment.LastException = result.ExecuteExceptionInfo.SourceException;
 
-            if (result.CompileExceptionInfo != null)
-                sessionEnvironment.LastException = result.CompileExceptionInfo.SourceException;
+                if (result.CompileExceptionInfo != null)
+                    sessionEnvironment.LastException = result.CompileExceptionInfo.SourceException;
+            }
 
             _logger.Debug("Finished execution");
             return result;
