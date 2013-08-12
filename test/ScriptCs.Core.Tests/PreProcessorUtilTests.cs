@@ -1,6 +1,6 @@
 ﻿using System;
-using Xunit;
 using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {

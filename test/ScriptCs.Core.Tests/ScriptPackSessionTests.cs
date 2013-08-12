@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ScriptCs.Contracts;
-using Xunit;
-using Should;
 using Moq;
+using ScriptCs.Contracts;
+using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -23,7 +20,7 @@ namespace ScriptCs.Tests
                 _scriptPackMock = new Mock<IScriptPack>();
                 _contextMock = new Mock<IScriptPackContext>();
                 _scriptPackMock.Setup(p => p.GetContext()).Returns(_contextMock.Object);
-                _scriptPackSession = new ScriptPackSession(new List<IScriptPack>{_scriptPackMock.Object});
+                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock.Object });
             }
 
             [Fact]
@@ -80,8 +77,8 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldCallInitializeOnAllScriptPacks()
             {
-                _scriptPackMock1.Verify(p=>p.Initialize(_scriptPackSession));
-                _scriptPackMock2.Verify(p =>p.Initialize(_scriptPackSession));
+                _scriptPackMock1.Verify(p => p.Initialize(_scriptPackSession));
+                _scriptPackMock2.Verify(p => p.Initialize(_scriptPackSession));
             }
         }
 

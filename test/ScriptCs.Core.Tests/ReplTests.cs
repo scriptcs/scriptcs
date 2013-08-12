@@ -27,10 +27,15 @@ namespace ScriptCs.Tests
             }
 
             public Mock<IFileSystem> FileSystem { get; private set; }
+
             public Mock<IScriptEngine> ScriptEngine { get; private set; }
+
             public Mock<ILog> Logger { get; private set; }
+
             public Mock<IConsole> Console { get; private set; }
+
             public Mock<IScriptPack> ScriptPack { get; private set; }
+
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
         }
 
@@ -74,6 +79,7 @@ namespace ScriptCs.Tests
                 {
                     _repl.References.ShouldContain(reference);
                 }
+
                 _repl.References.ShouldContain(@"c:\path");
             }
 
@@ -165,7 +171,6 @@ namespace ScriptCs.Tests
 
                 _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.Red);
                 _mocks.Console.Verify(x => x.WriteLine(It.IsAny<string>()));
-
             }
 
             [Fact]

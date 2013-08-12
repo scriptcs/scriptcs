@@ -153,7 +153,7 @@ namespace ScriptCs.Tests
                 var paths = new string[0];
                 var recipes = Enumerable.Empty<IScriptPack>();
                 var script = "var a=1;";
-                preProcessor.Setup(fs => fs.ProcessScript(script)).Returns(new FilePreProcessorResult {Code=script}).Verifiable();
+                preProcessor.Setup(fs => fs.ProcessScript(script)).Returns(new FilePreProcessorResult { Code = script }).Verifiable();
                 scriptEngine.Setup(e => e.Execute(code, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
@@ -165,8 +165,6 @@ namespace ScriptCs.Tests
 
                 scriptEngine.Verify(s => s.Execute(script, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
-
-
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddReferenceToEachDestinationFile([Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,
@@ -194,10 +192,11 @@ namespace ScriptCs.Tests
                 scriptEngine.Setup(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 scriptExecutor.AddReferences("a");
-                scriptExecutor.AddReferences(new[]{"a", "a", "b", "c", "d"});
+                scriptExecutor.AddReferences(new[] { "a", "a", "b", "c", "d" });
                 scriptExecutor.AddReference<FactAttribute>();
                 scriptExecutor.AddReferences(typeof(TheInitializeMethod));
                 var explicitReferences = new[] { "a", "b", "c", "d", typeof(FactAttribute).Assembly.Location, typeof(TheInitializeMethod).Assembly.Location };
+                
                 // act
                 scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
                 scriptExecutor.Execute(scriptName);
@@ -283,16 +282,17 @@ namespace ScriptCs.Tests
 
                 var scriptExecutor = CreateScriptExecutor(scriptEngine: scriptEngine, fileSystem: fileSystem, fileProcessor: preProcessor);
 
-                const string ScriptName = "script.csx";
-                var paths = new string[0];
-                var args = new string[0];
-                IEnumerable<IScriptPack> recipes = Enumerable.Empty<IScriptPack>();
-
+                scriptExecutor.ImportNamespaces("a");
+                scriptExecutor.ImportNamespaces(new[] { "a", "a", "b", "c", "d" }.ToArray());
+                scriptExecutor.ImportNamespace<FactAttribute>();
+                scriptExecutor.ImportNamespaces(typeof(TheInitializeMethod));
+                var explicitNamespaces = new[] { "a", "b", "c", "d", typeof(FactAttribute).Namespace, typeof(TheInitializeMethod).Namespace };
+                
                 // act
                 scriptExecutor.Execute(ScriptName, args, paths, recipes);
 
                 // assert
-                scriptEngine.Object.FileName.ShouldEqual(ScriptName);
+                scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(ScriptExecutor.DefaultNamespaces.Union(explicitNamespaces))), It.IsAny<ScriptPackSession>()), Times.Once());
             }
 
             [Theory, ScriptCsAutoData]

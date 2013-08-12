@@ -18,20 +18,20 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldProperlyConstructWorkingDirectoryIfScriptIsRunFromRelativePath()
             {
-                const string pathToMyScriptFolder = @"..\my_script";
+                const string PathToMyScriptFolder = @"..\my_script";
 
                 try
                 {
-                    Directory.CreateDirectory(pathToMyScriptFolder);
+                    Directory.CreateDirectory(PathToMyScriptFolder);
 
-                    _fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
-                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
+                    _fileSystem.GetWorkingDirectory(PathToMyScriptFolder)
+                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, PathToMyScriptFolder)));
                 }
                 finally
                 {
-                    if (Directory.Exists(pathToMyScriptFolder))
+                    if (Directory.Exists(PathToMyScriptFolder))
                     {
-                        Directory.Delete(pathToMyScriptFolder);
+                        Directory.Delete(PathToMyScriptFolder);
                     }
                 }
             }
@@ -39,7 +39,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldReturnWorkingDirectoryIfPathIsInvalid()
             {
-                var invalidPaths = new List<string> {"", " ", null};
+                var invalidPaths = new List<string> { string.Empty, " ", null };
 
                 foreach (var invalidPath in invalidPaths)
                 {
@@ -86,9 +86,9 @@ namespace ScriptCs.Tests
             [Fact]
             public void ReturnsCorrectWorkingDirectoryIfPathDoesNotExist()
             {
-                const string nonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
+                const string NonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
 
-                _fileSystem.GetWorkingDirectory(nonExistantFilePath).ShouldEqual(@"C:\working_dir");
+                _fileSystem.GetWorkingDirectory(NonExistantFilePath).ShouldEqual(@"C:\working_dir");
             }
         }
 
