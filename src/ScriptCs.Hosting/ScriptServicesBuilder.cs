@@ -35,8 +35,8 @@ namespace ScriptCs
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = _debug ? typeof (DebugScriptExecutor) : typeof (ScriptExecutor);
-            var defaultEngineType = _debug ? typeof (RoslynScriptDebuggerEngine) : typeof (RoslynScriptEngine);
+            var defaultExecutorType = typeof (ScriptExecutor);
+            var defaultEngineType = _inMemory ? typeof (RoslynScriptInMemoryEngine) : typeof (RoslynScriptPersistentEngine);
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) Overrides[typeof(IScriptEngine)] : defaultEngineType;
@@ -48,8 +48,9 @@ namespace ScriptCs
                 _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
-                                                                       _initializationServices);
+                                                                       _initializationServices, _scriptName);
             }
+
             return _runtimeServices.GetScriptServices();
         }
 

@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Autofac;
-using Autofac.Core;
-using Autofac.Integration.Mef;
+
 using Common.Logging;
-using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -53,13 +47,14 @@ namespace ScriptCs
             get
             {
                 if (_container == null)
+                {
                     _container = CreateContainer();
+                }
 
                 return _container;
             }
         }
 
         protected abstract IContainer CreateContainer();
-
     }
 }

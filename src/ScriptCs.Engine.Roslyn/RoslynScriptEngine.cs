@@ -28,8 +28,8 @@ namespace ScriptCs.Engine.Roslyn
         
         public string BaseDirectory
         {
-            get {  return _scriptEngine.BaseDirectory;  }
-            set {  _scriptEngine.BaseDirectory = value; }
+            get { return _scriptEngine.BaseDirectory;  }
+            set { _scriptEngine.BaseDirectory = value; }
         }
 
         public string FileName { get; set; }

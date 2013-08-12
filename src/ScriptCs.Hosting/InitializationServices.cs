@@ -35,6 +35,7 @@ namespace ScriptCs
         }
 
         private IAssemblyResolver _assemblyResolver;
+
         public IAssemblyResolver GetAssemblyResolver()
         {
             if (_assemblyResolver == null)
@@ -46,6 +47,7 @@ namespace ScriptCs
         }
 
         private IModuleLoader _moduleLoader;
+
         public IModuleLoader GetModuleLoader()
         {
             if (_moduleLoader == null)

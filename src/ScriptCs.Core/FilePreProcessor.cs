@@ -119,7 +119,10 @@ namespace ScriptCs
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
 
-                if (!wasProcessed) context.BodyLines.Add(line);
+                if (!wasProcessed)
+                {
+                    context.BodyLines.Add(line);
+                }
             }
         }
 

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-using Autofac;
+
 using PowerArgs;
 using ScriptCs.Command;
-using System.Linq;
-using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs
 {
