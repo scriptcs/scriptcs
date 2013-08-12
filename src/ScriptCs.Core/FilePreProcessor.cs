@@ -131,7 +131,10 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileLines", fileLines);
 
             var bodyIndex = fileLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
-            if (bodyIndex == -1) return;
+            if (bodyIndex == -1)
+            {
+                return;
+            }
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
             fileLines.Insert(bodyIndex, directiveLine);

@@ -30,15 +30,18 @@ namespace ScriptCs
             _resolver = resolver;
             _logger = logger;
             if (addToCatalog == null)
+            {
                 addToCatalog = (p, catalog) => catalog.Catalogs.Add(new AssemblyCatalog(p));
+            }
 
             _addToCatalog = addToCatalog;
 
             if (getModules == null)
+            {
                 getModules = (container) => container.GetExports<IModule, IModuleMetadata>();
+            }
 
             _getModules = getModules;
-
         }
 
         public void Load(IModuleConfiguration config, string modulePackagesPath, string extension, params string[] moduleNames)
@@ -64,6 +67,7 @@ namespace ScriptCs
                 _logger.Debug(string.Format("Initializing module:{0}", module.GetType().FullName));
                 module.Initialize(config);
             }
+
             _logger.Debug("Modules initialized");
         }
     }

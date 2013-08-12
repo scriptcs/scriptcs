@@ -38,9 +38,9 @@ namespace ScriptCs
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            _logger.Debug("Registering runtime services");
+            this.Logger.Debug("Registering runtime services");
 
-            builder.RegisterInstance<ILog>(_logger).Exported(x => x.As<ILog>());
+            builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterInstance(_console).As<IConsole>();
@@ -99,7 +99,7 @@ namespace ScriptCs
 
         public ScriptServices GetScriptServices()
         {
-            _logger.Debug("Resolving ScriptServices");
+            this.Logger.Debug("Resolving ScriptServices");
             return Container.Resolve<ScriptServices>();
         }
     }

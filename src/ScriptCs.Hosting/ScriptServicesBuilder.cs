@@ -25,7 +25,7 @@ namespace ScriptCs
         private Type _scriptEngineType;
         private ILog _logger;
 
-        public ScriptServicesBuilder (IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
+        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
             _initializationServices = new InitializationServices(logger);
             _runtimeServices = runtimeServices;
@@ -35,11 +35,11 @@ namespace ScriptCs
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = typeof (ScriptExecutor);
-            var defaultEngineType = _inMemory ? typeof (RoslynScriptInMemoryEngine) : typeof (RoslynScriptPersistentEngine);
+            var defaultExecutorType = typeof(ScriptExecutor);
+            var defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
-            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 

@@ -40,7 +40,6 @@ namespace ScriptCs
         [ArgDescription("Installs and restores global packages which are specified in packages.config")]
         public bool Global { get; set; }
 
-
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
@@ -72,7 +71,10 @@ namespace ScriptCs
             int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
             scriptArgs = new string[scriptArgsCount];
             Array.Copy(args, separatorLocation + 1, scriptArgs, 0, scriptArgsCount);
-            if (separatorLocation != -1) args = args.Take(separatorLocation).ToArray();
+            if (separatorLocation != -1)
+            {
+                args = args.Take(separatorLocation).ToArray();
+            }
         }
     }
 }

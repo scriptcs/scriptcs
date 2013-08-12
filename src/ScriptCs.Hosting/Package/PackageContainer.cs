@@ -84,12 +84,18 @@ namespace ScriptCs.Hosting.Package
 
             // No packages.config, check packages folder
             var packagesFolder = Path.Combine(_fileSystem.GetWorkingDirectory(path), Constants.PackagesFolder);
-            if (!_fileSystem.DirectoryExists(packagesFolder)) yield break;
+            if (!_fileSystem.DirectoryExists(packagesFolder))
+            {
+                yield break;
+            }
 
             var repository = new LocalPackageRepository(packagesFolder);
 
             var arbitraryPackages = repository.GetPackages();
-            if (!arbitraryPackages.Any()) yield break;
+            if (!arbitraryPackages.Any())
+            {
+                yield break;
+            }
 
             foreach (var arbitraryPackage in arbitraryPackages)
             {

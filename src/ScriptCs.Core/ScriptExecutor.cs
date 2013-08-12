@@ -14,11 +14,17 @@ namespace ScriptCs
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
+        
         public IFilePreProcessor FilePreProcessor { get; private set; }
+
         public IScriptEngine ScriptEngine { get; private set; }
+
         public ILog Logger { get; private set; }
+
         public Collection<string> References { get; private set; }
+
         public Collection<string> Namespaces { get; private set; }
+
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
@@ -43,12 +49,11 @@ namespace ScriptCs
             }
         }
 
-
         public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach(var path in paths)
+            foreach (var path in paths)
             {
                 References.Add(path);
             }

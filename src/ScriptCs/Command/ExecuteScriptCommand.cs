@@ -50,6 +50,7 @@ namespace ScriptCs.Command
                 {
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory, _script);
                 }
+
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
                 var result = _scriptExecutor.Execute(_script, ScriptArgs);
                 _scriptExecutor.Terminate();

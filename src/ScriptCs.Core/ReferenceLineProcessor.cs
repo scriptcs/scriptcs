@@ -4,7 +4,9 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public interface IReferenceLineProcessor : ILineProcessor { }
+    public interface IReferenceLineProcessor : ILineProcessor
+    {
+    }
 
     public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
     {

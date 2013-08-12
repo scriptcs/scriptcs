@@ -62,13 +62,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                sessionState = new SessionState<Session> { References = distinctReferences, Session = session };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
             {
                 _logger.Debug("Reusing existing session");
-                sessionState = (SessionState<Session>) scriptPackSession.State[SessionKey];
+                sessionState = (SessionState<Session>)scriptPackSession.State[SessionKey];
 
                 var newReferences = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
                 if (newReferences.Any())
@@ -78,6 +78,7 @@ namespace ScriptCs.Engine.Roslyn
                         _logger.DebugFormat("Adding reference to {0}", reference);
                         sessionState.Session.AddReference(reference);
                     }
+
                     sessionState.References = newReferences;
                 }
             }
