@@ -58,7 +58,9 @@ namespace ScriptCs.Command
 
             try
             {
-                while (ExecuteLine(repl)) { }
+                while (ExecuteLine(repl))
+                {
+                }
             }
             catch (Exception ex)
             {
@@ -73,10 +75,15 @@ namespace ScriptCs.Command
         private bool ExecuteLine(Repl repl)
         {
             if (string.IsNullOrWhiteSpace(repl.Buffer))
+            {
                 _console.Write("> ");
+            }
 
             var line = _console.ReadLine();
-            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer)) return false;
+            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer))
+            {
+                return false;
+            }
 
             repl.Execute(line);
             return true;

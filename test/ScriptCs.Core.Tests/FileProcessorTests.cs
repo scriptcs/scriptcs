@@ -220,7 +220,7 @@ namespace ScriptCs.Tests
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
-                        "",
+                        string.Empty,
                         "using System;",
                         @"Console.WriteLine(""abc"");"
                     };
@@ -256,6 +256,7 @@ namespace ScriptCs.Tests
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
                 Assert.Equal(1, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
+                
                 // consider #line directive
                 Assert.Equal(4, splitOutput.Length);
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "script4.csx")), Times.Never());
@@ -267,7 +268,7 @@ namespace ScriptCs.Tests
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
-                        "",
+                        string.Empty,
                         "using System;",
                         "using System.IO;",
                         "Console.WriteLine();",
@@ -473,7 +474,7 @@ namespace ScriptCs.Tests
 
                 var startingDirectory = "c:\\";
                 var currentDirectory = startingDirectory;
-                var lastCurrentDirectory = "";
+                var lastCurrentDirectory = string.Empty;
                 _fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
                 _fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
                            .Callback<string>((newCurrentDirectory) =>

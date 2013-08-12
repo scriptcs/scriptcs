@@ -1,8 +1,7 @@
-﻿using Common.Logging;
-using Roslyn.Scripting;
-using System;
-using System.Reflection;
+﻿using System.Reflection;
 using ScriptCs.Exceptions;
+
+using Common.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -20,7 +19,7 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
-            _logger.DebugFormat("Writing assembly to {0}.", FileName);
+            this.Logger.DebugFormat("Writing assembly to {0}.", FileName);
 
             if (!_fileSystem.DirectoryExists(this.BaseDirectory))
             {
@@ -32,7 +31,7 @@ namespace ScriptCs.Engine.Roslyn
 
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
-            _logger.DebugFormat("Loading assembly {0}.", dllPath);
+            this.Logger.DebugFormat("Loading assembly {0}.", dllPath);
 
             return Assembly.LoadFrom(dllPath);
 >>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll

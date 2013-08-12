@@ -13,13 +13,13 @@ namespace ScriptCs.Hosting
         public ModuleConfiguration(bool debug, string scriptName, bool repl, LogLevel logLevel, IDictionary<Type,Object> overrides)
             :base(overrides)
         {
-            Debug = debug;
+            this.InMemory = debug;
             ScriptName = scriptName;
             Repl = repl;
             LogLevel = logLevel;
         }
 
-        public bool Debug { get; private set; }
+        public bool InMemory { get; private set; }
         public string ScriptName { get; private set; }
         public bool Repl { get; private set; }
         public LogLevel LogLevel { get; private set; }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
+
 using Should;
+
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -28,7 +30,9 @@ namespace ScriptCs.Tests
                 finally
                 {
                     if (Directory.Exists(pathToMyScriptFolder))
+                    {
                         Directory.Delete(pathToMyScriptFolder);
+                    }
                 }
             }
 
@@ -63,13 +67,19 @@ namespace ScriptCs.Tests
                 finally
                 {
                     if (Directory.Exists(existingDirectoryPath))
+                    {
                         Directory.Delete(existingDirectoryPath);
+                    }
 
                     if (File.Exists(existingFilePath))
+                    {
                         File.Delete(existingFilePath);
+                    }
 
                     if (Directory.Exists(workingDir))
+                    {
                         Directory.Delete(workingDir);
+                    }
                 }
             }
 

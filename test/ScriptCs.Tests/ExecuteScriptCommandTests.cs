@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.ExceptionServices;
 
 using Common.Logging;
 
@@ -10,9 +12,6 @@ using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
-using System.Linq;
-using System.Runtime.ExceptionServices;
 
 using Should;
 
@@ -112,7 +111,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    Install = string.Empty,
                     ScriptName = "test.csx"
                 };
 

@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Common.Logging;
+
 using Moq;
 
-using ScriptCs.Contracts;
+using Should;
 
 using Xunit;
-using Should;
 
 namespace ScriptCs.Hosting.Tests
 {

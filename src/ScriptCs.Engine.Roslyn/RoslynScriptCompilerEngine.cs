@@ -12,14 +12,15 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected const string CompiledScriptClass = "Submission#0";
         protected const string CompiledScriptMethod = "<Factory>";
-        protected readonly ILog _logger;
-
+        
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
 >>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             : base(scriptHostFactory, logger)
         {
-            _logger = logger;
+            Logger = logger;
         }
+        
+        protected ILog Logger { get; private set; }
 
         protected override ScriptResult Execute(string code, Session session)
         {
@@ -28,7 +29,7 @@ namespace ScriptCs.Engine.Roslyn
             var scriptResult = new ScriptResult();
             Submission<object> submission = null;
 
-            _logger.Debug("Compiling submission");
+            this.Logger.Debug("Compiling submission");
             try
             {
                 submission = session.CompileSubmission<object>(code);
@@ -50,34 +51,34 @@ namespace ScriptCs.Engine.Roslyn
 
                 if (result.Success)
                 {
-                    _logger.Debug("Compilation was successful.");
+                    this.Logger.Debug("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }
                 else
                 {
                     var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
-                    _logger.ErrorFormat("Error occurred when compiling: {0})", errors);
+                    this.Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                 }
             }
 
             if (compileSuccess)
             {
                 var assembly = this.LoadAssembly(exeBytes, pdbBytes);
-                _logger.Debug("Retrieving compiled script class (reflection).");
+                this.Logger.Debug("Retrieving compiled script class (reflection).");
                 var type = assembly.GetType(CompiledScriptClass);
-                _logger.Debug("Retrieving compiled script method (reflection).");
+                this.Logger.Debug("Retrieving compiled script method (reflection).");
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
                 try
                 {
-                    this._logger.Debug("Invoking method.");
+                    this.Logger.Debug("Invoking method.");
                     scriptResult.ReturnValue = method.Invoke(null, new[] { session });
                 }
                 catch (Exception executeException)
                 {
-                    scriptResult.ExecuteException = executeException;
-                    this._logger.Error("An error occurred when executing the scripts.");
+                    scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
+                    this.Logger.Error("An error occurred when executing the scripts.");
                     var message = string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
                         executeException.InnerException.Message,

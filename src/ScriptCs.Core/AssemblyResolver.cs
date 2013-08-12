@@ -37,7 +37,10 @@ namespace ScriptCs
             Guard.AgainstNullArgument("path", path);
 
             List<string> assemblies;
-            if (_assemblyPathCache.TryGetValue(path, out assemblies)) return assemblies;
+            if (_assemblyPathCache.TryGetValue(path, out assemblies))
+            {
+                return assemblies;
+            }
 
             var packageAssemblies = GetPackageAssemblies(path);
             var binAssemblies = GetBinAssemblies(path, scriptName);
@@ -51,8 +54,10 @@ namespace ScriptCs
         private IEnumerable<string> GetBinAssemblies(string path, string scriptName)
         {
             var binFolder = Path.Combine(path, Constants.BinFolder);
-            if (!_fileSystem.DirectoryExists(binFolder)) 
+            if (!_fileSystem.DirectoryExists(binFolder))
+            {
                 return Enumerable.Empty<string>();
+            }
 
             var dllName = scriptName.Replace(Path.GetExtension(scriptName), ".dll");
 
@@ -72,8 +77,10 @@ namespace ScriptCs
         private IEnumerable<string> GetPackageAssemblies(string path)
         {
             var packagesFolder = Path.Combine(path, Constants.PackagesFolder);
-            if (!_fileSystem.DirectoryExists(packagesFolder)) 
+            if (!_fileSystem.DirectoryExists(packagesFolder))
+            {
                 return Enumerable.Empty<string>();
+            }
 
             var assemblies = _packageAssemblyResolver.GetAssemblyNames(path).ToList();
 

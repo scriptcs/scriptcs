@@ -18,9 +18,15 @@ namespace ScriptCs
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
-            if (!IsDirective(line)) return false;
+            if (!IsDirective(line))
+            {
+                return false;
+            }
 
-            if (!isBeforeCode && IgnoreAfterCode) return true;
+            if (!isBeforeCode && IgnoreAfterCode)
+            {
+                return true;
+            }
 
             return ProcessLine(parser, context, line);
         }

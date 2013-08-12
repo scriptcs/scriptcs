@@ -109,8 +109,11 @@ namespace ScriptCs.Engine.Roslyn
             {
                  result.UpdateClosingExpectation(ex);
                 if (!result.IsPendingClosingChar)
+                {
                     result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                }
             }
+
             return result;
         }
     }

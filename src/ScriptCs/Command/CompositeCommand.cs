@@ -20,7 +20,9 @@ namespace ScriptCs.Command
                 result = command.Execute();
 
                 if (result != CommandResult.Success)
+                {
                     return result;
+                }
             }
 
             return result;

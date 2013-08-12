@@ -32,7 +32,6 @@ namespace ScriptCs.Tests
 
                 var expected = _envVar1Value + "\\SomeText\\" + _envVar2Value;
                 output.ShouldEqual(expected);
-
             }
 
             private void SetEnvironmentVariables(string envVarKey, string envVarValue)
