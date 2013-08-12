@@ -151,14 +151,14 @@ namespace ScriptCs.Tests
             [Fact]
             public void CallsExecuteOnTheScriptEngine()
             {
-                _mocks.ScriptEngine.Verify(x => x.Execute("foo", new string[0], _repl.References, Repl.DefaultNamespaces, It.IsAny<ScriptPackSession>()));
+                _mocks.ScriptEngine.Verify(x => x.Execute(It.Is<ScriptEnvironment>(y => y.Script == "foo"), It.IsAny<ScriptPackSession>()));
             }
 
             [Fact]
             public void CatchesExceptionsAndWritesThemInRed()
             {
                 _mocks.ScriptEngine.Setup(
-                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                    x => x.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()))
                       .Throws<ArgumentException>();
 
                 _repl.Execute("foo");
@@ -197,7 +197,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
 
             [Fact]
@@ -209,7 +209,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
 
             [Fact]
@@ -278,10 +278,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
-                mocks.ScriptEngine.Setup(
-                    i =>
-                    i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                mocks.ScriptEngine.Setup(i => i.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()))
                      .Throws(new FileNotFoundException("error", "my.dll"));
 
                 _repl = GetRepl(mocks);
@@ -301,17 +298,14 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
 
             [Fact]
             public void ShouldSetBufferIFLineIsFirstOfMultilineConstruct()
             {
                 var mocks = new Mocks();
-                mocks.ScriptEngine.Setup(
-                    x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                mocks.ScriptEngine.Setup(x => x.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()))
                      .Returns<ScriptResult>(x => new ScriptResult()
                      {
                          ExpectingClosingChar = ')',
@@ -329,10 +323,7 @@ namespace ScriptCs.Tests
             public void ShouldResetBufferIfLineIsNoLongerMultilineConstruct()
             {
                 var mocks = new Mocks();
-                mocks.ScriptEngine.Setup(
-                    x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                mocks.ScriptEngine.Setup(x => x.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()))
                      .Returns(new ScriptResult
                      {
                          IsPendingClosingChar = false
@@ -350,10 +341,7 @@ namespace ScriptCs.Tests
             public void ShouldResubmitEverytingIfLineIsNoLongerMultilineConstruct()
             {
                 var mocks = new Mocks();
-                mocks.ScriptEngine.Setup(
-                    x =>
-                    x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                mocks.ScriptEngine.Setup(x => x.Execute(It.IsAny<ScriptEnvironment>(), It.IsAny<ScriptPackSession>()))
                      .Returns(new ScriptResult
                      {
                          IsPendingClosingChar = false

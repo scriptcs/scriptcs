@@ -11,8 +11,6 @@ namespace ScriptCs
 
         public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
 
-        public bool ContinueBuffering { get; set; }
-
         public bool IsPendingClosingChar { get; set; }
 
         public char? ExpectingClosingChar { get; set; }

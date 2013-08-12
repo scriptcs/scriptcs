@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Schema;
+
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -13,8 +14,11 @@ namespace ScriptCs.Engine.Roslyn
     public class RoslynScriptEngine : IScriptEngine
     {
         private readonly ScriptEngine _scriptEngine;
+
         private readonly IScriptHostFactory _scriptHostFactory;
+
         private readonly ILog _logger;
+
         public const string SessionKey = "Session";
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
@@ -31,19 +35,20 @@ namespace ScriptCs.Engine.Roslyn
             set {  _scriptEngine.BaseDirectory = value; }
         }
 
-        public ScriptResult Execute(string code, string[] scriptArgs, IEnumerable<string> references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptResult Execute(ScriptEnvironment environment, ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
             _logger.Debug("Starting to create execution components");
             _logger.Debug("Creating script host");
             
-            var distinctReferences = references.Union(scriptPackSession.References).Distinct().ToList();
-            SessionState<Session> sessionState;
+            var distinctReferences = environment.References.Union(scriptPackSession.References).Distinct().ToList();
+            var distinctNamespaces = environment.Namespaces.Union(scriptPackSession.Namespaces).Distinct().ToList();
 
+            SessionState<Session> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), environment);
                 _logger.Debug("Creating session");
                 var session = _scriptEngine.CreateSession(host);
 
@@ -53,13 +58,19 @@ namespace ScriptCs.Engine.Roslyn
                     session.AddReference(reference);
                 }
 
-                foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
+                foreach (var @namespace in distinctNamespaces)
                 {
                     _logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> {References = distinctReferences, Session = session};
+                sessionState = new SessionState<Session>
+                {
+                    References = distinctReferences, 
+                    Session = session,
+                    Environment = environment
+                };
+
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -80,35 +91,78 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             _logger.Debug("Starting execution");
-            var result = Execute(code, sessionState.Session);
+
+            Assembly currentAssembly;
+            var result = Execute(environment.Script, sessionState.Session, out currentAssembly);
+
+            var sessionEnvironment = sessionState.Environment;
+            if (sessionEnvironment != null)
+            {
+                if (currentAssembly != null)
+                    sessionEnvironment.Assembly = currentAssembly;
+
+                if (result.ExecuteExceptionInfo != null)
+                    sessionEnvironment.LastException = result.ExecuteExceptionInfo.SourceException;
+
+                if (result.CompileExceptionInfo != null)
+                    sessionEnvironment.LastException = result.CompileExceptionInfo.SourceException;
+            }
+
             _logger.Debug("Finished execution");
             return result;
         }
 
-        protected virtual ScriptResult Execute(string code, Session session)
+        protected virtual ScriptResult Execute(string code, Session session, out Assembly currentAssembly)
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
             try
             {
-                var submission = session.CompileSubmission<object>(code);
-                try
-                {
-                    result.ReturnValue = submission.Execute();
-                }
-                catch (Exception ex)
-                {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                var submission = CompileSubmission(code, session, out currentAssembly);
+                return ExecuteSubmission(submission);
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
+                var result = new ScriptResult();
+
+                result.UpdateClosingExpectation(ex);
                 if (!result.IsPendingClosingChar)
+                {
                     result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                }
+
+                currentAssembly = null;
+                return result;
             }
+        }
+
+        private static ScriptResult ExecuteSubmission(Submission<object> submission)
+        {
+            var result = new ScriptResult();
+
+            try
+            {
+                result.ReturnValue = submission.Execute();
+            }
+            catch (Exception ex)
+            {
+                result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+            }
+
             return result;
+        }
+
+        protected static Submission<object> CompileSubmission(string code, Session session, out Assembly currentAssembly)
+        {
+            var oldAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var submission = session.CompileSubmission<object>(code);
+
+            var newAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            currentAssembly = newAssemblies.Except(oldAssemblies).SingleOrDefault();
+
+            return submission;
         }
     }
 }

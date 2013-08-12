@@ -6,5 +6,6 @@ namespace ScriptCs
     {
         public T Session { get; set; }
         public IEnumerable<string> References { get; set; }
+        public ScriptEnvironment Environment { get; set; }
     }
 }

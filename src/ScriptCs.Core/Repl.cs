@@ -59,7 +59,9 @@ namespace ScriptCs
 
                 Buffer += script;
 
-                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                var environment = new ScriptEnvironment(References, DefaultNamespaces, null, _scriptArgs, Buffer);
+
+                var result = ScriptEngine.Execute(environment, ScriptPackSession);
                 if (result != null)
                 {
                     if (result.CompileExceptionInfo != null)
