@@ -30,7 +30,7 @@ namespace ScriptCs.Tests
                 };
 
                 var code = string.Join(Environment.NewLine, lines);
-                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
                 // Act
                 var exception = Assert.Throws<ScriptExecutionException>(() =>

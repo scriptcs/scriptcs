@@ -29,7 +29,7 @@ namespace ScriptCs.Contracts
 
         void RemoveNamespaces(params string[] namespaces);
 
-        void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks);
+        void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs);
 
         void Terminate();
 

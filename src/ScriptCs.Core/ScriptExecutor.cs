@@ -79,7 +79,7 @@ namespace ScriptCs
             }
         }
 
-        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
+        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
@@ -87,7 +87,7 @@ namespace ScriptCs
             ScriptEngine.BaseDirectory = bin;
 
             Logger.Debug("Initializing script packs");
-            var scriptPackSession = new ScriptPackSession(scriptPacks);
+            var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
 
             scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;

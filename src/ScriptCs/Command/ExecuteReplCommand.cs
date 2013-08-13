@@ -54,7 +54,7 @@ namespace ScriptCs.Command
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
-            repl.Initialize(assemblies, scriptPacks);
+            repl.Initialize(assemblies, scriptPacks, ScriptArgs);
 
             try
             {
