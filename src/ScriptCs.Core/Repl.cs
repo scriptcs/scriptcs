@@ -78,12 +78,14 @@ namespace ScriptCs
                     {
                         return result;
                     }
-                    else
+
+                    if (result.ReturnValue != null)
                     {
-                        Buffer = null;
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine(result.ReturnValue.ToJsv());
                     }
+
+                    Buffer = null;
                 }
 
                 return result;
