@@ -1,5 +1,7 @@
 ﻿using System;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs.Command
 {
     internal class SaveCommand : ISaveCommand

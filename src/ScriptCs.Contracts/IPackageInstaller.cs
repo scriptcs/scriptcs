@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ScriptCs.Package
+namespace ScriptCs.Contracts
 {
     public interface IPackageInstaller
     {

@@ -3,6 +3,8 @@ using System.Linq;
 
 using PowerArgs;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]

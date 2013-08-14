@@ -1,4 +1,6 @@
-﻿using Should;
+﻿using ScriptCs.Contracts;
+
+using Should;
 
 using Xunit.Extensions;
 

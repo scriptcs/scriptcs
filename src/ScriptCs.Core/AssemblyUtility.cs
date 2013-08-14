@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class AssemblyUtility : IAssemblyUtility 

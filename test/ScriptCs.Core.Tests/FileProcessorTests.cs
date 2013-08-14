@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
 using Moq;
+
+using ScriptCs.Contracts;
+
 using Should;
 using Xunit;
 

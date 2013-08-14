@@ -1,5 +1,7 @@
 ﻿using System;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public interface ILoadLineProcessor : ILineProcessor { }

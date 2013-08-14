@@ -10,7 +10,6 @@ using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {

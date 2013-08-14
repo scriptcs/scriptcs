@@ -6,6 +6,8 @@ using System.Text;
 
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class FilePreProcessor : IFilePreProcessor
