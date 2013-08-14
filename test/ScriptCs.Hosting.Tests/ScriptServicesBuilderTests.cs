@@ -9,7 +9,7 @@ using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
+
 using Xunit;
 using Should;
 

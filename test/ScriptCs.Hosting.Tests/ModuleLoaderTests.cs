@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
 using Moq;
+
+using ScriptCs.Contracts;
+
 using Xunit;
 using Should;
 

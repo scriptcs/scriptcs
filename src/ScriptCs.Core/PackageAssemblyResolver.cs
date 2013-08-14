@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
 

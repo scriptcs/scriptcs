@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
 using Common.Logging;
+
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 
 namespace ScriptCs.Command

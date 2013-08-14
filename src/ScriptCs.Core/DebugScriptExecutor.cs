@@ -1,5 +1,7 @@
 ﻿using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class DebugScriptExecutor : ScriptExecutor

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NuGet;
+
+using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
+
 using Should;
 using Xunit;
 using PackageReference = ScriptCs.Package.PackageReference;

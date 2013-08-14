@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
     public interface IFileSystem
     {

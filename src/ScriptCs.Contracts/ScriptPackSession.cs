@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
     public class ScriptPackSession : IScriptPackSession
     {
         private readonly IEnumerable<IScriptPack> _scriptPacks;
-        private readonly IEnumerable<IScriptPackContext> _contexts;
-        private readonly IDictionary<string, object> _state; 
 
-        private IList<string> _references;
-        private IList<string> _namespaces;
- 
+        private readonly IEnumerable<IScriptPackContext> _contexts;
+
+        private readonly IDictionary<string, object> _state;
+
+        private readonly IList<string> _references;
+
+        private readonly IList<string> _namespaces;
+
         public ScriptPackSession(IEnumerable<IScriptPack> scriptPacks)
         {
             _scriptPacks = scriptPacks;
-            _contexts = _scriptPacks.Select(s => s.GetContext()).Where(c=>c != null);
+            _contexts = _scriptPacks.Select(s => s.GetContext()).Where(c => c != null);
             _references = new List<string>();
             _namespaces = new List<string>();
             _state = new Dictionary<string, object>();
@@ -35,7 +36,7 @@ namespace ScriptCs
         public IEnumerable<IScriptPackContext> Contexts
         {
             get { return _contexts; }
-        } 
+        }
 
         public IEnumerable<string> References
         {
@@ -67,7 +68,7 @@ namespace ScriptCs
         {
             get { return _state; }
         }
- 
+
         void IScriptPackSession.AddReference(string assemblyDisplayNameOrPath)
         {
             _references.Add(assemblyDisplayNameOrPath);

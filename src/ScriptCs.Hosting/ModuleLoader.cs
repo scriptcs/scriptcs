@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class ModuleLoader : IModuleLoader

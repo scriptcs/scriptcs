@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class FileSystem : IFileSystem

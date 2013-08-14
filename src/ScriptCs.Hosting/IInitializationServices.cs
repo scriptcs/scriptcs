@@ -1,5 +1,7 @@
 ﻿using Autofac;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public interface IInitializationServices

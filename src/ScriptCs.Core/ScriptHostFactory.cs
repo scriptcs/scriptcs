@@ -1,4 +1,6 @@
-﻿namespace ScriptCs
+﻿using ScriptCs.Contracts;
+
+namespace ScriptCs
 {
     public class ScriptHostFactory : IScriptHostFactory
     {

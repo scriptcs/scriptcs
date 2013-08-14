@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public static class ScriptExecutorExtensions

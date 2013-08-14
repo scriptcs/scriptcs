@@ -10,7 +10,6 @@ using Autofac.Integration.Mef;
 using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
 
 namespace ScriptCs
 {
