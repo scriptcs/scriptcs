@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using Common.Logging;
+
 using Moq;
-using ScriptCs.Argument;
+
+using Ploeh.AutoFixture.Xunit;
+
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
-using Xunit;
+
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -16,75 +19,44 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [Fact]
-            public void InstallCommandShouldInstallSinglePackageIfNamePassed()
+            private const string CurrentDirectory = @"C:\";
+
+            [Theory, ScriptCsAutoData]
+            public void InstallCommandShouldInstallSinglePackageIfNamePassed(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IPackageInstaller> packageInstaller,
+                CommandFactory factory)
             {
-                var args = new ScriptCsArgs
-                    {
-                        AllowPreRelease = false,
-                        Install = "mypackage",
-                        ScriptName = null
-                    };
+                // Arrange
+                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "mypackage", ScriptName = null };
 
-                const string CurrentDirectory = @"C:\";
+                fileSystem.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var argumentHandler = new Mock<IArgumentHandler>();
-
-                var argsParseResult = new ArgumentParseResult(new string[0], args, new string[0]);
-                argumentHandler.Setup(i => i.GetParsedArguments()).Returns(argsParseResult);
-
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, argumentHandler.Object);
-
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand();
-
-                result.Execute();
-
-                packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 1 && x.First().PackageId == "mypackage"), It.IsAny<bool>(), It.IsAny<Action<string>>()), Times.Once());
+                // Assert
+                packageInstaller.Verify(i =>
+                    i.InstallPackages(
+                        It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 1 && x.First().PackageId == "mypackage"),
+                        It.IsAny<bool>(),
+                        It.IsAny<Action<string>>()),
+                    Times.Once());
             }
 
-            [Fact]
-            public void InstallCommandShouldInstallFromPackagesConfigIfNoNamePassed()
+            [Theory, ScriptCsAutoData]
+            public void InstallCommandShouldInstallFromPackagesConfigIfNoNamePassed(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IPackageAssemblyResolver> resolver,
+                [Frozen] Mock<IPackageInstaller> packageInstaller,
+                CommandFactory factory)
             {
-                var args = new ScriptCsArgs
-                {
-                    AllowPreRelease = false,
-                    Install = "",
-                    ScriptName = null
-                };
+                // Arrange
+                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = null };
 
-                const string CurrentDirectory = @"C:\";
-
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var argumentHandler = new Mock<IArgumentHandler>();
-
-                var argsParseResult = new ArgumentParseResult(new string[0], args, new string[0]);
-                argumentHandler.Setup(i => i.GetParsedArguments()).Returns(argsParseResult);
-
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, argumentHandler.Object);
+                fileSystem.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 resolver.Setup(i => i.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference>
                     {
@@ -92,11 +64,10 @@ namespace ScriptCs.Tests
                         new PackageReference("b", new FrameworkName(".NETFramework,Version=v4.0"), new Version())
                     });
 
-                var factory = new CommandFactory(root);
-                var result = factory.CreateCommand();
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
 
-                result.Execute();
-
+                // Assert
                 packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 2), It.IsAny<bool>(), It.IsAny<Action<string>>()), Times.Once());
             }
         }

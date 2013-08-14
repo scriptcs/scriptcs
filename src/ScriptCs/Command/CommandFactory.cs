@@ -11,10 +11,9 @@ namespace ScriptCs.Command
             _scriptServices = scriptServices;
         }
 
-        public ICommand CreateCommand()
+        public ICommand CreateCommand(ScriptCsArgs args, string[] scriptArgs)
         {
-            var args = _scriptServiceRoot.ArgumentHandler.GetParsedArguments().CommandArguments;
-            var scriptArgs = _scriptServiceRoot.ArgumentHandler.GetParsedArguments().ScriptArguments;
+            Guard.AgainstNullArgument("args", args);
 
             if (args.Help)
             {

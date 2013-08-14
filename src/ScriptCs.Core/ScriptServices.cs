@@ -1,13 +1,11 @@
 ﻿using Common.Logging;
-using ScriptCs.Argument;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class ScriptServiceRoot
+    public class ScriptServices
     {
-        public ScriptServiceRoot(
+        public ScriptServices(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
             IScriptExecutor executor,
@@ -17,8 +15,8 @@ namespace ScriptCs
             IPackageInstaller packageInstaller,
             ILog logger,
             IAssemblyResolver assemblyResolver,
-            IArgumentHandler argumentHandler,
-            IConsole console = null)
+            IConsole console = null,
+            IInstallationProvider installationProvider = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -28,8 +26,9 @@ namespace ScriptCs
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
             Logger = logger;
+            Console = console;
             AssemblyResolver = assemblyResolver;
-            ArgumentHandler = argumentHandler;
+			InstallationProvider = installationProvider;
             Console = console;
         }
 
@@ -43,6 +42,6 @@ namespace ScriptCs
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
-        public IArgumentHandler ArgumentHandler { get; set; }
+		public IInstallationProvider InstallationProvider { get; private set; }
     }
 }

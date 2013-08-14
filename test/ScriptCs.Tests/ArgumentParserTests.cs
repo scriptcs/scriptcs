@@ -1,4 +1,5 @@
 ﻿using ScriptCs.Argument;
+using ScriptCs.Contracts;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -35,7 +36,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleNull()
             {
-                var parser = new ArgumentParser();
+                var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(null);
 
                 Assert.NotNull(result);

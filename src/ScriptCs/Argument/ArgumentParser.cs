@@ -1,33 +1,47 @@
-﻿using System;
+﻿using System.Linq;
 using PowerArgs;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Argument
 {
     public class ArgumentParser : IArgumentParser
     {
+        private readonly IConsole _console;
+
+        public ArgumentParser(IConsole console)
+        {
+            _console = console;
+        }
+
         public ScriptCsArgs Parse(string[] args)
         {
-            var commandArgs = new ScriptCsArgs() { Repl = true };
+            //no args initialized REPL
+            if (args == null || args.Length <= 0) 
+                return new ScriptCsArgs { Repl = true };
 
-            if (args != null && args.Length > 0)
+            ScriptCsArgs commandArgs = null;
+            const string unexpectedArgumentMessage = "Unexpected Argument: ";
+
+            try
             {
-                const string unexpectedArgumentMessage = "Unexpected Argument: ";
+                commandArgs = Args.Parse<ScriptCsArgs>(args);
 
-                try
+                //if there is only 1 arg and it is a loglevel, it's also REPL
+                if(args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
                 {
-                    commandArgs = Args.Parse<ScriptCsArgs>(args);
+                    commandArgs.Repl = true;
                 }
-                catch (ArgException ex)
+            }
+            catch(ArgException ex)
+            {
+                if(ex.Message.StartsWith(unexpectedArgumentMessage))
                 {
-                    if (ex.Message.StartsWith(unexpectedArgumentMessage))
-                    {
-                        var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
-                        Console.WriteLine("Parameter \"{0}\" is not supported!", token);
-                    }
-                    else
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                    var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
+                    _console.WriteLine(string.Format("Parameter \"{0}\" is not supported!", token));
+                }
+                else
+                {
+                    _console.WriteLine(ex.Message);
                 }
             }
 

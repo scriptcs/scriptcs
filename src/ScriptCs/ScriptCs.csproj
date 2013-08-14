@@ -40,6 +40,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\PowerArgs.1.6.0.0\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.45.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.47\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -63,10 +67,10 @@
     <Compile Include="Argument\ArgumentHandler.cs" />
     <Compile Include="Argument\ArgumentParser.cs" />
     <Compile Include="Argument\ArgumentParseResult.cs" />
+    <Compile Include="Argument\ConfigFileParser.cs" />
     <Compile Include="Argument\IArgumentHandler.cs" />
     <Compile Include="Argument\IArgumentParser.cs" />
     <Compile Include="Argument\IConfigFileParser.cs" />
-    <Compile Include="Argument\ConfigFileParser.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
@@ -83,9 +87,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ScriptCsArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptCsArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

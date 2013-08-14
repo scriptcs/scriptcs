@@ -1,8 +1,10 @@
-﻿using Common.Logging;
-using Moq;
-using ScriptCs.Argument;
+﻿using Moq;
+
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+
 using ScriptCs.Command;
-using ScriptCs.Package;
+using ScriptCs.Contracts;
 using Should;
 using Xunit;
 
@@ -12,37 +14,28 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static ScriptServiceRoot CreateRoot(ScriptCsArgs args, bool packagesFileExists = true, bool packagesFolderExists = true)
+            private static ScriptServices CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
             {
                 const string CurrentDirectory = "C:\\";
                 const string PackagesFile = "C:\\packages.config";
                 const string PackagesFolder = "C:\\packages";
+
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
 
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
                 fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
                 fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 
-                var resolver = new Mock<IPackageAssemblyResolver>();
-                var executor = new Mock<IScriptExecutor>();
-                var engine = new Mock<IScriptEngine>();
-                var scriptpackResolver = new Mock<IScriptPackResolver>();
-                var packageInstaller = new Mock<IPackageInstaller>();
-                var logger = new Mock<ILog>();
-                var filePreProcessor = new Mock<IFilePreProcessor>();
-                var assemblyName = new Mock<IAssemblyResolver>();
-                var argumentHandler = new Mock<IArgumentHandler>();
+                fixture.Register(() => fs.Object);
 
-                var argsParseResult = new ArgumentParseResult(new string[0], args, new string[0]);
-                argumentHandler.Setup(i => i.GetParsedArguments()).Returns(argsParseResult);
-
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, argumentHandler.Object);
-                return root;
+                return fixture.Create<ScriptServices>();
             }
 
             [Fact]
             public void ShouldInstallAndRestoreWhenInstallFlagIsOn()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -50,15 +43,18 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldImplement<IInstallCommand>();
             }
 
             [Fact]
             public void ShouldInstallAndSaveWhenInstallFlagIsOnAndNoPackagesFileExists()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -66,9 +62,11 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
-                var factory = new CommandFactory(CreateRoot(args, packagesFileExists: false));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot(packagesFileExists: false));
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
@@ -80,6 +78,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExecuteWhenScriptNameIsPassed()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -87,15 +86,18 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
             public void ShouldInstallAndExecuteWhenScriptNameIsPassedAndPackagesFolderDoesNotExist()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -103,10 +105,12 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
-                var root = CreateRoot(args, packagesFileExists: true, packagesFolderExists: false);
+                // Act
+                var root = CreateRoot(packagesFileExists: true, packagesFolderExists: false);
                 var factory = new CommandFactory(root);
-                var result = factory.CreateCommand();
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
@@ -118,6 +122,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExecuteWhenBothNameAndInstallArePassed()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -125,20 +130,25 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldImplement<IScriptCommand>();
             }
 
             [Fact]
             public void ShouldSaveAndCleanWhenCleanFlagIsPassed()
             {
+                // Arrange
                 var args = new ScriptCsArgs { Clean = true, ScriptName = null };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 var compositeCommand = result as ICompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
@@ -150,11 +160,14 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldSaveWhenSaveFlagIsPassed()
             {
+                // Arrange
                 var args = new ScriptCsArgs { Save = true, ScriptName = null };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldNotBeNull();
                 result.ShouldImplement<ISaveCommand>();
             }
@@ -162,6 +175,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldReturnInvalidWhenNoNameOrInstallSet()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -169,29 +183,32 @@ namespace ScriptCs.Tests
                     ScriptName = null
                 };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldImplement<IInvalidCommand>();
             }
 
             [Fact]
             public void ShouldReturnHelpCommandWhenHelpIsPassed()
             {
-                var args = new ScriptCsArgs
-                    {
-                        Help = true
-                    };
+                // Arrange
+                var args = new ScriptCsArgs { Help = true };
 
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand();
+                // Act
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, new string[0]);
 
+                // Assert
                 result.ShouldImplement<IHelpCommand>();
             }
 
             [Fact]
             public void ShouldPassScriptArgsToExecuteCommandConstructor()
             {
+                // Arrange
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
@@ -199,10 +216,12 @@ namespace ScriptCs.Tests
                     ScriptName = "test.csx"
                 };
 
+                // Act
                 var scriptArgs = new string[0];
-                var factory = new CommandFactory(CreateRoot(args));
-                var result = factory.CreateCommand() as IScriptCommand;
+                var factory = new CommandFactory(CreateRoot());
+                var result = factory.CreateCommand(args, scriptArgs) as IScriptCommand;
 
+                // Assert
                 result.ScriptArgs.ShouldEqual(scriptArgs);
             }
         }

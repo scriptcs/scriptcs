@@ -1,4 +1,5 @@
 ﻿using ScriptCs.Argument;
+using ScriptCs.Contracts;
 using Xunit;
 
 namespace ScriptCs.Tests

@@ -84,6 +84,10 @@
       <Project>{E79EC231-E27D-4057-91C9-2D001A3A8C3B}</Project>
       <Name>ScriptCs.Engine.Roslyn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
+      <Project>{9AEF2D95-87FB-4829-B384-34BFE076D531}</Project>
+      <Name>ScriptCs.Hosting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\ScriptCs\ScriptCs.csproj">
       <Project>{25080671-1a80-4041-b9c7-260578ff4849}</Project>
       <Name>ScriptCs</Name>

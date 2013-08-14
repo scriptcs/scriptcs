@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using PowerArgs;
+using ScriptCs.Contracts;
 using ServiceStack.Text;
 
 namespace ScriptCs.Argument
@@ -16,7 +17,7 @@ namespace ScriptCs.Argument
         {
             Guard.AgainstNullArgument("argumentParser", argumentParser);
             Guard.AgainstNullArgument("configFileParser", configFileParser);
-            Guard.AgainstNullArgument("configFileParser", fileSystem);
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
 
             _fileSystem = fileSystem;
             _argumentParser = argumentParser;
