@@ -4,32 +4,32 @@
 
     public interface IServiceOverrides<out TConfig> : IServiceOverrides where TConfig : IServiceOverrides<TConfig>
     {
-        TConfig WithScriptExecutor<T>() where T : IScriptExecutor;
+        TConfig ScriptExecutor<T>() where T : IScriptExecutor;
 
-        TConfig WithScriptEngine<T>() where T : IScriptEngine;
+        TConfig ScriptEngine<T>() where T : IScriptEngine;
 
-        TConfig WithScriptHostFactory<T>() where T : IScriptHostFactory;
+        TConfig ScriptHostFactory<T>() where T : IScriptHostFactory;
 
-        TConfig WithScriptPackManager<T>() where T : IScriptPackManager;
+        TConfig ScriptPackManager<T>() where T : IScriptPackManager;
 
-        TConfig WithScriptPackResolver<T>() where T : IScriptPackResolver;
+        TConfig ScriptPackResolver<T>() where T : IScriptPackResolver;
 
-        TConfig WithInstallationProvider<T>() where T : IInstallationProvider;
+        TConfig InstallationProvider<T>() where T : IInstallationProvider;
 
-        TConfig WithFileSystem<T>() where T : IFileSystem;
+        TConfig FileSystem<T>() where T : IFileSystem;
 
-        TConfig WithAssemblyUtility<T>() where T : IAssemblyUtility;
+        TConfig AssemblyUtility<T>() where T : IAssemblyUtility;
 
-        TConfig WithPackageContainer<T>() where T : IPackageContainer;
+        TConfig PackageContainer<T>() where T : IPackageContainer;
 
-        TConfig WithPackageInstaller<T>() where T : IPackageInstaller;
+        TConfig PackageInstaller<T>() where T : IPackageInstaller;
 
-        TConfig WithFilePreProcessor<T>() where T : IFilePreProcessor;
+        TConfig FilePreProcessor<T>() where T : IFilePreProcessor;
 
-        TConfig WithPackageAssemblyResolver<T>() where T : IPackageAssemblyResolver;
+        TConfig PackageAssemblyResolver<T>() where T : IPackageAssemblyResolver;
 
-        TConfig WithAssemblyResolver<T>() where T : IAssemblyResolver;
+        TConfig AssemblyResolver<T>() where T : IAssemblyResolver;
 
-        TConfig WithLineProcessor<T>() where T : ILineProcessor;
+        TConfig LineProcessor<T>() where T : ILineProcessor;
     }
 }
