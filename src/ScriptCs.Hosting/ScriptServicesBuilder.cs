@@ -8,6 +8,8 @@ using ScriptCs.Engine.Roslyn;
 using ScriptCs.Hosting;
 using log4net.Core;
 
+using LogLevel = ScriptCs.Contracts.LogLevel;
+
 namespace ScriptCs
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder

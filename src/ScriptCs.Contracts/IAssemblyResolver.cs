@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
     public interface IAssemblyResolver
     {

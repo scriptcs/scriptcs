@@ -1,7 +1,6 @@
-﻿using ScriptCs.Contracts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
     public interface IScriptPackResolver
     {

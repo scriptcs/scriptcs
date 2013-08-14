@@ -9,6 +9,9 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -19,9 +22,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileParserContext.cs" />
+    <Compile Include="FilePreProcessorResult.cs" />
+    <Compile Include="IAssemblyResolver.cs" />
+    <Compile Include="IAssemblyUtility.cs" />
     <Compile Include="IConsole.cs" />
+    <Compile Include="IFileParser.cs" />
+    <Compile Include="IFilePreProcessor.cs" />
+    <Compile Include="IFileSystem.cs" />
+    <Compile Include="IInstallationProvider.cs" />
+    <Compile Include="ILineProcessor.cs" />
+    <Compile Include="IModule.cs" />
+    <Compile Include="IModuleConfiguration.cs" />
+    <Compile Include="IModuleMetadata.cs" />
+    <Compile Include="IPackageAssemblyResolver.cs" />
+    <Compile Include="IPackageContainer.cs" />
+    <Compile Include="IPackageInstaller.cs" />
+    <Compile Include="IPackageObject.cs" />
+    <Compile Include="IPackageReference.cs" />
+    <Compile Include="IScriptEngine.cs" />
+    <Compile Include="IScriptExecutor.cs" />
+    <Compile Include="IScriptHost.cs" />
+    <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPack.cs" />
     <Compile Include="IScriptPackContext.cs" />
+    <Compile Include="IScriptPackManager.cs" />
+    <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptPackSession.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -29,8 +55,13 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="IServiceOverrides.cs" />
+    <Compile Include="LogLevel.cs" />
+    <Compile Include="ModuleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptPack.cs" />
+    <Compile Include="ScriptPackSession.cs" />
+    <Compile Include="ScriptResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\ScriptCs.Contracts.nuspec" />

@@ -57,17 +57,11 @@
       <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="IInitializationServices.cs" />
-    <Compile Include="IModule.cs" />
-    <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleLoader.cs" />
-    <Compile Include="IModuleMetadata.cs" />
     <Compile Include="InitializationServices.cs" />
     <Compile Include="IRuntimeServices.cs" />
     <Compile Include="IScriptServicesBuilder.cs" />
-    <Compile Include="IServiceOverrides.cs" />
     <Compile Include="LoggerConfigurator.cs" />
-    <Compile Include="LogLevel.cs" />
-    <Compile Include="ModuleAttribute.cs" />
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Package\NugetInstallationProvider.cs" />

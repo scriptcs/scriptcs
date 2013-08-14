@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NuGet;
+
+using ScriptCs.Contracts;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
+
+using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
 namespace ScriptCs.Hosting.Package
 {

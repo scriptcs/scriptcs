@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using NuGet;
+
+using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
 using Should;
 using Xunit;
 using Moq;
+
+using IFileSystem = ScriptCs.Contracts.IFileSystem;
 using PackageReference = ScriptCs.Package.PackageReference;
 
 namespace ScriptCs.Tests

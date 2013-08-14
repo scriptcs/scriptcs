@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -79,6 +78,12 @@ namespace ScriptCs
             return _this;
         }
 
+        public TConfig WithPackageInstaller<T>() where T : IPackageInstaller
+        {
+            Overrides[typeof(IPackageInstaller)] = typeof(T);
+            return _this;
+        }
+
         public TConfig WithFilePreProcessor<T>() where T : IFilePreProcessor
         {
             Overrides[typeof(IFilePreProcessor)] = typeof(T);
@@ -91,7 +96,7 @@ namespace ScriptCs
             return _this;
         }
 
-        public TConfig WithAssemblyResolver<T>() where T : IFilePreProcessor
+        public TConfig WithAssemblyResolver<T>() where T : IAssemblyResolver
         {
             Overrides[typeof(IAssemblyResolver)] = typeof(T);
             return _this;

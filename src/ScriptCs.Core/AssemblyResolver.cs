@@ -4,6 +4,8 @@ using System.Linq;
 
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class AssemblyResolver : IAssemblyResolver

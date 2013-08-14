@@ -4,6 +4,8 @@ using Moq;
 
 using Ploeh.AutoFixture.Xunit;
 
+using ScriptCs.Contracts;
+
 using Should;
 
 using Xunit.Extensions;

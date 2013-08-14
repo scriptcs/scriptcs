@@ -6,6 +6,8 @@ using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs.Engine.Roslyn
 {
     using System.Runtime.ExceptionServices;

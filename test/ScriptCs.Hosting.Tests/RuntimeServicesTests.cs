@@ -8,7 +8,7 @@ using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
+
 using Should;
 using Xunit;
 

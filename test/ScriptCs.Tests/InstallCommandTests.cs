@@ -8,6 +8,7 @@ using Moq;
 using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 
 using Xunit.Extensions;

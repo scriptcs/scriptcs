@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using NuGet;
+
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 
 namespace ScriptCs.Hosting.Package

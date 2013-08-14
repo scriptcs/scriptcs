@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
     public class ScriptResult
     {
@@ -10,8 +10,6 @@ namespace ScriptCs
         public ExceptionDispatchInfo ExecuteExceptionInfo { get; set; }
 
         public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
-
-        public bool ContinueBuffering { get; set; }
 
         public bool IsPendingClosingChar { get; set; }
 

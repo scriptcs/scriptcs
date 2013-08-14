@@ -1,7 +1,4 @@
-﻿using ScriptCs.Package;
-using ScriptCs.Package.InstallationProvider;
-
-namespace ScriptCs
+﻿namespace ScriptCs.Contracts
 {
     public interface IServiceOverrides { }
 
@@ -25,11 +22,13 @@ namespace ScriptCs
 
         TConfig WithPackageContainer<T>() where T : IPackageContainer;
 
+        TConfig WithPackageInstaller<T>() where T : IPackageInstaller;
+
         TConfig WithFilePreProcessor<T>() where T : IFilePreProcessor;
 
         TConfig WithPackageAssemblyResolver<T>() where T : IPackageAssemblyResolver;
 
-        TConfig WithAssemblyResolver<T>() where T : IFilePreProcessor;
+        TConfig WithAssemblyResolver<T>() where T : IAssemblyResolver;
 
         TConfig WithLineProcessor<T>() where T : ILineProcessor;
     }
