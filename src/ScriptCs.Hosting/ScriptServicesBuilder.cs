@@ -17,15 +17,15 @@ namespace ScriptCs
         private readonly IInitializationServices _initializationServices;
         private IRuntimeServices _runtimeServices;
         private readonly IConsole _console;
-        private bool _debug = false;
         private bool _repl = false;
+        private bool _inMemory = false;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
 
-        public ScriptServicesBuilder (IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
+        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
             _initializationServices = new InitializationServices(logger);
             _runtimeServices = runtimeServices;
@@ -35,11 +35,13 @@ namespace ScriptCs
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = _debug ? typeof (DebugScriptExecutor) : typeof (ScriptExecutor);
-            var defaultEngineType = _debug ? typeof (RoslynScriptDebuggerEngine) : typeof (RoslynScriptEngine);
+            var defaultExecutorType = typeof(ScriptExecutor);
+            Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
+
+            defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
-            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type) Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
@@ -48,22 +50,23 @@ namespace ScriptCs
                 _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
-                                                                       _initializationServices);
+                                                                       _initializationServices, _scriptName);
             }
+
             return _runtimeServices.GetScriptServices();
         }
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, Overrides);
+            var config = new ModuleConfiguration(_inMemory, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
             loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
             return this;
         }
 
-        public IScriptServicesBuilder Debug(bool debug = true)
+        public IScriptServicesBuilder InMemory(bool inMemory = true)
         {
-            _debug = debug;
+            _inMemory = inMemory;
             return this;
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using Moq;
 using NuGet;
 
 using ScriptCs.Contracts;
@@ -9,7 +10,6 @@ using ScriptCs.Exceptions;
 using ScriptCs.Package;
 using Should;
 using Xunit;
-using Moq;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 using PackageReference = ScriptCs.Package.PackageReference;
@@ -37,7 +37,7 @@ namespace ScriptCs.Tests
 
                 _package = new Mock<IPackageObject>();
                 _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>()))
-                        .Returns(new List<string> {"test.dll", "test2.dll"});
+                        .Returns(new List<string> { "test.dll", "test2.dll" });
                 _package.SetupGet(i => i.Id).Returns("id");
                 _package.SetupGet(i => i.Version).Returns(new Version("3.0"));
                 _package.SetupGet(i => i.TextVersion).Returns("3.0");
@@ -93,7 +93,7 @@ namespace ScriptCs.Tests
                     i =>
                     i.GetCompatibleDlls(
                         It.Is<FrameworkName>(x => x.FullName == VersionUtility.ParseFrameworkName("net40").FullName)))
-                        .Returns(new List<string> {"test.dll"});
+                        .Returns(new List<string> { "test.dll" });
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object);
 
@@ -350,7 +350,7 @@ namespace ScriptCs.Tests
                 _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
                 _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
-                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string> {"package"});
+                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string> { "package" });
                 var resolver = GetResolver();
 
                 var output = new List<string>();

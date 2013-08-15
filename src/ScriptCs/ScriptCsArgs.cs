@@ -7,7 +7,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
+    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
     public class ScriptCsArgs
     {
         [ArgIgnore]
@@ -22,9 +22,9 @@ namespace ScriptCs
         [ArgShortcut("?")]
         public bool Help { get; set; }
 
-        [ArgShortcut("debug")]
-        [ArgDescription("Flag which switches on debug mode")]
-        public bool Debug { get; set; }
+        [ArgShortcut("inMemory")]
+        [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
+        public bool InMemory { get; set; }
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]
@@ -39,7 +39,6 @@ namespace ScriptCs
         [ArgShortcut("g")]
         [ArgDescription("Installs and restores global packages which are specified in packages.config")]
         public bool Global { get; set; }
-
 
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
@@ -72,7 +71,10 @@ namespace ScriptCs
             int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
             scriptArgs = new string[scriptArgsCount];
             Array.Copy(args, separatorLocation + 1, scriptArgs, 0, scriptArgsCount);
-            if (separatorLocation != -1) args = args.Take(separatorLocation).ToArray();
+            if (separatorLocation != -1)
+            {
+                args = args.Take(separatorLocation).ToArray();
+            }
         }
     }
 }

@@ -51,14 +51,16 @@ namespace ScriptCs.Command
             var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
-            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks);
 
             try
             {
-                while (ExecuteLine(repl)) { }
+                while (ExecuteLine(repl))
+                {
+                }
             }
             catch (Exception ex)
             {
@@ -73,10 +75,15 @@ namespace ScriptCs.Command
         private bool ExecuteLine(Repl repl)
         {
             if (string.IsNullOrWhiteSpace(repl.Buffer))
+            {
                 _console.Write("> ");
+            }
 
             var line = _console.ReadLine();
-            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer)) return false;
+            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer))
+            {
+                return false;
+            }
 
             repl.Execute(line);
             return true;

@@ -20,7 +20,7 @@ namespace ScriptCs
 
         public TContext Get<TContext>() where TContext : IScriptPackContext
         {
-            return (TContext) _contexts[typeof(TContext)];
+            return (TContext)_contexts[typeof(TContext)];
         }
     }
 }

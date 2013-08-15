@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
+
 using Should;
+
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -16,26 +18,28 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldProperlyConstructWorkingDirectoryIfScriptIsRunFromRelativePath()
             {
-                const string pathToMyScriptFolder = @"..\my_script";
+                const string PathToMyScriptFolder = @"..\my_script";
 
                 try
                 {
-                    Directory.CreateDirectory(pathToMyScriptFolder);
+                    Directory.CreateDirectory(PathToMyScriptFolder);
 
-                    _fileSystem.GetWorkingDirectory(pathToMyScriptFolder)
-                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, pathToMyScriptFolder)));
+                    _fileSystem.GetWorkingDirectory(PathToMyScriptFolder)
+                              .ShouldEqual(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, PathToMyScriptFolder)));
                 }
                 finally
                 {
-                    if (Directory.Exists(pathToMyScriptFolder))
-                        Directory.Delete(pathToMyScriptFolder);
+                    if (Directory.Exists(PathToMyScriptFolder))
+                    {
+                        Directory.Delete(PathToMyScriptFolder);
+                    }
                 }
             }
 
             [Fact]
             public void ShouldReturnWorkingDirectoryIfPathIsInvalid()
             {
-                var invalidPaths = new List<string> {"", " ", null};
+                var invalidPaths = new List<string> { string.Empty, " ", null };
 
                 foreach (var invalidPath in invalidPaths)
                 {
@@ -63,22 +67,28 @@ namespace ScriptCs.Tests
                 finally
                 {
                     if (Directory.Exists(existingDirectoryPath))
+                    {
                         Directory.Delete(existingDirectoryPath);
+                    }
 
                     if (File.Exists(existingFilePath))
+                    {
                         File.Delete(existingFilePath);
+                    }
 
                     if (Directory.Exists(workingDir))
+                    {
                         Directory.Delete(workingDir);
+                    }
                 }
             }
 
             [Fact]
             public void ReturnsCorrectWorkingDirectoryIfPathDoesNotExist()
             {
-                const string nonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
+                const string NonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
 
-                _fileSystem.GetWorkingDirectory(nonExistantFilePath).ShouldEqual(@"C:\working_dir");
+                _fileSystem.GetWorkingDirectory(NonExistantFilePath).ShouldEqual(@"C:\working_dir");
             }
         }
 

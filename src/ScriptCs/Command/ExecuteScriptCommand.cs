@@ -48,8 +48,9 @@ namespace ScriptCs.Command
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory, _script);
                 }
+
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
                 var result = _scriptExecutor.Execute(_script, ScriptArgs);
                 _scriptExecutor.Terminate();

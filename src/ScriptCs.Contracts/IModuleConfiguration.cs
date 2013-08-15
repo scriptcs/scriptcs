@@ -2,7 +2,8 @@
 {
     public interface IModuleConfiguration : IServiceOverrides<IModuleConfiguration>
     {
-        bool Debug { get; }
+        bool InMemory { get; }
+
 
         string ScriptName { get; }
 

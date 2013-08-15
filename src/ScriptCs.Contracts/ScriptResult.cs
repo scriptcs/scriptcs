@@ -21,11 +21,17 @@ namespace ScriptCs.Contracts
             char? closingChar = null;
 
             if (message.Contains("CS1026: ) expected"))
+            {
                 closingChar = ')';
+            }
             else if (message.Contains("CS1513: } expected"))
+            {
                 closingChar = '}';
+            }
             else if (message.Contains("CS1003: Syntax error, ']' expected"))
+            {
                 closingChar = ']';
+            }
 
             ExpectingClosingChar = closingChar;
             IsPendingClosingChar = closingChar.HasValue;

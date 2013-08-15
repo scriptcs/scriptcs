@@ -25,6 +25,7 @@ namespace ScriptCs.Command
                 Console.WriteLine("Save failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
+
             return CommandResult.Success;
         }
     }

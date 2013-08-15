@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Moq;
+
 using ScriptCs.Contracts;
-using ScriptCs;
-using Xunit;
+
 using Should;
-using Moq;
+
+using Xunit;
 
 namespace ScriptCs.Tests
 {
