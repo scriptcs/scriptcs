@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ScriptCs.Contracts</id>
-    <version>0.0.0</version>
+    <version>$version$</version>
     <authors>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</authors>
     <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
     <licenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</licenseUrl>
