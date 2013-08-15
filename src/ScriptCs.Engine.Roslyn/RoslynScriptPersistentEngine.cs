@@ -1,13 +1,12 @@
 ﻿using System.Reflection;
+using System.IO;
 
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.IO;
-
-    using ScriptCs.Contracts;
-
     public class RoslynScriptPersistentEngine : RoslynScriptCompilerEngine
     {
         private IFileSystem _fileSystem;
