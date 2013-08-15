@@ -5,7 +5,6 @@ using Ploeh.AutoFixture.AutoMoq;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
 using Should;
 using Xunit;
 
