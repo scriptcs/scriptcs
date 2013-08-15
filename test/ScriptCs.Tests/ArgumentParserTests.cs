@@ -1,5 +1,6 @@
 ﻿using ScriptCs.Argument;
 using ScriptCs.Contracts;
+using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -16,9 +17,9 @@ namespace ScriptCs.Tests
                 var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(args);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.LogLevel, LogLevel.Error);
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -27,10 +28,10 @@ namespace ScriptCs.Tests
                 var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(new string[0]);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Repl, true);
-                Assert.Equal(result.LogLevel, LogLevel.Info);
-                Assert.Equal(result.Config, "scriptcs.opts");
+                result.ShouldNotBeNull();
+                result.Repl.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.Config.ShouldEqual("scriptcs.opts");
             }
 
             [Fact]
@@ -39,12 +40,11 @@ namespace ScriptCs.Tests
                 var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(null);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Repl, true);
-                Assert.Equal(result.LogLevel, LogLevel.Info);
-                Assert.Equal(result.Config, "scriptcs.opts");
+                result.ShouldNotBeNull();
+                result.Repl.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.Config.ShouldEqual("scriptcs.opts");
             }
-
         }         
     }
 }

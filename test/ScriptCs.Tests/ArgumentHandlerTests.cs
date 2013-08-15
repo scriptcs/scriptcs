@@ -2,6 +2,7 @@
 using ScriptCs.Argument;
 using ScriptCs.Contracts;
 using Xunit;
+using Should;
 
 namespace ScriptCs.Tests
 {
@@ -33,13 +34,12 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Arguments, args);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.LogLevel, LogLevel.Error);
-                Assert.Equal(result.CommandArguments.Install, "install test value");
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.CommandArguments.Install.ShouldEqual("install test value");
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
             [Fact]
@@ -51,13 +51,12 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
-                Assert.NotNull(result.CommandArguments);
-                Assert.Equal(result.Arguments, args);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.Install, "command line arg");
-                Assert.Equal(result.CommandArguments.InMemory, false);
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.Install.ShouldEqual("command line arg");
+                result.CommandArguments.InMemory.ShouldEqual(false);
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
             [Fact]
@@ -69,12 +68,11 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Arguments, args);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.LogLevel, LogLevel.Error);
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
             [Fact]
@@ -85,12 +83,10 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(null, "test.txt", false);
                 var result = argumentHandler.Parse(args);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Arguments, args);
-                Assert.NotNull(result.CommandArguments);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
             [Fact]
@@ -101,10 +97,10 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(new string[0]);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.LogLevel, LogLevel.Error);
-                Assert.Equal(result.ScriptArguments, new string[0]);
+                result.ShouldNotBeNull();
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.ScriptArguments.ShouldEqual(new string[0]);
             }
 
             [Fact]
@@ -117,13 +113,12 @@ namespace ScriptCs.Tests
                 var argumentHandler = Setup(file, fileName);
                 var result = argumentHandler.Parse(args);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.Arguments, args);
-                Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
-                Assert.Equal(result.CommandArguments.LogLevel, LogLevel.Error);
-                Assert.Equal(result.CommandArguments.Install, "install test value");
-
-                Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);                
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.CommandArguments.Install.ShouldEqual("install test value");
             }
         }
     }

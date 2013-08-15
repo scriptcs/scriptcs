@@ -1,9 +1,5 @@
-﻿using System;
-using Common.Logging;
-using Moq;
-using ScriptCs.Argument;
-using ScriptCs.Command;
-using ScriptCs.Package;
+﻿using ScriptCs.Argument;
+using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -19,8 +15,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[0], sr.CommandArguments);
-                Assert.Equal(new string[0], sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new string[0]);
+                sr.ScriptArguments.ShouldEqual(new string[0]);
             }
 
             [Fact]
@@ -30,8 +26,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, sr.CommandArguments);
-                Assert.Equal(new string[0], sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new[] { "scriptname.csx", "-restore" });
+                sr.ScriptArguments.ShouldEqual(new string[0]);
             }
 
             [Fact]
@@ -41,8 +37,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, sr.CommandArguments);
-                Assert.Equal(new string[] { "-port", "8080" }, sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new[] { "scriptname.csx", "-restore" });
+                sr.ScriptArguments.ShouldEqual(new[] { "-port", "8080" });
             }
 
             [Fact]
@@ -52,8 +48,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[0], sr.CommandArguments);
-                Assert.Equal(new string[] { "-port", "8080" }, sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new string[0]);
+                sr.ScriptArguments.ShouldEqual(new[] { "-port", "8080" });
             }
 
             [Fact]
@@ -63,8 +59,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[0], sr.CommandArguments);
-                Assert.Equal(new string[0], sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new string[0]);
+                sr.ScriptArguments.ShouldEqual(new string[0]);
             }
 
             [Fact]
@@ -74,8 +70,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, sr.CommandArguments);
-                Assert.Equal(new string[] { "-port", "--", "8080" }, sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new[] { "scriptname.csx", "-restore" });
+                sr.ScriptArguments.ShouldEqual(new[] { "-port", "--", "8080" });
             }
 
             [Fact]
@@ -85,8 +81,8 @@ namespace ScriptCs.Tests
 
                 var sr = ArgumentHandler.SplitScriptArgs(args);
 
-                Assert.Equal(new string[] { "scriptname.csx", "-restore" }, sr.CommandArguments);
-                Assert.Equal(new string[0], sr.ScriptArguments);
+                sr.CommandArguments.ShouldEqual(new[] { "scriptname.csx", "-restore" });
+                sr.ScriptArguments.ShouldEqual(new string[0]);
             }
         }
     }

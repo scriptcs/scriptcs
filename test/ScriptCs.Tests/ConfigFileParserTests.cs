@@ -1,6 +1,7 @@
 ﻿using ScriptCs.Argument;
 using ScriptCs.Contracts;
 using Xunit;
+using Should;
 
 namespace ScriptCs.Tests
 {
@@ -16,9 +17,9 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.Install, "install test value");
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("install test value");
             }
 
             [Fact]
@@ -27,7 +28,7 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(null);
 
-                Assert.Null(result);
+                result.ShouldBeNull();
             }
 
             [Fact]
@@ -36,7 +37,7 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse("");
 
-                Assert.Null(result);
+                result.ShouldBeNull();
             }
 
             [Fact]
@@ -47,10 +48,10 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.Install, "install test value");
-                Assert.Equal(result.InMemory, true);
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("install test value");
+                result.InMemory.ShouldEqual(true);
             }
 
             [Fact]
@@ -61,11 +62,11 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.Install, "install test value");
-                Assert.Equal(result.InMemory, true);
-                Assert.Equal(result.LogLevel, LogLevel.Error);
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("install test value");
+                result.InMemory.ShouldEqual(true);
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -76,11 +77,11 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.Install, "install test value");
-                Assert.Equal(result.InMemory, true);
-                Assert.Equal(result.LogLevel, LogLevel.Trace);
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("install test value");
+                result.InMemory.ShouldEqual(true);
+                result.LogLevel.ShouldEqual(LogLevel.Trace);
             }
 
             [Fact]
@@ -91,7 +92,7 @@ namespace ScriptCs.Tests
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
 
-                Assert.Null(result);
+                result.ShouldBeNull();
             }
         }         
     }
