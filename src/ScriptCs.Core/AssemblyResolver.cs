@@ -59,7 +59,7 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var dllName = scriptName.Replace(Path.GetExtension(scriptName), ".dll");
+            var dllName = string.IsNullOrEmpty(scriptName) ? string.Empty : scriptName.Replace(Path.GetExtension(scriptName), ".dll");
 
             var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))

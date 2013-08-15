@@ -110,6 +110,28 @@ namespace ScriptCs.Tests
 
                 assemblies.Count.ShouldEqual(0);
             }
+
+            [Fact]
+            public void ShouldReturnsAllOtherDllsIfScriptDllIsNull()
+            {
+                const string WorkingDirectory = @"C:\";
+
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                    .Returns(new[] { "assembly.dll" });
+
+                var assemblyUtility = new Mock<IAssemblyUtility>();
+                assemblyUtility.Setup(x => x.IsManagedAssembly("assembly.dll")).Returns(true);
+
+                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
+
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, null).ToList();
+
+                assemblies.Count.ShouldEqual(1);
+            }
         }
     }
 }
