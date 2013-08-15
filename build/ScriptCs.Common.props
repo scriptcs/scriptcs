@@ -4,8 +4,6 @@
           Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
   <PropertyGroup>
-    <Root>$(MSBuildThisFileDirectory)..\</Root>
-
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     
@@ -13,7 +11,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <SolutionDir Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(Root)</SolutionDir>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -25,10 +23,8 @@
     
     <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
 
-    <CodeAnalysisRuleSet>$(Root)ScriptCs.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(SolutionDir)ScriptCs.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis Condition=" '$(RunCodeAnalysis)' == '' " >false</RunCodeAnalysis>
-
-    <CustomAfterMicrosoftCommonTargets>$(Root)build\ScriptCs.targets</CustomAfterMicrosoftCommonTargets>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">

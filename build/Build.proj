@@ -23,8 +23,6 @@
     <CodeAnalysisToolPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeAnalysis\</CodeAnalysisToolPath>
     <CodeAnalysisTargetsPath>$(CodeAnalysisToolPath)Microsoft.CodeAnalysis.targets</CodeAnalysisTargetsPath>
     <CodeAnalysisRuleSetDirectories>$(Root)</CodeAnalysisRuleSetDirectories>
-
-    <StyleCopForceFullAnalysis Condition=" '$(StyleCopForceFullAnalysis)' == '' ">true</StyleCopForceFullAnalysis>
   </PropertyGroup>
 
   <Import Project="$(CodeAnalysisTargetsPath)" Condition=" Exists('$(CodeAnalysisTargetsPath)') " />
@@ -35,17 +33,15 @@
         Configuration=$(Configuration);
         ArtifactsPath=$(ArtifactsPath);
         RunCodeAnalysis=false;
-        RunStyleAnalysis=false;
         RestorePackages=false
       </AdditionalProperties>
     </Solution>
 
-    <Projects Include="$(Root)**\*.csproj">
-      <AdditionalProperties>StyleCopForceFullAnalysis=$(StyleCopForceFullAnalysis)</AdditionalProperties>
-    </Projects>
+    <CoreProjects Include="$(Root)src\**\*.csproj" />
+    <TestProjects Include="$(Root)test\**\*.csproj" />
   </ItemGroup>
 
-  <Target Name="FullBuild" DependsOnTargets="Clean; StyleAnalysis; Build; CodeAnalysis; Test; Package" />
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; CodeAnalysis; Test; Package" />
 
   <Target Name="Clean" DependsOnTargets="_CleanSolution; _CleanArtifacts">
     <MakeDir Directories="$(ArtifactsPath)" Condition=" !Exists('$(ArtifactsPath)') " />
@@ -78,11 +74,6 @@
                   Condition=" Exists('$(CodeAnalysisTargetsPath)') And Exists('$(CodeAnalysisPath)') ">
       <Output ItemName="CodeAnalysisResults" TaskParameter="FilesWritten" />
     </CodeAnalysis>
-  </Target>
-
-  <Target Name="StyleAnalysis" DependsOnTargets="RestorePackages">
-    <Message Text="Running Style Analysis..." Importance="high" />
-    <MSBuild Projects="@(Projects)" Targets="StyleCop" BuildInParallel="true" />
   </Target>
 
   <Target Name="Test" DependsOnTargets="Build">
