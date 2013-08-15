@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
             public void ShouldHandleCommandLineArgumentsOverConfigFile()
             {
                 const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
-                string[] args = { "server.csx", "-Install", "command line arg", "-debug", "false", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-Install", "command line arg", "-inMemory", "false", "--", "-port", "8080" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
@@ -55,7 +55,7 @@ namespace ScriptCs.Tests
                 Assert.Equal(result.Arguments, args);
                 Assert.Equal(result.CommandArguments.ScriptName, "server.csx");
                 Assert.Equal(result.CommandArguments.Install, "command line arg");
-                Assert.Equal(result.CommandArguments.Debug, false);
+                Assert.Equal(result.CommandArguments.InMemory, false);
 
                 Assert.Equal(new string[] { "-port", "8080" }, result.ScriptArguments);
             }

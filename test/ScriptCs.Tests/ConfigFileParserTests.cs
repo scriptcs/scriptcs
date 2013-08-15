@@ -42,21 +42,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHanldeArgumentTypeConversionBool()
             {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"debug\": \"true\" }";
-
-                var parser = new ConfigFileParser(new ScriptConsole());
-                var result = parser.Parse(file);
-
-                Assert.NotNull(result);
-                Assert.Equal(result.ScriptName, "server.csx");
-                Assert.Equal(result.Install, "install test value"); 
-                Assert.Equal(result.Debug, true);
-            }
-
-            [Fact]
-            public void ShouldHanldeArgumentTypeConversionEnum()
-            {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"debug\": \"true\", \"log\": \"error\" }";
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMemory\": \"true\" }";
 
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
@@ -64,14 +50,28 @@ namespace ScriptCs.Tests
                 Assert.NotNull(result);
                 Assert.Equal(result.ScriptName, "server.csx");
                 Assert.Equal(result.Install, "install test value");
-                Assert.Equal(result.Debug, true);
+                Assert.Equal(result.InMemory, true);
+            }
+
+            [Fact]
+            public void ShouldHanldeArgumentTypeConversionEnum()
+            {
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMemory\": \"true\", \"log\": \"error\" }";
+
+                var parser = new ConfigFileParser(new ScriptConsole());
+                var result = parser.Parse(file);
+
+                Assert.NotNull(result);
+                Assert.Equal(result.ScriptName, "server.csx");
+                Assert.Equal(result.Install, "install test value");
+                Assert.Equal(result.InMemory, true);
                 Assert.Equal(result.LogLevel, LogLevel.Error);
             }
 
             [Fact]
             public void ShouldHandleConfigArgumentsCaseInsensitive()
             {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"deBUg\": \"tRUe\", \"logLEVEL\": \"TRaCE\" }";
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMeMOry\": \"tRUe\", \"logLEVEL\": \"TRaCE\" }";
 
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
@@ -79,7 +79,7 @@ namespace ScriptCs.Tests
                 Assert.NotNull(result);
                 Assert.Equal(result.ScriptName, "server.csx");
                 Assert.Equal(result.Install, "install test value");
-                Assert.Equal(result.Debug, true);
+                Assert.Equal(result.InMemory, true);
                 Assert.Equal(result.LogLevel, LogLevel.Trace);
             }
 

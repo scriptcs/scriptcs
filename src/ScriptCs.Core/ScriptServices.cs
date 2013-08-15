@@ -1,5 +1,6 @@
 ﻿using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Package;
 
 namespace ScriptCs
 {
@@ -28,8 +29,7 @@ namespace ScriptCs
             Logger = logger;
             Console = console;
             AssemblyResolver = assemblyResolver;
-			InstallationProvider = installationProvider;
-            Console = console;
+            InstallationProvider = installationProvider;
         }
 
         public IFileSystem FileSystem { get; private set; }
