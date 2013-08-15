@@ -4,7 +4,6 @@ using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests

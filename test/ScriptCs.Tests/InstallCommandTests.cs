@@ -53,7 +53,7 @@ namespace ScriptCs.Tests
                 CommandFactory factory)
             {
                 // Arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = string.Empty, ScriptName = null };
+                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = null };
 
                 fileSystem.Setup(x => x.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);

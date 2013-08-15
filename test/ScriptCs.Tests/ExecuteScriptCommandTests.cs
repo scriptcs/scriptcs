@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
 
 using Common.Logging;
 
@@ -12,6 +10,9 @@ using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
+
+using System.Linq;
+using System.Runtime.ExceptionServices;
 
 using Should;
 
@@ -32,7 +33,7 @@ namespace ScriptCs.Tests
                 CommandFactory factory)
             {
                 // Arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = string.Empty, ScriptName = "test.csx" };
+                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx" };
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
@@ -55,7 +56,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string NonManaged = "non-managed.dll";
 
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = string.Empty, ScriptName = "test.csx" };
+                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx" };
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
                 fileSystem.Setup(x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
@@ -83,19 +84,14 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    Install = "",
                     ScriptName = "test.csx"
                 };
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(
-                            new ScriptResult
-                                {
-                                    CompileExceptionInfo =
-                                        ExceptionDispatchInfo.Capture(new Exception("test"))
-                                });
+                        .Returns(new ScriptResult {CompileExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test"))});
 
                 // Act
                 var result = factory.CreateCommand(args, new string[0]).Execute();
@@ -116,7 +112,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    Install = "",
                     ScriptName = "test.csx"
                 };
 
