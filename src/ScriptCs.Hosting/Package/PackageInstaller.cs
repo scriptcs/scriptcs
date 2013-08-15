@@ -18,7 +18,11 @@ namespace ScriptCs.Hosting.Package
 
         public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false, Action<string> packageInstalled = null)
         {
-            if (packageIds == null) throw new ArgumentNullException("packageIds");
+            if (packageIds == null)
+            {
+                throw new ArgumentNullException("packageIds");
+            }
+
             packageIds = packageIds.ToList();
 
             if (!packageIds.Any())
@@ -32,13 +36,14 @@ namespace ScriptCs.Hosting.Package
             }
 
             bool successful = true;
-            foreach(var packageId in packageIds)
+            foreach (var packageId in packageIds)
             {
-                if(_installer.IsInstalled(packageId, allowPreRelease))
+                if (_installer.IsInstalled(packageId, allowPreRelease))
                 {
                     continue;
                 }
-                if(!_installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
+
+                if (!_installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
                 {
                     successful = false;
                 }

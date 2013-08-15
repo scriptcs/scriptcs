@@ -8,7 +8,9 @@ namespace ScriptCs.Package
     public class PackageReference : IPackageReference
     {
         public PackageReference(string packageId, FrameworkName frameworkName, Version version)
-            : this(packageId, frameworkName, version, null) { }
+            : this(packageId, frameworkName, version, null)
+        {
+        }
 
         public PackageReference(string packageId, FrameworkName frameworkName, Version version, string specialVersion)
         {

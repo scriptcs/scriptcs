@@ -6,6 +6,9 @@ namespace ScriptCs.Tests
 {
     public class ScriptCsAutoDataAttribute : AutoDataAttribute
     {
-        public ScriptCsAutoDataAttribute() : base(new Fixture().Customize(new AutoMoqCustomization())) { }
+        public ScriptCsAutoDataAttribute()
+            : base(new Fixture().Customize(new AutoMoqCustomization()))
+        {
+        }
     }
 }

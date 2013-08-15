@@ -48,12 +48,18 @@ namespace ScriptCs.Hosting.Package
                 settings = Settings.LoadDefaultSettings(configFileSystem);
             }
 
-            if (settings == null) return new[] { Constants.DefaultRepositoryUrl };
+            if (settings == null)
+            {
+                return new[] { Constants.DefaultRepositoryUrl };
+            }
 
             var sourceProvider = new PackageSourceProvider(settings);
             var sources = sourceProvider.LoadPackageSources();
 
-            if (sources == null || !sources.Any()) return new[] { Constants.DefaultRepositoryUrl };
+            if (sources == null || !sources.Any())
+            {
+                return new[] { Constants.DefaultRepositoryUrl };
+            }
 
             return sources.Select(i => i.Source);
         }
@@ -67,10 +73,11 @@ namespace ScriptCs.Hosting.Package
             try
             {
                 _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
-                if(packageInstalled != null)
+                if (packageInstalled != null)
                 {
                     packageInstalled("Installed: " + packageName);
                 }
+
                 return true;
             }
             catch (Exception e)
@@ -80,6 +87,7 @@ namespace ScriptCs.Hosting.Package
                     packageInstalled("Installation failed: " + packageName);
                     packageInstalled(e.Message);
                 }
+
                 return false;
             }
         }

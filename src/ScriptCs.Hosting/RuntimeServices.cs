@@ -21,8 +21,9 @@ namespace ScriptCs
         private readonly Type _scriptExecutorType;
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
+        private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
@@ -31,14 +32,15 @@ namespace ScriptCs
             _scriptExecutorType = scriptExecutorType;
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
+            _scriptName = scriptName;
         }
 
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            _logger.Debug("Registering runtime services");
+            this.Logger.Debug("Registering runtime services");
 
-            builder.RegisterInstance<ILog>(_logger).Exported(x => x.As<ILog>());
+            builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterInstance(_console).As<IConsole>();
@@ -63,7 +65,7 @@ namespace ScriptCs
             if (_initDirectoryCatalog)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
+                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory, _scriptName);
 
                 var aggregateCatalog = new AggregateCatalog();
 
@@ -97,7 +99,7 @@ namespace ScriptCs
 
         public ScriptServices GetScriptServices()
         {
-            _logger.Debug("Resolving ScriptServices");
+            this.Logger.Debug("Resolving ScriptServices");
             return Container.Resolve<ScriptServices>();
         }
     }

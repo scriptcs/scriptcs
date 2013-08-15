@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-using Autofac;
+
 using PowerArgs;
 using ScriptCs.Command;
-using System.Linq;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 
 namespace ScriptCs
 {
@@ -22,16 +20,18 @@ namespace ScriptCs
             configurator.Configure(console);
             var logger = configurator.GetLogger();
  
-            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)   .
-                Debug(commandArgs.Debug).
-                LogLevel(commandArgs.LogLevel).
-                ScriptName(commandArgs.ScriptName).
-                Repl(commandArgs.Repl);
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
+                .InMemory(commandArgs.InMemory)
+                .LogLevel(commandArgs.LogLevel)
+                .ScriptName(commandArgs.ScriptName)
+                .Repl(commandArgs.Repl);
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);
             if (extension != null)
+            {
                 extension = extension.Substring(1);
+            }
 
             scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
@@ -49,7 +49,9 @@ namespace ScriptCs
             var modules = new string[0];
 
             if (modulesArg != null)
+            {
                 modules = modulesArg.Split(',');
+            }
 
             return modules;
         }
@@ -59,7 +61,10 @@ namespace ScriptCs
             const string UnexpectedArgumentMessage = "Unexpected Argument: ";
 
             //no args initialized REPL
-            if (args.Length <= 0) return new ScriptCsArgs { Repl = true, LogLevel = LogLevel.Info};
+            if (args.Length <= 0)
+            {
+                return new ScriptCsArgs { Repl = true, LogLevel = LogLevel.Info };
+            }
 
             try
             {

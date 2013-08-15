@@ -96,9 +96,15 @@ namespace ScriptCs
             return new FileStream(filePath, mode);
         }
 
+        public void WriteAllBytes(string filePath, byte[] bytes)
+        {
+            File.WriteAllBytes(filePath, bytes);
+        }
+
         public string ModulesFolder
         {
-            get {
+            get 
+            {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
             }
         }
@@ -106,7 +112,9 @@ namespace ScriptCs
         public string GetWorkingDirectory(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
+            {
                 return CurrentDirectory;
+            }
 
             var realPath = GetFullPath(path);
 
@@ -115,8 +123,10 @@ namespace ScriptCs
                 var attributes = File.GetAttributes(realPath);
 
                 if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
                     return realPath;
-                
+                }
+
                 return Path.GetDirectoryName(realPath);
             }
 

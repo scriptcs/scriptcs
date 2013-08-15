@@ -1,9 +1,9 @@
-﻿using Common.Logging;
-using ScriptCs.Contracts;
-using ServiceStack.Text;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using Common.Logging;
+using ScriptCs.Contracts;
+using ServiceStack.Text;
 
 namespace ScriptCs
 {
