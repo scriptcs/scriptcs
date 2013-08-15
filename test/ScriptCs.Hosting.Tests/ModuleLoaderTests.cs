@@ -13,6 +13,8 @@ using Xunit;
 
 namespace ScriptCs.Hosting.Tests
 {
+    using ScriptCs.Contracts;
+
     public class ModuleLoaderTests
     {
         public class TheLoadMethod
@@ -29,7 +31,7 @@ namespace ScriptCs.Hosting.Tests
             public TheLoadMethod()
             {
                 var paths = new[] { "path1", "path2" };
-                _mockAssemblyResolver.Setup(r => r.GetAssemblyPaths(It.IsAny<string>())).Returns(paths);
+                _mockAssemblyResolver.Setup(r => r.GetAssemblyPaths(It.IsAny<string>(), It.IsAny<string>())).Returns(paths);
                 _modules.Add(
                     new Lazy<IModule, IModuleMetadata>(
                         () => _mockModule1.Object, new ModuleMetadata { Extensions = "ext1,ext2", Name = "module1" }));

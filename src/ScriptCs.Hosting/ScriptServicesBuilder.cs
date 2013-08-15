@@ -17,8 +17,8 @@ namespace ScriptCs
         private readonly IInitializationServices _initializationServices;
         private IRuntimeServices _runtimeServices;
         private readonly IConsole _console;
-        private bool _debug = false;
         private bool _repl = false;
+        private bool _inMemory = false;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
@@ -56,15 +56,15 @@ namespace ScriptCs
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_debug, _scriptName, _repl, _logLevel, Overrides);
+            var config = new ModuleConfiguration(_inMemory, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
             loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
             return this;
         }
 
-        public IScriptServicesBuilder Debug(bool debug = true)
+        public IScriptServicesBuilder InMemory(bool inMemory = true)
         {
-            _debug = debug;
+            _inMemory = inMemory;
             return this;
         }
 

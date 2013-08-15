@@ -47,7 +47,7 @@ namespace ScriptCs
         public void Load(IModuleConfiguration config, string modulePackagesPath, string extension, params string[] moduleNames)
         {
             _logger.Debug("Loading modules from: " + modulePackagesPath);
-            var paths = _resolver.GetAssemblyPaths(modulePackagesPath);
+            var paths = _resolver.GetAssemblyPaths(modulePackagesPath, string.Empty);
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
             {

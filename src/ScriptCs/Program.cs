@@ -3,6 +3,7 @@ using System.IO;
 
 using PowerArgs;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {

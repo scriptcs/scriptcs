@@ -8,19 +8,19 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
+    using System.Runtime.ExceptionServices;
+
+    using ScriptCs.Contracts;
+
     public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
         protected const string CompiledScriptClass = "Submission#0";
         protected const string CompiledScriptMethod = "<Factory>";
         
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
->>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             : base(scriptHostFactory, logger)
         {
-            Logger = logger;
         }
-        
-        protected ILog Logger { get; private set; }
 
         protected override ScriptResult Execute(string code, Session session)
         {
@@ -36,7 +36,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception compileException)
             {
-                scriptResult.CompileException = compileException;
+                scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(compileException);
             }
 
             var exeBytes = new byte[0];
@@ -65,9 +65,9 @@ namespace ScriptCs.Engine.Roslyn
             if (compileSuccess)
             {
                 var assembly = this.LoadAssembly(exeBytes, pdbBytes);
-                this.Logger.Debug("Retrieving compiled script class (reflection).");
+                Logger.Debug("Retrieving compiled script class (reflection).");
                 var type = assembly.GetType(CompiledScriptClass);
-                this.Logger.Debug("Retrieving compiled script method (reflection).");
+                Logger.Debug("Retrieving compiled script method (reflection).");
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
                 try
@@ -86,13 +86,11 @@ namespace ScriptCs.Engine.Roslyn
                         executeException.InnerException.StackTrace);
                     throw new ScriptExecutionException(message);
                 }
->>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
             }
 
             return scriptResult;
         }
 
         protected abstract Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes);
->>>>>>> # Added RoslynScriptDllGeneratorEngine.cs which saves generated file to .dll
     }
 }

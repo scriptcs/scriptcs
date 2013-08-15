@@ -7,7 +7,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
+    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
     public class ScriptCsArgs
     {
         [ArgIgnore]
@@ -22,9 +22,9 @@ namespace ScriptCs
         [ArgShortcut("?")]
         public bool Help { get; set; }
 
-        [ArgShortcut("debug")]
-        [ArgDescription("Flag which switches on debug mode")]
-        public bool Debug { get; set; }
+        [ArgShortcut("inMemory")]
+        [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
+        public bool InMemory { get; set; }
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]

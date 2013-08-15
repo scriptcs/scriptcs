@@ -105,7 +105,7 @@ namespace ScriptCs
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
-            _scriptEngine.FileName = Path.GetFileName(path);
+            ScriptEngine.FileName = Path.GetFileName(path);
 
             Logger.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);

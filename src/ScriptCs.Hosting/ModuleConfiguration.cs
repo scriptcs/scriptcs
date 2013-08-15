@@ -7,10 +7,10 @@ namespace ScriptCs.Hosting
 {
     public class ModuleConfiguration : ServiceOverrides<IModuleConfiguration>, IModuleConfiguration
     {
-        public ModuleConfiguration(bool debug, string scriptName, bool repl, LogLevel logLevel, IDictionary<Type, Object> overrides)
+        public ModuleConfiguration(bool inMemory, string scriptName, bool repl, LogLevel logLevel, IDictionary<Type, Object> overrides)
             : base(overrides)
         {
-            InMemory = debug;
+            InMemory = inMemory;
             ScriptName = scriptName;
             Repl = repl;
             LogLevel = logLevel;

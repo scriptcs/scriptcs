@@ -59,7 +59,6 @@
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoslynScriptDebuggerEngineTests.cs" />
     <Compile Include="RoslynScriptInMemoryEngineTests.cs" />
     <Compile Include="RoslynScriptEngineTests.cs" />
   </ItemGroup>
