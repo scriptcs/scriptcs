@@ -2,10 +2,6 @@
 
 namespace ScriptCs
 {
-    public interface IUsingLineProcessor : ILineProcessor
-    {
-    }
-
     public class UsingLineProcessor : IUsingLineProcessor
     {
         private const string UsingString = "using ";
