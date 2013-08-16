@@ -102,18 +102,17 @@ namespace ScriptCs
         public virtual ScriptResult ExecuteFile(string path, params string[] scriptArgs)
         {
             var rootedPath = Path.IsPathRooted(path) ? path : Path.Combine(FileSystem.CurrentDirectory, path);
-            var result = FilePreProcessor.ProcessFile(rootedPath);
-            var references = References.Union(result.References);
-            var namespaces = Namespaces.Union(result.Namespaces);
-            ScriptEngine.FileName = Path.GetFileName(path);
+            var code = FileSystem.ReadFile(rootedPath);
 
-            Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+            ScriptEngine.FileName = Path.GetFileName(rootedPath);
+
+            return ExecuteCode(code, scriptArgs);
         }
 
         public virtual ScriptResult ExecuteCode(string code, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessCode(code);
+
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
