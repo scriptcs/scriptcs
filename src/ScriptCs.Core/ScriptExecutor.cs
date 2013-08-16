@@ -13,6 +13,8 @@ namespace ScriptCs
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
+        private IDependenciesPreProcessor _dependenciesPreProcessor;
+
         public IFileSystem FileSystem { get; private set; }
         
         public IFilePreProcessor FilePreProcessor { get; private set; }
@@ -27,8 +29,13 @@ namespace ScriptCs
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+        public ScriptExecutor(IFileSystem fileSystem, 
+            IFilePreProcessor filePreProcessor, 
+            IScriptEngine scriptEngine,
+            IDependenciesPreProcessor dependenciesPreProcessor,
+            ILog logger)
         {
+            _dependenciesPreProcessor = dependenciesPreProcessor;
             References = new Collection<string>();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
@@ -102,6 +109,7 @@ namespace ScriptCs
         public virtual ScriptResult Execute(string script, params string[] scriptArgs)
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
+
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);

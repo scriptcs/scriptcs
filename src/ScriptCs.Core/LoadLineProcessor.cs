@@ -1,20 +1,16 @@
-﻿using System;
-
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public interface ILoadLineProcessor : ILineProcessor
     {
+        string GetArgumentFullPath(string line);
     }
 
     public class LoadLineProcessor : DirectiveLineProcessor, ILoadLineProcessor
     {
-        private readonly IFileSystem _fileSystem;
-
-        public LoadLineProcessor(IFileSystem fileSystem)
+        public LoadLineProcessor(IFileSystem fileSystem) :  base(fileSystem)
         {
-            _fileSystem = fileSystem;
         }
 
         protected override string DirectiveName
@@ -29,10 +25,7 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
-            var argument = GetDirectiveArgument(line);
-            var filePath = Environment.ExpandEnvironmentVariables(argument);
-
-            var fullPath = _fileSystem.GetFullPath(filePath);
+            var fullPath = GetArgumentFullPath(line);
             if (!string.IsNullOrWhiteSpace(fullPath))
             {
                 parser.ParseFile(fullPath, context);

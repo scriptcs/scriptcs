@@ -11,13 +11,10 @@ namespace ScriptCs
     {
         private readonly string[] _scriptArgs;
 
-        public Repl(
-            string[] scriptArgs,
-            IFileSystem fileSystem,
-            IScriptEngine scriptEngine,
-            ILog logger,
-            IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+        public IConsole Console { get; private set; }
+
+        public Repl(string[] scriptArgs, IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor, IDependenciesPreProcessor dependenciesPreProcessor)
+            : base(fileSystem, filePreProcessor, scriptEngine, dependenciesPreProcessor, logger)
         {
             _scriptArgs = scriptArgs;
             Console = console;

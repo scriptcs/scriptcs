@@ -1,7 +1,26 @@
-﻿namespace ScriptCs.Contracts
+﻿using System;
+using ScriptCs.Contracts;
+
+namespace ScriptCs
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
+        private readonly IFileSystem _fileSystem;
+
+        public DirectiveLineProcessor(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
+        public string GetArgumentFullPath(string line)
+        {
+            var argument = GetDirectiveArgument(line);
+            var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
+
+            var referencePath = _fileSystem.GetFullPath(assemblyPath);
+            return referencePath;
+        }
+
         protected virtual bool IgnoreAfterCode
         {
             get { return false; }
@@ -13,7 +32,7 @@
         {
             get { return string.Format("#{0} ", DirectiveName); }
         }
-
+        
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
             if (!IsDirective(line))
