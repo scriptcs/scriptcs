@@ -56,7 +56,7 @@ namespace ScriptCs.Command
                 if (!string.IsNullOrWhiteSpace(_scriptName))
                 {
                     _logger.Info(string.Format("Loading preseeded script: {0}", _scriptName));
-                    repl.Execute("#load " + _scriptName);
+                    repl.Execute(string.Format("#load {0}", _scriptName));
                 }
 
                 while (ExecuteLine(repl))
