@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -8,22 +7,17 @@ namespace ScriptCs.Command
     internal class ExecuteReplCommand : IScriptCommand
     {
         private readonly IScriptPackResolver _scriptPackResolver;
-
         private readonly IAssemblyResolver _assemblyResolver;
-
         private readonly IFilePreProcessor _filePreProcessor;
-
         private readonly IScriptEngine _scriptEngine;
-
+        private readonly string _scriptName;
         private readonly string[] _scriptArgs;
-
         private readonly IFileSystem _fileSystem;
-
         private readonly IConsole _console;
-
         private readonly ILog _logger;
 
         public ExecuteReplCommand(
+            string scriptName,
             string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
@@ -33,6 +27,7 @@ namespace ScriptCs.Command
             IConsole console,
             IAssemblyResolver assemblyResolver)
         {
+            _scriptName = scriptName;
             _scriptArgs = scriptArgs;
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
@@ -58,6 +53,12 @@ namespace ScriptCs.Command
 
             try
             {
+                if (!string.IsNullOrWhiteSpace(_scriptName))
+                {
+                    _logger.Info(string.Format("Loading preseeded script: {0}", _scriptName));
+                    repl.Execute("#load " + _scriptName);
+                }
+
                 while (ExecuteLine(repl))
                 {
                 }
