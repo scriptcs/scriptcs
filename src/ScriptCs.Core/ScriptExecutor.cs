@@ -126,13 +126,9 @@ namespace ScriptCs
 
         public virtual ScriptResult ExecuteCode(string code, params string[] scriptArgs)
         {
-            var result = FilePreProcessor.ProcessCode(code);
-
-            var references = References.Union(result.References);
-            var namespaces = Namespaces.Union(result.Namespaces);
-
-            Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+            return Execute(FilePreProcessor.ProcessCode(code), scriptArgs);
         }
+
+        protected abstract ScriptResult Execute(FilePreProcessorResult result, string[] scriptArgs);
     }
 }

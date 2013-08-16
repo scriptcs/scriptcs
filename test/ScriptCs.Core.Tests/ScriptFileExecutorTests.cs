@@ -11,7 +11,7 @@ using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
-    public class ScriptExecutorTests
+    public class ScriptFileExecutorTests
     {
         public class TheInitializeMethod
         {
@@ -19,14 +19,15 @@ namespace ScriptCs.Tests
             public void ShouldSetEngineBaseDirectoryBasedOnCurrentDirectoryAndBinFolder(
                 [Frozen] Mock<IScriptEngine> scriptEngine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
-                                                                                                                                     [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor scriptExecutor)
+                [Frozen] Mock<IFilePreProcessor> preProcessor, 
+                ScriptFileExecutor scriptExecutor)
             {
                 // arrange
                 preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
-                var currentDirectory = @"C:\";
-                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
-                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+                const string CurrentDirectory = @"C:\";
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(CurrentDirectory);
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(CurrentDirectory);
 
                 scriptEngine.SetupProperty(e => e.BaseDirectory);
 
@@ -37,7 +38,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedBaseDirectory = Path.Combine(currentDirectory, "bin");
+                string expectedBaseDirectory = Path.Combine(CurrentDirectory, "bin");
                 expectedBaseDirectory.ShouldEqual(scriptEngine.Object.BaseDirectory);
             }
 
@@ -45,8 +46,8 @@ namespace ScriptCs.Tests
             public void ShouldInitializeScriptPacks(
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
                 [Frozen] Mock<IFileSystem> fileSystem,
-                [Frozen] Mock<IScriptPack> scriptPack1, 
-                ScriptExecutor scriptExecutor)
+                [Frozen] Mock<IScriptPack> scriptPack1,
+                ScriptFileExecutor scriptExecutor)
             {
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
@@ -71,7 +72,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptPack> scriptPack1, 
-                ScriptExecutor executor)
+                ScriptFileExecutor executor)
             {
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
@@ -98,7 +99,7 @@ namespace ScriptCs.Tests
             public void ConstructsAbsolutePath(
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
                 [Frozen] Mock<IFileSystem> fileSystem, 
-                ScriptExecutor executor)
+                ScriptFileExecutor executor)
             {
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
@@ -113,7 +114,7 @@ namespace ScriptCs.Tests
             public void DoesNotChangePathIfAbsolute(
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
                 [Frozen] Mock<IFileSystem> fileSystem, 
-                ScriptExecutor executor)
+                ScriptFileExecutor executor)
             {
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
@@ -129,7 +130,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IScriptEngine> scriptEngine,
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                ScriptExecutor scriptExecutor)
+                ScriptFileExecutor scriptExecutor)
             {
                 // arrange
                 const string CurrentDirectory = @"c:\scriptcs";
@@ -160,7 +161,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IScriptEngine> scriptEngine,
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                ScriptExecutor scriptExecutor)
+                ScriptFileExecutor scriptExecutor)
             {
                 // Arrange
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(@"C:\");
@@ -179,8 +180,8 @@ namespace ScriptCs.Tests
             public void ShouldExecuteCode(
                 [Frozen] Mock<IScriptEngine> scriptEngine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
-                [Frozen] Mock<IFilePreProcessor> preProcessor, 
-                ScriptExecutor scriptExecutor)
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                ScriptFileExecutor scriptExecutor)
             {
                 // Arrange
                 fileSystem.Setup(fs => fs.CurrentDirectory).Returns(@"C:\");
@@ -208,8 +209,8 @@ namespace ScriptCs.Tests
             public void ShouldAddReferenceToEachDestinationFile(
                 [Frozen] Mock<IScriptEngine> scriptEngine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
-                [Frozen] Mock<IFilePreProcessor> preProcessor, 
-                ScriptExecutor scriptExecutor)
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                ScriptFileExecutor scriptExecutor)
             {
                 // arrange
                 preProcessor.Setup(x => x.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
@@ -250,7 +251,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IScriptEngine> scriptEngine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
-                ScriptExecutor scriptExecutor)
+                ScriptFileExecutor scriptExecutor)
             {
                 // arrange
                 preProcessor.Setup(x => x.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult());
@@ -285,7 +286,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IScriptEngine> engine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                ScriptExecutor executor)
+                ScriptFileExecutor executor)
             {
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
@@ -308,7 +309,7 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IScriptEngine> engine, 
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor, 
-                ScriptExecutor executor)
+                ScriptFileExecutor executor)
             {
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
