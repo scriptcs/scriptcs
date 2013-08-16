@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -62,11 +61,6 @@ namespace ScriptCs.Command
                 while (ExecuteLine(repl))
                 {
                 }
-            }
-            catch (FileNotFoundException fnfex)
-            {
-                _logger.ErrorFormat("{0} - {1}", fnfex.Message, fnfex.FileName);
-                return CommandResult.Error;
             }
             catch (Exception ex)
             {
