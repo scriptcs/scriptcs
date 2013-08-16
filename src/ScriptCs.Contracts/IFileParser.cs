@@ -6,6 +6,6 @@ namespace ScriptCs.Contracts
     {
         void ParseFile(string path, FileParserContext context);
 
-        void ParseScript(List<string> scriptLines, FileParserContext context);
+        void ParseCode(string code, FileParserContext context);
     }
 }

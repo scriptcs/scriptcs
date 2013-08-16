@@ -30,10 +30,9 @@ namespace ScriptCs
             return Process(context => ParseFile(path, context));
         }
 
-        public virtual FilePreProcessorResult ProcessScript(string script)
+        public virtual FilePreProcessorResult ProcessCode(string code)
         {
-            var scriptLines = _fileSystem.SplitLines(script).ToList();
-            return Process(context => ParseScript(scriptLines, context));
+            return Process(context => ParseCode(code, context));
         }
 
         protected virtual FilePreProcessorResult Process(Action<FileParserContext> parseAction)
@@ -100,22 +99,29 @@ namespace ScriptCs
             // Add script to loaded collection before parsing to avoid loop.
             context.LoadedScripts.Add(fullPath);
 
-            var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
+            var codeLines = _fileSystem.ReadFileLines(fullPath).ToList();
             
-            InsertLineDirective(fullPath, scriptLines);
-            InDirectory(fullPath, () => ParseScript(scriptLines, context));
+            InsertLineDirective(fullPath, codeLines);
+            InDirectory(fullPath, () => ParseCodeLines(codeLines, context));
         }
 
-        public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
+        public virtual void ParseCode(string code, FileParserContext context)
         {
-            Guard.AgainstNullArgument("scriptLines", scriptLines);
+            Guard.AgainstNullArgument("code", code);
             Guard.AgainstNullArgument("context", context);
 
-            var codeIndex = scriptLines.FindIndex(IsNonDirectiveLine);
+            var scriptLines = _fileSystem.SplitLines(code).ToList();
 
-            for (var index = 0; index < scriptLines.Count; index++)
+            ParseCodeLines(scriptLines, context);
+        }
+
+        private void ParseCodeLines(List<string> codeLines, FileParserContext context)
+        {
+            var codeIndex = codeLines.FindIndex(IsNonDirectiveLine);
+
+            for (var index = 0; index < codeLines.Count; index++)
             {
-                var line = scriptLines[index];
+                var line = codeLines[index];
                 var isBeforeCode = index < codeIndex || codeIndex < 0;
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));

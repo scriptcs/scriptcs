@@ -137,7 +137,7 @@ namespace ScriptCs.Tests
             public TheExecuteMethod()
             {
                 _mocks = new Mocks();
-                _mocks.FilePreProcessor.Setup(x => x.ProcessScript("foo"))
+                _mocks.FilePreProcessor.Setup(x => x.ProcessCode("foo"))
                     .Returns(new FilePreProcessorResult { Code = "foo" });
                 _repl = GetRepl(_mocks);
                 _repl.Console.ForegroundColor = ConsoleColor.White;
@@ -190,14 +190,14 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
-                mocks.FilePreProcessor.Verify(i => i.ProcessScript("#load \"file.csx\""), Times.Once());
+                mocks.FilePreProcessor.Verify(i => i.ProcessCode("#load \"file.csx\""), Times.Once());
             }
 
             [Fact]
             public void ShouldExecuteLoadedFileIfLineIsALoad()
             {
                 var mocks = new Mocks();
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                      .Returns(new FilePreProcessorResult());
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
 
@@ -226,7 +226,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"c:/my.dll");
                 mocks.FileSystem.Setup(x => x.FileExists("c:/my.dll")).Returns(true);
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
@@ -243,7 +243,7 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
@@ -259,7 +259,7 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { References = new List<string> { "PresentationCore" } });
 
                 _repl = GetRepl(mocks);
@@ -276,7 +276,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
@@ -293,7 +293,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
                 mocks.ScriptEngine.Setup(
                     i =>
@@ -332,7 +332,7 @@ namespace ScriptCs.Tests
                          ExpectingClosingChar = ')',
                          IsPendingClosingChar = true
                      });
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "var x = 1;" });
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _repl = GetRepl(mocks);
@@ -354,7 +354,7 @@ namespace ScriptCs.Tests
                      {
                          IsPendingClosingChar = false
                      });
-                mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
+                mocks.FilePreProcessor.Setup(x => x.ProcessCode(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "}" });
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _repl = GetRepl(mocks);

@@ -113,7 +113,7 @@ namespace ScriptCs
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
-            var result = FilePreProcessor.ProcessScript(script);
+            var result = FilePreProcessor.ProcessCode(script);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 

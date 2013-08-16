@@ -153,7 +153,7 @@ namespace ScriptCs.Tests
                 var paths = new string[0];
                 var recipes = Enumerable.Empty<IScriptPack>();
                 var script = "var a=1;";
-                preProcessor.Setup(fs => fs.ProcessScript(script)).Returns(new FilePreProcessorResult { Code = script }).Verifiable();
+                preProcessor.Setup(fs => fs.ProcessCode(script)).Returns(new FilePreProcessorResult { Code = script }).Verifiable();
                 scriptEngine.Setup(e => e.Execute(code, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // act
@@ -161,7 +161,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.ExecuteScript(script);
 
                 // assert
-                preProcessor.Verify(fs => fs.ProcessScript(script), Times.Once());
+                preProcessor.Verify(fs => fs.ProcessCode(script), Times.Once());
 
                 scriptEngine.Verify(s => s.Execute(script, It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
