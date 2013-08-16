@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Common.Logging;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {

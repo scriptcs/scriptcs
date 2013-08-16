@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
 
@@ -62,7 +64,10 @@ namespace ScriptCs
         public IEnumerable<string> GetAssemblyNames(string workingDirectory, Action<string> outputCallback = null)
         {
             var packages = GetPackages(workingDirectory).ToList();
-            if (!packages.Any()) return Enumerable.Empty<string>();
+            if (!packages.Any())
+            {
+                return Enumerable.Empty<string>();
+            }
 
             var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);
             var packageDir = Path.Combine(workingDirectory, Constants.PackagesFolder);
@@ -114,7 +119,10 @@ namespace ScriptCs
 
                 foreach (var path in compatibleFilePaths)
                 {
-                    if (foundAssemblies.Contains(path)) continue;
+                    if (foundAssemblies.Contains(path))
+                    {
+                        continue;
+                    }
 
                     foundAssemblies.Add(path);
                     if (outputCallback != null)
@@ -123,7 +131,10 @@ namespace ScriptCs
                     }
                 }
 
-                if (nugetPackage.Dependencies == null || !nugetPackage.Dependencies.Any() || !strictLoad) continue;
+                if (nugetPackage.Dependencies == null || !nugetPackage.Dependencies.Any() || !strictLoad)
+                {
+                    continue;
+                }
 
                 var dependencyReferences = nugetPackage.Dependencies
                     .Where(i => _topLevelPackages.All(x => x.PackageId != i.Id))

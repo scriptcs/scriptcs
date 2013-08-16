@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -12,23 +14,74 @@ namespace ScriptCs
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
+        
         public IFilePreProcessor FilePreProcessor { get; private set; }
+
         public IScriptEngine ScriptEngine { get; private set; }
+
         public ILog Logger { get; private set; }
-        public IEnumerable<string> References { get; protected set; }
+
+        public Collection<string> References { get; private set; }
+
+        public Collection<string> Namespaces { get; private set; }
+
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
         {
+            References = new Collection<string>();
+            AddReferences(DefaultReferences);
+            Namespaces = new Collection<string>();
+            ImportNamespaces(DefaultNamespaces);
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             Logger = logger;
         }
 
+        public void ImportNamespaces(params string[] namespaces)
+        {
+            Guard.AgainstNullArgument("namespaces", namespaces);
+
+            foreach (var @namespace in namespaces)
+            {
+                Namespaces.Add(@namespace);
+            }
+        }
+
+        public void AddReferences(params string[] paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+
+            foreach (var path in paths)
+            {
+                References.Add(path);
+            }
+        }
+
+        public void RemoveReferences(params string[] paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+            
+            foreach (var path in paths)
+            {
+                References.Remove(path);
+            }
+        }
+
+        public void RemoveNamespaces(params string[] namespaces)
+        {
+            Guard.AgainstNullArgument("namespaces", namespaces);
+
+            foreach (var @namespace in namespaces)
+            {
+                Namespaces.Remove(@namespace);
+            }
+        }
+
         public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
-            References = DefaultReferences.Union(paths);
+            AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
             ScriptEngine.BaseDirectory = bin;
@@ -46,19 +99,26 @@ namespace ScriptCs
             ScriptPackSession.TerminatePacks();
         }
 
-        public virtual ScriptResult Execute(string script)
-        {
-            return Execute(script, new string[0]);
-        }
-
-        public virtual ScriptResult Execute(string script, string[] scriptArgs)
+        public virtual ScriptResult Execute(string script, params string[] scriptArgs)
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
+            var namespaces = Namespaces.Union(result.Namespaces);
+            ScriptEngine.FileName = Path.GetFileName(path);
 
             Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, DefaultNamespaces, ScriptPackSession);
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+        }
+
+        public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
+        {
+            var result = FilePreProcessor.ProcessScript(script);
+            var references = References.Union(result.References);
+            var namespaces = Namespaces.Union(result.Namespaces);
+
+            Logger.Debug("Starting execution in engine");
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }
     }
 }

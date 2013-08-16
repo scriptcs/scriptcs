@@ -1,5 +1,7 @@
 ﻿using System;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs.Command
 {
     internal class SaveCommand : ISaveCommand
@@ -23,6 +25,7 @@ namespace ScriptCs.Command
                 Console.WriteLine("Save failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
+
             return CommandResult.Success;
         }
     }

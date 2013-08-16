@@ -1,9 +1,13 @@
+using System;
+
 namespace ScriptCs
 {
     public static class PreProcessorUtil
     {
         public const string LoadString = "#load ";
+
         public const string UsingString = "using ";
+
         public const string RString = "#r ";
 
         public static bool IsNonDirectiveLine(string line)
@@ -36,8 +40,12 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("line", line);
 
-            var filepath = line.Trim(' ').Replace(replaceString, string.Empty).Replace("\"", string.Empty).Replace(";", string.Empty);
-            return filepath;
+            var filePath = line.Replace(replaceString, string.Empty)
+                .Trim(' ')
+                .Replace("\"", string.Empty)
+                .Replace(";", string.Empty);
+
+            return Environment.ExpandEnvironmentVariables(filePath);
         }
     }
 }

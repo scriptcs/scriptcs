@@ -1,29 +1,35 @@
 ﻿using System;
-using System.Linq;
-
+using System.IO;
 using PowerArgs;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
+    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
     [Serializable]
     public class ScriptCsArgs
     {
+        public ScriptCsArgs()
+        {
+            LogLevel = LogLevel.Info;
+            Config = "scriptcs.opts";
+        }
+
         [ArgIgnore]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
+        [ArgShortcut("script")]
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
-        [ArgDescription("Displays help")]
-        
         [ArgShortcut("?")]
+        [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
-        [ArgShortcut("debug")]
-        [ArgDescription("Flag which switches on debug mode")]
-        public bool Debug { get; set; }
+        [ArgShortcut("inMemory")]
+        [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
+        public bool InMemory { get; set; }
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]
@@ -34,6 +40,11 @@ namespace ScriptCs
         [ArgShortcut("install")]
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
+
+        [ArgShortcut("g")]
+        [ArgDescription("Installs and restores global packages which are specified in packages.config")]
+        public bool Global { get; set; }
+
 
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
@@ -55,16 +66,49 @@ namespace ScriptCs
         [ArgDescription("Runs the script in an isolated AppDomain")]
         public bool Isolated { get; set; }
 
-        public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
+        [ArgShortcut("modules")]
+        [ArgDescription("Specify modules to load")]
+        public string Modules { get; set; }
+
+        [ArgShortcut("config")]
+        [DefaultValue("scriptcs.opts")]
+        [ArgDescription("Defines config file name")]
+        public string Config { get; set; }
+
+        public ScriptServices CreateServices(ScriptConsole console = null)
         {
-            // Split the arguments list on "--".
-            // The arguments before the "--" (or all arguments if there is no "--") are
-            // for ScriptCs.exe, and the arguments after that are for the csx script.
-            int separatorLocation = Array.IndexOf(args, "--");
-            int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
-            scriptArgs = new string[scriptArgsCount];
-            Array.Copy(args, separatorLocation + 1, scriptArgs, 0, scriptArgsCount);
-            if (separatorLocation != -1) args = args.Take(separatorLocation).ToArray();
+            if(console == null)
+            {
+                console = new ScriptConsole();
+            }
+            var configurator = new LoggerConfigurator(LogLevel);
+            configurator.Configure(console);
+            var logger = configurator.GetLogger();
+
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
+                .InMemory(InMemory)
+                .LogLevel(LogLevel)
+                .ScriptName(ScriptName)
+                .Repl(Repl);
+
+            var modules = GetModuleList(Modules);
+            var extension = Path.GetExtension(ScriptName);
+            if(extension != null)
+            {
+                extension = extension.Substring(1);
+            }
+            scriptServicesBuilder.LoadModules(extension, modules);
+            return scriptServicesBuilder.Build();
+        }
+
+        private static string[] GetModuleList(string modulesArg)
+        {
+            var modules = new string[0];
+            if(modulesArg != null)
+            {
+                modules = modulesArg.Split(',');
+            }
+            return modules;
         }
     }
 }

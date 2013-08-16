@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using ScriptCs.Contracts;
-using Xunit;
-using Should;
 using Moq;
+using ScriptCs.Contracts;
+using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -18,7 +18,7 @@ namespace ScriptCs.Tests
             {
                 _pack1 = new Mock<IScriptPack>();
                 _pack2 = new Mock<IScriptPack>();
-                var packs = new[] {_pack1.Object, _pack2.Object};
+                var packs = new[] { _pack1.Object, _pack2.Object };
                 _packManager = new ScriptPackResolver(packs);
             }
 
@@ -30,7 +30,6 @@ namespace ScriptCs.Tests
                 packs.ShouldContain(_pack1.Object);
                 packs.ShouldContain(_pack2.Object);
             }
-
         }
     }
 }

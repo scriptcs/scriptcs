@@ -2,7 +2,8 @@
 
 namespace ScriptCs.Command
 {
-    public interface IScriptCommand : ICommand {
+    public interface IScriptCommand : ICommand 
+    {
         string[] ScriptArgs { get; }
     }
 
@@ -10,15 +11,26 @@ namespace ScriptCs.Command
     {
         IIsolatedHelper IsolatedHelper { get; set; }
     }
-    public interface ISaveCommand : ICommand { }
 
-    public interface ICleanCommand : ICommand { }
+    public interface ISaveCommand : ICommand
+    {
+    }
 
-    public interface IInstallCommand : ICommand { }
+    public interface ICleanCommand : ICommand
+    {
+    }
 
-    public interface IInvalidCommand : ICommand { }
+    public interface IInstallCommand : ICommand
+    {
+    }
 
-    public interface IHelpCommand : ICommand { }
+    public interface IInvalidCommand : ICommand
+    {
+    }
+
+    public interface IHelpCommand : ICommand
+    {
+    }
 
     public interface ICompositeCommand : ICommand
     {

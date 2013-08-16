@@ -6,34 +6,41 @@ using System.Text;
 
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class FilePreProcessor : IFilePreProcessor
     {
         private readonly ILog _logger;
 
+        private readonly IEnumerable<ILineProcessor> _lineProcessors;
+
         private readonly IFileSystem _fileSystem;
 
-        public FilePreProcessor(IFileSystem fileSystem, ILog logger)
+        public FilePreProcessor(IFileSystem fileSystem, ILog logger, IEnumerable<ILineProcessor> lineProcessors)
         {
             _fileSystem = fileSystem;
             _logger = logger;
+            _lineProcessors = lineProcessors;
         }
 
         public virtual FilePreProcessorResult ProcessFile(string path)
         {
-            return Parse(context => ParseFile(path, context));
+            return Process(context => ParseFile(path, context));
         }
 
         public virtual FilePreProcessorResult ProcessScript(string script)
         {
             var scriptLines = _fileSystem.SplitLines(script).ToList();
-            return Parse(context => ParseScript(scriptLines, context));
+            return Process(context => ParseScript(scriptLines, context));
         }
 
-        protected virtual FilePreProcessorResult Parse(Action<FilePreProcessorContext> parseAction)
+        protected virtual FilePreProcessorResult Process(Action<FileParserContext> parseAction)
         {
-            var context = new FilePreProcessorContext();
+            Guard.AgainstNullArgument("parseAction", parseAction);
+
+            var context = new FileParserContext();
 
             _logger.DebugFormat("Starting pre-processing");
 
@@ -45,19 +52,22 @@ namespace ScriptCs
 
             return new FilePreProcessorResult
             {
-                UsingStatements = context.UsingStatements,
+                Namespaces = context.Namespaces,
                 LoadedScripts = context.LoadedScripts,
                 References = context.References,
                 Code = code
             };
         }
 
-        protected virtual string GenerateCode(FilePreProcessorContext context)
+        protected virtual string GenerateCode(FileParserContext context)
         {
+            Guard.AgainstNullArgument("context", context);
+
             var stringBuilder = new StringBuilder();
 
-            var usingLines = context.UsingStatements
-                .Select(item => string.Format("using {0};", item))
+            var usingLines = context.Namespaces
+                .Where(ns => !string.IsNullOrWhiteSpace(ns))
+                .Select(ns => string.Format("using {0};", ns))
                 .ToList();
 
             if (usingLines.Count > 0)
@@ -66,106 +76,89 @@ namespace ScriptCs
                 stringBuilder.AppendLine(); // Insert a blank separator line
             }
 
-            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.Body));
+            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.BodyLines));
 
             return stringBuilder.ToString();
         }
 
-        protected virtual void ParseFile(string path, FilePreProcessorContext context)
+        public virtual void ParseFile(string path, FileParserContext context)
         {
-            _logger.DebugFormat("Processing {0}...", Path.GetFileName(path));
+            Guard.AgainstNullArgument("path", path);
+            Guard.AgainstNullArgument("context", context);
 
-            var scriptLines = _fileSystem.ReadFileLines(path).ToList();
+            var fullPath = _fileSystem.GetFullPath(path);
+            var filename = Path.GetFileName(path);
 
-            ParseScript(scriptLines, context, path);
+            if (context.LoadedScripts.Contains(fullPath))
+            {
+                _logger.DebugFormat("Skipping {0} because it's already been loaded.", filename);
+                return;
+            }
+
+            _logger.DebugFormat("Processing {0}...", filename);
+
+            var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
+            
+            InsertLineDirective(fullPath, scriptLines);
+            InDirectory(fullPath, () => ParseScript(scriptLines, context));
+
+            context.LoadedScripts.Add(fullPath);
         }
 
-        protected virtual void ParseScript(List<string> scriptLines, FilePreProcessorContext context, string path = null)
+        public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
         {
-            // Insert line directive if there's a path
-            if (path != null) InsertLineDirective(path, scriptLines);
+            Guard.AgainstNullArgument("scriptLines", scriptLines);
+            Guard.AgainstNullArgument("context", context);
 
-            var codeIndex = scriptLines.FindIndex(PreProcessorUtil.IsNonDirectiveLine);
+            var codeIndex = scriptLines.FindIndex(IsNonDirectiveLine);
 
             for (var index = 0; index < scriptLines.Count; index++)
             {
-                ProcessLine(context, scriptLines[index], index < codeIndex || codeIndex < 0);
-            }
+                var line = scriptLines[index];
+                var isBeforeCode = index < codeIndex || codeIndex < 0;
 
-            if (path != null) context.LoadedScripts.Add(path);
+                var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
+
+                if (!wasProcessed)
+                {
+                    context.BodyLines.Add(line);
+                }
+            }
         }
 
         protected virtual void InsertLineDirective(string path, List<string> fileLines)
         {
-            var bodyIndex = fileLines.FindIndex(line => PreProcessorUtil.IsNonDirectiveLine(line) && !PreProcessorUtil.IsUsingLine(line));
-            if (bodyIndex == -1) return;
+            Guard.AgainstNullArgument("fileLines", fileLines);
+
+            var bodyIndex = fileLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
+            if (bodyIndex == -1)
+            {
+                return;
+            }
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
             fileLines.Insert(bodyIndex, directiveLine);
         }
 
-        protected virtual void ProcessLine(FilePreProcessorContext context, string line, bool isBeforeCode)
+        private void InDirectory(string path, Action action)
         {
-            if (PreProcessorUtil.IsUsingLine(line))
-            {
-                var @using = PreProcessorUtil.GetPath(PreProcessorUtil.UsingString, line);
-                if (!context.UsingStatements.Contains(@using))
-                {
-                    context.UsingStatements.Add(@using);
-                }
+            var oldCurrentDirectory = _fileSystem.CurrentDirectory;
+            _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(path);
 
-                return;
-            }
+            action();
 
-            if (PreProcessorUtil.IsRLine(line))
-            {
-                if (isBeforeCode)
-                {
-                    var reference = PreProcessorUtil.GetPath(PreProcessorUtil.RString, line);
-                    if (!string.IsNullOrWhiteSpace(reference) && !context.References.Contains(reference))
-                    {
-                        context.References.Add(reference);
-                    }
-                }
-
-                return;
-            }
-
-            if (PreProcessorUtil.IsLoadLine(line))
-            {
-                if (isBeforeCode)
-                {
-                    var filePath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, line);
-                    if (!string.IsNullOrWhiteSpace(filePath) && !context.LoadedScripts.Contains(filePath))
-                    {
-                        ParseFile(filePath, context);
-                    }
-                }
-
-                return;
-            }
-
-            // If we've reached this, the line is part of the body...
-            context.Body.Add(line);
+            _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
 
-        public class FilePreProcessorContext
+        private static bool IsNonDirectiveLine(string line)
         {
-            public FilePreProcessorContext()
-            {
-                UsingStatements = new List<string>();
-                References = new List<string>();
-                LoadedScripts = new List<string>();
-                Body = new List<string>();
-            }
+            var trimmedLine = line.TrimStart(' ');
+            return !trimmedLine.StartsWith("#r ") && !trimmedLine.StartsWith("#load ") && line.Trim() != string.Empty;
+        }
 
-            public List<string> UsingStatements { get; private set; }
-
-            public List<string> References { get; private set; }
-
-            public List<string> LoadedScripts { get; private set; }
-
-            public List<string> Body { get; private set; }
+        private static bool IsUsingLine(string line)
+        {
+            return line.TrimStart(' ').StartsWith("using ") && !line.Contains("{") && line.Contains(";");
         }
     }
 }

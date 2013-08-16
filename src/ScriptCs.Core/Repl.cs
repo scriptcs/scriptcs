@@ -1,19 +1,22 @@
-﻿using Common.Logging;
+﻿using System;
+using System.IO;
+using System.Runtime.ExceptionServices;
+using Common.Logging;
 using ScriptCs.Contracts;
 using ServiceStack.Text;
-using System;
-using System.IO;
-using System.Linq;
 
 namespace ScriptCs
 {
     public class Repl : ScriptExecutor
     {
+        private readonly string[] _scriptArgs;
+
         public IConsole Console { get; private set; }
 
-        public Repl(IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
+        public Repl(string[] scriptArgs, IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
             : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
+            _scriptArgs = scriptArgs;
             Console = console;
         }
 
@@ -24,7 +27,9 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public override ScriptResult Execute(string script)
+        public string Buffer { get; set; }
+
+        public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             try
             {
@@ -45,48 +50,58 @@ namespace ScriptCs
                 {
                     var assemblyName = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
                     var assemblyPath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, assemblyName));
-                    References = References.Union(FileSystem.FileExists(assemblyPath) ? new[] { assemblyPath } : new[] { assemblyName });
+                    AddReferences(FileSystem.FileExists(assemblyPath) ? assemblyPath : assemblyName);
 
                     return new ScriptResult();
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                var result = ScriptEngine.Execute(script, new string[0], References, DefaultNamespaces, ScriptPackSession);
+
+                Buffer += script;
+
+                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
                 if (result != null)
                 {
-                    if (result.CompileException != null)
+                    if (result.CompileExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(result.CompileException.ToString());
+                        Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
                     }
 
-                    if (result.ExecuteException != null)
+                    if (result.ExecuteExceptionInfo != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(result.ExecuteException.ToString());
+                        Console.WriteLine(result.ExecuteExceptionInfo.SourceException.ToString());
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ReturnValue.ToJsv());
+                    if (result.IsPendingClosingChar)
+                    {
+                        return result;
+                    }
+
+                    if (result.ReturnValue != null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine(result.ReturnValue.ToJsv());
+                    }
+
+                    Buffer = null;
                 }
 
                 return result;
             }
             catch (FileNotFoundException fileEx)
             {
-                if (References != null && References.Any(i => i == fileEx.FileName))
-                {
-                    References = References.Except(new[] {fileEx.FileName});
-                }
+                RemoveReferences(fileEx.FileName);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + fileEx + "\r\n");
-                return new ScriptResult { CompileException = fileEx };
+                return new ScriptResult { CompileExceptionInfo = ExceptionDispatchInfo.Capture(fileEx) };
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult { ExecuteException = ex };
+                return new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex) };
             }
             finally
             {

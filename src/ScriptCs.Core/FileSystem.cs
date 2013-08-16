@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading;
 using Common.Logging;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs
 {
     public class FileSystem : IFileSystem
@@ -93,6 +95,7 @@ namespace ScriptCs
         public string CurrentDirectory
         {
             get { return Environment.CurrentDirectory; }
+            set { Environment.CurrentDirectory = value; }
         }
 
         public string NewLine
@@ -122,7 +125,9 @@ namespace ScriptCs
 
         public IEnumerable<string> SplitLines(string value)
         {
-            return value.Split(new[] { NewLine }, StringSplitOptions.None);
+            Guard.AgainstNullArgument("value", value);
+
+            return value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
         }
 
         public void WriteToFile(string path, string text)
@@ -135,16 +140,41 @@ namespace ScriptCs
             return new FileStream(filePath, mode);
         }
 
+        public void WriteAllBytes(string filePath, byte[] bytes)
+        {
+            File.WriteAllBytes(filePath, bytes);
+        }
+
+        public string ModulesFolder
+        {
+            get 
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
+            }
+        }
+
         public string GetWorkingDirectory(string path)
         {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return CurrentDirectory;
+            }
+
             var realPath = GetFullPath(path);
 
-            var attributes = File.GetAttributes(realPath);
+            if (FileExists(realPath) || DirectoryExists(realPath))
+            {
+                var attributes = File.GetAttributes(realPath);
 
-            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                return realPath;
-            else
+                if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    return realPath;
+                }
+
                 return Path.GetDirectoryName(realPath);
+            }
+
+            return Path.GetDirectoryName(realPath);
         }
 
         public string GetFullPath(string path)

@@ -15,6 +15,8 @@ namespace ScriptCs.Command
 
         private readonly IScriptEngine _scriptEngine;
 
+        private readonly string[] _scriptArgs;
+
         private readonly IFileSystem _fileSystem;
 
         private readonly IConsole _console;
@@ -22,6 +24,7 @@ namespace ScriptCs.Command
         private readonly ILog _logger;
 
         public ExecuteReplCommand(
+            string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
@@ -30,6 +33,7 @@ namespace ScriptCs.Command
             IConsole console,
             IAssemblyResolver assemblyResolver)
         {
+            _scriptArgs = scriptArgs;
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
@@ -44,17 +48,19 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
+            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
-            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks);
 
             try
             {
-                while (ExecuteLine(repl)) { }
+                while (ExecuteLine(repl))
+                {
+                }
             }
             catch (Exception ex)
             {
@@ -68,10 +74,16 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            _console.Write("> ");
+            if (string.IsNullOrWhiteSpace(repl.Buffer))
+            {
+                _console.Write("> ");
+            }
 
             var line = _console.ReadLine();
-            if (line == string.Empty) return false;
+            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer))
+            {
+                return false;
+            }
 
             repl.Execute(line);
             return true;

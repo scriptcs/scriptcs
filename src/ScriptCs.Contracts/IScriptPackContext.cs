@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScriptCs.Contracts
+﻿namespace ScriptCs.Contracts
 {
-    public interface IScriptPackContext
-    {
-    }
+    public interface IScriptPackContext { }
 }

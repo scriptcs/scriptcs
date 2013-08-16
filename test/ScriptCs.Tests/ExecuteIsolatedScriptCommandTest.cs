@@ -4,6 +4,7 @@ using Common.Logging;
 using Moq;
 using Moq.Language.Flow;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 using Xunit;
 
@@ -59,7 +60,7 @@ namespace ScriptCs.Tests
 
         public class CommandInfo
         {
-            public ScriptServiceRoot Root { get; set; }
+            public ScriptServices Root { get; set; }
             public ICommand Command { get; set; }
 
             public CommandResult Execute()
@@ -67,12 +68,12 @@ namespace ScriptCs.Tests
                 return Command.Execute();
             }
 
-            public static CommandInfo Create(Action<ScriptServiceRoot> setup)
+            public static CommandInfo Create(Action<ScriptServices> setup)
             {
                 return Create(setup, new ScriptCsArgs { ScriptName = "test.csx" }, new string[0]);
             }
 
-            public static CommandInfo Create(Action<ScriptServiceRoot> setup, ScriptCsArgs args, string[] scriptArgs)
+            public static CommandInfo Create(Action<ScriptServices> setup, ScriptCsArgs args, string[] scriptArgs)
             {
                 var fs = new Mock<IFileSystem>();
                 var resolver = new Mock<IPackageAssemblyResolver>();
@@ -83,7 +84,9 @@ namespace ScriptCs.Tests
                 var logger = new Mock<ILog>();
                 var filePreProcessor = new Mock<IFilePreProcessor>();
                 var assemblyName = new Mock<IAssemblyResolver>();
-                var root = new ScriptServiceRoot(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object);
+                var installationProvider = new Mock<IInstallationProvider>();
+                var console = new Mock<IConsole>();
+                var root = new ScriptServices(fs.Object, resolver.Object, executor.Object, engine.Object, filePreProcessor.Object, scriptpackResolver.Object, packageInstaller.Object, logger.Object, assemblyName.Object, console.Object, installationProvider.Object);
 
                 setup(root);
 

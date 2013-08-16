@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+
+using ScriptCs.Contracts;
+
+namespace ScriptCs
+{
+    public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
+        where TConfig : class, IServiceOverrides<TConfig>
+    {
+        protected readonly IList<Type> LineProcessors = new List<Type>();
+
+        protected readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+
+        private readonly TConfig _this;
+
+        protected ServiceOverrides()
+        {
+            _this = this as TConfig;
+        }
+
+        protected ServiceOverrides(IDictionary<Type, object> overrides)
+        {
+            Overrides = overrides;
+        }
+
+        public TConfig ScriptExecutor<T>() where T : IScriptExecutor
+        {
+            Overrides[typeof(IScriptExecutor)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ScriptEngine<T>() where T : IScriptEngine
+        {
+            Overrides[typeof(IScriptEngine)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
+        {
+            Overrides[typeof(IScriptHostFactory)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ScriptPackManager<T>() where T : IScriptPackManager
+        {
+            Overrides[typeof(IScriptPackManager)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ScriptPackResolver<T>() where T : IScriptPackResolver
+        {
+            Overrides[typeof(IScriptPackResolver)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig InstallationProvider<T>() where T : IInstallationProvider
+        {
+            Overrides[typeof(IInstallationProvider)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig FileSystem<T>() where T : IFileSystem
+        {
+            Overrides[typeof(IFileSystem)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig AssemblyUtility<T>() where T : IAssemblyUtility
+        {
+            Overrides[typeof(IAssemblyUtility)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig PackageContainer<T>() where T : IPackageContainer
+        {
+            Overrides[typeof(IPackageContainer)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig PackageInstaller<T>() where T : IPackageInstaller
+        {
+            Overrides[typeof(IPackageInstaller)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig FilePreProcessor<T>() where T : IFilePreProcessor
+        {
+            Overrides[typeof(IFilePreProcessor)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig PackageAssemblyResolver<T>() where T : IPackageAssemblyResolver
+        {
+            Overrides[typeof(IPackageAssemblyResolver)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig AssemblyResolver<T>() where T : IAssemblyResolver
+        {
+            Overrides[typeof(IAssemblyResolver)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig LineProcessor<T>() where T : ILineProcessor
+        {
+            LineProcessors.Add(typeof(T));
+            return _this;
+        }
+    }
+}

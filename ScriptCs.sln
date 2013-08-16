@@ -23,15 +23,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
 	ProjectSection(SolutionItems) = preProject
 		build\Build.proj = build\Build.proj
-		build\Build.tasks = build\Build.tasks
+		build\ScriptCs.Tasks.targets = build\ScriptCs.Tasks.targets
 		build\ScriptCs.Common.props = build\ScriptCs.Common.props
-		build\ScriptCs.ruleset = build\ScriptCs.ruleset
+		ScriptCs.ruleset = ScriptCs.ruleset
 		build\ScriptCs.Version.props = build\ScriptCs.Version.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn", "src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting", "src\ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting.Tests", "test\ScriptCs.Hosting.Tests\ScriptCs.Hosting.Tests.csproj", "{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +71,14 @@ Global
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AEF2D95-87FB-4829-B384-34BFE076D531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,5 +87,6 @@ Global
 		{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{AC228213-7356-4F0D-BA48-EBA5FB8A7506} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 	EndGlobalSection
 EndGlobal

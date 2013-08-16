@@ -5,6 +5,8 @@ using System.Linq;
 using Common.Logging;
 using System.Reflection;
 
+using ScriptCs.Contracts;
+
 namespace ScriptCs.Command
 {
     internal class ExecuteScriptCommand : IScriptCommand
@@ -40,26 +42,26 @@ namespace ScriptCs.Command
         {
             try
             {
-                var assemblyPaths = new string[0];
-
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                string[] assemblyPaths = null;
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory, _script);
                 }
-                var result = Execute(workingDirectory, assemblyPaths);
+
+                var result = Execute(workingDirectory, assemblyPaths ?? new string[0]);
 
                 if (result != null)
                 {
-                    if (result.CompileException != null)
+                    if (result.CompileExceptionInfo != null)
                     {
-                        _logger.Error(result.CompileException);
+                        _logger.Error(result.CompileExceptionInfo.SourceException);
                         return CommandResult.Error;
                     }
 
-                    if (result.ExecuteException != null)
+                    if (result.ExecuteExceptionInfo != null)
                     {
-                        _logger.Error(result.ExecuteException);
+                        _logger.Error(result.ExecuteExceptionInfo.SourceException);
                         return CommandResult.Error;
                     }
 

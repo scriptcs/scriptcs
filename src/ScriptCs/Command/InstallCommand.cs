@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Versioning;
 using Common.Logging;
+
+using ScriptCs.Contracts;
 using ScriptCs.Package;
 
 namespace ScriptCs.Command
@@ -38,11 +41,12 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _logger.Info("Installing packages...");
-
             var workingDirectory = _fileSystem.CurrentDirectory;
+            _logger.Info("Installing packages...");
+            _logger.TraceFormat("Packages folder: {0}", Path.Combine(workingDirectory, "Packages"));
+ 
             var packages = GetPackages(workingDirectory);
-
+            
             try
             {
                 _packageInstaller.InstallPackages(packages, _allowPre, _logger.Info);
