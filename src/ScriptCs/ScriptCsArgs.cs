@@ -13,7 +13,8 @@ namespace ScriptCs
             Config = "scriptcs.opts";
         }
 
-        [ArgIgnore]
+        [ArgShortcut("repl")]
+        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
