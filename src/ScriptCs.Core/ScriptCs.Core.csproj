@@ -45,7 +45,6 @@
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="PackageReference.cs" />
-    <Compile Include="PreProcessorUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineProcessor.cs" />
     <Compile Include="Repl.cs" />
