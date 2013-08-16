@@ -537,7 +537,7 @@ namespace ScriptCs.Tests
                 var preProcessor = GetFilePreProcessor();
                 var script = @"Console.WriteLine(""Testing..."");";
                 
-                preProcessor.ProcessCode(script);
+                preProcessor.ProcessScript(script);
 
                 _fileSystem.Verify(x => x.SplitLines(script), Times.Once());
             }
@@ -548,7 +548,7 @@ namespace ScriptCs.Tests
                 var preProcessor = GetFilePreProcessor();
                 var script = @"Console.WriteLine(""Testing..."");";
                 
-                preProcessor.ProcessCode(script);
+                preProcessor.ProcessScript(script);
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.IsAny<string>()), Times.Never());
             }
@@ -564,7 +564,7 @@ namespace ScriptCs.Tests
                 var preProcessor = GetFilePreProcessor();
                 var script = @"#load script1.csx";
                 
-                var result = preProcessor.ProcessCode(script);
+                var result = preProcessor.ProcessScript(script);
                 var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
                 fileLines.Count(x => x.StartsWith("#line ")).ShouldEqual(1);

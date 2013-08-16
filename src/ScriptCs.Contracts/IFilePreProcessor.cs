@@ -4,6 +4,6 @@
     {
         FilePreProcessorResult ProcessFile(string path);
 
-        FilePreProcessorResult ProcessCode(string code);
+        FilePreProcessorResult ProcessScript(string script);
     }
 }

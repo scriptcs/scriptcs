@@ -30,9 +30,9 @@ namespace ScriptCs
             return Process(context => ParseFile(path, context));
         }
 
-        public virtual FilePreProcessorResult ProcessCode(string code)
+        public virtual FilePreProcessorResult ProcessScript(string script)
         {
-            return Process(context => ParseCode(code, context));
+            return Process(context => ParseScript(script, context));
         }
 
         protected virtual FilePreProcessorResult Process(Action<FileParserContext> parseAction)
@@ -99,29 +99,29 @@ namespace ScriptCs
             // Add script to loaded collection before parsing to avoid loop.
             context.LoadedScripts.Add(fullPath);
 
-            var codeLines = _fileSystem.ReadFileLines(fullPath).ToList();
+            var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
             
-            InsertLineDirective(fullPath, codeLines);
-            InDirectory(fullPath, () => ParseCodeLines(codeLines, context));
+            InsertLineDirective(fullPath, scriptLines);
+            InDirectory(fullPath, () => ParseScriptLines(scriptLines, context));
         }
 
-        public virtual void ParseCode(string code, FileParserContext context)
+        public virtual void ParseScript(string script, FileParserContext context)
         {
-            Guard.AgainstNullArgument("code", code);
+            Guard.AgainstNullArgument("script", script);
             Guard.AgainstNullArgument("context", context);
 
-            var scriptLines = _fileSystem.SplitLines(code).ToList();
+            var scriptLines = _fileSystem.SplitLines(script).ToList();
 
-            ParseCodeLines(scriptLines, context);
+            ParseScriptLines(scriptLines, context);
         }
 
-        private void ParseCodeLines(List<string> codeLines, FileParserContext context)
+        private void ParseScriptLines(List<string> scriptLines, FileParserContext context)
         {
-            var codeIndex = codeLines.FindIndex(IsNonDirectiveLine);
+            var codeIndex = scriptLines.FindIndex(IsNonDirectiveLine);
 
-            for (var index = 0; index < codeLines.Count; index++)
+            for (var index = 0; index < scriptLines.Count; index++)
             {
-                var line = codeLines[index];
+                var line = scriptLines[index];
                 var isBeforeCode = index < codeIndex || codeIndex < 0;
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
@@ -133,18 +133,18 @@ namespace ScriptCs
             }
         }
 
-        protected virtual void InsertLineDirective(string path, List<string> fileLines)
+        protected virtual void InsertLineDirective(string path, List<string> scriptLines)
         {
-            Guard.AgainstNullArgument("fileLines", fileLines);
+            Guard.AgainstNullArgument("fileLines", scriptLines);
 
-            var bodyIndex = fileLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
+            var bodyIndex = scriptLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
             if (bodyIndex == -1)
             {
                 return;
             }
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
-            fileLines.Insert(bodyIndex, directiveLine);
+            scriptLines.Insert(bodyIndex, directiveLine);
         }
 
         private void InDirectory(string path, Action action)

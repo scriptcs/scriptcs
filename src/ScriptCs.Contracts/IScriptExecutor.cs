@@ -18,6 +18,6 @@ namespace ScriptCs.Contracts
 
         ScriptResult ExecuteFile(string path, params string[] scriptArgs);
 
-        ScriptResult ExecuteCode(string code, params string[] scriptArgs);
+        ScriptResult ExecuteScript(string script, params string[] scriptArgs);
     }
 }

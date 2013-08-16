@@ -170,10 +170,10 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());
-                scriptExecutor.ExecuteCode(code);
+                scriptExecutor.ExecuteScript(code);
 
                 // assert
-                preProcessor.Verify(p => p.ProcessCode(code));
+                preProcessor.Verify(p => p.ProcessScript(code));
             }
 
             [Theory, ScriptCsAutoData]
@@ -189,11 +189,11 @@ namespace ScriptCs.Tests
                 var code = Guid.NewGuid().ToString();
                 const string Expected = "var a = 0;";
 
-                preProcessor.Setup(fs => fs.ProcessCode(code)).Returns(new FilePreProcessorResult { Code = Expected });
+                preProcessor.Setup(fs => fs.ProcessScript(code)).Returns(new FilePreProcessorResult { Code = Expected });
 
                 // act
                 scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());
-                scriptExecutor.ExecuteCode(code);
+                scriptExecutor.ExecuteScript(code);
 
                 // assert
                 scriptEngine.Verify(s => s.Execute(
@@ -213,7 +213,7 @@ namespace ScriptCs.Tests
                 ScriptFileExecutor scriptExecutor)
             {
                 // arrange
-                preProcessor.Setup(x => x.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
+                preProcessor.Setup(x => x.ProcessScript(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 const string CurrentDirectory = @"C:\";
                 var destinationFilePath1 = Path.Combine(CurrentDirectory, @"bin\fileName1.cs");
@@ -233,7 +233,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
-                scriptExecutor.ExecuteCode("code");
+                scriptExecutor.ExecuteScript("code");
 
                 // assert
                 scriptEngine.Verify(e => e.Execute(
@@ -254,7 +254,7 @@ namespace ScriptCs.Tests
                 ScriptFileExecutor scriptExecutor)
             {
                 // arrange
-                preProcessor.Setup(x => x.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                preProcessor.Setup(x => x.ProcessScript(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
                 const string CurrentDirectory = @"C:\";
 
@@ -268,7 +268,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());
-                scriptExecutor.ExecuteCode("var a = 0;");
+                scriptExecutor.ExecuteScript("var a = 0;");
 
                 // assert
                 scriptEngine.Verify(e => e.Execute(
@@ -290,10 +290,10 @@ namespace ScriptCs.Tests
             {
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
-                preProcessor.Setup(p => p.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                preProcessor.Setup(p => p.ProcessScript(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.ExecuteCode("var a = 0;");
+                executor.ExecuteScript("var a = 0;");
 
                 engine.Verify(i =>i.Execute(
                             It.IsAny<string>(),
@@ -313,10 +313,10 @@ namespace ScriptCs.Tests
             {
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
 
-                preProcessor.Setup(p => p.ProcessCode(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                preProcessor.Setup(p => p.ProcessScript(It.IsAny<string>())).Returns(new FilePreProcessorResult());
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.ExecuteCode("var a = 0;");
+                executor.ExecuteScript("var a = 0;");
 
                 engine.Verify(i => i.Execute(
                             It.IsAny<string>(),

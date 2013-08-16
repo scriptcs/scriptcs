@@ -121,12 +121,12 @@ namespace ScriptCs
 
             ScriptEngine.FileName = Path.GetFileName(rootedPath);
 
-            return ExecuteCode(code, scriptArgs);
+            return ExecuteScript(code, scriptArgs);
         }
 
-        public virtual ScriptResult ExecuteCode(string code, params string[] scriptArgs)
+        public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
-            return Execute(FilePreProcessor.ProcessCode(code), scriptArgs);
+            return Execute(FilePreProcessor.ProcessScript(script), scriptArgs);
         }
 
         protected abstract ScriptResult Execute(FilePreProcessorResult result, string[] scriptArgs);
