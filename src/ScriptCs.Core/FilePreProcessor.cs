@@ -97,12 +97,13 @@ namespace ScriptCs
 
             _logger.DebugFormat("Processing {0}...", filename);
 
+            // Add script to loaded collection before parsing to avoid loop.
+            context.LoadedScripts.Add(fullPath);
+
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
             
             InsertLineDirective(fullPath, scriptLines);
             InDirectory(fullPath, () => ParseScript(scriptLines, context));
-
-            context.LoadedScripts.Add(fullPath);
         }
 
         public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
