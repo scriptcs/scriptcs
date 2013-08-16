@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -8,36 +6,55 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptExecutor : IScriptExecutor
+    public abstract class ScriptExecutor : IScriptExecutor
     {
-        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq" };
-        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
+        public static readonly string[] DefaultReferences =
+        {
+            "System", 
+            "System.Xml", 
+            "System.Core", 
+            "System.Data", 
+            "System.Xml.Linq",
+            "System.Data.DataSetExtensions" 
+        };
+
+        public static readonly string[] DefaultNamespaces =
+        {
+            "System", 
+            "System.IO",
+            "System.Linq", 
+            "System.Text", 
+            "System.Threading.Tasks", 
+            "System.Collections.Generic" 
+        };
+
+        protected ScriptExecutor(
+            IFileSystem fileSystem,
+            IFilePreProcessor filePreProcessor,
+            IScriptEngine scriptEngine,
+            ILog logger)
+        {
+            References = new List<string>(DefaultReferences);
+            Namespaces = new List<string>(DefaultNamespaces);
+            FileSystem = fileSystem;
+            FilePreProcessor = filePreProcessor;
+            ScriptEngine = scriptEngine;
+            Logger = logger;
+        }
 
         public IFileSystem FileSystem { get; private set; }
-        
+
         public IFilePreProcessor FilePreProcessor { get; private set; }
 
         public IScriptEngine ScriptEngine { get; private set; }
 
         public ILog Logger { get; private set; }
 
-        public Collection<string> References { get; private set; }
+        public List<string> References { get; private set; }
 
-        public Collection<string> Namespaces { get; private set; }
+        public List<string> Namespaces { get; private set; }
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
-
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
-        {
-            References = new Collection<string>();
-            AddReferences(DefaultReferences);
-            Namespaces = new Collection<string>();
-            ImportNamespaces(DefaultNamespaces);
-            FileSystem = fileSystem;
-            FilePreProcessor = filePreProcessor;
-            ScriptEngine = scriptEngine;
-            Logger = logger;
-        }
 
         public void ImportNamespaces(params string[] namespaces)
         {
@@ -82,15 +99,13 @@ namespace ScriptCs
         public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
         {
             AddReferences(paths.ToArray());
-            var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
-            ScriptEngine.BaseDirectory = bin;
+            ScriptEngine.BaseDirectory = Path.Combine(FileSystem.CurrentDirectory, "bin");
 
             Logger.Debug("Initializing script packs");
-            var scriptPackSession = new ScriptPackSession(scriptPacks);
+            ScriptPackSession = new ScriptPackSession(scriptPacks);
 
-            scriptPackSession.InitializePacks();
-            ScriptPackSession = scriptPackSession;
+            ScriptPackSession.InitializePacks();
         }
 
         public virtual void Terminate()
