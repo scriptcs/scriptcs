@@ -1,14 +1,10 @@
 ﻿using System;
-
 using Moq;
-
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Contracts;
-
 using Should;
-
 using Xunit.Extensions;
+using System.Linq;
 
 namespace ScriptCs.Tests
 {
@@ -94,6 +90,29 @@ namespace ScriptCs.Tests
 
                 // Assert
                 context.References.Count.ShouldEqual(1);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddReferenceByNameFromGACIfLocalFileDoesntExist(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                ReferenceLineProcessor processor,
+                IFileParser parser)
+            {
+                // Arrange
+                var context = new FileParserContext();
+
+                var name = "script.csx";
+                var line = @"#r " + name;
+                var fullPath = "C:\\script.csx";
+
+                fileSystem.Setup(x => x.GetFullPath(name)).Returns(fullPath);
+                fileSystem.Setup(x => x.FileExists(fullPath)).Returns(false);
+
+                // Act
+                var result = processor.ProcessLine(parser, context, line, true);
+
+                // Assert
+                context.References.Count(x => x == name).ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]
