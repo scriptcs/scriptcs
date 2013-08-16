@@ -2,16 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Common.Logging;
 using Roslyn.Scripting;
+using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
-    using ScriptCs.Contracts;
-
     public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
         protected const string CompiledScriptClass = "Submission#0";
@@ -65,7 +63,10 @@ namespace ScriptCs.Engine.Roslyn
             if (compileSuccess)
             {
                 var assembly = this.LoadAssembly(exeBytes, pdbBytes);
+                
                 Logger.Debug("Retrieving compiled script class (reflection).");
+                
+                // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
                 var type = assembly.GetType(CompiledScriptClass);
                 Logger.Debug("Retrieving compiled script method (reflection).");
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
