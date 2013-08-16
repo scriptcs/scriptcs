@@ -34,11 +34,11 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public override ScriptResult Execute(string script, params string[] scriptArgs)
+        public override ScriptResult ExecuteCode(string code, params string[] scriptArgs)
         {
             try
             {
-                var preProcessResult = FilePreProcessor.ProcessCode(script);
+                var preProcessResult = FilePreProcessor.ProcessCode(code);
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
 

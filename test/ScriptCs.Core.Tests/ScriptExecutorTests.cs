@@ -76,7 +76,7 @@ namespace ScriptCs.Tests
 
                 // act
                 executor.Initialize(Enumerable.Empty<string>(), new[] { scriptPack1.Object });
-                executor.Execute("script.csx");
+                executor.ExecuteFile("script.csx");
                 executor.Terminate();
 
                 // assert
@@ -95,7 +95,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.Execute("script.csx");
+                executor.ExecuteFile("script.csx");
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
 
@@ -108,7 +108,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.Execute("script.csx");
+                executor.ExecuteFile("script.csx");
 
                 preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
             }
@@ -132,7 +132,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(paths, recipes);
-                scriptExecutor.Execute(scriptName);
+                scriptExecutor.ExecuteFile(scriptName);
 
                 // assert
                 preProcessor.Verify(fs => fs.ProcessFile(Path.Combine(currentDirectory, scriptName)), Times.Once());
@@ -158,7 +158,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(paths, recipes);
-                scriptExecutor.ExecuteScript(script);
+                scriptExecutor.ExecuteCode(script);
 
                 // assert
                 preProcessor.Verify(fs => fs.ProcessCode(script), Times.Once());
@@ -199,7 +199,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
-                scriptExecutor.Execute(scriptName);
+                scriptExecutor.ExecuteFile(scriptName);
 
                 // assert
                 scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
@@ -223,7 +223,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                scriptExecutor.Execute(ScriptName);
+                scriptExecutor.ExecuteFile(ScriptName);
 
                 // assert
                 scriptEngine.Object.FileName.ShouldEqual(ScriptName);
@@ -253,7 +253,7 @@ namespace ScriptCs.Tests
 
                 // act
                 scriptExecutor.Initialize(new string[0], Enumerable.Empty<IScriptPack>());
-                scriptExecutor.Execute(scriptName);
+                scriptExecutor.ExecuteFile(scriptName);
 
                 // assert
                 scriptEngine.Verify(e => e.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x => x.SequenceEqual(ScriptExecutor.DefaultNamespaces.Union(explicitNamespaces))), It.IsAny<ScriptPackSession>()), Times.Once());
@@ -271,7 +271,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.Execute("script.csx");
+                executor.ExecuteFile("script.csx");
 
                 engine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<string>>(x => !x.Except(expectedNamespaces).Any()), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
             }
@@ -288,7 +288,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                executor.Execute("script.csx");
+                executor.ExecuteFile("script.csx");
 
                 engine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<IEnumerable<string>>(x => !x.Except(defaultReferences).Any()), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
             }

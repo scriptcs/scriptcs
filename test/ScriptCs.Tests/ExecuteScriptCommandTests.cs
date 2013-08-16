@@ -42,7 +42,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 executor.Verify(i => i.Initialize(It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
-                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
+                executor.Verify(i => i.ExecuteFile(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
                 executor.Verify(i => i.Terminate(), Times.Once());
             }
 
@@ -69,7 +69,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 executor.Verify(i => i.Initialize(It.Is<IEnumerable<string>>(x => !x.Contains(NonManaged)), It.IsAny<IEnumerable<IScriptPack>>()), Times.Once());
-                executor.Verify(i => i.Execute(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
+                executor.Verify(i => i.ExecuteFile(It.Is<string>(x => x == "test.csx"), It.IsAny<string[]>()), Times.Once());
                 executor.Verify(i => i.Terminate(), Times.Once());
             }
 
@@ -90,7 +90,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
-                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                executor.Setup(i => i.ExecuteFile(It.IsAny<string>(), It.IsAny<string[]>()))
                         .Returns(new ScriptResult {CompileExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test"))});
 
                 // Act
@@ -118,7 +118,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
-                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                executor.Setup(i => i.ExecuteFile(It.IsAny<string>(), It.IsAny<string[]>()))
                         .Returns(new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test")) });
 
                 // Act

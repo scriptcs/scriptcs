@@ -16,8 +16,8 @@ namespace ScriptCs.Contracts
 
         void Terminate();
 
-        ScriptResult Execute(string script, params string[] scriptArgs);
+        ScriptResult ExecuteFile(string path, params string[] scriptArgs);
 
-        ScriptResult ExecuteScript(string script, params string[] scriptArgs);
+        ScriptResult ExecuteCode(string code, params string[] scriptArgs);
     }
 }

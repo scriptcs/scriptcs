@@ -99,10 +99,10 @@ namespace ScriptCs
             ScriptPackSession.TerminatePacks();
         }
 
-        public virtual ScriptResult Execute(string script, params string[] scriptArgs)
+        public virtual ScriptResult ExecuteFile(string path, params string[] scriptArgs)
         {
-            var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
-            var result = FilePreProcessor.ProcessFile(path);
+            var rootedPath = Path.IsPathRooted(path) ? path : Path.Combine(FileSystem.CurrentDirectory, path);
+            var result = FilePreProcessor.ProcessFile(rootedPath);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
@@ -111,9 +111,9 @@ namespace ScriptCs
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }
 
-        public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
+        public virtual ScriptResult ExecuteCode(string code, params string[] scriptArgs)
         {
-            var result = FilePreProcessor.ProcessCode(script);
+            var result = FilePreProcessor.ProcessCode(code);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
