@@ -28,7 +28,6 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
-    <Compile Include="DirectiveLineProcessor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
