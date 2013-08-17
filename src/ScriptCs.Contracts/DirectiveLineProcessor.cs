@@ -1,6 +1,4 @@
-﻿using ScriptCs.Contracts;
-
-namespace ScriptCs
+﻿namespace ScriptCs.Contracts
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
