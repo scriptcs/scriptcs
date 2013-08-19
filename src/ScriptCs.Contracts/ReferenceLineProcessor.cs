@@ -1,13 +1,7 @@
 ﻿using System;
-using System.IO;
-using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Contracts
 {
-    public interface IReferenceLineProcessor : ILineProcessor
-    {
-    }
-
     public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
     {
         private readonly IFileSystem _fileSystem;
