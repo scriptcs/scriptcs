@@ -1,10 +1,11 @@
 ﻿using ScriptCs.Contracts;
-using System.IO;
+
 namespace ScriptCs
 {
     public interface IReferenceLineProcessor : ILineProcessor
     {
-        string GetArgumentFullPath(string line);
+        string GetArgumentFullPath(string argument);
+        string GetDirectiveArgument(string line);
     }
 
     public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
@@ -25,8 +26,10 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
-            var referencePath = GetArgumentFullPath(line);
-            var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
+            var argument = this.GetDirectiveArgument(line);
+            var referencePath = GetArgumentFullPath(argument);
+
+            var referencePathOrName = this.FileSystem.FileExists(referencePath) ? referencePath : argument;
 
             if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
             {

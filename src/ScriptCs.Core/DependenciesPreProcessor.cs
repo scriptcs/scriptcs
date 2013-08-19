@@ -1,7 +1,6 @@
 ﻿namespace ScriptCs
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
 
     using ScriptCs.Contracts;
@@ -15,7 +14,7 @@
         private readonly IFileSystem _fileSystem;
 
         public DependenciesPreProcessor(
-            IReferenceLineProcessor referenceLineProcessor, 
+            IReferenceLineProcessor referenceLineProcessor,
             ILoadLineProcessor loadLineProcessor,
             IFileSystem fileSystem)
         {
@@ -29,15 +28,21 @@
             var oldCurrentDirectory = _fileSystem.CurrentDirectory;
             _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(path);
 
-            foreach (var line in File.ReadAllLines(path).Where(l => l.StartsWith("#r") || l.StartsWith("#load")))
+            foreach (var line in _fileSystem.ReadAllLines(path).Where(l => l.StartsWith("#r") || l.StartsWith("#load")))
             {
                 if (line.StartsWith("#r"))
                 {
-                    yield return _referenceLineProcessor.GetArgumentFullPath(line);
+                    var argument = _referenceLineProcessor.GetDirectiveArgument(line);
+                    var referencePath = _referenceLineProcessor.GetArgumentFullPath(argument);
+                    if (_fileSystem.FileExists(referencePath))
+                    {
+                        yield return referencePath;
+                    }
                 }
                 else
                 {
-                    var fullPath = _loadLineProcessor.GetArgumentFullPath(line);
+                    var argument = _loadLineProcessor.GetDirectiveArgument(line);
+                    var fullPath = _loadLineProcessor.GetArgumentFullPath(argument);
 
                     yield return fullPath;
 

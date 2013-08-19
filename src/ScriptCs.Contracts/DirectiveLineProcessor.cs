@@ -5,19 +5,19 @@ namespace ScriptCs
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
-        private readonly IFileSystem _fileSystem;
+        protected IFileSystem FileSystem { get; private set; }
 
-        public DirectiveLineProcessor(IFileSystem fileSystem)
+        protected DirectiveLineProcessor(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            this.FileSystem = fileSystem;
         }
 
-        public string GetArgumentFullPath(string line)
+        public string GetArgumentFullPath(string argument)
         {
-            var argument = GetDirectiveArgument(line);
             var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
 
-            var referencePath = _fileSystem.GetFullPath(assemblyPath);
+            var referencePath = this.FileSystem.GetFullPath(assemblyPath);
+
             return referencePath;
         }
 
@@ -48,7 +48,7 @@ namespace ScriptCs
             return ProcessLine(parser, context, line);
         }
 
-        protected string GetDirectiveArgument(string line)
+        public string GetDirectiveArgument(string line)
         {
             return line.Replace(DirectiveString, string.Empty)
                 .Trim(' ')

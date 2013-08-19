@@ -4,7 +4,8 @@ namespace ScriptCs
 {
     public interface ILoadLineProcessor : ILineProcessor
     {
-        string GetArgumentFullPath(string line);
+        string GetArgumentFullPath(string argument);
+        string GetDirectiveArgument(string line);
     }
 
     public class LoadLineProcessor : DirectiveLineProcessor, ILoadLineProcessor
@@ -25,7 +26,8 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
-            var fullPath = GetArgumentFullPath(line);
+            var argument = GetDirectiveArgument(line);
+            var fullPath = GetArgumentFullPath(argument);
             if (!string.IsNullOrWhiteSpace(fullPath))
             {
                 parser.ParseFile(fullPath, context);

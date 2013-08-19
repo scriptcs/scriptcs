@@ -22,8 +22,6 @@ namespace ScriptCs
 
         public string Buffer { get; set; }
 
-        public IConsole Console { get; private set; }
-
         public override void Terminate()
         {
             base.Terminate();
