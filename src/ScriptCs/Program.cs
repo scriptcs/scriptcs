@@ -9,7 +9,7 @@ namespace ScriptCs
         private static int Main(string[] args) 
         {
             var console = new ScriptConsole();
-
+     
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
             var arguments = parser.Parse(args);
             var commandArgs = arguments.CommandArguments;
@@ -23,7 +23,8 @@ namespace ScriptCs
                 .InMemory(commandArgs.InMemory)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
-                .Repl(commandArgs.Repl);
+                .Repl(commandArgs.Repl)
+                .WriteCompilationExceptionsToFile(commandArgs.WriteCompilationExceptionsToFile);
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);

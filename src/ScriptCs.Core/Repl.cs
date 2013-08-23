@@ -17,15 +17,19 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor, ICompilationExceptionWriter compilationExceptionWriter)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             Console = console;
+            CompilationExceptionWriter = compilationExceptionWriter;
         }
 
         public string Buffer { get; set; }
 
         public IConsole Console { get; private set; }
+
+        public ICompilationExceptionWriter CompilationExceptionWriter { get; private set; }
 
         public override void Terminate()
         {
@@ -58,7 +62,26 @@ namespace ScriptCs
                 if (result.CompileExceptionInfo != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
+                    
+                    if (CompilationExceptionWriter != null)
+                    {
+                        try
+                        {
+                            using (var outfile = new StreamWriter(CompilationExceptionWriter.CompilationExceptionFilePath, true))
+                            {
+                                outfile.WriteLine(result.CompileExceptionInfo.SourceException.ToString() + "\r\n");
+                                Console.WriteLine("Compilation exception written to log.");
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
+                    }
                 }
 
                 if (result.ExecuteExceptionInfo != null)

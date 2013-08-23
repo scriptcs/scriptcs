@@ -22,8 +22,9 @@ namespace ScriptCs
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
+        private readonly Type _compilationExceptionWriterType;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName, Type compilationExceptionWriterType) :
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
@@ -33,6 +34,7 @@ namespace ScriptCs
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
             _scriptName = scriptName;
+            _compilationExceptionWriterType = compilationExceptionWriterType;
         }
 
         protected override IContainer CreateContainer()
@@ -46,6 +48,11 @@ namespace ScriptCs
             builder.RegisterInstance(_console).As<IConsole>();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
+            if (_compilationExceptionWriterType != null)
+            {
+                builder.RegisterType(_compilationExceptionWriterType).As<ICompilationExceptionWriter>();
+            } 
+            
             RegisterLineProcessors(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
@@ -81,7 +88,7 @@ namespace ScriptCs
         private void RegisterLineProcessors(ContainerBuilder builder)
         {
             var loadProcessorType = _lineProcessors
-                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x)) 
+                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
                 ?? typeof(LoadLineProcessor);
 
             var usingProcessorType = _lineProcessors

@@ -15,5 +15,7 @@ namespace ScriptCs
         IScriptServicesBuilder LogLevel(LogLevel level);
 
         IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
+
+        IScriptServicesBuilder WriteCompilationExceptionsToFile(bool writeCompilationExceptionsToFile = false);
     }
 }
