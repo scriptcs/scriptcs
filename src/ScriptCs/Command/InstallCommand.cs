@@ -49,7 +49,7 @@ namespace ScriptCs.Command
             
             try
             {
-                _packageInstaller.InstallPackages(packages, _allowPre, _logger.Info);
+                _packageInstaller.InstallPackages(packages, _allowPre);
 
                 _logger.Info("Installation completed successfully.");
                 return CommandResult.Success;

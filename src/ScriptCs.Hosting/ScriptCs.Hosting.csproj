@@ -30,12 +30,9 @@
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.XmlTransform">
-      <HintPath>..\..\packages\Microsoft.Web.Xdt.1.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Core, Version=2.2.31210.9045, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="NuGet.Core, Version=2.7.40808.167, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NuGet.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <HintPath>..\..\packages\Nuget.Core.2.7.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -65,6 +62,7 @@
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Package\NugetInstallationProvider.cs" />
+    <Compile Include="Package\NugetMachineWideSettings.cs" />
     <Compile Include="Package\PackageContainer.cs" />
     <Compile Include="Package\PackageInstaller.cs" />
     <Compile Include="Package\PackageObject.cs" />
