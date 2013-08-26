@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Common.Logging;
 using NuGet;
 
 using ScriptCs.Contracts;
@@ -13,7 +14,7 @@ namespace ScriptCs.Hosting.Package
 {
     public class NugetInstallationProvider : IInstallationProvider
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
         private PackageManager _manager;
         private IEnumerable<string> _repositoryUrls;
 
@@ -45,7 +46,7 @@ namespace ScriptCs.Hosting.Package
             }
             else
             {
-                settings = Settings.LoadDefaultSettings(configFileSystem);
+                settings = Settings.LoadDefaultSettings(configFileSystem, null, new NugetMachineWideSettings());
             }
 
             if (settings == null) return new[] { Constants.DefaultRepositoryUrl };
