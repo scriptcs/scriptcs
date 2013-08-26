@@ -15,16 +15,18 @@ namespace ScriptCs.Hosting.Package
     public class NugetInstallationProvider : IInstallationProvider
     {
         private readonly IFileSystem _fileSystem;
+        private readonly ILog _logger;
         private PackageManager _manager;
         private IEnumerable<string> _repositoryUrls;
 
         private static readonly Version EmptyVersion = new Version();
 
-        public NugetInstallationProvider(IFileSystem fileSystem)
+        public NugetInstallationProvider(IFileSystem fileSystem, ILog logger)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
 
             _fileSystem = fileSystem;
+            _logger = logger;
         }
 
         public void Initialize()
@@ -59,7 +61,7 @@ namespace ScriptCs.Hosting.Package
             return sources.Select(i => i.Source);
         }
 
-        public bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false, Action<string> packageInstalled = null)
+        public bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
         {
             Guard.AgainstNullArgument("packageId", packageId);
 
@@ -68,19 +70,13 @@ namespace ScriptCs.Hosting.Package
             try
             {
                 _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
-                if(packageInstalled != null)
-                {
-                    packageInstalled("Installed: " + packageName);
-                }
+                _logger.Info("Installed: " + packageName);
                 return true;
             }
             catch (Exception e)
             {
-                if (packageInstalled != null)
-                {
-                    packageInstalled("Installation failed: " + packageName);
-                    packageInstalled(e.Message);
-                }
+                _logger.Error("Installation failed: " + packageName);
+                _logger.Error(e.Message);
                 return false;
             }
         }

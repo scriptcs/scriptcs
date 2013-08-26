@@ -1,33 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 namespace ScriptCs.Hosting.Package
 {
     public class PackageInstaller : IPackageInstaller
     {
         private readonly IInstallationProvider _installer;
+        private readonly ILog _logger;
 
-        public PackageInstaller(IInstallationProvider installer)
+        public PackageInstaller(IInstallationProvider installer, ILog logger)
         {
             _installer = installer;
+            _logger = logger;
         }
 
-        public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false, Action<string> packageInstalled = null)
+        public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false)
         {
             if (packageIds == null) throw new ArgumentNullException("packageIds");
             packageIds = packageIds.ToList();
 
             if (!packageIds.Any())
             {
-                if (packageInstalled != null)
-                {
-                    packageInstalled("Nothing to install.");
-                }
-
+                _logger.Info("Nothing to install.");
                 return;
             }
 
@@ -38,15 +35,16 @@ namespace ScriptCs.Hosting.Package
                 {
                     continue;
                 }
-                if(!_installer.InstallPackage(packageId, allowPreRelease, packageInstalled))
+
+                if(!_installer.InstallPackage(packageId, allowPreRelease))
                 {
                     successful = false;
                 }
             }
             
-            if (packageInstalled != null && packageIds.Count() > 1)
+            if (packageIds.Count() > 1)
             {
-                packageInstalled(successful ? "Installation successful." : "Installation unsuccessful.");
+                _logger.Info(successful ? "Installation successful." : "Installation unsuccessful.");
             }
         }
     }
