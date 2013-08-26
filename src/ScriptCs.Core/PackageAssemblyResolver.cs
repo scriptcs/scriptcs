@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
@@ -12,43 +12,43 @@ namespace ScriptCs
     public class PackageAssemblyResolver : IPackageAssemblyResolver
     {
         private readonly IFileSystem _fileSystem;
-
         private readonly IPackageContainer _packageContainer;
-
+        private readonly ILog _logger;
         private List<IPackageReference> _topLevelPackages;
 
-        public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer)
+        public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger)
         {
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
+            _logger = logger;
         }
 
-        public void SavePackages(Action<string> output)
+        public void SavePackages()
         {
             var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
 
             if (_fileSystem.FileExists(packagesFile))
             {
-                output("Packages.config already exists!");
+                _logger.Info("Packages.config already exists!");
                 return;
             }
 
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
-                output("Packages directory does not exist!");
+                _logger.Info("Packages directory does not exist!");
                 return;
             }
 
             var result = _packageContainer.CreatePackageFile().ToList();
             if (!result.Any())
             {
-                output("No packages found!");
+                _logger.Info("No packages found!");
                 return;
             }
 
-            result.ForEach(i => output(string.Format("Added {0}", i)));
-            output("Packages.config successfully created!");
+            result.ForEach(i => _logger.Info(string.Format("Added {0}", i)));
+            _logger.Info("Packages.config successfully created!");
         }
 
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)
@@ -61,7 +61,7 @@ namespace ScriptCs
             return packages;
         }
 
-        public IEnumerable<string> GetAssemblyNames(string workingDirectory, Action<string> outputCallback = null)
+        public IEnumerable<string> GetAssemblyNames(string workingDirectory)
         {
             var packages = GetPackages(workingDirectory).ToList();
             if (!packages.Any()) return Enumerable.Empty<string>();
@@ -72,7 +72,7 @@ namespace ScriptCs
             var foundAssemblyPaths = new List<string>();
             var missingAssemblies = new List<IPackageReference>();
 
-            LoadFiles(packageDir, packages, ref missingAssemblies, ref foundAssemblyPaths, _fileSystem.FileExists(packageFile), outputCallback);
+            LoadFiles(packageDir, packages, missingAssemblies, foundAssemblyPaths, _fileSystem.FileExists(packageFile));
 
             if (missingAssemblies.Count > 0)
             {
@@ -83,7 +83,7 @@ namespace ScriptCs
             return foundAssemblyPaths;
         }
 
-        private void LoadFiles(string packageDir, IEnumerable<IPackageReference> packageReferences, ref List<IPackageReference> missingAssemblies, ref List<string> foundAssemblies, bool strictLoad = true, Action<string> outputCallback = null)
+        private void LoadFiles(string packageDir, IEnumerable<IPackageReference> packageReferences, List<IPackageReference> missingAssemblies, List<string> foundAssemblies, bool strictLoad = true)
         {
             foreach (var packageRef in packageReferences)
             {
@@ -91,10 +91,7 @@ namespace ScriptCs
                 if (nugetPackage == null)
                 {
                     missingAssemblies.Add(packageRef);
-                    if (outputCallback != null)
-                    {
-                        outputCallback("Cannot find: " + packageRef.PackageId + " " + packageRef.Version);
-                    }
+                    _logger.Info("Cannot find: " + packageRef.PackageId + " " + packageRef.Version);
 
                     continue;
                 }
@@ -103,11 +100,7 @@ namespace ScriptCs
                 if (compatibleFiles == null)
                 {
                     missingAssemblies.Add(packageRef);
-                    if (outputCallback != null)
-                    {
-                        outputCallback("Cannot find binaries for " + packageRef.FrameworkName + " in: " +
-                                       packageRef.PackageId + " " + packageRef.Version);
-                    }
+                    _logger.Info("Cannot find binaries for " + packageRef.FrameworkName + " in: " + packageRef.PackageId + " " + packageRef.Version);
 
                     continue;
                 }
@@ -119,10 +112,7 @@ namespace ScriptCs
                     if (foundAssemblies.Contains(path)) continue;
 
                     foundAssemblies.Add(path);
-                    if (outputCallback != null)
-                    {
-                        outputCallback("Found: " + path);
-                    }
+                    _logger.Info("Found: " + path);
                 }
 
                 if (nugetPackage.Dependencies == null || !nugetPackage.Dependencies.Any() || !strictLoad) continue;
@@ -131,7 +121,7 @@ namespace ScriptCs
                     .Where(i => _topLevelPackages.All(x => x.PackageId != i.Id))
                     .Select(i => new PackageReference(i.Id, i.FrameworkName, i.Version));
 
-                LoadFiles(packageDir, dependencyReferences, ref missingAssemblies, ref foundAssemblies, true, outputCallback);
+                LoadFiles(packageDir, dependencyReferences, missingAssemblies, foundAssemblies, true);
             }
         }
     }

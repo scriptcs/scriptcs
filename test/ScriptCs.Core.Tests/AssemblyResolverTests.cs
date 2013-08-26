@@ -30,7 +30,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
 
                 var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
-                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory, It.IsAny<Action<string>>())).Returns(new[] { assemblyFile });
+                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
 
                 var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
 
