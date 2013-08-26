@@ -44,6 +44,8 @@ namespace ScriptCs.Contracts
         
         Stream CreateFileStream(string filePath, FileMode mode);
 
+        void WriteAllBytes(string filePath, byte[] bytes);
+
         string ModulesFolder { get; }
     }
 }

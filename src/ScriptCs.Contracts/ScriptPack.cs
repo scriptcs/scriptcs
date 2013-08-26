@@ -4,13 +4,17 @@
     {
         public TContext Context { get; set; }
 
-        public virtual void Initialize(IScriptPackSession session) { }
+        public virtual void Initialize(IScriptPackSession session)
+        {
+        }
 
         public virtual IScriptPackContext GetContext()
         {
             return Context;
         }
 
-        public virtual void Terminate() { }
+        public virtual void Terminate()
+        {
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using ScriptCs.Contracts;
-
-namespace ScriptCs
+﻿namespace ScriptCs.Contracts
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
@@ -18,9 +16,15 @@ namespace ScriptCs
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
-            if (!IsDirective(line)) return false;
+            if (!IsDirective(line))
+            {
+                return false;
+            }
 
-            if (!isBeforeCode && IgnoreAfterCode) return true;
+            if (!isBeforeCode && IgnoreAfterCode)
+            {
+                return true;
+            }
 
             return ProcessLine(parser, context, line);
         }

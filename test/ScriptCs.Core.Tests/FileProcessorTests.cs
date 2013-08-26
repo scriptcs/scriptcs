@@ -220,7 +220,7 @@ namespace ScriptCs.Tests
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
-                        "",
+                        string.Empty,
                         "using System;",
                         @"Console.WriteLine(""abc"");"
                     };
@@ -236,6 +236,18 @@ namespace ScriptCs.Tests
 
                 splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")).ShouldEqual(2);
                 Assert.True(lastUsing < firsNotUsing);
+            }
+
+            [Fact]
+            public void ShouldNotThrowStackOverflowExceptionOnLoadLoop()
+            {
+                var a = new List<string> { "#load B.csx" };
+                var b = new List<string> { "#load A.csx" };
+
+                _fileSystem.Setup(x => x.ReadFileLines("A.csx")).Returns(a.ToArray());
+                _fileSystem.Setup(x => x.ReadFileLines("B.csx")).Returns(b.ToArray());
+
+                Assert.DoesNotThrow(() => GetFilePreProcessor().ProcessFile("A.csx"));
             }
 
             [Fact]
@@ -256,6 +268,7 @@ namespace ScriptCs.Tests
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
                 Assert.Equal(1, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
+                
                 // consider #line directive
                 Assert.Equal(4, splitOutput.Length);
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "script4.csx")), Times.Never());
@@ -267,7 +280,7 @@ namespace ScriptCs.Tests
                 var file = new List<string>
                     {
                         @"#load ""script4.csx""",
-                        "",
+                        string.Empty,
                         "using System;",
                         "using System.IO;",
                         "Console.WriteLine();",
@@ -473,7 +486,7 @@ namespace ScriptCs.Tests
 
                 var startingDirectory = "c:\\";
                 var currentDirectory = startingDirectory;
-                var lastCurrentDirectory = "";
+                var lastCurrentDirectory = string.Empty;
                 _fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
                 _fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
                            .Callback<string>((newCurrentDirectory) =>

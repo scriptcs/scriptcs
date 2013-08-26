@@ -51,12 +51,18 @@ namespace ScriptCs.Hosting.Package
                 settings = Settings.LoadDefaultSettings(configFileSystem, null, new NugetMachineWideSettings());
             }
 
-            if (settings == null) return new[] { Constants.DefaultRepositoryUrl };
+            if (settings == null)
+            {
+                return new[] { Constants.DefaultRepositoryUrl };
+            }
 
             var sourceProvider = new PackageSourceProvider(settings);
             var sources = sourceProvider.LoadPackageSources();
 
-            if (sources == null || !sources.Any()) return new[] { Constants.DefaultRepositoryUrl };
+            if (sources == null || !sources.Any())
+            {
+                return new[] { Constants.DefaultRepositoryUrl };
+            }
 
             return sources.Select(i => i.Source);
         }

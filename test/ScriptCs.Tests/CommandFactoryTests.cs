@@ -5,7 +5,6 @@ using Ploeh.AutoFixture.AutoMoq;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
 using Should;
 using Xunit;
 
@@ -40,7 +39,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    Install = string.Empty,
                     ScriptName = null
                 };
 
@@ -59,7 +58,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    Install = string.Empty,
                     ScriptName = null
                 };
 
@@ -127,7 +126,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    Install = string.Empty,
                     ScriptName = "test.csx"
                 };
 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using ScriptCs.Contracts;
+using Common.Logging.Log4Net;
 using log4net;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
-using Common.Logging.Log4Net;
+using ScriptCs.Contracts;
 using ICommonLog = Common.Logging.ILog;
 
 namespace ScriptCs

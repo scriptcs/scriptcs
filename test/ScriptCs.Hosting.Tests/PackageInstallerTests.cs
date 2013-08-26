@@ -32,7 +32,8 @@ namespace ScriptCs.Tests
                     i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()))
                         .Returns(true);
 
-                var references = new List<IPackageReference> {
+                var references = new List<IPackageReference> 
+                {
                     new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")),
                     new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("4.0")),
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
@@ -56,7 +57,8 @@ namespace ScriptCs.Tests
                     i => i.InstallPackage(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()))
                         .Returns(false);
 
-                var references = new List<IPackageReference> {
+                var references = new List<IPackageReference> 
+                {
                     new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")),
                     new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("4.0")),
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
@@ -78,7 +80,8 @@ namespace ScriptCs.Tests
                     i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()))
                         .Returns(true);
 
-                var references = new List<IPackageReference> {
+                var references = new List<IPackageReference> 
+                {
                     new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")),
                     new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("4.0")),
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
@@ -99,7 +102,8 @@ namespace ScriptCs.Tests
                     i => i.IsInstalled(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()))
                         .Returns(true);
 
-                var references = new List<IPackageReference> {
+                var references = new List<IPackageReference>
+                {
                     new PackageReference("testId", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")),
                     new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("4.0")),
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))

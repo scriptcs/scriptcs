@@ -5,22 +5,19 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Common.Logging;
 using Roslyn.Scripting;
-
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public class RoslynScriptDebuggerEngine : RoslynScriptEngine
+    public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
-        private const string CompiledScriptClass = "Submission#0";
-        private const string CompiledScriptMethod = "<Factory>";
-        private readonly ILog _logger;
-
-        public RoslynScriptDebuggerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        protected const string CompiledScriptClass = "Submission#0";
+        protected const string CompiledScriptMethod = "<Factory>";
+        
+        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
-            this._logger = logger;
         }
 
         protected override ScriptResult Execute(string code, Session session)
@@ -30,7 +27,7 @@ namespace ScriptCs.Engine.Roslyn
             var scriptResult = new ScriptResult();
             Submission<object> submission = null;
 
-            _logger.Debug("Compiling submission");
+            this.Logger.Debug("Compiling submission");
             try
             {
                 submission = session.CompileSubmission<object>(code);
@@ -45,53 +42,56 @@ namespace ScriptCs.Engine.Roslyn
             var compileSuccess = false;
 
             using (var exeStream = new MemoryStream())
-            using (var pdbStream = new MemoryStream()) 
+            using (var pdbStream = new MemoryStream())
             {
                 var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
                 compileSuccess = result.Success;
 
-                if (result.Success) 
+                if (result.Success)
                 {
-                    _logger.Debug("Compilation was successful.");
+                    this.Logger.Debug("Compilation was successful.");
                     exeBytes = exeStream.ToArray();
                     pdbBytes = pdbStream.ToArray();
                 }
-                else 
+                else
                 {
                     var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
-                    _logger.ErrorFormat("Error occurred when compiling: {0})", errors);
+                    this.Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                 }
             }
 
-            if (compileSuccess) 
+            if (compileSuccess)
             {
-                _logger.Debug("Loading assembly into appdomain.");
-                var assembly = AppDomain.CurrentDomain.Load(exeBytes, pdbBytes);
-                _logger.Debug("Retrieving compiled script class (reflection).");
+                var assembly = this.LoadAssembly(exeBytes, pdbBytes);
+                
+                Logger.Debug("Retrieving compiled script class (reflection).");
+                
+                // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
                 var type = assembly.GetType(CompiledScriptClass);
-                _logger.Debug("Retrieving compiled script method (reflection).");
+                Logger.Debug("Retrieving compiled script method (reflection).");
                 var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
                 try
                 {
-                    _logger.Debug("Invoking method.");
+                    this.Logger.Debug("Invoking method.");
                     scriptResult.ReturnValue = method.Invoke(null, new[] { session });
                 }
                 catch (Exception executeException)
                 {
                     scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executeException);
-                    _logger.Error("An error occurred when executing the scripts.");
-                    var message = 
-                        string.Format(
+                    this.Logger.Error("An error occurred when executing the scripts.");
+                    var message = string.Format(
                         "Exception Message: {0} {1}Stack Trace:{2}",
                         executeException.InnerException.Message,
-                        Environment.NewLine, 
+                        Environment.NewLine,
                         executeException.InnerException.StackTrace);
-                    throw new ScriptExecutionException(message, executeException);
+                    throw new ScriptExecutionException(message);
                 }
             }
 
             return scriptResult;
         }
+
+        protected abstract Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes);
     }
 }

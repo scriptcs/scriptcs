@@ -7,19 +7,20 @@ using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
-using Should;
 using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
-    public class RoslynScriptDebuggerEngineTests
+    using Should;
+
+    public class RoslynScriptInMemoryEngineTests
     {
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
             public void ShouldThrowExceptionThrownByScriptWhenErrorOccurs(
-                [NoAutoProperties] RoslynScriptDebuggerEngine scriptEngine)
+                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
             {
                 // Arrange
                 var lines = new List<string>

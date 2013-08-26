@@ -1,30 +1,34 @@
-﻿using System;
-using System.Linq;
-
-using PowerArgs;
+﻿using PowerArgs;
 
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -debug", "Shows how to start the script with debug mode switched on")]
+    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
     public class ScriptCsArgs
     {
-        [ArgIgnore]
+        public ScriptCsArgs()
+        {
+            LogLevel = LogLevel.Info;
+            Config = "scriptcs.opts";
+        }
+
+        [ArgShortcut("repl")]
+        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
+        [ArgShortcut("script")]
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
-        [ArgDescription("Displays help")]
-        
         [ArgShortcut("?")]
+        [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
-        [ArgShortcut("debug")]
-        [ArgDescription("Flag which switches on debug mode")]
-        public bool Debug { get; set; }
+        [ArgShortcut("inMemory")]
+        [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
+        public bool InMemory { get; set; }
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]
@@ -57,22 +61,15 @@ namespace ScriptCs
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
 
+
         [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
 
-        public static void SplitScriptArgs(ref string[] args, out string[] scriptArgs)
-        {
-            Guard.AgainstNullArgument("args", args);
+        [ArgShortcut("config")]
+        [DefaultValue("scriptcs.opts")]
+        [ArgDescription("Defines config file name")]
+        public string Config { get; set; }
 
-            // Split the arguments list on "--".
-            // The arguments before the "--" (or all arguments if there is no "--") are
-            // for ScriptCs.exe, and the arguments after that are for the csx script.
-            int separatorLocation = Array.IndexOf(args, "--");
-            int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
-            scriptArgs = new string[scriptArgsCount];
-            Array.Copy(args, separatorLocation + 1, scriptArgs, 0, scriptArgsCount);
-            if (separatorLocation != -1) args = args.Take(separatorLocation).ToArray();
-        }
     }
 }

@@ -7,7 +7,7 @@ namespace ScriptCs.Contracts
     public interface IPackageObject
     {
         string Id { get; }
-
+        
         string TextVersion { get; }
 
         Version Version { get; }

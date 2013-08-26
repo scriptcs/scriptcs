@@ -26,7 +26,7 @@ namespace ScriptCs.Hosting.Package
             var dependencies = _package.GetCompatiblePackageDependencies(frameworkName);
             if (dependencies != null)
             {
-                Dependencies = dependencies.Select(i => new PackageObject(i.Id) {FrameworkName = frameworkName});
+                Dependencies = dependencies.Select(i => new PackageObject(i.Id) { FrameworkName = frameworkName });
             }
         }
 
@@ -36,8 +36,11 @@ namespace ScriptCs.Hosting.Package
         }
 
         public string Id { get; private set; }
+
         public string TextVersion { get; private set; }
+
         public Version Version { get; private set; }
+
         public FrameworkName FrameworkName { get; private set; }
 
         public IEnumerable<IPackageObject> Dependencies { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Common.Logging;
 
@@ -48,29 +49,32 @@ namespace ScriptCs.Command
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory, _script);
                 }
+
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
                 var result = _scriptExecutor.Execute(_script, ScriptArgs);
                 _scriptExecutor.Terminate();
 
-                if (result != null)
+                if (result == null) return CommandResult.Error;
+
+                if (result.CompileExceptionInfo != null)
                 {
-                    if (result.CompileExceptionInfo != null)
-                    {
-                        _logger.Error(result.CompileExceptionInfo.SourceException);
-                        return CommandResult.Error;
-                    }
-
-                    if (result.ExecuteExceptionInfo != null)
-                    {
-                        _logger.Error(result.ExecuteExceptionInfo.SourceException);
-                        return CommandResult.Error;
-                    }
-
-                    return CommandResult.Success;
+                    _logger.Error(result.CompileExceptionInfo.SourceException);
+                    return CommandResult.Error;
                 }
 
+                if (result.ExecuteExceptionInfo != null)
+                {
+                    _logger.Error(result.ExecuteExceptionInfo.SourceException);
+                    return CommandResult.Error;
+                }
+
+                return CommandResult.Success;
+            }
+            catch (FileNotFoundException fnfex)
+            {
+                _logger.ErrorFormat("{0} - {1}", fnfex.Message, fnfex.FileName);
                 return CommandResult.Error;
             }
             catch (Exception ex)

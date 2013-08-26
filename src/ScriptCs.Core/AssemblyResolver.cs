@@ -32,15 +32,18 @@ namespace ScriptCs
             _assemblyUtility = assemblyUtility;
         }
 
-        public IEnumerable<string> GetAssemblyPaths(string path)
+        public IEnumerable<string> GetAssemblyPaths(string path, string scriptName)
         {
             Guard.AgainstNullArgument("path", path);
 
             List<string> assemblies;
-            if (_assemblyPathCache.TryGetValue(path, out assemblies)) return assemblies;
+            if (_assemblyPathCache.TryGetValue(path, out assemblies))
+            {
+                return assemblies;
+            }
 
             var packageAssemblies = GetPackageAssemblies(path);
-            var binAssemblies = GetBinAssemblies(path);
+            var binAssemblies = GetBinAssemblies(path, scriptName);
 
             assemblies = packageAssemblies.Union(binAssemblies).ToList();
             _assemblyPathCache.Add(path, assemblies);
@@ -48,15 +51,19 @@ namespace ScriptCs
             return assemblies;
         }
 
-        private IEnumerable<string> GetBinAssemblies(string path)
+        private IEnumerable<string> GetBinAssemblies(string path, string scriptName)
         {
             var binFolder = Path.Combine(path, Constants.BinFolder);
-            if (!_fileSystem.DirectoryExists(binFolder)) 
+            if (!_fileSystem.DirectoryExists(binFolder))
+            {
                 return Enumerable.Empty<string>();
+            }
+
+            var dllName = string.IsNullOrEmpty(scriptName) ? string.Empty : scriptName.Replace(Path.GetExtension(scriptName), ".dll");
 
             var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(_assemblyUtility.IsManagedAssembly)
+                .Where(f => _assemblyUtility.IsManagedAssembly(f) && !dllName.Equals(Path.GetFileName(f)))
                 .ToList();
 
             foreach (var assembly in assemblies)
@@ -70,8 +77,10 @@ namespace ScriptCs
         private IEnumerable<string> GetPackageAssemblies(string path)
         {
             var packagesFolder = Path.Combine(path, Constants.PackagesFolder);
-            if (!_fileSystem.DirectoryExists(packagesFolder)) 
+            if (!_fileSystem.DirectoryExists(packagesFolder))
+            {
                 return Enumerable.Empty<string>();
+            }
 
             var assemblies = _packageAssemblyResolver.GetAssemblyNames(path).ToList();
 

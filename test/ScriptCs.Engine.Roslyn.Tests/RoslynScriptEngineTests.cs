@@ -31,7 +31,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 scriptPack.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
-                scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext) null);
+                scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext)null);
 
                 // Act
                 engine.Execute(Code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
@@ -97,8 +97,8 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                engine.Execute(Code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
-                
+                engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
+
                 // Assert
                 ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
             }
@@ -225,7 +225,6 @@ namespace ScriptCs.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
-
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
@@ -274,7 +273,8 @@ namespace ScriptCs.Tests
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
 
                 // Act
-                var result = engine.Execute(Code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+                var result = engine.Execute(
+                    Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
                 result.IsPendingClosingChar.ShouldBeTrue();
@@ -331,7 +331,9 @@ namespace ScriptCs.Tests
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {
             public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger) { }
+                : base(scriptHostFactory, logger)
+            {
+            }
 
             public Session Session { get; private set; }
 

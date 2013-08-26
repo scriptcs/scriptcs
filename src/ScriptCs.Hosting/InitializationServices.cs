@@ -22,8 +22,8 @@ namespace ScriptCs
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            _logger.Debug("Registering initialization services");
-            builder.RegisterInstance<ILog>(_logger);
+            this.Logger.Debug("Registering initialization services");
+            builder.RegisterInstance<ILog>(this.Logger);
             builder.RegisterType<ScriptServicesBuilder>().As<IScriptServicesBuilder>();
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
@@ -35,35 +35,41 @@ namespace ScriptCs
         }
 
         private IAssemblyResolver _assemblyResolver;
+
         public IAssemblyResolver GetAssemblyResolver()
         {
             if (_assemblyResolver == null)
             {
-                _logger.Debug("Resolving AssemblyResolver");
+                this.Logger.Debug("Resolving AssemblyResolver");
                 _assemblyResolver = Container.Resolve<IAssemblyResolver>();
             }
+
             return _assemblyResolver;
         }
 
         private IModuleLoader _moduleLoader;
+
         public IModuleLoader GetModuleLoader()
         {
             if (_moduleLoader == null)
             {
-                _logger.Debug("Resolving ModuleLoader");
+                this.Logger.Debug("Resolving ModuleLoader");
                 _moduleLoader = Container.Resolve<IModuleLoader>();
             }
+
             return _moduleLoader;
         }
 
         private IFileSystem _fileSystem;
+        
         public IFileSystem GetFileSystem()
         {
             if (_fileSystem == null)
             {
-                _logger.Debug("Resolving FileSystem");
+                this.Logger.Debug("Resolving FileSystem");
                 _fileSystem = Container.Resolve<IFileSystem>();
             }
+
             return _fileSystem;
         }
     }

@@ -29,8 +29,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IPackageInstaller packageInstaller,
-            ILog logger
-            )
+            ILog logger)
         {
             _name = name;
             _allowPre = allowPre;
@@ -42,7 +41,6 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-
             var workingDirectory = _fileSystem.CurrentDirectory;
             _logger.Info("Installing packages...");
             _logger.TraceFormat("Packages folder: {0}", Path.Combine(workingDirectory, "Packages"));
