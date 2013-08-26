@@ -39,9 +39,7 @@ namespace ScriptCs.Tests
                 // Assert
                 packageInstaller.Verify(i =>
                     i.InstallPackages(
-                        It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 1 && x.First().PackageId == "mypackage"),
-                        It.IsAny<bool>(),
-                        It.IsAny<Action<string>>()),
+                        It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 1 && x.First().PackageId == "mypackage"), It.IsAny<bool>()),
                     Times.Once());
             }
 
@@ -68,7 +66,7 @@ namespace ScriptCs.Tests
                 factory.CreateCommand(args, new string[0]).Execute();
 
                 // Assert
-                packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 2), It.IsAny<bool>(), It.IsAny<Action<string>>()), Times.Once());
+                packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 2), It.IsAny<bool>()), Times.Once());
             }
         }
     }
