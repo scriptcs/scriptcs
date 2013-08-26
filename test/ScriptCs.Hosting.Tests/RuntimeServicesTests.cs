@@ -22,6 +22,7 @@ namespace ScriptCs.Tests
             private Mock<ILog> _mockLogger = new Mock<ILog>();
             private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             private RuntimeServices _runtimeServices = null;
+            private Type _compilationExceptionWriterType = null;
 
             public TheCreateContainerMethod()
             {
@@ -31,8 +32,11 @@ namespace ScriptCs.Tests
                 var mockScriptEngineType = new Mock<IScriptEngine>();
                 _scriptEngineType = mockScriptEngineType.Object.GetType();
 
+                var compilationExceptionWriterType = new Mock<ICompilationExceptionWriter>();
+                _compilationExceptionWriterType = compilationExceptionWriterType.Object.GetType();
+
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(),  _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices, "script.csx");
+                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices, "script.csx", _compilationExceptionWriterType);
             }
 
             [Fact]

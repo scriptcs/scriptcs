@@ -24,6 +24,7 @@
     <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="IAssemblyResolver.cs" />
     <Compile Include="IAssemblyUtility.cs" />
+    <Compile Include="ICompilationExceptionWriter.cs" />
     <Compile Include="IConsole.cs" />
     <Compile Include="IFileParser.cs" />
     <Compile Include="IFilePreProcessor.cs" />

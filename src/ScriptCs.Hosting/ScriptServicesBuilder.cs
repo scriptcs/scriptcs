@@ -19,11 +19,13 @@ namespace ScriptCs
         private readonly IConsole _console;
         private bool _repl = false;
         private bool _inMemory = false;
+        private bool _writeCompilationExceptionsToFile = false;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
+        private Type _compilationExceptionWriterType;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
@@ -42,6 +44,7 @@ namespace ScriptCs
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _compilationExceptionWriterType = _writeCompilationExceptionsToFile ? typeof(CompilationExceptionWriter) : null;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
@@ -50,7 +53,8 @@ namespace ScriptCs
                 _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
-                                                                       _initializationServices, _scriptName);
+                                                                       _initializationServices, _scriptName
+                                                                       , _compilationExceptionWriterType);
             }
 
             return _runtimeServices.GetScriptServices();
@@ -85,6 +89,12 @@ namespace ScriptCs
         public IScriptServicesBuilder LogLevel(LogLevel level)
         {
             _logLevel = level;
+            return this;
+        }
+
+        public IScriptServicesBuilder WriteCompilationExceptionsToFile(bool writeCompilationExceptionsToFile = true)
+        {
+            _writeCompilationExceptionsToFile = writeCompilationExceptionsToFile;
             return this;
         }
     }

@@ -15,6 +15,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IConsole _console;
         private readonly ILog _logger;
+        private readonly ICompilationExceptionWriter _compilationExceptionWriter;
 
         public ExecuteReplCommand(
             string scriptName,
@@ -25,7 +26,8 @@ namespace ScriptCs.Command
             IFilePreProcessor filePreProcessor,
             ILog logger,
             IConsole console,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            ICompilationExceptionWriter compilationExceptionWriter)
         {
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -36,6 +38,7 @@ namespace ScriptCs.Command
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
+            _compilationExceptionWriter = compilationExceptionWriter;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -43,7 +46,12 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
+            if (_compilationExceptionWriter != null)
+            {
+                _console.WriteLine("Compilation errors will be written to: " + _compilationExceptionWriter.CompilationExceptionFilePath + "\r\n");
+            } 
+            
+            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor, _compilationExceptionWriter);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);

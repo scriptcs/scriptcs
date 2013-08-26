@@ -16,7 +16,7 @@ namespace ScriptCs.Argument
         public ScriptCsArgs Parse(string[] args)
         {
             //no args initialized REPL
-            if (args == null || args.Length <= 0) 
+            if (args == null || args.Length <= 0)
                 return new ScriptCsArgs { Repl = true };
 
             ScriptCsArgs commandArgs = null;
@@ -26,15 +26,17 @@ namespace ScriptCs.Argument
             {
                 commandArgs = Args.Parse<ScriptCsArgs>(args);
 
-                //if there is only 1 arg and it is a loglevel, it's also REPL
-                if(args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
+                //If there are any args that are -log or -writecex, they are also REPL
+                if (args.Length == 1 && args.Any(x => x.ToLowerInvariant() == "-writecex")
+                    || (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-log"))
+                    || args.Length == 3 && args.Any(x => x.ToLowerInvariant() == "-log") && args.Any(x => x.ToLowerInvariant() == "-writecex"))
                 {
                     commandArgs.Repl = true;
                 }
             }
-            catch(ArgException ex)
+            catch (ArgException ex)
             {
-                if(ex.Message.StartsWith(unexpectedArgumentMessage))
+                if (ex.Message.StartsWith(unexpectedArgumentMessage))
                 {
                     var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
                     _console.WriteLine(string.Format("Parameter \"{0}\" is not supported!", token));

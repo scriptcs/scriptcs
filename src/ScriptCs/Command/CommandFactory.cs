@@ -44,7 +44,8 @@ namespace ScriptCs.Command
                     _scriptServices.FilePreProcessor,
                     _scriptServices.Logger,
                     _scriptServices.Console,
-                    _scriptServices.AssemblyResolver);
+                    _scriptServices.AssemblyResolver,
+                    _scriptServices.CompilationExceptionWriter);
 
                 return replCommand;
             }

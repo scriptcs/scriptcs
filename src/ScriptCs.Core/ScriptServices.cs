@@ -17,7 +17,8 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
-            IInstallationProvider installationProvider = null)
+            IInstallationProvider installationProvider = null,
+            ICompilationExceptionWriter compilationExceptionWriter = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -30,6 +31,7 @@ namespace ScriptCs
             Console = console;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
+            CompilationExceptionWriter = compilationExceptionWriter;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -43,5 +45,6 @@ namespace ScriptCs
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
 		public IInstallationProvider InstallationProvider { get; private set; }
+        public ICompilationExceptionWriter CompilationExceptionWriter { get; private set; }
     }
 }

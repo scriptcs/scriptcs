@@ -44,6 +44,9 @@ namespace ScriptCs
         [ArgDescription("Installs and restores global packages which are specified in packages.config")]
         public bool Global { get; set; }
 
+        [ArgShortcut("writecex")]
+        [ArgDescription("Flag which switches on the writing of compilation exceptions to a log file")]
+        public bool WriteCompilationExceptionsToFile { get; set; }
 
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
