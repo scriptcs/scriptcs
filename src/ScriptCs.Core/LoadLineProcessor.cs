@@ -4,10 +4,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public interface ILoadLineProcessor : ILineProcessor
-    {
-    }
-
     public class LoadLineProcessor : DirectiveLineProcessor, ILoadLineProcessor
     {
         private readonly IFileSystem _fileSystem;

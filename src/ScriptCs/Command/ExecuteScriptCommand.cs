@@ -53,7 +53,7 @@ namespace ScriptCs.Command
                 }
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
-                var result = _scriptExecutor.Execute(_script, ScriptArgs);
+                var result = _scriptExecutor.ExecuteFile(_script, ScriptArgs);
                 _scriptExecutor.Terminate();
 
                 if (result == null) return CommandResult.Error;

@@ -35,7 +35,7 @@ namespace ScriptCs
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = typeof(ScriptExecutor);
+            var defaultExecutorType = typeof(ScriptFileExecutor);
             Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
 
             defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;

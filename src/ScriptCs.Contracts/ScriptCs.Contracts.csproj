@@ -30,6 +30,7 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IInstallationProvider.cs" />
     <Compile Include="ILineProcessor.cs" />
+    <Compile Include="ILoadLineProcessor.cs" />
     <Compile Include="IModule.cs" />
     <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleMetadata.cs" />
@@ -38,6 +39,7 @@
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IPackageObject.cs" />
     <Compile Include="IPackageReference.cs" />
+    <Compile Include="IReferenceLineProcessor.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptExecutor.cs" />
     <Compile Include="IScriptHost.cs" />
@@ -54,6 +56,7 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="IServiceOverrides.cs" />
+    <Compile Include="IUsingLineProcessor.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -34,14 +34,10 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public override ScriptResult Execute(string script, params string[] scriptArgs)
+        protected override ScriptResult Execute(FilePreProcessorResult preProcessResult, string[] scriptArgs)
         {
             try
             {
-                var preProcessResult = FilePreProcessor.ProcessScript(script);
-
-                ImportNamespaces(preProcessResult.Namespaces.ToArray());
-
                 foreach (var reference in preProcessResult.References)
                 {
                     var referencePath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, reference));
