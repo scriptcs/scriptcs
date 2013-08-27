@@ -91,6 +91,11 @@ namespace ScriptCs
             File.WriteAllText(path, text);
         }
 
+        public IEnumerable<string> ReadAllLines(string path)
+        {
+            return File.ReadAllLines(path);
+        }
+
         public Stream CreateFileStream(string filePath, FileMode mode)
         {
             return new FileStream(filePath, mode);

@@ -1,20 +1,17 @@
-﻿using System;
-using System.IO;
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public interface IReferenceLineProcessor : ILineProcessor
     {
+        string GetArgumentFullPath(string argument);
+        string GetDirectiveArgument(string line);
     }
 
     public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
     {
-        private readonly IFileSystem _fileSystem;
-
-        public ReferenceLineProcessor(IFileSystem fileSystem)
+        public ReferenceLineProcessor(IFileSystem fileSystem) : base(fileSystem)
         {
-            _fileSystem = fileSystem;
         }
 
         protected override string DirectiveName
@@ -29,11 +26,10 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
-            var argument = GetDirectiveArgument(line);
-            var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
+            var argument = this.GetDirectiveArgument(line);
+            var referencePath = GetArgumentFullPath(argument);
 
-            var referencePath = _fileSystem.GetFullPath(assemblyPath);
-            var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
+            var referencePathOrName = this.FileSystem.FileExists(referencePath) ? referencePath : argument;
 
             if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
             {

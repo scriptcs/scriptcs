@@ -27,7 +27,7 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
-    <Compile Include="DebugScriptExecutor.cs" />
+    <Compile Include="DependenciesPreProcessor.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
     <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
@@ -39,6 +39,7 @@
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="IDependenciesPreProcessor.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />

@@ -58,8 +58,9 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>().SingleInstance());
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
+            RegisterOverrideOrDefault<IDependenciesPreProcessor>(builder, b => b.RegisterType<DependenciesPreProcessor>().As<IDependenciesPreProcessor>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
-
+            
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
 
             if (_initDirectoryCatalog)
@@ -95,6 +96,9 @@ namespace ScriptCs
             var lineProcessors = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(_lineProcessors);
 
             builder.RegisterTypes(lineProcessors.ToArray()).As<ILineProcessor>();
+
+            this.RegisterOverrideOrDefault<ILoadLineProcessor>(builder, b => b.RegisterType<LoadLineProcessor>().As<ILoadLineProcessor>().SingleInstance());
+            this.RegisterOverrideOrDefault<IReferenceLineProcessor>(builder, b => b.RegisterType<ReferenceLineProcessor>().As<IReferenceLineProcessor>().SingleInstance());
         }
 
         public ScriptServices GetScriptServices()

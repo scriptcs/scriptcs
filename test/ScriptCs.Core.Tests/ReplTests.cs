@@ -24,6 +24,7 @@ namespace ScriptCs.Tests
                 Console = new Mock<IConsole>();
                 ScriptPack = new Mock<IScriptPack>();
                 FilePreProcessor = new Mock<IFilePreProcessor>();
+                DependenciesPreProcessor = new Mock<IDependenciesPreProcessor>();
             }
 
             public Mock<IFileSystem> FileSystem { get; private set; }
@@ -37,11 +38,13 @@ namespace ScriptCs.Tests
             public Mock<IScriptPack> ScriptPack { get; private set; }
 
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
+
+            public Mock<IDependenciesPreProcessor> DependenciesPreProcessor { get; private set; }
         }
 
         public static Repl GetRepl(Mocks mocks)
         {
-            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object);
+            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object, mocks.DependenciesPreProcessor.Object);
         }
 
         public class TheConstructor

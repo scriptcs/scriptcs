@@ -41,6 +41,8 @@ namespace ScriptCs.Contracts
         IEnumerable<string> SplitLines(string value);
 
         void WriteToFile(string path, string text);
+
+        IEnumerable<string> ReadAllLines(string path);
         
         Stream CreateFileStream(string filePath, FileMode mode);
 
