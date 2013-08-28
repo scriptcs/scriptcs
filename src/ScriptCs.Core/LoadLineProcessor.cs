@@ -35,7 +35,8 @@ namespace ScriptCs
             var fullPath = _fileSystem.GetFullPath(filePath);
             if (!string.IsNullOrWhiteSpace(fullPath))
             {
-                parser.ParseFile(fullPath, context);
+                var scriptSource = new FileScriptSource(fullPath, _fileSystem);
+                parser.ParseScriptSource(scriptSource, context);
             }
 
             return true;

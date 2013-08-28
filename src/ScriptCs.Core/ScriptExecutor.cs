@@ -102,7 +102,7 @@ namespace ScriptCs
         public virtual ScriptResult Execute(string script, params string[] scriptArgs)
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
-            var result = FilePreProcessor.ProcessFile(path);
+            var result = FilePreProcessor.ProcessFile(path).Result;
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
@@ -113,7 +113,7 @@ namespace ScriptCs
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
-            var result = FilePreProcessor.ProcessScript(script);
+            var result = FilePreProcessor.ProcessScript(script).Result;
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
