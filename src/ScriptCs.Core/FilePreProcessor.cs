@@ -125,7 +125,7 @@ namespace ScriptCs
                 }
             }
 
-            return Task.Delay(0);
+            return Task.FromResult<object>(null);
         }
 
         protected virtual void InsertLineDirective(string path, List<string> fileLines)
