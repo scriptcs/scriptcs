@@ -12,8 +12,10 @@ namespace ScriptCs
     {
         public static void ImportNamespaces(this IScriptExecutor executor, params Type[] typesFromReferencedAssembly)
         {
+            Guard.AgainstNullArgument("executor", executor);
             Guard.AgainstNullArgument("typesFromReferencedAssembly", typesFromReferencedAssembly);
-            var namespaces = typesFromReferencedAssembly.Select(t => t.Namespace); 
+
+            var namespaces = typesFromReferencedAssembly.Select(t => t.Namespace);
             executor.ImportNamespaces(namespaces.ToArray());
         }
 
@@ -24,7 +26,9 @@ namespace ScriptCs
 
         public static void AddReferences(this IScriptExecutor executor, params Type[] typesFromReferencedAssembly)
         {
+            Guard.AgainstNullArgument("executor", executor);
             Guard.AgainstNullArgument("typeFromReferencedAssembly", typesFromReferencedAssembly);
+
             var paths = typesFromReferencedAssembly.Select(t => t.Assembly.Location);
 
             executor.AddReferences(paths.ToArray());
@@ -34,7 +38,7 @@ namespace ScriptCs
         {
             executor.AddReferences(typeof(T));
         }
-        
+
         public static void AddReferenceAndImportNamespaces(this IScriptExecutor executor, Type[] types)
         {
             executor.AddReferences(types);

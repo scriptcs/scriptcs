@@ -12,6 +12,8 @@ namespace ScriptCs
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
+            Guard.AgainstNullArgument("context", context);
+
             if (!IsUsingLine(line))
             {
                 return false;
