@@ -29,6 +29,8 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
+            Guard.AgainstNullArgument("context", context);
+
             var argument = GetDirectiveArgument(line);
             var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
 
