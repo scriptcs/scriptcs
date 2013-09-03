@@ -102,6 +102,12 @@ namespace ScriptCs
             return _this;
         }
 
+        public TConfig Console<T>() where T : IConsole
+        {
+            Overrides[typeof(IConsole)] = typeof(T);
+            return _this;
+        }
+
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
             LineProcessors.Add(typeof(T));
