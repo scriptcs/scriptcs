@@ -70,7 +70,7 @@ namespace ScriptCs.Tests
 
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var managed = Path.Combine(binFolder, "MyAssembly.dll");
-                var nonManaged = Path.Combine(binFolder, "MyAssembly.dll");
+                var nonManaged = Path.Combine(binFolder, "MyNonManagedAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
@@ -79,6 +79,7 @@ namespace ScriptCs.Tests
 
                 var assemblyUtility = new Mock<IAssemblyUtility>();
                 assemblyUtility.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
+                assemblyUtility.Setup(x => x.IsManagedAssembly(nonManaged)).Returns(false);
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
