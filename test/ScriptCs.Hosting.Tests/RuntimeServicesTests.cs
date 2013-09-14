@@ -191,6 +191,14 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldRegisterTheOverriddenConsole()
+            {
+                var mock = new Mock<IConsole>();
+                _overrides[typeof(IConsole)] = mock.Object.GetType();
+                _runtimeServices.Container.Resolve<IConsole>().ShouldBeType(mock.Object.GetType());
+            }
+
+            [Fact]
             public void ShouldRegisterTheOverriddenPackageContainer()
             {
                 var mock = new Mock<IPackageContainer>();
