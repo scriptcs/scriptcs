@@ -43,7 +43,6 @@ namespace ScriptCs
             builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
-            builder.RegisterInstance(_console).As<IConsole>();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
             RegisterLineProcessors(builder);
@@ -59,6 +58,7 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
+            RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
 
