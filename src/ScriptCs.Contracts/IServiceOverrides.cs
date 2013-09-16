@@ -31,5 +31,7 @@
         TConfig AssemblyResolver<T>() where T : IAssemblyResolver;
 
         TConfig LineProcessor<T>() where T : ILineProcessor;
+
+        TConfig Console<T>() where T : IConsole;
     }
 }

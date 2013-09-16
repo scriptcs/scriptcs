@@ -14,7 +14,7 @@ namespace ScriptCs
             var arguments = parser.Parse(args);
             var commandArgs = arguments.CommandArguments;
             var scriptArgs = arguments.ScriptArguments;
-			
+
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
