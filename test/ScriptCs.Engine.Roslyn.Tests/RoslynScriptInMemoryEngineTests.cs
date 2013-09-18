@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Ploeh.AutoFixture.Xunit;
-
+using Roslyn.Compilers;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
@@ -19,7 +20,7 @@ namespace ScriptCs.Tests
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldThrowExceptionThrownByScriptWhenErrorOccurs(
+            public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs(
                 [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
             {
                 // Arrange
@@ -33,17 +34,36 @@ namespace ScriptCs.Tests
                 var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
 
                 // Act
-                var exception = Assert.Throws<ScriptExecutionException>(() =>
-                    scriptEngine.Execute(
-                        code,
-                        new string[0],
-                        Enumerable.Empty<string>(),
-                        Enumerable.Empty<string>(),
-                        session));
+                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                        session);
 
                 // Assert
-                exception.Message.ShouldContain("at Submission#0");
-                exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
+                var exception = Assert.Throws<InvalidOperationException>(() => result.ExecuteExceptionInfo.Throw());
+                exception.StackTrace.ShouldContain("at Submission#0");
+                exception.Message.ShouldContain("InvalidOperationExceptionMessage");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExposeExceptionThrownByCompilation(
+                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+            {
+                // Arrange
+                var lines = new List<string>
+                {
+                    "using Sysasdasdasdtem;"
+                };
+
+                var code = string.Join(Environment.NewLine, lines);
+                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+
+                // Act
+                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                        session);
+
+                // Assert
+                var exception = Assert.Throws<ScriptCompilationException>(() => result.CompileExceptionInfo.Throw());
+                exception.InnerException.ShouldBeType<CompilationErrorException>();
+                exception.Message.ShouldContain("The type or namespace name 'Sysasdasdasdtem' could not be found");
             }
         }
     }
