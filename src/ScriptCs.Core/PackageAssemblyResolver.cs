@@ -118,7 +118,7 @@ namespace ScriptCs
                     }
 
                     foundAssemblies.Add(path);
-                    _logger.Info("Found: " + path);
+                    _logger.Debug("Found: " + path);
                 }
 
                 if (nugetPackage.Dependencies == null || !nugetPackage.Dependencies.Any() || !strictLoad)
