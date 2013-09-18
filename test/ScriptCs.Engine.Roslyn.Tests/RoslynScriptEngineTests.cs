@@ -3,7 +3,7 @@ using Common.Logging;
 using Moq;
 
 using Ploeh.AutoFixture.Xunit;
-
+using Roslyn.Compilers;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
@@ -15,6 +15,16 @@ namespace ScriptCs.Tests
 {
     public class RoslynScriptEngineTests
     {
+        public class Constructor
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddReferenceToCore()
+            {
+                var engine = new RoslynTestScriptEngine(new Mock<IScriptHostFactory>().Object, new Mock<ILog>().Object);
+                engine.Engine.GetReferences().Where(x => x.Display.EndsWith("ScriptCs.Core.dll")).Count().ShouldEqual(1);
+            }
+        }
+
         public class TheExecuteMethod 
         {
             [Theory, ScriptCsAutoData]
@@ -341,6 +351,10 @@ namespace ScriptCs.Tests
             {
                 Session = session;
                 return new ScriptResult();
+            }
+
+            internal ScriptEngine Engine {
+                get { return ScriptEngine; }
             }
         }
     }

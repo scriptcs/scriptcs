@@ -4,8 +4,6 @@ using Common.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using ScriptCs.Contracts;
-
     public class RoslynScriptInMemoryEngine : RoslynScriptCompilerEngine
     {
         public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILog logger)

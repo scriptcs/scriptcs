@@ -1,4 +1,6 @@
-﻿namespace ScriptCs.Contracts
+﻿using ScriptCs.Contracts;
+
+namespace ScriptCs
 {
     public interface IScriptHost 
     {
