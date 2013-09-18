@@ -58,13 +58,13 @@ namespace ScriptCs
                 if (result.CompileExceptionInfo != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
+                    Console.WriteLine(result.CompileExceptionInfo.SourceException.Message);
                 }
 
                 if (result.ExecuteExceptionInfo != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(result.ExecuteExceptionInfo.SourceException.ToString());
+                    Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
                 }
 
                 if (result.IsPendingClosingChar)
