@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -50,6 +51,7 @@ namespace ScriptCs.Command
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks, ScriptArgs);
+            repl.AddAssemblyReferences(Assembly.GetCallingAssembly());
 
             try
             {

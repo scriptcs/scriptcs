@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -21,7 +22,7 @@ namespace ScriptCs
 
         public ILog Logger { get; private set; }
 
-        public Collection<string> References { get; private set; }
+        public AssemblyReferences References { get; private set; }
 
         public Collection<string> Namespaces { get; private set; }
 
@@ -29,7 +30,7 @@ namespace ScriptCs
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
         {
-            References = new Collection<string>();
+            References = new AssemblyReferences();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);
@@ -49,13 +50,33 @@ namespace ScriptCs
             }
         }
 
+        public void AddAssemblyReferences(params Assembly[] assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            foreach (var assembly in assemblies)
+            {
+                References.Assemblies.Add(assembly);
+            }
+        }
+
+        public void RemoveReferences(params Assembly[] assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            foreach (var assembly in assemblies)
+            {
+                References.Assemblies.Remove(assembly);
+            }
+        }
+
         public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
             foreach (var path in paths)
             {
-                References.Add(path);
+                References.PathReferences.Add(path);
             }
         }
 
@@ -65,7 +86,7 @@ namespace ScriptCs
             
             foreach (var path in paths)
             {
-                References.Remove(path);
+                References.PathReferences.Remove(path);
             }
         }
 
@@ -103,22 +124,22 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-            var references = References.Union(result.References);
+            References.PathReferences.UnionWith(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
 
             Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+            return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessScript(script);
-            var references = References.Union(result.References);
+            References.PathReferences.UnionWith(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
-            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
+            return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
     }
 }
