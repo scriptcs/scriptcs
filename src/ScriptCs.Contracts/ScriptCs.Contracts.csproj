@@ -19,6 +19,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyReferences.cs" />
     <Compile Include="DirectiveLineProcessor.cs" />
     <Compile Include="FileParserContext.cs" />
     <Compile Include="FilePreProcessorResult.cs" />
