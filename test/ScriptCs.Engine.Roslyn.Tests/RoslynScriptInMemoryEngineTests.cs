@@ -34,7 +34,7 @@ namespace ScriptCs.Tests
                 var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
                 // Act
-                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                var result = scriptEngine.Execute(code, new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
                         session);
 
                 // Assert
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
                 var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
                 // Act
-                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                var result = scriptEngine.Execute(code, new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
                         session);
 
                 // Assert
