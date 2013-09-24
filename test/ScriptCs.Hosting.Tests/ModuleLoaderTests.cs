@@ -31,7 +31,7 @@ namespace ScriptCs.Hosting.Tests
             public TheLoadMethod()
             {
                 var paths = new[] { "path1", "path2" };
-                _mockAssemblyResolver.Setup(r => r.GetAssemblyPaths(It.IsAny<string>(), It.IsAny<string>())).Returns(paths);
+                _mockAssemblyResolver.Setup(r => r.GetAssemblyPaths(It.IsAny<string>())).Returns(paths);
                 _modules.Add(
                     new Lazy<IModule, IModuleMetadata>(
                         () => _mockModule1.Object, new ModuleMetadata { Extensions = "ext1,ext2", Name = "module1" }));
@@ -47,7 +47,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => { }, c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
                 loader.Load(null, "c:\test", null);
-                _mockAssemblyResolver.Verify(r => r.GetAssemblyPaths("c:\test", string.Empty));
+                _mockAssemblyResolver.Verify(r => r.GetAssemblyPaths("c:\test"));
             }
 
             [Fact]

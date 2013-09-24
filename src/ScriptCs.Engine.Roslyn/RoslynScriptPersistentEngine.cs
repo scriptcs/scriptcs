@@ -29,7 +29,7 @@ namespace ScriptCs.Engine.Roslyn
                 _fileSystem.CreateDirectory(BaseDirectory);
             }
 
-            var dllName = FileName.Replace(Path.GetExtension(FileName), ".dll");
+            var dllName = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), Constants.CompiledDllSuffix);
             var dllPath = Path.Combine(BaseDirectory, dllName);
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
