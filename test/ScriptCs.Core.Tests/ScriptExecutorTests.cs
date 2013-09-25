@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
@@ -289,6 +290,41 @@ namespace ScriptCs.Tests
                 executor.Execute("script.csx");
 
                 engine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.Is<AssemblyReferences>(x => !x.PathReferences.Except(defaultReferences).Any()), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Exactly(1));
+            }
+        }
+
+        public class TheAddReferencesMethod
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddReferenceToEachAssembly(ScriptExecutor executor)
+            {
+                var calling = Assembly.GetCallingAssembly();
+                var executing = Assembly.GetExecutingAssembly();
+                var entry = Assembly.GetEntryAssembly();
+                executor.AddReferences(calling, executing, entry, entry);
+
+                executor.References.Assemblies.ShouldContain(calling);
+                executor.References.Assemblies.ShouldContain(executing);
+                executor.References.Assemblies.ShouldContain(entry);
+                executor.References.Assemblies.Count.ShouldEqual(3);
+            }           
+        }
+
+        public class TheRemoveReferencesMethod
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldRemoveReferenceToEachAssembly(ScriptExecutor executor)
+            {
+                var calling = Assembly.GetCallingAssembly();
+                var executing = Assembly.GetExecutingAssembly();
+                var entry = Assembly.GetEntryAssembly();
+                executor.AddReferences(calling, executing, entry);
+                executor.RemoveReferences(calling, executing);
+
+                executor.References.Assemblies.ShouldNotContain(calling);
+                executor.References.Assemblies.ShouldNotContain(executing);
+                executor.References.Assemblies.ShouldContain(entry);
+                executor.References.Assemblies.Count.ShouldEqual(1);
             }
         }
     }

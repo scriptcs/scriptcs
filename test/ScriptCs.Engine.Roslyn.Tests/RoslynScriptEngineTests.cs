@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Common.Logging;
 using Moq;
 
@@ -360,6 +361,32 @@ namespace ScriptCs.Tests
             }
         }
 
+            [Theory, ScriptCsAutoData]
+            public void ShouldCompileWhenUsingClassesFromAPassedAssemblyInstance(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine engine,
+                ScriptPackSession scriptPackSession)
+            {
+                // Arrange
+                const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
+
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
+
+                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var refs = new AssemblyReferences();
+                refs.PathReferences.Add("System");
+                refs.Assemblies.Add(Assembly.GetExecutingAssembly());
+
+                // Act
+                var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
+
+                // Assert
+                result.CompileExceptionInfo.ShouldBeNull();
+                result.ExecuteExceptionInfo.ShouldBeNull();
+            }
+
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {
             public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
@@ -380,4 +407,6 @@ namespace ScriptCs.Tests
             }
         }
     }
+
+    public class TestMarkerClass { }
 }
