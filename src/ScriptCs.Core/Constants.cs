@@ -9,5 +9,6 @@ namespace ScriptCs
         public const string DefaultRepositoryUrl = "https://nuget.org/api/v2/";
         public const string DebugContractName = "Debug";
         public const string RunContractName = "Run";
+        public const string CompiledDllSuffix = ".scriptcs.build.dll";
     }
 }

@@ -34,7 +34,7 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(assemblyFile);
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(assemblyFile);
@@ -83,19 +83,19 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(managed);
             }
 
             [Fact]
-            public void ShouldNotReturnScriptDll()
+            public void ShouldNotReturnFilesThatMatchscriptcs_build_dllPattern()
             {
                 const string WorkingDirectory = @"C:\";
 
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
-                var scriptDll = Path.Combine(binFolder, "script.dll");
+                var scriptDll = Path.Combine(binFolder, string.Format("myscript{0}", Constants.CompiledDllSuffix));
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
@@ -107,7 +107,7 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(0);
             }
@@ -129,7 +129,7 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, null).ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(1);
             }

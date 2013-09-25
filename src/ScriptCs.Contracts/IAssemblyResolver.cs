@@ -4,6 +4,6 @@ namespace ScriptCs.Contracts
 {
     public interface IAssemblyResolver
     {
-        IEnumerable<string> GetAssemblyPaths(string path, string scriptName);
+        IEnumerable<string> GetAssemblyPaths(string path);
     }
 }
