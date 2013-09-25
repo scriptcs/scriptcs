@@ -50,7 +50,7 @@ namespace ScriptCs
             }
         }
 
-        public void AddAssemblyReferences(params Assembly[] assemblies)
+        public void AddReferences(params Assembly[] assemblies)
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
