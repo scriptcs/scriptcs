@@ -9,6 +9,7 @@ using ScriptCs.Contracts;
 using Should;
 
 using Xunit.Extensions;
+using Should.Core.Assertions;
 
 namespace ScriptCs.Tests
 {
@@ -52,7 +53,7 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnTrueButNotParseFileIfAfterCode(
+            public void ShouldThrowExceptionIfAfterCode(
                 [Frozen] Mock<IFileParser> parser,
                 [Frozen] Mock<IFileSystem> fileSystem,
                 LoadLineProcessor processor)
@@ -65,13 +66,9 @@ namespace ScriptCs.Tests
                 const string FullPath = "C:\\script.csx";
 
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
-                
-                // Act
-                var result = processor.ProcessLine(parser.Object, context, Line, false);
 
-                // Assert
-                result.ShouldBeTrue();
-                parser.Verify(x => x.ParseFile(FullPath, It.IsAny<FileParserContext>()), Times.Never());
+                // Act / Assert
+                Assert.Throws(typeof(Exception), () => processor.ProcessLine(parser.Object, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]

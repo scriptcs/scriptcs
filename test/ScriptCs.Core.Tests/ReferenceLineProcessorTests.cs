@@ -5,6 +5,7 @@ using ScriptCs.Contracts;
 using Should;
 using Xunit.Extensions;
 using System.Linq;
+using Should.Core.Assertions;
 
 namespace ScriptCs.Tests
 {
@@ -48,7 +49,7 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnTrueButNotAddReferenceIfAfterCode(
+            public void ShouldThrowExceptionIfAfterCode(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 ReferenceLineProcessor processor,
                 IFileParser parser)
@@ -62,12 +63,8 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
                 
-                // Act
-                var result = processor.ProcessLine(parser, context, Line, false);
-
-                // Assert
-                result.ShouldBeTrue();
-                context.References.Count.ShouldEqual(0);
+                // Act / Assert
+                Assert.Throws(typeof(Exception), () => processor.ProcessLine(parser, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]

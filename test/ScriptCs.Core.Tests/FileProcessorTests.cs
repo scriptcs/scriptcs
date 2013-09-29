@@ -32,9 +32,6 @@ namespace ScriptCs.Tests
                 {
                     "using System;",
                     @"Console.WriteLine(""Hello Script 2"");",
-                    @"Console.WriteLine(""Loading Script 3"");",
-                    @"#load ""script3.csx""",
-                    @"Console.WriteLine(""Loaded Script 3"");",
                     @"Console.WriteLine(""Goodbye Script 2"");"
                 };
 
@@ -52,6 +49,16 @@ namespace ScriptCs.Tests
                     "using System.Core;",
                     @"Console.WriteLine(""Hello Script 4"");",
                     @"Console.WriteLine(""Goodbye Script 4"");"
+                };
+
+            private List<string> _file5 = new List<string>
+                {
+                    "using System;",
+                    @"Console.WriteLine(""Hello Script 2"");",
+                    @"Console.WriteLine(""Loading Script 3"");",
+                    @"#load ""script3.csx""",
+                    @"Console.WriteLine(""Loaded Script 3"");",
+                    @"Console.WriteLine(""Goodbye Script 2"");"
                 };
 
             private readonly Mock<IFileSystem> _fileSystem;
@@ -263,14 +270,8 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("file.csx");
+                Assert.Throws(typeof(Exception), () => processor.ProcessFile("file.csx"));
 
-                var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-                Assert.Equal(1, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
-                
-                // consider #line directive
-                Assert.Equal(4, splitOutput.Length);
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "script4.csx")), Times.Never());
             }
 

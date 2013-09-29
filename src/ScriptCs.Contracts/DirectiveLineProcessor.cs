@@ -1,8 +1,9 @@
-﻿namespace ScriptCs.Contracts
+﻿using System;
+namespace ScriptCs.Contracts
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
-        protected virtual bool IgnoreAfterCode
+        protected virtual bool ThrowIfAfterCode
         {
             get { return false; }
         }
@@ -21,9 +22,9 @@
                 return false;
             }
 
-            if (!isBeforeCode && IgnoreAfterCode)
+            if (!isBeforeCode && ThrowIfAfterCode)
             {
-                return true;
+                throw new Exception(string.Format("Encountered {0}directive after the start of code. Please move this directive to the beginning of the file.", DirectiveString)); 
             }
 
             return ProcessLine(parser, context, line);

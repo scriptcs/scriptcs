@@ -22,7 +22,7 @@ namespace ScriptCs
             get { return "r"; }
         }
 
-        protected override bool IgnoreAfterCode
+        protected override bool ThrowIfAfterCode
         {
             get { return true; }
         }
