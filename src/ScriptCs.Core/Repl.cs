@@ -1,9 +1,9 @@
-﻿using Common.Logging;
-using ScriptCs.Contracts;
-using ServiceStack.Text;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using Common.Logging;
+using ScriptCs.Contracts;
+using ServiceStack.Text;
 
 namespace ScriptCs
 {
@@ -11,14 +11,21 @@ namespace ScriptCs
     {
         private readonly string[] _scriptArgs;
 
-        public IConsole Console { get; private set; }
-
-        public Repl(string[] scriptArgs, IFileSystem fileSystem, IScriptEngine scriptEngine, ILog logger, IConsole console, IFilePreProcessor filePreProcessor)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger)
+        public Repl(
+            string[] scriptArgs,
+            IFileSystem fileSystem,
+            IScriptEngine scriptEngine,
+            ILog logger,
+            IConsole console,
+            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             Console = console;
         }
+
+        public string Buffer { get; set; }
+
+        public IConsole Console { get; private set; }
 
         public override void Terminate()
         {
@@ -27,67 +34,51 @@ namespace ScriptCs
             Console.Exit();
         }
 
-        public string Buffer { get; set; }
-
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             try
             {
-                if (PreProcessorUtil.IsLoadLine(script))
-                {
-                    var filepath = PreProcessorUtil.GetPath(PreProcessorUtil.LoadString, script);
-                    if (FileSystem.FileExists(filepath))
-                    {
-                        var processorResult = FilePreProcessor.ProcessFile(filepath);
-                        script = processorResult.Code;
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException(string.Format("Could not find script '{0}'", filepath), filepath);
-                    }
-                }
-                else if (PreProcessorUtil.IsRLine(script))
-                {
-                    var assemblyName = PreProcessorUtil.GetPath(PreProcessorUtil.RString, script);
-                    var assemblyPath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, assemblyName));
-                    AddReferences(FileSystem.FileExists(assemblyPath) ? assemblyPath : assemblyName);
+                var preProcessResult = FilePreProcessor.ProcessScript(script);
 
-                    return new ScriptResult();
+                ImportNamespaces(preProcessResult.Namespaces.ToArray());
+
+                foreach (var reference in preProcessResult.References)
+                {
+                    var referencePath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, reference));
+                    AddReferences(FileSystem.FileExists(referencePath) ? referencePath : reference);
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
-                Buffer += script;
+                Buffer += preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
-                if (result != null)
+                if (result == null) return new ScriptResult();
+
+                if (result.CompileExceptionInfo != null)
                 {
-                    if (result.CompileExceptionInfo != null)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(result.CompileExceptionInfo.SourceException.ToString());
-                    }
-
-                    if (result.ExecuteExceptionInfo != null)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(result.ExecuteExceptionInfo.SourceException.ToString());
-                    }
-
-                    if (result.IsPendingClosingChar)
-                    {
-                        return result;
-                    }
-
-                    if (result.ReturnValue != null)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(result.ReturnValue.ToJsv());
-                    }
-
-                    Buffer = null;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(result.CompileExceptionInfo.SourceException.Message);
                 }
 
+                if (result.ExecuteExceptionInfo != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
+                }
+
+                if (result.IsPendingClosingChar)
+                {
+                    return result;
+                }
+
+                if (result.ReturnValue != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(result.ReturnValue.ToJsv());
+                }
+
+                Buffer = null;
                 return result;
             }
             catch (FileNotFoundException fileEx)

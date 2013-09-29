@@ -97,12 +97,13 @@ namespace ScriptCs
 
             _logger.DebugFormat("Processing {0}...", filename);
 
+            // Add script to loaded collection before parsing to avoid loop.
+            context.LoadedScripts.Add(fullPath);
+
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
             
             InsertLineDirective(fullPath, scriptLines);
             InDirectory(fullPath, () => ParseScript(scriptLines, context));
-
-            context.LoadedScripts.Add(fullPath);
         }
 
         public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
@@ -119,7 +120,10 @@ namespace ScriptCs
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
 
-                if (!wasProcessed) context.BodyLines.Add(line);
+                if (!wasProcessed)
+                {
+                    context.BodyLines.Add(line);
+                }
             }
         }
 
@@ -128,7 +132,10 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileLines", fileLines);
 
             var bodyIndex = fileLines.FindIndex(line => IsNonDirectiveLine(line) && !IsUsingLine(line));
-            if (bodyIndex == -1) return;
+            if (bodyIndex == -1)
+            {
+                return;
+            }
 
             var directiveLine = string.Format("#line {0} \"{1}\"", bodyIndex + 1, path);
             fileLines.Insert(bodyIndex, directiveLine);

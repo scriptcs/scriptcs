@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using Moq;
 
 using Ploeh.AutoFixture.Xunit;
@@ -38,6 +40,45 @@ namespace ScriptCs.Tests
                 // Assert
                 builder.ToString().EndsWith("> ").ShouldBeTrue();
                 readLines.ShouldEqual(1);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void WhenPassedAScript_ShouldPressedReplWithScript(
+                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,[Frozen] Mock<IConsole> console,
+                CommandFactory factory)
+            {
+                // Arrange
+                var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx"};
+
+                console.Setup(x => x.ReadLine()).Returns(() => string.Empty);
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                scriptEngine.Setup(
+                    x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
+
+                // Assert
+                scriptEngine.Verify();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void WhenNotPassedAScript_ShouldNotCallTheEngineAutomatically(
+                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
+                 CommandFactory factory)
+            {
+                // Arrange
+                var args = new ScriptCsArgs { Repl = true };
+
+                console.Setup(x => x.ReadLine()).Returns(() => string.Empty);
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+
+                // Act
+                factory.CreateCommand(args, new string[0]).Execute();
+
+                // Assert
+                scriptEngine.Verify(
+                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
         }
     }

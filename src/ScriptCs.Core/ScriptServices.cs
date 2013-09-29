@@ -17,8 +17,7 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
-            IInstallationProvider installationProvider = null
-        )
+            IInstallationProvider installationProvider = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -43,6 +42,6 @@ namespace ScriptCs
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
-        public IInstallationProvider InstallationProvider { get; private set; }
+		public IInstallationProvider InstallationProvider { get; private set; }
     }
 }

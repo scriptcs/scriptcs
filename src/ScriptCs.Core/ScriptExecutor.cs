@@ -14,11 +14,17 @@ namespace ScriptCs
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
+        
         public IFilePreProcessor FilePreProcessor { get; private set; }
+
         public IScriptEngine ScriptEngine { get; private set; }
+
         public ILog Logger { get; private set; }
+
         public Collection<string> References { get; private set; }
+
         public Collection<string> Namespaces { get; private set; }
+
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
@@ -43,12 +49,11 @@ namespace ScriptCs
             }
         }
 
-
         public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach(var path in paths)
+            foreach (var path in paths)
             {
                 References.Add(path);
             }
@@ -74,7 +79,7 @@ namespace ScriptCs
             }
         }
 
-        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks)
+        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
@@ -82,7 +87,7 @@ namespace ScriptCs
             ScriptEngine.BaseDirectory = bin;
 
             Logger.Debug("Initializing script packs");
-            var scriptPackSession = new ScriptPackSession(scriptPacks);
+            var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
 
             scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;
@@ -100,6 +105,7 @@ namespace ScriptCs
             var result = FilePreProcessor.ProcessFile(path);
             var references = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
+            ScriptEngine.FileName = Path.GetFileName(path);
 
             Logger.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);

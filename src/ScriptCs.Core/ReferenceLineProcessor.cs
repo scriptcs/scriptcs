@@ -1,10 +1,12 @@
 ﻿using System;
-
+using System.IO;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public interface IReferenceLineProcessor : ILineProcessor { }
+    public interface IReferenceLineProcessor : ILineProcessor
+    {
+    }
 
     public class ReferenceLineProcessor : DirectiveLineProcessor, IReferenceLineProcessor
     {
@@ -27,13 +29,17 @@ namespace ScriptCs
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
+            Guard.AgainstNullArgument("context", context);
+
             var argument = GetDirectiveArgument(line);
             var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
 
             var referencePath = _fileSystem.GetFullPath(assemblyPath);
-            if (!string.IsNullOrWhiteSpace(referencePath) && !context.References.Contains(referencePath))
+            var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
+
+            if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
             {
-                context.References.Add(referencePath);
+                context.References.Add(referencePathOrName);
             }
 
             return true;

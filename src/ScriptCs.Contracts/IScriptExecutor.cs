@@ -1,26 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-using Common.Logging;
 
 namespace ScriptCs.Contracts
 {
     public interface IScriptExecutor
     {
-        IFileSystem FileSystem { get; }
-
-        IFilePreProcessor FilePreProcessor { get; }
-
-        IScriptEngine ScriptEngine { get; }
-
-        ILog Logger { get; }
-
-        Collection<string> References { get; }
-
-        Collection<string> Namespaces { get; }
-
-        ScriptPackSession ScriptPackSession { get; }
-
         void ImportNamespaces(params string[] namespaces);
 
         void AddReferences(params string[] references);
@@ -29,7 +12,7 @@ namespace ScriptCs.Contracts
 
         void RemoveNamespaces(params string[] namespaces);
 
-        void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks);
+        void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs);
 
         void Terminate();
 

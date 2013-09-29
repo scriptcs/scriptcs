@@ -2,7 +2,9 @@
 
 namespace ScriptCs
 {
-    public interface IUsingLineProcessor : ILineProcessor { }
+    public interface IUsingLineProcessor : ILineProcessor
+    {
+    }
 
     public class UsingLineProcessor : IUsingLineProcessor
     {
@@ -10,7 +12,12 @@ namespace ScriptCs
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
-            if (!IsUsingLine(line)) return false;
+            Guard.AgainstNullArgument("context", context);
+
+            if (!IsUsingLine(line))
+            {
+                return false;
+            }
 
             var @namespace = GetNamespace(line);
             if (!context.Namespaces.Contains(@namespace))

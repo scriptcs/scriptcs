@@ -19,12 +19,15 @@
     <Reference Include="Common.Logging">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\..\packages\Microsoft.Web.Xdt.1.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Core, Version=2.2.31210.9045, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="NuGet.Core, Version=2.7.40808.167, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NuGet.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <HintPath>..\..\packages\NuGet.Core.2.7.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture">
       <HintPath>..\..\packages\AutoFixture.3.6.5\lib\net40\Ploeh.AutoFixture.dll</HintPath>
@@ -67,7 +70,6 @@
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="PackageAssemblyResolverTests.cs" />
-    <Compile Include="PreProcessorUtilTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplTests.cs" />
     <Compile Include="ScriptExecutorTests.cs" />

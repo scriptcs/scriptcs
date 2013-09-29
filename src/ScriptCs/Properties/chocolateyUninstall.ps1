@@ -1,13 +1,17 @@
 ﻿try {
-    $binPath = "$env:APPDATA\scriptcs"
+    $paths = @(
+        "$env:APPDATA\scriptcs",
+        "$env:LOCALAPPDATA\scriptcs"
+    )
 
-    Write-Host "Removing '$binPath'..." -ForegroundColor DarkYellow
+    $paths | foreach {
+        if (Test-Path $_) {
+            Remove-Item $_ -Recurse -Force
+        }
 
-    if (Test-Path $binPath) {
-        Remove-Item $binPath -Recurse -Force
+        Write-Host "'$_' has been removed." -ForegroundColor DarkYellow
     }
 
-    Write-Host "'$binPath' has been removed." -ForegroundColor DarkYellow
     Write-ChocolateySuccess 'scriptcs'
 } catch {
     Write-ChocolateyFailure 'scriptcs' "$($_.Exception.Message)"

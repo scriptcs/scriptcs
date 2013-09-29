@@ -5,10 +5,8 @@ namespace ScriptCs.Contracts
 {
     public interface IPackageAssemblyResolver
     {
-        void SavePackages(Action<string> output);
-
+        void SavePackages();
         IEnumerable<IPackageReference> GetPackages(string workingDirectory);
-
-        IEnumerable<string> GetAssemblyNames(string workingDirectory, Action<string> outputCallback = null);
+        IEnumerable<string> GetAssemblyNames(string workingDirectory);
     }
 }

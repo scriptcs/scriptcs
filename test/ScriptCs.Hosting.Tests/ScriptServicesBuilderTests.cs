@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
-using Autofac.Core.Registration;
-using Common.Logging;
+﻿using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
+using Should;
 using ScriptCs.Package;
 
 using Xunit;
-using Should;
 
 namespace ScriptCs.Tests
 {
@@ -20,7 +13,8 @@ namespace ScriptCs.Tests
         public class TheBuildMethod
         {
             private Mock<ILog> _mockLogger = new Mock<ILog>();
-            private ScriptServices _scriptServices = new ScriptServices(null, null, null, null,null,null,null,null,null,null);
+
+            private ScriptServices _scriptServices = new ScriptServices(null, null, null, null, null, null, null, null, null, null);
             private Mock<IRuntimeServices> _mockFactory = new Mock<IRuntimeServices>();
             private Mock<IConsole> _mockConsole = new Mock<IConsole>();
             private ScriptServicesBuilder _builder = null;

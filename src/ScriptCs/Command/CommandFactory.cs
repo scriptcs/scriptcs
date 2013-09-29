@@ -24,8 +24,10 @@ namespace ScriptCs.Command
             {
                 var currentDir = _scriptServices.FileSystem.ModulesFolder;
                 if (!_scriptServices.FileSystem.DirectoryExists(currentDir))
+                {
                     _scriptServices.FileSystem.CreateDirectory(currentDir);
-                
+                }
+
                 _scriptServices.FileSystem.CurrentDirectory = currentDir;
             }
 
@@ -34,6 +36,7 @@ namespace ScriptCs.Command
             if (args.Repl)
             {
                 var replCommand = new ExecuteReplCommand(
+                    args.ScriptName,
                     scriptArgs,
                     _scriptServices.FileSystem,
                     _scriptServices.ScriptPackResolver,
@@ -86,8 +89,7 @@ namespace ScriptCs.Command
                     _scriptServices.FileSystem,
                     _scriptServices.PackageAssemblyResolver,
                     _scriptServices.PackageInstaller,
-                    _scriptServices.Logger
-                    );
+                    _scriptServices.Logger);
 
                 string currentDirectory = null;
 
@@ -113,7 +115,9 @@ namespace ScriptCs.Command
                     var currentDirectory = _scriptServices.FileSystem.ModulesFolder;
                     _scriptServices.FileSystem.CurrentDirectory = currentDirectory;
                     if (!_scriptServices.FileSystem.DirectoryExists(currentDirectory))
+                    {
                         _scriptServices.FileSystem.CreateDirectory(currentDirectory);
+                    }
                 }
 
                 var cleanCommand = new CleanCommand(

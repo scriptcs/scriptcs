@@ -1,5 +1,4 @@
 ﻿using System;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -18,13 +17,14 @@ namespace ScriptCs.Command
             Console.WriteLine("Initiated saving packages into packages.config...");
             try
             {
-                _packageAssemblyResolver.SavePackages(msg => Console.WriteLine(msg));
+                _packageAssemblyResolver.SavePackages();
             }
             catch (Exception e)
             {
                 Console.WriteLine("Save failed: {0}.", e.Message);
                 return CommandResult.Error;
             }
+
             return CommandResult.Success;
         }
     }

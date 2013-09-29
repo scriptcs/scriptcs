@@ -30,11 +30,11 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
 
                 var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
-                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory, It.IsAny<Action<string>>())).Returns(new[] { assemblyFile });
+                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
 
                 var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(assemblyFile);
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(assemblyFile);
@@ -70,7 +70,7 @@ namespace ScriptCs.Tests
 
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var managed = Path.Combine(binFolder, "MyAssembly.dll");
-                var nonManaged = Path.Combine(binFolder, "MyAssembly.dll");
+                var nonManaged = Path.Combine(binFolder, "MyNonManagedAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
@@ -79,13 +79,59 @@ namespace ScriptCs.Tests
 
                 var assemblyUtility = new Mock<IAssemblyUtility>();
                 assemblyUtility.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
+                assemblyUtility.Setup(x => x.IsManagedAssembly(nonManaged)).Returns(false);
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 
-                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(managed);
+            }
+
+            [Fact]
+            public void ShouldNotReturnScriptDll()
+            {
+                const string WorkingDirectory = @"C:\";
+
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
+                var scriptDll = Path.Combine(binFolder, "script.dll");
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                    .Returns(new[] { scriptDll });
+
+                var assemblyUtility = new Mock<IAssemblyUtility>();
+                assemblyUtility.Setup(x => x.IsManagedAssembly(scriptDll)).Returns(true);
+
+                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
+
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, "script.csx").ToList();
+
+                assemblies.Count.ShouldEqual(0);
+            }
+
+            [Fact]
+            public void ShouldReturnsAllOtherDllsIfScriptDllIsNull()
+            {
+                const string WorkingDirectory = @"C:\";
+
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
+
+                var fileSystem = new Mock<IFileSystem>();
+                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                    .Returns(new[] { "assembly.dll" });
+
+                var assemblyUtility = new Mock<IAssemblyUtility>();
+                assemblyUtility.Setup(x => x.IsManagedAssembly("assembly.dll")).Returns(true);
+
+                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
+
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, null).ToList();
+
+                assemblies.Count.ShouldEqual(1);
             }
         }
     }
