@@ -17,6 +17,8 @@ namespace ScriptCs.Contracts
 
         public void UpdateClosingExpectation(Exception ex)
         {
+            Guard.AgainstNullArgument("ex", ex);
+
             var message = ex.Message;
             char? closingChar = null;
 

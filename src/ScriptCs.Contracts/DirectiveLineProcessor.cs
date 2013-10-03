@@ -31,6 +31,8 @@
 
         protected string GetDirectiveArgument(string line)
         {
+            Guard.AgainstNullArgument("line", line);
+
             return line.Replace(DirectiveString, string.Empty)
                 .Trim(' ')
                 .Replace("\"", string.Empty)

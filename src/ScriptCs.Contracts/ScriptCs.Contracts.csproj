@@ -19,6 +19,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ScriptCs.Core\Guard.cs">
+      <Link>Guard.cs</Link>
+    </Compile>
     <Compile Include="DirectiveLineProcessor.cs" />
     <Compile Include="FileParserContext.cs" />
     <Compile Include="FilePreProcessorResult.cs" />
