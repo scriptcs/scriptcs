@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="ScriptCs Rule Set" Description="Based on Microsoft Managed Recommended Rules." ToolsVersion="11.0">
   <Include Path="managedminimumrules.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1062" Action="Warning" />
+  </Rules>
 </RuleSet>
