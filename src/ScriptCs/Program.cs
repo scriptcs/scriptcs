@@ -27,9 +27,14 @@ namespace ScriptCs
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);
-            if (extension != null)
+            if (!string.IsNullOrWhiteSpace(extension))
             {
                 extension = extension.Substring(1);
+            }
+            else if (extension == string.Empty)
+            {
+                console.WriteLine(string.Format("{0} is not a valid script name.", commandArgs.ScriptName));
+                return 1;
             }
 
             scriptServicesBuilder.LoadModules(extension, modules);
