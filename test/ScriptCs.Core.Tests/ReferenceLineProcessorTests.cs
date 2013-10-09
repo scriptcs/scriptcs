@@ -6,6 +6,7 @@ using Should;
 using Xunit.Extensions;
 using System.Linq;
 using Should.Core.Assertions;
+using ScriptCs.Contracts.Exceptions;
 
 namespace ScriptCs.Tests
 {
@@ -64,7 +65,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
                 
                 // Act / Assert
-                Assert.Throws(typeof(Exception), () => processor.ProcessLine(parser, context, Line, false));
+                Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessLine(parser, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]

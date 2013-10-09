@@ -8,6 +8,7 @@ using ScriptCs.Contracts;
 
 using Should;
 using Xunit;
+using ScriptCs.Contracts.Exceptions;
 
 namespace ScriptCs.Tests
 {
@@ -270,7 +271,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
 
                 var processor = GetFilePreProcessor();
-                Assert.Throws(typeof(Exception), () => processor.ProcessFile("file.csx"));
+                Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessFile("file.csx"));
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i == "script4.csx")), Times.Never());
             }
