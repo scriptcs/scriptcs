@@ -22,9 +22,9 @@ namespace ScriptCs
             get { return "r"; }
         }
 
-        protected override bool ThrowIfAfterCode
+        protected override BehaviorAfterCode BehaviorAfterCode
         {
-            get { return true; }
+            get { return BehaviorAfterCode.Throw; }
         }
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)

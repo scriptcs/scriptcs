@@ -3,9 +3,9 @@ namespace ScriptCs.Contracts
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
-        protected virtual bool ThrowIfAfterCode
+        protected virtual BehaviorAfterCode BehaviorAfterCode
         {
-            get { return false; }
+            get { return BehaviorAfterCode.Ignore; }
         }
 
         protected abstract string DirectiveName { get; }
@@ -22,10 +22,17 @@ namespace ScriptCs.Contracts
                 return false;
             }
 
-            if (!isBeforeCode && ThrowIfAfterCode)
+            if (!isBeforeCode)
             {
-                throw new Exception(string.Format("Encountered {0}directive after the start of code. Please move this directive to the beginning of the file.", DirectiveString)); 
-            }
+                if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Throw)
+                {
+                    throw new Exception(string.Format("Encountered {0}directive after the start of code. Please move this directive to the beginning of the file.", DirectiveString));
+                }
+                else if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Ignore)
+                {
+                    return true;
+                }
+             }
 
             return ProcessLine(parser, context, line);
         }
