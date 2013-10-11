@@ -23,9 +23,14 @@ namespace ScriptCs
             return Directory.Exists(path);
         }
 
-        public void CreateDirectory(string path)
+        public void CreateDirectory(string path, bool hidden)
         {
-            Directory.CreateDirectory(path);
+            var directory = Directory.CreateDirectory(path);
+
+            if (hidden)
+            {
+                directory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+            }
         }
 
         public void DeleteDirectory(string path)

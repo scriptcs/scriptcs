@@ -24,13 +24,13 @@ namespace ScriptCs.Engine.Roslyn
         {
             this.Logger.DebugFormat("Writing assembly to {0}.", FileName);
 
-            if (!_fileSystem.DirectoryExists(BaseDirectory))
+            if (!_fileSystem.DirectoryExists(CacheDirectory))
             {
-                _fileSystem.CreateDirectory(BaseDirectory);
+                _fileSystem.CreateDirectory(CacheDirectory, true);
             }
 
             var dllName = FileName.Replace(Path.GetExtension(FileName), ".dll");
-            var dllPath = Path.Combine(BaseDirectory, dllName);
+            var dllPath = Path.Combine(CacheDirectory, dllName);
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
             this.Logger.DebugFormat("Loading assembly {0}.", dllPath);
