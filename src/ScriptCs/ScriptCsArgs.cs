@@ -4,7 +4,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
+    [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
         public ScriptCsArgs()
@@ -27,6 +27,7 @@ namespace ScriptCs
         public bool Help { get; set; }
 
         [ArgShortcut("inMemory")]
+        [DefaultValue(true)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
         public bool InMemory { get; set; }
 
@@ -60,7 +61,6 @@ namespace ScriptCs
         [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
-
 
         [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
