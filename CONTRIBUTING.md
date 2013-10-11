@@ -1,6 +1,6 @@
 # Contributing
 
-We've seen some great energy from folks around contributing to scriptcs and WE LOVE IT. scriptcs *welcomes* your contribuitions! In order to make it easy we've come up with the following model so that you can [Jump in](http://nikcodes.com/2013/05/10/new-contributor-jump-in/). The guidelines will help us all to operate in harmony.
+We've seen some great energy from folks around contributing to scriptcs and WE LOVE IT. scriptcs *welcomes* your contributions! In order to make it easy we've come up with the following model so that you can [Jump in](http://nikcodes.com/2013/05/10/new-contributor-jump-in/). The guidelines will help us all to operate in harmony.
 
 We definitely want to soak up all that energy you have!
 
