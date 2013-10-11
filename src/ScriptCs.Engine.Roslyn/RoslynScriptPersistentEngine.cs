@@ -37,7 +37,7 @@ namespace ScriptCs.Engine.Roslyn
 
             // the assembly is automatically loaded into the AppDomain when compiled
             // just need to find and return it
-            return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName.StartsWith(RoslynAssemblyNameCharacter));
+            return AppDomain.CurrentDomain.GetAssemblies().LastOrDefault(x => x.FullName.StartsWith(RoslynAssemblyNameCharacter));
         }
     }
 }
