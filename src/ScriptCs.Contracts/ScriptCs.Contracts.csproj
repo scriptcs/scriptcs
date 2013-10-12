@@ -54,6 +54,7 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="IScriptSource.cs" />
     <Compile Include="IServiceOverrides.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />

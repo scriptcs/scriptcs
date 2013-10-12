@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ScriptCs.Contracts
 {
     public interface IFileParser
     {
-        void ParseFile(string path, FileParserContext context);
+        Task ParseScriptSource(IScriptSource scriptSource, FileParserContext context);
 
-        void ParseScript(List<string> scriptLines, FileParserContext context);
+        Task ParseScript(List<string> scriptLines, FileParserContext context);
     }
 }

@@ -38,7 +38,7 @@ namespace ScriptCs
         {
             try
             {
-                var preProcessResult = FilePreProcessor.ProcessScript(script);
+                var preProcessResult = FilePreProcessor.ProcessScript(script).Result;
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
 

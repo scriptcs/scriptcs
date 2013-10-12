@@ -66,6 +66,7 @@
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
     <Compile Include="AssemblyResolverTests.cs" />
+    <Compile Include="FileScriptSourceTests.cs" />
     <Compile Include="ReferenceLineProcessorTests.cs" />
     <Compile Include="LoadLineProcessorTests.cs" />
     <Compile Include="FileSystemTests.cs" />

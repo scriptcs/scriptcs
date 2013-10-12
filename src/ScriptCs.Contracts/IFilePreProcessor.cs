@@ -1,9 +1,11 @@
-﻿namespace ScriptCs.Contracts
+﻿using System.Threading.Tasks;
+
+namespace ScriptCs.Contracts
 {
     public interface IFilePreProcessor : IFileParser
     {
-        FilePreProcessorResult ProcessFile(string path);
+        Task<FilePreProcessorResult> ProcessFile(string path);
 
-        FilePreProcessorResult ProcessScript(string script);
+        Task<FilePreProcessorResult> ProcessScript(string script);
     }
 }

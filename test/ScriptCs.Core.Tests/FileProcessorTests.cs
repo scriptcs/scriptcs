@@ -76,7 +76,7 @@ namespace ScriptCs.Tests
             public void MultipleUsingStatementsShouldProduceDistinctOutput()
             {
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -88,7 +88,7 @@ namespace ScriptCs.Tests
             public void UsingStateMentsShoulAllBeAtTheTop()
             {
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 var lastUsing = splitOutput.ToList().FindLastIndex(x => x.TrimStart(' ').StartsWith("using "));
@@ -113,7 +113,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnResultWithAllLoadedFiles()
             {
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 result.LoadedScripts.Count.ShouldEqual(3);
                 result.LoadedScripts.ShouldContain("script1.csx");
@@ -125,7 +125,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnResultWithAllUsings()
             {
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 result.Namespaces.Count.ShouldEqual(2);
                 result.Namespaces.ShouldContain("System");
@@ -154,7 +154,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 result.References.Count.ShouldEqual(2);
                 result.References.ShouldContain("My.dll");
@@ -183,7 +183,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 result.Code.ShouldNotContain("#r");
             }
@@ -228,7 +228,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("file.csx");
+                var result = processor.ProcessFile("file.csx").Result;
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 var lastUsing = splitOutput.ToList().FindLastIndex(x => x.TrimStart(' ').StartsWith("using "));
@@ -263,7 +263,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("file.csx");
+                var result = processor.ProcessFile("file.csx").Result;
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -291,7 +291,7 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("file.csx");
+                var result = processor.ProcessFile("file.csx").Result;
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 var firstNonImportUsing =
@@ -325,7 +325,7 @@ namespace ScriptCs.Tests
                            .Returns(file2.ToArray());
 
                 var processor = GetFilePreProcessor();
-                var result = processor.ProcessFile("script1.csx");
+                var result = processor.ProcessFile("script1.csx").Result;
 
                 result.References.Count.ShouldEqual(2);
             }
@@ -387,7 +387,7 @@ namespace ScriptCs.Tests
 
                 var preProcessor = GetFilePreProcessor();
 
-                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+                var result = preProcessor.ProcessFile(@"C:\f1.csx").Result;
 
                 var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -467,7 +467,7 @@ namespace ScriptCs.Tests
 
                 var preProcessor = GetFilePreProcessor();
 
-                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+                var result = preProcessor.ProcessFile(@"C:\f1.csx").Result;
 
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\f1.csx"), Times.Once());
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"), Times.Once());
@@ -564,7 +564,7 @@ namespace ScriptCs.Tests
                 var preProcessor = GetFilePreProcessor();
                 var script = @"#load script1.csx";
                 
-                var result = preProcessor.ProcessScript(script);
+                var result = preProcessor.ProcessScript(script).Result;
                 var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
                 fileLines.Count(x => x.StartsWith("#line ")).ShouldEqual(1);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Text;
 
 using Common.Logging;
@@ -25,18 +25,20 @@ namespace ScriptCs
             _lineProcessors = lineProcessors;
         }
 
-        public virtual FilePreProcessorResult ProcessFile(string path)
+        public virtual async Task<FilePreProcessorResult> ProcessFile(string path)
         {
-            return Process(context => ParseFile(path, context));
+            var scriptSource = new FileScriptSource(path, _fileSystem);
+
+            return await Process(context => this.ParseScriptSource(scriptSource, context));
         }
 
-        public virtual FilePreProcessorResult ProcessScript(string script)
+        public virtual Task<FilePreProcessorResult> ProcessScript(string script)
         {
             var scriptLines = _fileSystem.SplitLines(script).ToList();
             return Process(context => ParseScript(scriptLines, context));
         }
 
-        protected virtual FilePreProcessorResult Process(Action<FileParserContext> parseAction)
+        protected virtual async Task<FilePreProcessorResult> Process(Func<FileParserContext, Task> parseAction)
         {
             Guard.AgainstNullArgument("parseAction", parseAction);
 
@@ -44,7 +46,7 @@ namespace ScriptCs
 
             _logger.DebugFormat("Starting pre-processing");
 
-            parseAction(context);
+            await parseAction(context);
 
             var code = GenerateCode(context);
 
@@ -81,32 +83,29 @@ namespace ScriptCs
             return stringBuilder.ToString();
         }
 
-        public virtual void ParseFile(string path, FileParserContext context)
+        public async Task ParseScriptSource(IScriptSource scriptSource, FileParserContext context)
         {
-            Guard.AgainstNullArgument("path", path);
+            Guard.AgainstNullArgument("scriptSource", scriptSource);
             Guard.AgainstNullArgument("context", context);
 
-            var fullPath = _fileSystem.GetFullPath(path);
-            var filename = Path.GetFileName(path);
-
-            if (context.LoadedScripts.Contains(fullPath))
+            if (context.LoadedScripts.Contains(scriptSource.Path))
             {
-                _logger.DebugFormat("Skipping {0} because it's already been loaded.", filename);
+                _logger.DebugFormat("Skipping {0} because it's already been loaded.", scriptSource.Path);
                 return;
             }
 
-            _logger.DebugFormat("Processing {0}...", filename);
+            _logger.DebugFormat("Processing {0}...", scriptSource.Path);
 
             // Add script to loaded collection before parsing to avoid loop.
-            context.LoadedScripts.Add(fullPath);
+            context.LoadedScripts.Add(scriptSource.Path);
 
-            var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
-            
-            InsertLineDirective(fullPath, scriptLines);
-            InDirectory(fullPath, () => ParseScript(scriptLines, context));
+            var scriptLines = await scriptSource.GetLines();
+
+            InsertLineDirective(scriptSource.Path, scriptLines);
+            await InDirectory(scriptSource.Path, () => ParseScript(scriptLines, context));
         }
 
-        public virtual void ParseScript(List<string> scriptLines, FileParserContext context)
+        public virtual Task ParseScript(List<string> scriptLines, FileParserContext context)
         {
             Guard.AgainstNullArgument("scriptLines", scriptLines);
             Guard.AgainstNullArgument("context", context);
@@ -125,6 +124,8 @@ namespace ScriptCs
                     context.BodyLines.Add(line);
                 }
             }
+
+            return Task.FromResult<object>(null);
         }
 
         protected virtual void InsertLineDirective(string path, List<string> fileLines)
@@ -141,12 +142,12 @@ namespace ScriptCs
             fileLines.Insert(bodyIndex, directiveLine);
         }
 
-        private void InDirectory(string path, Action action)
+        private async Task InDirectory(string path, Func<Task> action)
         {
             var oldCurrentDirectory = _fileSystem.CurrentDirectory;
             _fileSystem.CurrentDirectory = _fileSystem.GetWorkingDirectory(path);
 
-            action();
+            await action();
 
             _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }

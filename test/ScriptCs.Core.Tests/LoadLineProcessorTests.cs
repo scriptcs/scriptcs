@@ -71,7 +71,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 result.ShouldBeTrue();
-                parser.Verify(x => x.ParseFile(FullPath, It.IsAny<FileParserContext>()), Times.Never());
+                parser.Verify(x => x.ParseScriptSource(It.Is<IScriptSource>(s => s.Path.Equals(FullPath)), It.IsAny<FileParserContext>()), Times.Never());
             }
 
             [Theory, ScriptCsAutoData]
@@ -88,12 +88,13 @@ namespace ScriptCs.Tests
                 const string FullPath = "C:\\script.csx";
 
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
+                parser.Setup(p => p.ParseScriptSource(It.Is<IScriptSource>(s => s.Path.Equals(FullPath)), It.IsAny<FileParserContext>()));
 
                 // Act
                 processor.ProcessLine(parser.Object, context, Line, true);
 
                 // Assert
-                parser.Verify(x => x.ParseFile(FullPath, It.IsAny<FileParserContext>()));
+                parser.Verify(x => x.ParseScriptSource(It.Is<IScriptSource>(s => s.Path.Equals(FullPath)), It.IsAny<FileParserContext>()), Times.Once());
             }
 
             [Theory, ScriptCsAutoData]
