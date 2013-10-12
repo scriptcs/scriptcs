@@ -14,6 +14,8 @@ namespace ScriptCs.Contracts
 
         void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs);
 
+        void Reset();
+
         void Terminate();
 
         ScriptResult Execute(string script, params string[] scriptArgs);

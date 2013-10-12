@@ -93,6 +93,17 @@ namespace ScriptCs
             ScriptPackSession = scriptPackSession;
         }
 
+        public virtual void Reset()
+        {
+            References.Clear();
+            AddReferences(DefaultReferences);
+
+            Namespaces.Clear();
+            ImportNamespaces(DefaultNamespaces);
+
+            ScriptPackSession.State.Clear();
+        }
+
         public virtual void Terminate()
         {
             Logger.Debug("Terminating packs");

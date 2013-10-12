@@ -12,6 +12,8 @@ namespace ScriptCs.Contracts
 
         string ReadLine();
 
+        void Clear();
+
         void Exit();
 
         void ResetColor();
