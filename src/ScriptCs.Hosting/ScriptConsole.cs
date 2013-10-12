@@ -15,6 +15,11 @@ namespace ScriptCs
             Console.Write(value);
         }
 
+        public void WriteLine()
+        {
+            Console.WriteLine();
+        }
+
         public void WriteLine(string value)
         {
             Console.WriteLine(value);
