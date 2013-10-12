@@ -25,6 +25,11 @@ namespace ScriptCs
             return Console.ReadLine();
         }
 
+        public void Clear()
+        {
+            Console.Clear();
+        }
+
         public void Exit()
         {
             ResetColor();
