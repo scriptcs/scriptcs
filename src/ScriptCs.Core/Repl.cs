@@ -46,11 +46,7 @@ namespace ScriptCs
 
                 if (script.StartsWith("#reset"))
                 {
-                    References.Clear();
-                    AddReferences(DefaultReferences);
-                    Namespaces.Clear();
-                    ImportNamespaces(DefaultNamespaces);
-                    ScriptPackSession.State.Clear();
+                    Reset();
                     return new ScriptResult();
                 }
 
