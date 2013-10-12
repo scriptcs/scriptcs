@@ -62,6 +62,8 @@ namespace ScriptCs.Command
                 while (ExecuteLine(repl))
                 {
                 }
+
+                _console.WriteLine();
             }
             catch (Exception ex)
             {
