@@ -38,6 +38,18 @@ namespace ScriptCs
         {
             try
             {
+                if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.Clear();
+                    return new ScriptResult();
+                }
+
+                if (script.StartsWith("#reset"))
+                {
+                    Reset();
+                    return new ScriptResult();
+                }
+
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
