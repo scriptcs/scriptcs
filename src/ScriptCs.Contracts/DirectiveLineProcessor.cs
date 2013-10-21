@@ -1,10 +1,12 @@
-﻿namespace ScriptCs.Contracts
+﻿using System;
+using ScriptCs.Contracts.Exceptions;
+namespace ScriptCs.Contracts
 {
     public abstract class DirectiveLineProcessor : ILineProcessor
     {
-        protected virtual bool IgnoreAfterCode
+        protected virtual BehaviorAfterCode BehaviorAfterCode
         {
-            get { return false; }
+            get { return BehaviorAfterCode.Ignore; }
         }
 
         protected abstract string DirectiveName { get; }
@@ -21,10 +23,17 @@
                 return false;
             }
 
-            if (!isBeforeCode && IgnoreAfterCode)
+            if (!isBeforeCode)
             {
-                return true;
-            }
+                if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Throw)
+                {
+                    throw new InvalidDirectiveUseException(string.Format("Encountered {0}directive after the start of code. Please move this directive to the beginning of the file.", DirectiveString));
+                }
+                else if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Ignore)
+                {
+                    return true;
+                }
+             }
 
             return ProcessLine(parser, context, line);
         }

@@ -19,10 +19,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BehaviorAfterCode.cs" />
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="DirectiveLineProcessor.cs" />
+    <Compile Include="Exceptions\InvalidDirectiveUseException.cs" />
     <Compile Include="FileParserContext.cs" />
     <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="IAssemblyResolver.cs" />
