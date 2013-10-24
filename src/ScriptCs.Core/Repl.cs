@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Runtime.ExceptionServices;
-using Common.Logging;
+﻿using Common.Logging;
 using ScriptCs.Contracts;
 using ServiceStack.Text;
+using System;
+using System.IO;
+using System.Runtime.ExceptionServices;
 
 namespace ScriptCs
 {
@@ -17,7 +17,8 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             Console = console;
@@ -36,6 +37,8 @@ namespace ScriptCs
 
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
+            Guard.AgainstNullArgument("script", script);
+
             try
             {
                 if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
