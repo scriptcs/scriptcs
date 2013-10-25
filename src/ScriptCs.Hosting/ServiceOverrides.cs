@@ -38,7 +38,7 @@ namespace ScriptCs
 
         public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
         {
-            Overrides[typeof (IScriptEngine)] = typeof (T);
+            Overrides[typeof (IScriptHostFactory)] = typeof (T);
             return _this;
         }
 
