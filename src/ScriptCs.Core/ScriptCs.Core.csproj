@@ -41,8 +41,6 @@
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
-    <Compile Include="IScriptHost.cs" />
-    <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
