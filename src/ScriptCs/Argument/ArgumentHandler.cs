@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using PowerArgs;
+﻿using PowerArgs;
 using ScriptCs.Contracts;
 using ServiceStack.Text;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace ScriptCs.Argument
 {
@@ -29,7 +29,7 @@ namespace ScriptCs.Argument
             var sr = SplitScriptArgs(args);
 
             var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs.Config));
+            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : null));
             var finalArguments = ReconcileArguments(configArgs, commandArgs, sr);
 
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
@@ -60,7 +60,7 @@ namespace ScriptCs.Argument
             result.ScriptArguments = new string[scriptArgsCount];
             Array.Copy(args, separatorLocation + 1, result.ScriptArguments, 0, scriptArgsCount);
 
-            if(separatorLocation != -1)
+            if (separatorLocation != -1)
                 result.CommandArguments = args.Take(separatorLocation).ToArray();
 
             return result;
@@ -80,15 +80,15 @@ namespace ScriptCs.Argument
                 var commandValue = property.GetValue(commandArgs);
                 var defaultValue = GetPropertyDefaultValue(property);
 
-                if(!object.Equals(configValue, commandValue))
+                if (!object.Equals(configValue, commandValue))
                 {
-                    if(!object.Equals(commandValue, defaultValue))
+                    if (!object.Equals(commandValue, defaultValue))
                     {
                         property.SetValue(configArgs, commandValue);
                     }
                     else
                     {
-                        if(IsCommandLinePresent(splitResult.CommandArguments, property))
+                        if (IsCommandLinePresent(splitResult.CommandArguments, property))
                             property.SetValue(configArgs, commandValue);
                     }
                 }
@@ -103,7 +103,7 @@ namespace ScriptCs.Argument
 
             var attribute = property.GetCustomAttribute<ArgShortcut>();
 
-            if(attribute != null)
+            if (attribute != null)
                 attributeFound = args.Any(a => a.Contains((attribute as ArgShortcut).Shortcut));
 
             var result = args.Any(a => a.Contains(property.Name)) || attributeFound;
