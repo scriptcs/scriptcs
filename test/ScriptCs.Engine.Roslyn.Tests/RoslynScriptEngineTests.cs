@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Common.Logging;
 using Moq;
 
@@ -335,6 +336,34 @@ namespace ScriptCs.Tests
                 // Assert
                 result.IsPendingClosingChar.ShouldBeTrue();
                 result.ExpectingClosingChar.ShouldEqual(')');
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldCreateOnlyOneInMemoryAssembly(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine engine,
+                ScriptPackSession scriptPackSession)
+            {
+                // Arrange
+                const string Code = "var theNumber = 42;";
+
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                                 .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
+
+                var session = new SessionState<Session> {Session = new ScriptEngine().CreateSession()};
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+
+                var assembliesCountBefore =
+                    AppDomain.CurrentDomain.GetAssemblies().Count(x => x.FullName.StartsWith("ℛ"));
+
+                // Act
+                engine.Execute(Code, new string[0], new[] {"System"}, Enumerable.Empty<string>(), scriptPackSession);
+
+                var assembliesCountAfter = AppDomain.CurrentDomain.GetAssemblies()
+                                                    .Count(x => x.FullName.StartsWith("ℛ"));
+
+                // Assert
+                assembliesCountAfter.ShouldEqual(assembliesCountBefore + 1);
             }
         }
 
