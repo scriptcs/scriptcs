@@ -13,10 +13,9 @@ namespace ScriptCs.Engine.Roslyn
 {
     public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
-        protected const string RoslynAssemblyNameCharacter = "ℛ";
         protected const string CompiledScriptClass = "Submission#0";
         protected const string CompiledScriptMethod = "<Factory>";
-
+        
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
@@ -25,54 +24,41 @@ namespace ScriptCs.Engine.Roslyn
         protected override ScriptResult Execute(string code, Session session)
         {
             Guard.AgainstNullArgument("session", session);
-            var scriptResult = new ScriptResult();
 
+            var scriptResult = new ScriptResult();
+            Submission<object> submission = null;
+
+            this.Logger.Debug("Compiling submission");
             try
             {
-                Logger.Debug("Compiling submission");
-                var submission = session.CompileSubmission<object>(code);
+                submission = session.CompileSubmission<object>(code);
 
-                if (submission != null)
+                var exeBytes = new byte[0];
+                var pdbBytes = new byte[0];
+                var compileSuccess = false;
+
+                using (var exeStream = new MemoryStream())
+                using (var pdbStream = new MemoryStream())
                 {
-                    Logger.Debug("Code compiled. Locating the assembly in the AppDomain.");
-                    var assembly = AppDomain.CurrentDomain.GetAssemblies().LastOrDefault(x => x.FullName.StartsWith(RoslynAssemblyNameCharacter));
+                    var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
+                    compileSuccess = result.Success;
 
-                    if (assembly != null)
+                    if (result.Success)
                     {
-                        Logger.Debug("Found the assembly in the AppDomain.");
+                        this.Logger.Debug("Compilation was successful.");
+                        exeBytes = exeStream.ToArray();
+                        pdbBytes = pdbStream.ToArray();
                     }
                     else
                     {
-                        Logger.Debug("Could not find the assembly in the AppDomain. Will emit compilation instead.");
-                        var exeBytes = new byte[0];
-                        var pdbBytes = new byte[0];
-                        var compileSuccess = false;
-
-                        using (var exeStream = new MemoryStream())
-                        using (var pdbStream = new MemoryStream())
-                        {
-                            var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
-                            compileSuccess = result.Success;
-
-                            if (result.Success)
-                            {
-                                this.Logger.Debug("Emitting compilation was successful.");
-                                exeBytes = exeStream.ToArray();
-                                pdbBytes = pdbStream.ToArray();
-                            }
-                            else
-                            {
-                                var errors = String.Join(Environment.NewLine,
-                                                         result.Diagnostics.Select(x => x.ToString()));
-                                this.Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
-                            }
-                        }
-
-                        if (compileSuccess)
-                        {
-                            assembly = this.LoadAssembly(exeBytes, pdbBytes);
-                        }
+                        var errors = String.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
+                        this.Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
                     }
+                }
+
+                if (compileSuccess)
+                {
+                    var assembly = this.LoadAssembly(exeBytes, pdbBytes);
 
                     //if assembly is still null, then throw exception
                     if (assembly == null)
@@ -96,8 +82,8 @@ namespace ScriptCs.Engine.Roslyn
 
                     try
                     {
-                        this.Logger.Debug("Invoking entrz point method.");
-                        scriptResult.ReturnValue = method.Invoke(null, new[] { session });
+                        this.Logger.Debug("Invoking entry point method.");
+                        scriptResult.ReturnValue = method.Invoke(null, new[] {session});
                     }
                     catch (Exception executeException)
                     {
@@ -110,9 +96,7 @@ namespace ScriptCs.Engine.Roslyn
             catch (Exception compileException)
             {
                 //we catch Exception rather than CompilationErrorException because there might be issues with assembly loading too
-                scriptResult.CompileExceptionInfo =
-                    ExceptionDispatchInfo.Capture(new ScriptCompilationException(compileException.Message,
-                                                                                 compileException));
+                scriptResult.CompileExceptionInfo = ExceptionDispatchInfo.Capture(new ScriptCompilationException(compileException.Message, compileException));
             }
 
             return scriptResult;
