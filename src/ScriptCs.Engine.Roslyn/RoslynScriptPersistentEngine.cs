@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
 using Common.Logging;
+
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
@@ -10,6 +12,7 @@ namespace ScriptCs.Engine.Roslyn
     public class RoslynScriptPersistentEngine : RoslynScriptCompilerEngine
     {
         private readonly IFileSystem _fileSystem;
+        private const string RoslynAssemblyNameCharacter = "ℛ";
 
         public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILog logger, IFileSystem fileSystem)
             : base(scriptHostFactory, logger)
