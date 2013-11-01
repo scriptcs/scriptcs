@@ -41,6 +41,8 @@ namespace ScriptCs
             defaultEngineType = _debug ? typeof (RoslynScriptInMemoryEngine) : defaultEngineType;
             defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
 
+            _logger.Debug(string.Format("Selected {0} engine to use.", defaultEngineType.FullName));
+
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
 

@@ -18,9 +18,10 @@ namespace ScriptCs
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
- 
+
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .InMemory(commandArgs.InMemory)
+                .Debug(commandArgs.Debug)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
