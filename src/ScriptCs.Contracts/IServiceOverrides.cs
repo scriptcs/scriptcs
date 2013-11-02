@@ -8,6 +8,8 @@
 
         TConfig ScriptEngine<T>() where T : IScriptEngine;
 
+        TConfig ScriptHostFactory<T>() where T : IScriptHostFactory;
+
         TConfig ScriptPackManager<T>() where T : IScriptPackManager;
 
         TConfig ScriptPackResolver<T>() where T : IScriptPackResolver;

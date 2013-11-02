@@ -10,7 +10,7 @@ namespace ScriptCs
     {
         protected readonly IList<Type> LineProcessors = new List<Type>();
 
-        protected readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
 
         private readonly TConfig _this;
 
@@ -33,6 +33,12 @@ namespace ScriptCs
         public TConfig ScriptEngine<T>() where T : IScriptEngine
         {
             Overrides[typeof(IScriptEngine)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
+        {
+            Overrides[typeof (IScriptHostFactory)] = typeof (T);
             return _this;
         }
 
