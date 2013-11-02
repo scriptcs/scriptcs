@@ -57,7 +57,7 @@ namespace ScriptCs.Hosting.Package
             }
 
             var sourceProvider = new PackageSourceProvider(settings);
-            var sources = sourceProvider.LoadPackageSources();
+            var sources = sourceProvider.LoadPackageSources().Where(i => i.IsEnabled == true);
 
             if (sources == null || !sources.Any())
             {
