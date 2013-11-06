@@ -11,12 +11,12 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
+    public abstract class RoslynScriptCompilerEngine<TScriptHost> : RoslynScriptEngine<TScriptHost> where TScriptHost : class
     {
         protected const string CompiledScriptClass = "Submission#0";
         protected const string CompiledScriptMethod = "<Factory>";
-        
-        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+
+        protected RoslynScriptCompilerEngine(IScriptHostFactory<TScriptHost> scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
         }

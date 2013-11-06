@@ -11,13 +11,13 @@ namespace ScriptCs.Engine.Roslyn
 {
     using System.Runtime.ExceptionServices;
 
-    public class RoslynScriptEngine : IScriptEngine
+    public class RoslynScriptEngine<TScriptHost> : IScriptEngine where TScriptHost : class
     {
         protected readonly ScriptEngine ScriptEngine;
-        private readonly IScriptHostFactory _scriptHostFactory;
+        private readonly IScriptHostFactory<TScriptHost> _scriptHostFactory;
         public const string SessionKey = "Session";
 
-        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public RoslynScriptEngine(IScriptHostFactory<TScriptHost> scriptHostFactory, ILog logger)
         {
             ScriptEngine = new ScriptEngine();
             ScriptEngine.AddReference(typeof(ScriptExecutor).Assembly);

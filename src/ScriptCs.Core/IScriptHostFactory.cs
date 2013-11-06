@@ -2,8 +2,8 @@
 
 namespace ScriptCs
 {
-    public interface IScriptHostFactory
+    public interface IScriptHostFactory<TScriptHost>
     {
-        IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs);
+        TScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs);
     }
 }

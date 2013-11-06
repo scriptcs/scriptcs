@@ -2,7 +2,7 @@
 
 namespace ScriptCs
 {
-    public class ScriptHostFactory : IScriptHostFactory
+    public class ScriptHostFactory : IScriptHostFactory<IScriptHost>
     {
         public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {

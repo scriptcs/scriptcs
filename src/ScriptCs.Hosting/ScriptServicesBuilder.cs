@@ -36,9 +36,9 @@ namespace ScriptCs
         public ScriptServices Build()
         {
             var defaultExecutorType = typeof(ScriptExecutor);
-            Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
+            Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine<IScriptHost>) : typeof(RoslynScriptPersistentEngine<IScriptHost>);
 
-            defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
+            defaultEngineType = _repl ? typeof(RoslynScriptEngine<IScriptHost>) : defaultEngineType;
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
