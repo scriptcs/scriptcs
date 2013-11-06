@@ -21,7 +21,7 @@ namespace ScriptCs.Tests
         {
             [Theory, ScriptCsAutoData]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs(
-                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+                [NoAutoProperties] RoslynScriptInMemoryEngine<IScriptHost> scriptEngine)
             {
                 // Arrange
                 var lines = new List<string>
@@ -45,7 +45,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldExposeExceptionThrownByCompilation(
-                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+                [NoAutoProperties] RoslynScriptInMemoryEngine<IScriptHost> scriptEngine)
             {
                 // Arrange
                 var lines = new List<string>

@@ -20,7 +20,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldAddReferenceToCore()
             {
-                var engine = new RoslynTestScriptEngine(new Mock<IScriptHostFactory>().Object, new Mock<ILog>().Object);
+                var engine = new RoslynTestScriptEngine(new Mock<IScriptHostFactory<IScriptHost>>().Object, new Mock<ILog>().Object);
                 engine.Engine.GetReferences().Where(x => x.Display.EndsWith("ScriptCs.Core.dll")).Count().ShouldEqual(1);
             }
         }
@@ -29,10 +29,10 @@ namespace ScriptCs.Tests
         {
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
                 [Frozen] Mock<IScriptPack> scriptPack,
                 ScriptPackSession scriptPackSession,
-                [NoAutoProperties] RoslynScriptEngine engine)
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine)
             {
                 // Arrange
                 const string Code = "var a = 0;";
@@ -52,7 +52,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReuseExistingSessionIfProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
                 [NoAutoProperties] RoslynTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -63,7 +63,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 engine.Execute(Code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(), scriptPackSession);
@@ -74,7 +74,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldCreateNewSessionIfNotProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
                 [NoAutoProperties] RoslynTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -93,7 +93,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddNewReferencesIfTheyAreProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
                 [NoAutoProperties] RoslynTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -104,18 +104,18 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Count().ShouldEqual(1);
+                ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey]).References.Count().ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnAScriptResult(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
                 [NoAutoProperties] RoslynTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -126,7 +126,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
@@ -137,8 +137,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnCompileExceptionIfCodeDoesNotCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -148,8 +148,8 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
+
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
@@ -159,8 +159,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnCompileExceptionIfCodeDoesCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -170,8 +170,8 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
+
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
@@ -181,8 +181,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnExecuteExceptionIfCodeExecutionThrowsException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -192,8 +192,8 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
+
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
@@ -203,8 +203,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnExecuteExceptionIfCodeExecutionDoesNotThrowAnException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -214,7 +214,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
@@ -225,8 +225,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnReturnValueIfCodeExecutionReturnsValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 const string Code = "\"Hello\" //this should return \"Hello\"";
@@ -236,7 +236,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
@@ -247,8 +247,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnReturnValueIfCodeExecutionDoesNotReturnValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -258,8 +258,8 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
+
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
 
@@ -269,8 +269,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingCurlyBracket(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -280,7 +280,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(
@@ -293,8 +293,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingSquareBracket(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -304,7 +304,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
@@ -316,8 +316,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingParenthesis(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
+                [Frozen] Mock<IScriptHostFactory<IScriptHost>> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine<IScriptHost> engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
@@ -327,7 +327,7 @@ namespace ScriptCs.Tests
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                scriptPackSession.State[RoslynScriptEngine<IScriptHost>.SessionKey] = session;
 
                 // Act
                 var result = engine.Execute(Code, new string[0], new[] { "System" }, Enumerable.Empty<string>(), scriptPackSession);
@@ -338,9 +338,9 @@ namespace ScriptCs.Tests
             }
         }
 
-        public class RoslynTestScriptEngine : RoslynScriptEngine
+        public class RoslynTestScriptEngine : RoslynScriptEngine<IScriptHost>
         {
-            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+            public RoslynTestScriptEngine(IScriptHostFactory<IScriptHost> scriptHostFactory, ILog logger)
                 : base(scriptHostFactory, logger)
             {
             }

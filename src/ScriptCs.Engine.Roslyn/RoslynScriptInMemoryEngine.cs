@@ -4,9 +4,9 @@ using Common.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public class RoslynScriptInMemoryEngine : RoslynScriptCompilerEngine
+    public class RoslynScriptInMemoryEngine<TScriptHost> : RoslynScriptCompilerEngine<TScriptHost> where TScriptHost : class
     {
-        public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public RoslynScriptInMemoryEngine(IScriptHostFactory<TScriptHost> scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
         }

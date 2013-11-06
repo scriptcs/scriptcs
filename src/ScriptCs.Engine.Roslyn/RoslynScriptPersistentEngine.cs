@@ -9,12 +9,12 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public class RoslynScriptPersistentEngine : RoslynScriptCompilerEngine
+    public class RoslynScriptPersistentEngine<TScriptHost> : RoslynScriptCompilerEngine<TScriptHost> where TScriptHost : class
     {
         private readonly IFileSystem _fileSystem;
         private const string RoslynAssemblyNameCharacter = "ℛ";
 
-        public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILog logger, IFileSystem fileSystem)
+        public RoslynScriptPersistentEngine(IScriptHostFactory<TScriptHost> scriptHostFactory, ILog logger, IFileSystem fileSystem)
             : base(scriptHostFactory, logger)
         {
             _fileSystem = fileSystem;

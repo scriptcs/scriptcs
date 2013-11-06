@@ -71,7 +71,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheDefaultScriptHostFactoryIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldNotBeNull();
+                _runtimeServices.Container.Resolve<IScriptHostFactory<IScriptHost>>().ShouldNotBeNull();
             }
 
             [Fact]
@@ -137,9 +137,9 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheOverriddenScriptHostFactory()
             {
-                var mock = new Mock<IScriptHostFactory>();
-                _overrides[typeof(IScriptHostFactory)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
+                var mock = new Mock<IScriptHostFactory<IScriptHost>>();
+                _overrides[typeof(IScriptHostFactory<IScriptHost>)] = mock.Object.GetType();
+                _runtimeServices.Container.Resolve<IScriptHostFactory<IScriptHost>>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
