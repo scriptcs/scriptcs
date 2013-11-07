@@ -27,15 +27,21 @@ namespace ScriptCs
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);
-            if (!string.IsNullOrWhiteSpace(extension))
+
+
+            if (string.IsNullOrWhiteSpace(extension))
             {
-                extension = extension.Substring(1);
+                extension = ".csx";
+
+                if (!File.Exists((commandArgs.ScriptName + extension)))
+                {
+                    console.WriteLine(string.Format("Can't find a script named {0}",
+                        (commandArgs.ScriptName + extension)));
+
+                    return 1;
+                }
             }
-            else if (extension == string.Empty)
-            {
-                console.WriteLine(string.Format("{0} is not a valid script name.", commandArgs.ScriptName));
-                return 1;
-            }
+            
 
             scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
