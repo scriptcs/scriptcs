@@ -32,14 +32,17 @@ namespace ScriptCs
             if (string.IsNullOrWhiteSpace(extension))
             {
                 extension = ".csx";
+                var scriptName = string.Format("{0}.csx", commandArgs.ScriptName);
 
-                if (!File.Exists((commandArgs.ScriptName + extension)))
+                if (!File.Exists(scriptName))
                 {
-                    console.WriteLine(string.Format("Can't find a script named {0}",
-                        (commandArgs.ScriptName + extension)));
+                    console.WriteLine(string.Format(
+                        "Can't find a script named {0}",scriptName));
 
                     return 1;
                 }
+
+                commandArgs.ScriptName = scriptName;
             }
             
 
