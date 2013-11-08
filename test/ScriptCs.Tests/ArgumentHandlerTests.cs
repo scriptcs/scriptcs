@@ -1,8 +1,8 @@
 ﻿using Moq;
 using ScriptCs.Argument;
 using ScriptCs.Contracts;
-using Xunit;
 using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -13,7 +13,7 @@ namespace ScriptCs.Tests
             private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true)
             {
                 const string currentDirectory = "C:\\test\\folder";
-                
+
                 string filePath = currentDirectory + '\\' + fileName;
 
                 var fs = new Mock<IFileSystem>();
@@ -73,6 +73,18 @@ namespace ScriptCs.Tests
                 result.CommandArguments.ScriptName.ShouldEqual("server.csx");
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
+            public void ShouldHandleInvalidCommandLineArguments()
+            {
+                string[] args = { "-version", "-foo", "-bar" };
+
+                var argumentHandler = Setup(null, "test.txt", false);
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.ShouldBeNull();
+                result.Arguments.Length.ShouldEqual<int>(3);
             }
 
             [Fact]
