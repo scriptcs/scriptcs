@@ -11,6 +11,7 @@ using ScriptCs.Contracts;
 using Should;
 
 using Xunit.Extensions;
+using System;
 
 namespace ScriptCs.Tests
 {
@@ -31,7 +32,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
 
-                console.Setup(x => x.ReadLine()).Returns(() => string.Empty).Callback(() => readLines++);
+                console.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
                 console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
 
                 // Act
@@ -44,13 +45,17 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenPassedAScript_ShouldPressedReplWithScript(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,[Frozen] Mock<IConsole> console,
-                CommandFactory factory)
+                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
+                 CommandFactory factory)
             {
                 // Arrange
-                var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx"};
+                var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx" };
 
-                console.Setup(x => x.ReadLine()).Returns(() => string.Empty);
+                console.Setup(x => x.ReadLine()).Returns(() =>
+                {
+                    console.Setup(x => x.ReadLine()).Throws(new Exception());
+                    return string.Empty;
+                });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
                 scriptEngine.Setup(
                     x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
@@ -70,7 +75,11 @@ namespace ScriptCs.Tests
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true };
 
-                console.Setup(x => x.ReadLine()).Returns(() => string.Empty);
+                console.Setup(x => x.ReadLine()).Returns(() =>
+                {
+                    console.Setup(x => x.ReadLine()).Throws(new Exception());
+                    return string.Empty;
+                });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
 
                 // Act

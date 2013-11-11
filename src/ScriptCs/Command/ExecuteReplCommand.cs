@@ -82,7 +82,17 @@ namespace ScriptCs.Command
                 _console.Write("> ");
             }
 
-            var line = _console.ReadLine();
+            string line = null;
+            
+            try
+            {
+                line = _console.ReadLine();
+            }
+            catch
+            {
+                return false;
+            }
+
             if (!string.IsNullOrWhiteSpace(line))
             {
                 repl.Execute(line);
