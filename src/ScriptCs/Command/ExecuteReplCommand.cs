@@ -42,7 +42,7 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
+            _console.WriteLine("scriptcs (ctrl-c to exit)\r\n");
             var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
@@ -68,7 +68,7 @@ namespace ScriptCs.Command
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
-                return CommandResult.Error;              
+                return CommandResult.Error;
             }
 
             repl.Terminate();
@@ -83,12 +83,11 @@ namespace ScriptCs.Command
             }
 
             var line = _console.ReadLine();
-            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer))
+            if (!string.IsNullOrWhiteSpace(line))
             {
-                return false;
+                repl.Execute(line);
             }
 
-            repl.Execute(line);
             return true;
         }
     }
