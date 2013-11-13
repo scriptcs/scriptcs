@@ -29,7 +29,7 @@ namespace ScriptCs
             var extension = Path.GetExtension(commandArgs.ScriptName);
 
 
-            if (string.IsNullOrWhiteSpace(extension))
+            if (string.IsNullOrWhiteSpace(extension) && !commandArgs.Repl)
             {
                 extension = ".csx";
                 var scriptName = string.Format("{0}.csx", commandArgs.ScriptName);
