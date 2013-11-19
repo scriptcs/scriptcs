@@ -7,6 +7,11 @@ namespace ScriptCs.Command
         string[] ScriptArgs { get; }
     }
 
+    public interface IIsolatedScriptCommand : IScriptCommand
+    {
+        IIsolatedHelper IsolatedHelper { get; set; }
+    }
+
     public interface ISaveCommand : ICommand
     {
     }

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
@@ -51,7 +53,16 @@ namespace ScriptCs.Command
 
             if (args.ScriptName != null)
             {
-                var executeCommand = new ExecuteScriptCommand(
+                var executeCommand = args.Isolated ?
+                    new ExecuteIsolatedScriptCommand(
+                    args.ScriptName,
+                    scriptArgs,
+                    _scriptServices.FileSystem,
+                    _scriptServices.Executor,
+                    _scriptServices.ScriptPackResolver,
+                    _scriptServices.Logger,
+                    _scriptServices.AssemblyResolver) { IsolatedHelper = new IsolatedHelper { CommandArgs = args, Script = args.ScriptName, ScriptArgs = scriptArgs } }
+                    : new ExecuteScriptCommand(
                     args.ScriptName,
                     scriptArgs,
                     _scriptServices.FileSystem,
@@ -139,6 +150,26 @@ namespace ScriptCs.Command
             }
 
             return new ShowUsageCommand(_scriptServices.Logger, isValid: false);
+        }
+    }
+
+    [Serializable]
+    public class IsolatedHelper : IIsolatedHelper
+    {
+        public ScriptCsArgs CommandArgs { get; set; }
+        public string[] AssemblyPaths { get; set; }
+        public string Script { get; set; }
+        public string[] ScriptArgs { get; set; }
+        public ScriptResult Result { get; set; }
+
+        public void Execute()
+        {
+            var scriptServiceRoot = CommandArgs.CreateServices();
+            scriptServiceRoot.Logger.Debug("Creating isolated ScriptServiceRoot");
+            var executor = scriptServiceRoot.Executor;
+            executor.Initialize(AssemblyPaths, scriptServiceRoot.ScriptPackResolver.GetPacks());
+            Result = executor.Execute(Script, ScriptArgs);
+            executor.Terminate();
         }
     }
 }

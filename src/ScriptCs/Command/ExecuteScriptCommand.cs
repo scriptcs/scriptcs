@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Common.Logging;
+using System.Reflection;
 
 using ScriptCs.Contracts;
 
@@ -9,17 +10,13 @@ namespace ScriptCs.Command
 {
     internal class ExecuteScriptCommand : IScriptCommand
     {
+        protected readonly string _script;
+        protected readonly IFileSystem _fileSystem;
+        private readonly IScriptExecutor _scriptExecutor;
         private readonly IScriptPackResolver _scriptPackResolver;
-
         private readonly IAssemblyResolver _assemblyResolver;
 
-        private readonly IScriptExecutor _scriptExecutor;
-
-        private readonly IFileSystem _fileSystem;
-
-        private readonly string _script;
-
-        private readonly ILog _logger;
+        protected readonly ILog _logger;
 
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,
@@ -30,8 +27,8 @@ namespace ScriptCs.Command
             IAssemblyResolver assemblyResolver)
         {
             _script = script;
-            _fileSystem = fileSystem;
             ScriptArgs = scriptArgs;
+            _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
@@ -44,17 +41,14 @@ namespace ScriptCs.Command
         {
             try
             {
-                var assemblyPaths = Enumerable.Empty<string>();
-
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                string[] assemblyPaths = null;
                 if (workingDirectory != null)
                 {
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory, _script);
                 }
 
-                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
-                var result = _scriptExecutor.Execute(_script, ScriptArgs);
-                _scriptExecutor.Terminate();
+                var result = Execute(workingDirectory, assemblyPaths ?? new string[0]);
 
                 if (result == null) return CommandResult.Error;
 
@@ -83,6 +77,14 @@ namespace ScriptCs.Command
                 _logger.Error(ex.Message);
                 return CommandResult.Error;
             }
+        }
+
+        protected virtual ScriptResult Execute(string workingDirectory, string[] assemblyPaths)
+        {
+            _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+            var result = _scriptExecutor.Execute(_script, ScriptArgs);
+            _scriptExecutor.Terminate();
+            return result;
         }
     }
 }

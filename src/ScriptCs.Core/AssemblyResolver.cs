@@ -10,7 +10,7 @@ namespace ScriptCs
 {
     public class AssemblyResolver : IAssemblyResolver
     {
-        private readonly Dictionary<string, List<string>> _assemblyPathCache = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, string[]> _assemblyPathCache = new Dictionary<string, string[]>();
  
         private readonly IFileSystem _fileSystem;
 
@@ -32,31 +32,30 @@ namespace ScriptCs
             _assemblyUtility = assemblyUtility;
         }
 
-        public IEnumerable<string> GetAssemblyPaths(string path, string scriptName)
+        public string[] GetAssemblyPaths(string path, string scriptName)
         {
             Guard.AgainstNullArgument("path", path);
 
-            List<string> assemblies;
+            string[] assemblies;
             if (_assemblyPathCache.TryGetValue(path, out assemblies))
             {
                 return assemblies;
             }
-
             var packageAssemblies = GetPackageAssemblies(path);
             var binAssemblies = GetBinAssemblies(path, scriptName);
 
-            assemblies = packageAssemblies.Union(binAssemblies).ToList();
+            assemblies = packageAssemblies.Union(binAssemblies).ToArray();
             _assemblyPathCache.Add(path, assemblies);
 
             return assemblies;
         }
 
-        private IEnumerable<string> GetBinAssemblies(string path, string scriptName)
+        private string[] GetBinAssemblies(string path, string scriptName)
         {
             var binFolder = Path.Combine(path, Constants.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))
             {
-                return Enumerable.Empty<string>();
+                return new string[0];
             }
 
             var dllName = string.IsNullOrEmpty(scriptName) ? string.Empty : scriptName.Replace(Path.GetExtension(scriptName), ".dll");
@@ -64,7 +63,7 @@ namespace ScriptCs
             var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
                 .Where(f => _assemblyUtility.IsManagedAssembly(f) && !dllName.Equals(Path.GetFileName(f)))
-                .ToList();
+                .ToArray();
 
             foreach (var assembly in assemblies)
             {
