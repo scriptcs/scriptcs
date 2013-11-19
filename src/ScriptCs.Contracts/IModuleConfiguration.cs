@@ -2,8 +2,7 @@
 {
     public interface IModuleConfiguration : IServiceOverrides<IModuleConfiguration>
     {
-        bool InMemory { get; }
-
+        bool Cache { get; }
 
         string ScriptName { get; }
 

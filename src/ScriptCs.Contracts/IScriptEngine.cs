@@ -5,6 +5,8 @@ namespace ScriptCs.Contracts
     public interface IScriptEngine
     {
         string BaseDirectory { get; set; }
+
+        string CacheDirectory { get; set; }
         
         string FileName { get; set; }
         

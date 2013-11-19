@@ -26,10 +26,10 @@ namespace ScriptCs
         [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
-        [ArgShortcut("inMemory")]
-        [DefaultValue(true)]
+        [ArgShortcut("cache")]
+        [DefaultValue(false)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
-        public bool InMemory { get; set; }
+        public bool Cache { get; set; }
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]

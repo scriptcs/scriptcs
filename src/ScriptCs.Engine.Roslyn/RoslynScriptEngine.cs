@@ -15,6 +15,7 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected readonly ScriptEngine ScriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
+
         public const string SessionKey = "Session";
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
@@ -32,6 +33,8 @@ namespace ScriptCs.Engine.Roslyn
             get { return ScriptEngine.BaseDirectory;  }
             set { ScriptEngine.BaseDirectory = value; }
         }
+
+        public string CacheDirectory { get; set; }
 
         public string FileName { get; set; }
 

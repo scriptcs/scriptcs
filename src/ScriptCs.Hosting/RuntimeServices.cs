@@ -65,7 +65,7 @@ namespace ScriptCs
             if (_initDirectoryCatalog)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory, _scriptName);
+                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
 
                 var aggregateCatalog = new AggregateCatalog();
 

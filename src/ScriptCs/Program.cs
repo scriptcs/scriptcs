@@ -20,7 +20,7 @@ namespace ScriptCs
             var logger = configurator.GetLogger();
  
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
-                .InMemory(commandArgs.InMemory)
+                .Cache(commandArgs.Cache)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
