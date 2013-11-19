@@ -24,6 +24,7 @@ namespace ScriptCs
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
+        private bool _debug;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
@@ -36,9 +37,11 @@ namespace ScriptCs
         public ScriptServices Build()
         {
             var defaultExecutorType = typeof(ScriptExecutor);
-            Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
-
+            var defaultEngineType = _inMemory ? typeof(RoslynScriptEngine) : typeof(RoslynScriptPersistentEngine);
+            defaultEngineType = _debug ? typeof (RoslynScriptInMemoryEngine) : defaultEngineType;
             defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
+
+            _logger.Debug(string.Format("Selected {0} engine to use.", defaultEngineType.FullName));
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
@@ -85,6 +88,12 @@ namespace ScriptCs
         public IScriptServicesBuilder LogLevel(LogLevel level)
         {
             _logLevel = level;
+            return this;
+        }
+
+        public IScriptServicesBuilder Debug(bool debug)
+        {
+            _debug = debug;
             return this;
         }
     }

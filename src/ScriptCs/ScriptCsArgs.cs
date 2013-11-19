@@ -31,6 +31,10 @@ namespace ScriptCs
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
         public bool InMemory { get; set; }
 
+        [ArgShortcut("debug")]
+        [ArgDescription("Emits PDB symbols allowing for attaching a Visual Studio debugger")]
+        public bool Debug { get; set; }
+
         [ArgIgnoreCase]
         [ArgShortcut("log")]
         [DefaultValue(LogLevel.Info)]

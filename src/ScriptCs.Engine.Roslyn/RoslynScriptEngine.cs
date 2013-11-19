@@ -100,10 +100,12 @@ namespace ScriptCs.Engine.Roslyn
             var result = new ScriptResult();
             try
             {
+                this.Logger.Debug("Compiling submission");
                 var submission = session.CompileSubmission<object>(code);
                 try
                 {
                     result.ReturnValue = submission.Execute();
+                    this.Logger.Debug("Compilation was successful.");
                 }
                 catch (Exception ex)
                 {

@@ -1,6 +1,7 @@
 ﻿using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
+using ScriptCs.Engine.Roslyn;
 using Should;
 using ScriptCs.Package;
 
@@ -29,6 +30,38 @@ namespace ScriptCs.Tests
             public void ShouldResolveScriptServices()
             {
                 _builder.Build().ShouldEqual(_scriptServices);
+            }
+
+            [Fact]
+            public void ShouldUseInMemoryEngineForDebugFlag()
+            {
+                var builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object);
+                var services = builder.Debug(true).Build();
+                services.Engine.ShouldBeType<RoslynScriptInMemoryEngine>();
+            }
+
+            [Fact]
+            public void ShouldUseBasicEngineForInMemoryFlag()
+            {
+                var builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object);
+                var services = builder.InMemory(true).Build();
+                services.Engine.ShouldBeType<RoslynScriptEngine>();
+            }
+
+            [Fact]
+            public void ShouldUseBasicEngineForRepl()
+            {
+                var builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object);
+                var services = builder.Repl(true).Build();
+                services.Engine.ShouldBeType<RoslynScriptEngine>();
+            }
+
+            [Fact]
+            public void ShouldUsePersistanceEngineForInMemoryFlagSetToFalse()
+            {
+                var builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object);
+                var services = builder.InMemory(false).Build();
+                services.Engine.ShouldBeType<RoslynScriptPersistentEngine>();
             }
         }
     }

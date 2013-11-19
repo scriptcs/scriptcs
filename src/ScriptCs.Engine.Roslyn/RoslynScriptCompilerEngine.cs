@@ -60,16 +60,29 @@ namespace ScriptCs.Engine.Roslyn
                 {
                     var assembly = this.LoadAssembly(exeBytes, pdbBytes);
 
-                    Logger.Debug("Retrieving compiled script class (reflection).");
+                    //if assembly is still null, then throw exception
+                    if (assembly == null)
+                    {
+                        throw new ScriptCompilationException("Unable to create an assembly for a given script");
+                    }
 
-                    // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
+                    Logger.Debug("Retrieving compiled script class (reflection).");
                     var type = assembly.GetType(CompiledScriptClass);
+                    if (type == null)
+                    {
+                        throw new ScriptCompilationException("Unable to retrieve the entry point class of the compiled assembly");
+                    }
+
                     Logger.Debug("Retrieving compiled script method (reflection).");
                     var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
+                    if (method == null)
+                    {
+                        throw new ScriptCompilationException("Unable to retrieve the entry point method of the compiled assembly");
+                    }
 
                     try
                     {
-                        this.Logger.Debug("Invoking method.");
+                        this.Logger.Debug("Invoking entry point method.");
                         scriptResult.ReturnValue = method.Invoke(null, new[] {session});
                     }
                     catch (Exception executeException)
