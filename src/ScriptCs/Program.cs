@@ -18,6 +18,10 @@ namespace ScriptCs
             var scriptArgs = arguments.ScriptArguments;
 
             var scriptServiceRoot = commandArgs.CreateServices(console);
+            if(scriptServiceRoot == null)
+            {
+                return 1;
+            }
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);

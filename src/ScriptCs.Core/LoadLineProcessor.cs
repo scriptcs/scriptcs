@@ -22,13 +22,15 @@ namespace ScriptCs
             get { return "load"; }
         }
 
-        protected override bool IgnoreAfterCode
+        protected override BehaviorAfterCode BehaviorAfterCode
         {
-            get { return true; }
+            get { return BehaviorAfterCode.Throw; }
         }
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
+            Guard.AgainstNullArgument("parser", parser);
+
             var argument = GetDirectiveArgument(line);
             var filePath = Environment.ExpandEnvironmentVariables(argument);
 

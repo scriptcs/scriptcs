@@ -7,10 +7,10 @@ using Common.Logging;
 
 namespace ScriptCs
 {
-    public abstract class ScriptServicesRegistration 
+    public abstract class ScriptServicesRegistration
     {
         private readonly IDictionary<Type, object> _overrides = null;
-        
+
         protected ILog Logger { get; private set; }
 
         public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
@@ -21,6 +21,8 @@ namespace ScriptCs
 
         protected void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)
         {
+            Guard.AgainstNullArgument("registrationAction", registrationAction);
+
             if (_overrides.ContainsKey(typeof(T)))
             {
                 var reg = _overrides[typeof(T)];
@@ -43,7 +45,7 @@ namespace ScriptCs
         }
 
         private IContainer _container;
-        
+
         public IContainer Container
         {
             get

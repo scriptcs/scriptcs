@@ -16,6 +16,8 @@ namespace ScriptCs
 
         protected override void Append(LoggingEvent loggingEvent)
         {
+            Guard.AgainstNullArgument("loggingEvent", loggingEvent);
+
             var txt = new StringBuilder();
             txt.Append(loggingEvent.Level);
             txt.Append(": ");

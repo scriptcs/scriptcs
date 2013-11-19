@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="ScriptCs Test Rule Set" Description="Based on Microsoft Managed Recommended Rules." ToolsVersion="11.0">
+  <Include Path="managedminimumrules.ruleset" Action="Default" />
+</RuleSet>

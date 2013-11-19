@@ -20,7 +20,7 @@ namespace ScriptCs.Tests
                 _scriptPackMock = new Mock<IScriptPack>();
                 _contextMock = new Mock<IScriptPackContext>();
                 _scriptPackMock.Setup(p => p.GetContext()).Returns(_contextMock.Object);
-                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock.Object });
+                _scriptPackSession = new ScriptPackSession(new List<IScriptPack>{_scriptPackMock.Object}, new string[0]);
             }
 
             [Fact]
@@ -70,7 +70,7 @@ namespace ScriptCs.Tests
                 _scriptPackMock1.Setup(p => p.GetContext()).Returns(_contextMock1.Object);
                 _scriptPackMock2 = new Mock<IScriptPack>();
                 _scriptPackMock2.Setup(p => p.GetContext()).Returns(_contextMock2.Object);
-                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock1.Object, _scriptPackMock2.Object });
+                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock1.Object, _scriptPackMock2.Object }, new string[0]);
                 _scriptPackSession.InitializePacks();
             }
             
@@ -98,7 +98,7 @@ namespace ScriptCs.Tests
                 _scriptPackMock1.Setup(p => p.GetContext()).Returns(_contextMock1.Object);
                 _scriptPackMock2 = new Mock<IScriptPack>();
                 _scriptPackMock2.Setup(p => p.GetContext()).Returns(_contextMock2.Object);
-                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock1.Object, _scriptPackMock2.Object });
+                _scriptPackSession = new ScriptPackSession(new List<IScriptPack> { _scriptPackMock1.Object, _scriptPackMock2.Object }, new string[0]);
                 _scriptPackSession.TerminatePacks();
             }
 
@@ -112,7 +112,7 @@ namespace ScriptCs.Tests
 
         public class TheAddReferenceMethod
         {
-            private ScriptPackSession _scriptPackSession = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+            private ScriptPackSession _scriptPackSession = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
             public TheAddReferenceMethod()
             {
@@ -128,7 +128,7 @@ namespace ScriptCs.Tests
 
         public class TheImportNamespaceMethod
         {
-            private ScriptPackSession _scriptPackSession = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+            private ScriptPackSession _scriptPackSession = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
             public TheImportNamespaceMethod()
             {

@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 using Common.Logging;
 
@@ -9,7 +11,8 @@ namespace ScriptCs.Engine.Roslyn
 {
     public class RoslynScriptPersistentEngine : RoslynScriptCompilerEngine
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
+        private const string RoslynAssemblyNameCharacter = "ℛ";
 
         public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILog logger, IFileSystem fileSystem)
             : base(scriptHostFactory, logger)
@@ -32,7 +35,9 @@ namespace ScriptCs.Engine.Roslyn
 
             this.Logger.DebugFormat("Loading assembly {0}.", dllPath);
 
-            return Assembly.LoadFrom(dllPath);
+            // the assembly is automatically loaded into the AppDomain when compiled
+            // just need to find and return it
+            return AppDomain.CurrentDomain.GetAssemblies().LastOrDefault(x => x.FullName.StartsWith(RoslynAssemblyNameCharacter));
         }
     }
 }

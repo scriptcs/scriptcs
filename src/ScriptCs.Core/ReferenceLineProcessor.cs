@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.IO;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -22,20 +22,24 @@ namespace ScriptCs
             get { return "r"; }
         }
 
-        protected override bool IgnoreAfterCode
+        protected override BehaviorAfterCode BehaviorAfterCode
         {
-            get { return true; }
+            get { return BehaviorAfterCode.Throw; }
         }
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
+            Guard.AgainstNullArgument("context", context);
+
             var argument = GetDirectiveArgument(line);
             var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
 
             var referencePath = _fileSystem.GetFullPath(assemblyPath);
-            if (!string.IsNullOrWhiteSpace(referencePath) && !context.References.Contains(referencePath))
+            var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
+
+            if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
             {
-                context.References.Add(referencePath);
+                context.References.Add(referencePathOrName);
             }
 
             return true;

@@ -30,7 +30,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
 
                 var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
-                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory, It.IsAny<Action<string>>())).Returns(new[] { assemblyFile });
+                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
 
                 var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
 
@@ -70,7 +70,7 @@ namespace ScriptCs.Tests
 
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var managed = Path.Combine(binFolder, "MyAssembly.dll");
-                var nonManaged = Path.Combine(binFolder, "MyAssembly.dll");
+                var nonManaged = Path.Combine(binFolder, "MyNonManagedAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
@@ -79,6 +79,7 @@ namespace ScriptCs.Tests
 
                 var assemblyUtility = new Mock<IAssemblyUtility>();
                 assemblyUtility.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
+                assemblyUtility.Setup(x => x.IsManagedAssembly(nonManaged)).Returns(false);
 
                 var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
 

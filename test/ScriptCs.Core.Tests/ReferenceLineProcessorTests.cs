@@ -1,14 +1,12 @@
 ﻿using System;
-
 using Moq;
-
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Contracts;
-
 using Should;
-
 using Xunit.Extensions;
+using System.Linq;
+using Should.Core.Assertions;
+using ScriptCs.Contracts.Exceptions;
 
 namespace ScriptCs.Tests
 {
@@ -52,7 +50,7 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnTrueButNotAddReferenceIfAfterCode(
+            public void ShouldThrowExceptionIfAfterCode(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 ReferenceLineProcessor processor,
                 IFileParser parser)
@@ -66,12 +64,8 @@ namespace ScriptCs.Tests
 
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
                 
-                // Act
-                var result = processor.ProcessLine(parser, context, Line, false);
-
-                // Assert
-                result.ShouldBeTrue();
-                context.References.Count.ShouldEqual(0);
+                // Act / Assert
+                Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessLine(parser, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]
@@ -94,6 +88,29 @@ namespace ScriptCs.Tests
 
                 // Assert
                 context.References.Count.ShouldEqual(1);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddReferenceByNameFromGACIfLocalFileDoesntExist(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                ReferenceLineProcessor processor,
+                IFileParser parser)
+            {
+                // Arrange
+                var context = new FileParserContext();
+
+                var name = "script.csx";
+                var line = @"#r " + name;
+                var fullPath = "C:\\script.csx";
+
+                fileSystem.Setup(x => x.GetFullPath(name)).Returns(fullPath);
+                fileSystem.Setup(x => x.FileExists(fullPath)).Returns(false);
+
+                // Act
+                var result = processor.ProcessLine(parser, context, line, true);
+
+                // Assert
+                context.References.Count(x => x == name).ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]

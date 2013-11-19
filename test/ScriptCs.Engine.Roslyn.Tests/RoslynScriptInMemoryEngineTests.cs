@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-
+using Common.Logging;
+using Moq;
 using Ploeh.AutoFixture.Xunit;
-
+using Roslyn.Compilers;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
@@ -19,9 +21,9 @@ namespace ScriptCs.Tests
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldThrowExceptionThrownByScriptWhenErrorOccurs(
-                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+            public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
                 // Arrange
                 var lines = new List<string>
                 {
@@ -30,20 +32,40 @@ namespace ScriptCs.Tests
                 };
 
                 var code = string.Join(Environment.NewLine, lines);
-                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>());
+                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
 
                 // Act
-                var exception = Assert.Throws<ScriptExecutionException>(() =>
-                    scriptEngine.Execute(
-                        code,
-                        new string[0],
-                        Enumerable.Empty<string>(),
-                        Enumerable.Empty<string>(),
-                        session));
+                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                        session);
 
                 // Assert
-                exception.Message.ShouldContain("at Submission#0");
-                exception.Message.ShouldContain("Exception Message: InvalidOperationExceptionMessage.");
+                var exception = Assert.Throws<InvalidOperationException>(() => result.ExecuteExceptionInfo.Throw());
+                exception.StackTrace.ShouldContain("at Submission#0");
+                exception.Message.ShouldContain("InvalidOperationExceptionMessage");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExposeExceptionThrownByCompilation()
+            {
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+
+                // Arrange
+                var lines = new List<string>
+                {
+                    "using Sysasdasdasdtem;"
+                };
+
+                var code = string.Join(Environment.NewLine, lines);
+                var session = new ScriptPackSession(Enumerable.Empty<IScriptPack>(), new string[0]);
+
+                // Act
+                var result = scriptEngine.Execute(code, new string[0], Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                        session);
+
+                // Assert
+                var exception = Assert.Throws<ScriptCompilationException>(() => result.CompileExceptionInfo.Throw());
+                exception.InnerException.ShouldBeType<CompilationErrorException>();
+                exception.Message.ShouldContain("The type or namespace name 'Sysasdasdasdtem' could not be found");
             }
         }
     }

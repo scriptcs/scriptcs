@@ -5,7 +5,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -inMemory", "Shows how to start the script running from memory (not compiling to a .dll)")]
+    [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     [Serializable]
     public class ScriptCsArgs
     {
@@ -15,7 +15,8 @@ namespace ScriptCs
             Config = "scriptcs.opts";
         }
 
-        [ArgIgnore]
+        [ArgShortcut("repl")]
+        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
@@ -28,6 +29,7 @@ namespace ScriptCs
         public bool Help { get; set; }
 
         [ArgShortcut("inMemory")]
+        [DefaultValue(true)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
         public bool InMemory { get; set; }
 
@@ -66,6 +68,7 @@ namespace ScriptCs
         [ArgDescription("Runs the script in an isolated AppDomain")]
         public bool Isolated { get; set; }
 
+
         [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
@@ -77,6 +80,18 @@ namespace ScriptCs
 
         public ScriptServices CreateServices(ScriptConsole console = null)
         {
+            var extension = Path.GetExtension(ScriptName);
+            if(string.IsNullOrWhiteSpace(extension) && !Repl)
+            {
+                extension = ".csx";
+                var scriptName = string.Format("{0}.csx", ScriptName);
+                if(!File.Exists(scriptName))
+                {
+                    console.WriteLine(string.Format("Can't find a script named {0}", scriptName));
+                    return null;
+                }
+                ScriptName = scriptName;
+            }
             if(console == null)
             {
                 console = new ScriptConsole();
@@ -84,19 +99,12 @@ namespace ScriptCs
             var configurator = new LoggerConfigurator(LogLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
-
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .InMemory(InMemory)
                 .LogLevel(LogLevel)
                 .ScriptName(ScriptName)
                 .Repl(Repl);
-
             var modules = GetModuleList(Modules);
-            var extension = Path.GetExtension(ScriptName);
-            if(extension != null)
-            {
-                extension = extension.Substring(1);
-            }
             scriptServicesBuilder.LoadModules(extension, modules);
             return scriptServicesBuilder.Build();
         }

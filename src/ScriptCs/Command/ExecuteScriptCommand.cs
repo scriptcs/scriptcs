@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -51,23 +50,26 @@ namespace ScriptCs.Command
 
                 var result = Execute(workingDirectory, assemblyPaths ?? new string[0]);
 
-                if (result != null)
+                if (result == null) return CommandResult.Error;
+
+                if (result.CompileExceptionInfo != null)
                 {
-                    if (result.CompileExceptionInfo != null)
-                    {
-                        _logger.Error(result.CompileExceptionInfo.SourceException);
-                        return CommandResult.Error;
-                    }
-
-                    if (result.ExecuteExceptionInfo != null)
-                    {
-                        _logger.Error(result.ExecuteExceptionInfo.SourceException);
-                        return CommandResult.Error;
-                    }
-
-                    return CommandResult.Success;
+                    _logger.Error(result.CompileExceptionInfo.SourceException.Message);
+                    _logger.Debug(result.CompileExceptionInfo.SourceException);
+                    return CommandResult.Error;
                 }
 
+                if (result.ExecuteExceptionInfo != null)
+                {
+                    _logger.Error(result.ExecuteExceptionInfo.SourceException);
+                    return CommandResult.Error;
+                }
+
+                return CommandResult.Success;
+            }
+            catch (FileNotFoundException fnfex)
+            {
+                _logger.ErrorFormat("{0} - {1}", fnfex.Message, fnfex.FileName);
                 return CommandResult.Error;
             }
             catch (Exception ex)
