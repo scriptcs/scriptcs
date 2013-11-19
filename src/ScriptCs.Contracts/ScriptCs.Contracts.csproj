@@ -45,6 +45,8 @@
     <Compile Include="IPackageReference.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="IScriptExecutor.cs" />
+    <Compile Include="IScriptHost.cs" />
+    <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPack.cs" />
     <Compile Include="IScriptPackContext.cs" />
     <Compile Include="IScriptPackManager.cs" />

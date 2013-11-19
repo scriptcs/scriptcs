@@ -49,7 +49,10 @@ namespace ScriptCs.Engine.Roslyn
             {
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 Logger.Debug("Creating session");
-                var session = ScriptEngine.CreateSession(host);
+
+                var hostType = host.GetType();
+                ScriptEngine.AddReference(hostType.Assembly);
+                var session = ScriptEngine.CreateSession(host, hostType);
 
                 foreach (var reference in distinctReferences)
                 {

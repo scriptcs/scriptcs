@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Common.Logging;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
