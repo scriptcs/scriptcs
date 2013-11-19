@@ -81,7 +81,7 @@ namespace ScriptCs.Command
 
         protected virtual ScriptResult Execute(string workingDirectory, string[] assemblyPaths)
         {
-            _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
+            _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
             var result = _scriptExecutor.Execute(_script, ScriptArgs);
             _scriptExecutor.Terminate();
             return result;
