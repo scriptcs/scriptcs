@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
-
+using System.Reflection;
 using Common.Logging;
-
 using Moq;
-
+using ScriptCs.Contracts;
 using Should;
-
 using Xunit;
 
 namespace ScriptCs.Hosting.Tests
 {
-    using ScriptCs.Contracts;
-
     public class ModuleLoaderTests
     {
         public class TheLoadMethod
