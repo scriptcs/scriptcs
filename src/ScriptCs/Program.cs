@@ -31,21 +31,24 @@ namespace ScriptCs
 
             if (string.IsNullOrWhiteSpace(extension) && !commandArgs.Repl)
             {
+                // No extension was given, i.e we might have something like
+                // "scriptcs foo" to deal with. We activate the default extension,
+                // to make sure it's given to the LoadModules below.
                 extension = ".csx";
-                var scriptName = string.Format("{0}.csx", commandArgs.ScriptName);
 
-                if (!File.Exists(scriptName))
+                if (!string.IsNullOrWhiteSpace(commandArgs.ScriptName)) 
                 {
-                    console.WriteLine(string.Format(
-                        "Can't find a script named {0}",scriptName));
+                    // If the was in fact a script specified, we'll extend it
+                    // with the default extension, assuming the user giving
+                    // "scriptcs foo" actually meant "scriptcs foo.csx". We
+                    // perform no validation here thought; let it be done by
+                    // the activated command. If the file don't exist, it's
+                    // up to the command to detect and report.
 
-                    return 1;
+                    commandArgs.ScriptName += extension;
                 }
-
-                commandArgs.ScriptName = scriptName;
             }
             
-
             scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
 
