@@ -132,6 +132,20 @@ namespace ScriptCs.Tests
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
                 result.CommandArguments.Install.ShouldEqual("install test value");
             }
+
+            [Fact]
+            public void ShouldHandleHelp() 
+            {
+                string[] args = { "-help" };
+
+                var argumentHandler = Setup(null);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldBeNull();
+                result.CommandArguments.Help.ShouldBeTrue();
+            }
         }
     }
 }
