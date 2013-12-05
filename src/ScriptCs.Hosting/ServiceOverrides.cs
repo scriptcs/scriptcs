@@ -72,6 +72,12 @@ namespace ScriptCs
             return _this;
         }
 
+        public TConfig ObjectSerializer<T>() where T : IObjectSerializer
+        {
+            Overrides[typeof(IObjectSerializer)] = typeof(T);
+            return _this;
+        }
+
         public TConfig PackageContainer<T>() where T : IPackageContainer
         {
             Overrides[typeof(IPackageContainer)] = typeof(T);

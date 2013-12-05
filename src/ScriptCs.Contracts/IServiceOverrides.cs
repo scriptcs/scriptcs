@@ -18,6 +18,8 @@
 
         TConfig AssemblyUtility<T>() where T : IAssemblyUtility;
 
+        TConfig ObjectSerializer<T>() where T : IObjectSerializer;
+
         TConfig PackageContainer<T>() where T : IPackageContainer;
 
         TConfig PackageInstaller<T>() where T : IPackageInstaller;

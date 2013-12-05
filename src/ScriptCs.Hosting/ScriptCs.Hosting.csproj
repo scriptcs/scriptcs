@@ -34,6 +34,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.7.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.71.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -73,6 +77,7 @@
     <Compile Include="ScriptServicesRegistration.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
+    <Compile Include="ObjectSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
