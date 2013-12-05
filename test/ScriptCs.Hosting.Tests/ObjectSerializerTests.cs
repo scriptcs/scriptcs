@@ -32,10 +32,20 @@ namespace ScriptCs.Hosting.Tests
                 }));
             }
 
+            [Fact]
+            public void ShouldSerializeWithCircularReferences()
+            {
+                var foo = new Foo();
+                foo.Parent = foo;
+
+                Assert.DoesNotThrow(() => _serializer.Serialize(foo));
+            }
+
             private class Foo
             {
                 public Action Action { get; set; }
                 public Func<string> Func { get; set; }
+                public Foo Parent { get; set; }
             }
         }
     }

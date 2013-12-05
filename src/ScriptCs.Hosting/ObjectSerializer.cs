@@ -6,7 +6,11 @@ namespace ScriptCs
 {
     public class ObjectSerializer : IObjectSerializer
     {
-        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings { MaxDepth = 4, };
+        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            MaxDepth = 4
+        };
 
         public string Serialize(object value)
         {
