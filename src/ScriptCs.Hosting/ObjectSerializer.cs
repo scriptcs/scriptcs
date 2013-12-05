@@ -1,14 +1,16 @@
-﻿using ScriptCs.Contracts;
+﻿using Newtonsoft.Json;
 
-using ServiceStack.Text;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public class ObjectSerializer : IObjectSerializer
     {
+        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings { MaxDepth = 4, };
+
         public string Serialize(object value)
         {
-            return value.ToCsv();
+            return JsonConvert.SerializeObject(value, Formatting.Indented, Settings);
         }
     }
 }
