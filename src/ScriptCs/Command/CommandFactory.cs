@@ -42,6 +42,7 @@ namespace ScriptCs.Command
                     _scriptServices.ScriptPackResolver,
                     _scriptServices.Engine,
                     _scriptServices.FilePreProcessor,
+                    _scriptServices.ObjectSerializer,
                     _scriptServices.Logger,
                     _scriptServices.Console,
                     _scriptServices.AssemblyResolver);

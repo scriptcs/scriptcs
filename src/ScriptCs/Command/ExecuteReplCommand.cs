@@ -9,6 +9,7 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyResolver _assemblyResolver;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly IObjectSerializer _serializer;
         private readonly IScriptEngine _scriptEngine;
         private readonly string _scriptName;
         private readonly string[] _scriptArgs;
@@ -23,6 +24,7 @@ namespace ScriptCs.Command
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
+            IObjectSerializer serializer,
             ILog logger,
             IConsole console,
             IAssemblyResolver assemblyResolver)
@@ -33,6 +35,7 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
             _filePreProcessor = filePreProcessor;
+            _serializer = serializer;
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
@@ -43,7 +46,7 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             _console.WriteLine("scriptcs (ctrl-c to exit)\r\n");
-            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
+            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _serializer, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);

@@ -38,6 +38,7 @@
     <Compile Include="IModule.cs" />
     <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleMetadata.cs" />
+    <Compile Include="IObjectSerializer.cs" />
     <Compile Include="IPackageAssemblyResolver.cs" />
     <Compile Include="IPackageContainer.cs" />
     <Compile Include="IPackageInstaller.cs" />
