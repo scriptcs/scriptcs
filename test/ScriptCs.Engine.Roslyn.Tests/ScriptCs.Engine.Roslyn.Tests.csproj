@@ -7,6 +7,7 @@
     <RootNamespace>ScriptCs.Tests</RootNamespace>
     <AssemblyName>ScriptCs.Engine.Roslyn.Tests</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <CodeAnalysisRuleSet>..\..\ScriptCs.Test.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">

@@ -45,6 +45,20 @@ namespace ScriptCs.Tests
                 result.LogLevel.ShouldEqual(LogLevel.Info);
                 result.Config.ShouldEqual("scriptcs.opts");
             }
-        }         
+
+            [Fact]
+            public void ShouldSupportHelp() 
+            {
+                string[] args = { "-help" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.ScriptName.ShouldBeNull();
+                result.Help.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Info);
+            }
+        }
     }
 }

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using Common.Logging;
+using Moq;
 using Ploeh.AutoFixture.Xunit;
 using Roslyn.Compilers;
 using ScriptCs.Contracts;
@@ -20,9 +21,9 @@ namespace ScriptCs.Tests
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs(
-                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+            public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
                 // Arrange
                 var lines = new List<string>
                 {
@@ -44,9 +45,10 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldExposeExceptionThrownByCompilation(
-                [NoAutoProperties] RoslynScriptInMemoryEngine scriptEngine)
+            public void ShouldExposeExceptionThrownByCompilation()
             {
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+
                 // Arrange
                 var lines = new List<string>
                 {

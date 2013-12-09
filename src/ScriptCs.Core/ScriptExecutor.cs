@@ -103,15 +103,28 @@ namespace ScriptCs
         public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
-            var bin = Path.Combine(FileSystem.CurrentDirectory, "bin");
+            var bin = Path.Combine(FileSystem.CurrentDirectory, Constants.BinFolder);
+            var cache = Path.Combine(FileSystem.CurrentDirectory, Constants.DllCacheFolder);
 
             ScriptEngine.BaseDirectory = bin;
+            ScriptEngine.CacheDirectory = cache;
 
             Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
 
             scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;
+        }
+
+        public virtual void Reset()
+        {
+            References.Clear();
+            AddReferences(DefaultReferences);
+
+            Namespaces.Clear();
+            ImportNamespaces(DefaultNamespaces);
+
+            ScriptPackSession.State.Clear();
         }
 
         public virtual void Terminate()

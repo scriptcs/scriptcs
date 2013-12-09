@@ -43,7 +43,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHanldeArgumentTypeConversionBool()
             {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMemory\": \"true\" }";
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"cache\": \"true\" }";
 
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
@@ -51,13 +51,13 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldEqual("server.csx");
                 result.Install.ShouldEqual("install test value");
-                result.InMemory.ShouldEqual(true);
+                result.Cache.ShouldEqual(true);
             }
 
             [Fact]
             public void ShouldHanldeArgumentTypeConversionEnum()
             {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMemory\": \"true\", \"log\": \"error\" }";
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"cache\": \"true\", \"log\": \"error\" }";
 
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
@@ -65,14 +65,14 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldEqual("server.csx");
                 result.Install.ShouldEqual("install test value");
-                result.InMemory.ShouldEqual(true);
+                result.Cache.ShouldEqual(true);
                 result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
             public void ShouldHandleConfigArgumentsCaseInsensitive()
             {
-                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"inMeMOry\": \"tRUe\", \"logLEVEL\": \"TRaCE\" }";
+                const string file = "{\"Install\": \"install test value\", \"script\": \"server.csx\", \"cache\": \"tRUe\", \"logLEVEL\": \"TRaCE\" }";
 
                 var parser = new ConfigFileParser(new ScriptConsole());
                 var result = parser.Parse(file);
@@ -80,7 +80,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldEqual("server.csx");
                 result.Install.ShouldEqual("install test value");
-                result.InMemory.ShouldEqual(true);
+                result.Cache.ShouldEqual(true);
                 result.LogLevel.ShouldEqual(LogLevel.Trace);
             }
 

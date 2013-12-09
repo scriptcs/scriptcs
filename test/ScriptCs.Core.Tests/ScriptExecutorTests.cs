@@ -36,8 +36,32 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedBaseDirectory = Path.Combine(currentDirectory, "bin");
+                string expectedBaseDirectory = Path.Combine(currentDirectory, Constants.BinFolder);
                 expectedBaseDirectory.ShouldEqual(scriptEngine.Object.BaseDirectory);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldSetEngineDllCacheDirectoryBasedOnCurrentDirectory([Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem,
+                                                                                                                                     [Frozen] Mock<IFilePreProcessor> preProcessor, ScriptExecutor scriptExecutor)
+            {
+                // arrange
+                preProcessor.Setup(x => x.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+
+                var currentDirectory = @"C:\";
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(currentDirectory);
+                fileSystem.Setup(fs => fs.CurrentDirectory).Returns(currentDirectory);
+
+                scriptEngine.SetupProperty(e => e.CacheDirectory);
+
+                var paths = new string[0];
+                IEnumerable<IScriptPack> recipes = Enumerable.Empty<IScriptPack>();
+
+                // act
+                scriptExecutor.Initialize(paths, recipes);
+
+                // assert
+                string expectedCacheDirectory = Path.Combine(currentDirectory, Constants.DllCacheFolder);
+                expectedCacheDirectory.ShouldEqual(scriptEngine.Object.CacheDirectory);
             }
 
             [Theory, ScriptCsAutoData]

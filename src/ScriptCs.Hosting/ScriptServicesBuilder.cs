@@ -18,7 +18,7 @@ namespace ScriptCs
         private IRuntimeServices _runtimeServices;
         private readonly IConsole _console;
         private bool _repl = false;
-        private bool _inMemory = false;
+        private bool _cache = false;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
@@ -36,7 +36,7 @@ namespace ScriptCs
         public ScriptServices Build()
         {
             var defaultExecutorType = typeof(ScriptExecutor);
-            Type defaultEngineType = _inMemory ? typeof(RoslynScriptInMemoryEngine) : typeof(RoslynScriptPersistentEngine);
+            Type defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptInMemoryEngine);
 
             defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
 
@@ -58,15 +58,15 @@ namespace ScriptCs
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_inMemory, _scriptName, _repl, _logLevel, Overrides);
+            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
             loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
             return this;
         }
 
-        public IScriptServicesBuilder InMemory(bool inMemory = true)
+        public IScriptServicesBuilder Cache(bool cache = true)
         {
-            _inMemory = inMemory;
+            _cache = cache;
             return this;
         }
 

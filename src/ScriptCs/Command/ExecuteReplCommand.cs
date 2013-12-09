@@ -10,6 +10,7 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyResolver _assemblyResolver;
         private readonly IFilePreProcessor _filePreProcessor;
+        private readonly IObjectSerializer _serializer;
         private readonly IScriptEngine _scriptEngine;
         private readonly string _scriptName;
         private readonly string[] _scriptArgs;
@@ -24,6 +25,7 @@ namespace ScriptCs.Command
             IScriptPackResolver scriptPackResolver,
             IScriptEngine scriptEngine,
             IFilePreProcessor filePreProcessor,
+            IObjectSerializer serializer,
             ILog logger,
             IConsole console,
             IAssemblyResolver assemblyResolver)
@@ -34,6 +36,7 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
             _scriptEngine = scriptEngine;
             _filePreProcessor = filePreProcessor;
+            _serializer = serializer;
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
@@ -43,11 +46,11 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _console.WriteLine("scriptcs (ctrl-c or blank to exit)\r\n");
-            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _logger, _console, _filePreProcessor);
+            _console.WriteLine("scriptcs (ctrl-c to exit)\r\n");
+            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _serializer, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
-            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory, string.Empty);
+            var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks, ScriptArgs);
@@ -63,11 +66,13 @@ namespace ScriptCs.Command
                 while (ExecuteLine(repl))
                 {
                 }
+
+                _console.WriteLine();
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
-                return CommandResult.Error;              
+                return CommandResult.Error;
             }
 
             repl.Terminate();
@@ -81,13 +86,22 @@ namespace ScriptCs.Command
                 _console.Write("> ");
             }
 
-            var line = _console.ReadLine();
-            if (line == string.Empty && string.IsNullOrWhiteSpace(repl.Buffer))
+            string line = null;
+            
+            try
+            {
+                line = _console.ReadLine();
+            }
+            catch
             {
                 return false;
             }
 
-            repl.Execute(line);
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                repl.Execute(line);
+            }
+
             return true;
         }
     }

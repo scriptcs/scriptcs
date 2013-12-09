@@ -6,9 +6,13 @@ namespace ScriptCs.Contracts
     {
         void Write(string value);
 
+        void WriteLine();
+
         void WriteLine(string value);
 
         string ReadLine();
+
+        void Clear();
 
         void Exit();
 

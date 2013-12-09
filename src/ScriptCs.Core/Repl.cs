@@ -3,7 +3,6 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ServiceStack.Text;
 
 namespace ScriptCs
 {
@@ -11,15 +10,19 @@ namespace ScriptCs
     {
         private readonly string[] _scriptArgs;
 
+        private readonly IObjectSerializer _serializer;
+
         public Repl(
             string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptEngine scriptEngine,
+            IObjectSerializer serializer,
             ILog logger,
             IConsole console,
             IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
+            _serializer = serializer;
             Console = console;
         }
 
@@ -38,6 +41,18 @@ namespace ScriptCs
         {
             try
             {
+                if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.Clear();
+                    return new ScriptResult();
+                }
+
+                if (script.StartsWith("#reset"))
+                {
+                    Reset();
+                    return new ScriptResult();
+                }
+
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
@@ -75,7 +90,10 @@ namespace ScriptCs
                 if (result.ReturnValue != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(result.ReturnValue.ToJsv());
+
+                    var serializedResult = _serializer.Serialize(result.ReturnValue);
+
+                    Console.WriteLine(serializedResult);
                 }
 
                 Buffer = null;

@@ -10,13 +10,19 @@ namespace ScriptCs
     {
         protected readonly IList<Type> LineProcessors = new List<Type>();
 
-        protected readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
 
         private readonly TConfig _this;
 
         protected ServiceOverrides()
         {
             _this = this as TConfig;
+        }
+
+        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
+        {
+            Overrides[typeof (IScriptHostFactory)] = typeof (T);
+            return _this;
         }
 
         protected ServiceOverrides(IDictionary<Type, object> overrides)
@@ -63,6 +69,12 @@ namespace ScriptCs
         public TConfig AssemblyUtility<T>() where T : IAssemblyUtility
         {
             Overrides[typeof(IAssemblyUtility)] = typeof(T);
+            return _this;
+        }
+
+        public TConfig ObjectSerializer<T>() where T : IObjectSerializer
+        {
+            Overrides[typeof(IObjectSerializer)] = typeof(T);
             return _this;
         }
 

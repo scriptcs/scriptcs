@@ -6,7 +6,7 @@ namespace ScriptCs
     {
         ScriptServices Build();
 
-        IScriptServicesBuilder InMemory(bool inMemory = true);
+        IScriptServicesBuilder Cache(bool cache = true);
 
         IScriptServicesBuilder ScriptName(string name);
 

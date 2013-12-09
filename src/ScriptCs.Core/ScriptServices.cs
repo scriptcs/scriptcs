@@ -14,6 +14,7 @@ namespace ScriptCs
             IFilePreProcessor filePreProcessor,
             IScriptPackResolver scriptPackResolver, 
             IPackageInstaller packageInstaller,
+            IObjectSerializer objectSerializer,
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
@@ -26,6 +27,7 @@ namespace ScriptCs
             FilePreProcessor = filePreProcessor;
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
+            ObjectSerializer = objectSerializer;
             Logger = logger;
             Console = console;
             AssemblyResolver = assemblyResolver;
@@ -37,6 +39,7 @@ namespace ScriptCs
         public IScriptExecutor Executor { get; private set; }
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
+        public IObjectSerializer ObjectSerializer { get; private set; }
         public ILog Logger { get; private set; }
         public IScriptEngine Engine { get; private set; }
         public IFilePreProcessor FilePreProcessor { get; private set; }

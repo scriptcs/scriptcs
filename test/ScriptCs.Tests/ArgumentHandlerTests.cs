@@ -1,8 +1,8 @@
 ﻿using Moq;
 using ScriptCs.Argument;
 using ScriptCs.Contracts;
-using Xunit;
 using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
@@ -13,7 +13,7 @@ namespace ScriptCs.Tests
             private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true)
             {
                 const string currentDirectory = "C:\\test\\folder";
-                
+
                 string filePath = currentDirectory + '\\' + fileName;
 
                 var fs = new Mock<IFileSystem>();
@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
             public void ShouldHandleCommandLineArgumentsOverConfigFile()
             {
                 const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
-                string[] args = { "server.csx", "-Install", "command line arg", "-inMemory", "false", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-Install", "command line arg", "-cache", "--", "-port", "8080" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
@@ -55,7 +55,7 @@ namespace ScriptCs.Tests
                 result.Arguments.ShouldEqual(args);
                 result.CommandArguments.ScriptName.ShouldEqual("server.csx");
                 result.CommandArguments.Install.ShouldEqual("command line arg");
-                result.CommandArguments.InMemory.ShouldEqual(false);
+                result.CommandArguments.Cache.ShouldEqual(true);
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
@@ -73,6 +73,18 @@ namespace ScriptCs.Tests
                 result.CommandArguments.ScriptName.ShouldEqual("server.csx");
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
+            public void ShouldHandleInvalidCommandLineArguments()
+            {
+                string[] args = { "-version", "-foo", "-bar" };
+
+                var argumentHandler = Setup(null, "test.txt", false);
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.ShouldBeNull();
+                result.Arguments.Length.ShouldEqual<int>(3);
             }
 
             [Fact]
@@ -119,6 +131,20 @@ namespace ScriptCs.Tests
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
                 result.CommandArguments.Install.ShouldEqual("install test value");
+            }
+
+            [Fact]
+            public void ShouldHandleHelp() 
+            {
+                string[] args = { "-help" };
+
+                var argumentHandler = Setup(null);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldBeNull();
+                result.CommandArguments.Help.ShouldBeTrue();
             }
         }
     }

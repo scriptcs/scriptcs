@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Common.Logging;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -10,7 +11,17 @@ namespace ScriptCs.Engine.Roslyn
             : base(scriptHostFactory, logger)
         {
         }
-        
+
+        protected override bool ShouldCompile()
+        {
+            return true;
+        }
+
+        protected override Assembly LoadAssemblyFromCache()
+        {
+            throw new NotImplementedException("Reaching this point indicates a bug. The RoslynScriptInMemoryEngine should never load the assembly from the cache.");
+        }
+
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
             this.Logger.Debug("Loading assembly from memory.");

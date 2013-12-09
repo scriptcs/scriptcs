@@ -32,7 +32,7 @@ namespace ScriptCs
             _assemblyUtility = assemblyUtility;
         }
 
-        public IEnumerable<string> GetAssemblyPaths(string path, string scriptName)
+        public IEnumerable<string> GetAssemblyPaths(string path)
         {
             Guard.AgainstNullArgument("path", path);
 
@@ -43,7 +43,7 @@ namespace ScriptCs
             }
 
             var packageAssemblies = GetPackageAssemblies(path);
-            var binAssemblies = GetBinAssemblies(path, scriptName);
+            var binAssemblies = GetBinAssemblies(path);
 
             assemblies = packageAssemblies.Union(binAssemblies).ToList();
             _assemblyPathCache.Add(path, assemblies);
@@ -51,7 +51,7 @@ namespace ScriptCs
             return assemblies;
         }
 
-        private IEnumerable<string> GetBinAssemblies(string path, string scriptName)
+        private IEnumerable<string> GetBinAssemblies(string path)
         {
             var binFolder = Path.Combine(path, Constants.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))
@@ -59,11 +59,9 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var dllName = string.IsNullOrEmpty(scriptName) ? string.Empty : scriptName.Replace(Path.GetExtension(scriptName), ".dll");
-
             var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
                 .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
-                .Where(f => _assemblyUtility.IsManagedAssembly(f) && !dllName.Equals(Path.GetFileName(f)))
+                .Where(f => _assemblyUtility.IsManagedAssembly(f))
                 .ToList();
 
             foreach (var assembly in assemblies)

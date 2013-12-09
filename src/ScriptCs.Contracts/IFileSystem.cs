@@ -12,7 +12,7 @@ namespace ScriptCs.Contracts
 
         bool DirectoryExists(string path);
 
-        void CreateDirectory(string path);
+        void CreateDirectory(string path, bool hidden = false);
 
         void DeleteDirectory(string path);
 

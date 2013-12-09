@@ -15,6 +15,7 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected readonly ScriptEngine ScriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
+
         public const string SessionKey = "Session";
 
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
@@ -33,6 +34,8 @@ namespace ScriptCs.Engine.Roslyn
             set { ScriptEngine.BaseDirectory = value; }
         }
 
+        public string CacheDirectory { get; set; }
+
         public string FileName { get; set; }
 
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
@@ -49,7 +52,10 @@ namespace ScriptCs.Engine.Roslyn
             {
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 Logger.Debug("Creating session");
-                var session = ScriptEngine.CreateSession(host);
+
+                var hostType = host.GetType();
+                ScriptEngine.AddReference(hostType.Assembly);
+                var session = ScriptEngine.CreateSession(host, hostType);
 
                 foreach (var reference in references.PathReferences)
                 {
