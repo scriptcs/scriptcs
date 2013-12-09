@@ -118,7 +118,7 @@ namespace ScriptCs
 
         public virtual void Reset()
         {
-            References.Clear();
+            References = new AssemblyReferences();
             AddReferences(DefaultReferences);
 
             Namespaces.Clear();
