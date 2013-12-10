@@ -18,7 +18,7 @@ namespace ScriptCs.Tests
 
             public TheGetMethod()
             {
-                _scriptHost = new ScriptHost(_mockScriptPackManager.Object, new string[0]);
+                _scriptHost = new ScriptHost(_mockScriptPackManager.Object, new ScriptEnvironment(new string[0]));
                 _mockScriptPackManager.Setup(s => s.Get<IScriptPackContext>()).Returns(_mockContext.Object);
             }
 
@@ -33,11 +33,12 @@ namespace ScriptCs.Tests
         public class TheConstructor
         {
             [Fact]
-            public void ShouldSetScriptArgsWhenConstructed()
+            public void ShouldSetScriptEnvironment()
             {
-                var scriptArgs = new string[0];
-                var scriptHost = new ScriptHost(null, scriptArgs);
-                scriptHost.ScriptArgs.ShouldEqual(scriptArgs);
+                var environment = new ScriptEnvironment(new string[0]);
+                var scriptHost = new ScriptHost(null, environment);
+
+                scriptHost.Env.ShouldEqual(environment);
             }
         }
     }
