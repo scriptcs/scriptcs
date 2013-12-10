@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime;
 using ScriptCs.Argument;
 using ScriptCs.Command;
 
@@ -6,8 +7,11 @@ namespace ScriptCs
 {
     internal static class Program
     {
-        private static int Main(string[] args) 
+        private static int Main(string[] args)
         {
+            ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
+            ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+
             var console = new ScriptConsole();
 
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
