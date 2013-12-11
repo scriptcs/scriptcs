@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -38,7 +39,29 @@ namespace ScriptCs
 
             if (getModules == null)
             {
-                getModules = (container) => container.GetExports<IModule, IModuleMetadata>();
+                getModules = (container) =>
+                {
+                    try
+                    {
+                        return container.GetExports<IModule, IModuleMetadata>();
+                    }
+                    catch (ReflectionTypeLoadException exception)
+                    {
+                        if (exception.LoaderExceptions != null && exception.LoaderExceptions.Any())
+                        {
+                            foreach (var loaderException in exception.LoaderExceptions)
+                            {
+                                logger.Error(string.Format("Module loader exception {0}", loaderException.Message));
+                            }
+                        }
+                        else
+                        {
+                            logger.Error("Module loader threw an exception", exception);
+                        }
+                        return Enumerable.Empty<Lazy<IModule, IModuleMetadata>>();
+                    }
+                };
+
             }
 
             _getModules = getModules;
