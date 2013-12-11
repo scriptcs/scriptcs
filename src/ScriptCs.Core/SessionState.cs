@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -6,6 +7,6 @@ namespace ScriptCs
     {
         public T Session { get; set; }
 
-        public IEnumerable<string> References { get; set; }
+        public AssemblyReferences References { get; set; }
     }
 }

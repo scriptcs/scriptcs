@@ -80,10 +80,10 @@ namespace ScriptCs.Tests
             {
                 foreach (var reference in Repl.DefaultReferences)
                 {
-                    _repl.References.ShouldContain(reference);
+                    _repl.References.PathReferences.ShouldContain(reference);
                 }
 
-                _repl.References.ShouldContain(@"c:\path");
+                _repl.References.PathReferences.ShouldContain(@"c:\path");
             }
 
             [Fact]
@@ -169,7 +169,7 @@ namespace ScriptCs.Tests
             public void CatchesExceptionsAndWritesThemInRed()
             {
                 _mocks.ScriptEngine.Setup(
-                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                       .Throws<ArgumentException>();
 
                 _repl.Execute("foo");
@@ -207,7 +207,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
 
             [Fact]
@@ -219,7 +219,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Execute("#load \"file.csx\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
 
             [Fact]
@@ -237,7 +237,7 @@ namespace ScriptCs.Tests
                 _repl.Execute("#r \"my.dll\"");
 
                 //default references = 6, + 1 we just added
-                _repl.References.Count().ShouldEqual(7);
+                _repl.References.PathReferences.Count().ShouldEqual(7);
             }
 
             [Fact]
@@ -269,7 +269,7 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"PresentationCore\"");
 
-                _repl.References.Contains("PresentationCore").ShouldBeTrue();
+                _repl.References.PathReferences.Contains("PresentationCore").ShouldBeTrue();
             }
 
             [Fact]
@@ -286,7 +286,7 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                _repl.References.Contains("my.dll").ShouldBeTrue();
+                _repl.References.PathReferences.Contains("my.dll").ShouldBeTrue();
             }
 
             [Fact]
@@ -300,14 +300,14 @@ namespace ScriptCs.Tests
                     .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
                 mocks.ScriptEngine.Setup(
                     i =>
-                    i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                    i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                      .Throws(new FileNotFoundException("error", "my.dll"));
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
-                _repl.References.Contains("my.dll").ShouldBeFalse();
+                _repl.References.PathReferences.Contains("my.dll").ShouldBeFalse();
             }
 
             [Fact]
@@ -319,7 +319,7 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+                mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
 
             [Fact]
@@ -328,7 +328,7 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
                     x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                      .Returns<ScriptResult>(x => new ScriptResult()
                      {
@@ -351,7 +351,7 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
                     x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                      .Returns(new ScriptResult
                      {
@@ -374,7 +374,7 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
                     x =>
-                    x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(),
+                    x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                      .Returns(new ScriptResult
                      {

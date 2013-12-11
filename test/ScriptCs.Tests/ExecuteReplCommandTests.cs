@@ -58,7 +58,7 @@ namespace ScriptCs.Tests
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
                 scriptEngine.Setup(
-                    x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+                    x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
@@ -87,7 +87,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 scriptEngine.Verify(
-                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+                    x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
         }
     }

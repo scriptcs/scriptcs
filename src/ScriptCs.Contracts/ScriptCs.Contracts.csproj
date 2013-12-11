@@ -19,6 +19,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyReferences.cs" />
     <Compile Include="BehaviorAfterCode.cs" />
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
