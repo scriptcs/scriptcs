@@ -6,13 +6,13 @@ namespace ScriptCs
     {
         private readonly IScriptPackManager _scriptPackManager;
 
-        public ScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
+        public ScriptHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment)
         {
             _scriptPackManager = scriptPackManager;
-            ScriptArgs = scriptArgs;
+            Env = environment;
         }
 
-        public string[] ScriptArgs { get; private set; }
+        public ScriptEnvironment Env { get; private set; }
 
         public T Require<T>() where T : IScriptPackContext
         {
