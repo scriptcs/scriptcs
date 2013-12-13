@@ -2,7 +2,7 @@
 
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class ObjectSerializer : IObjectSerializer
     {

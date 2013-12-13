@@ -2,6 +2,7 @@
 using System.Runtime;
 using ScriptCs.Argument;
 using ScriptCs.Command;
+using ScriptCs.Hosting;
 
 namespace ScriptCs
 {

@@ -1,6 +1,8 @@
 ﻿using Moq;
 using ScriptCs.Argument;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting;
+
 using Should;
 using Xunit;
 
