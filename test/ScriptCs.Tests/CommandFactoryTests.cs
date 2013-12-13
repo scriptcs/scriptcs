@@ -33,7 +33,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldInstallAndRestoreWhenInstallFlagIsOn()
+            public void ShouldInstallAndSaveWhenInstallFlagIsOn()
             {
                 // Arrange
                 var args = new ScriptCsArgs
@@ -45,25 +45,6 @@ namespace ScriptCs.Tests
 
                 // Act
                 var factory = new CommandFactory(CreateRoot());
-                var result = factory.CreateCommand(args, new string[0]);
-
-                // Assert
-                result.ShouldImplement<IInstallCommand>();
-            }
-
-            [Fact]
-            public void ShouldInstallAndSaveWhenInstallFlagIsOnAndNoPackagesFileExists()
-            {
-                // Arrange
-                var args = new ScriptCsArgs
-                {
-                    AllowPreRelease = false,
-                    Install = string.Empty,
-                    ScriptName = null
-                };
-
-                // Act
-                var factory = new CommandFactory(CreateRoot(packagesFileExists: false));
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert

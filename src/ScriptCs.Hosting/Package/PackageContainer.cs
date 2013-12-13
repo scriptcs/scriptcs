@@ -5,7 +5,6 @@ using System.Runtime.Versioning;
 using NuGet;
 
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 using PackageReference = ScriptCs.Package.PackageReference;
@@ -37,7 +36,11 @@ namespace ScriptCs.Hosting.Package
             foreach (var package in newestPackages)
             {
                 var newestFramework = GetNewestSupportedFramework(package);
-                packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+
+                if (!packageReferenceFile.EntryExists(package.Id, package.Version))
+                {
+                    packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+                }
 
                 if (newestFramework == null)
                 {

@@ -319,20 +319,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldNotSaveWhenThereIsPackagesFile()
-            {
-                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
-                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
-                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
-                var resolver = GetResolver();
-
-                resolver.SavePackages();
-
-                _pc.Verify(i => i.CreatePackageFile(), Times.Never());
-                _logger.Verify(i => i.Info(It.Is<string>(x => x == "Packages.config already exists!")), Times.Once());
-            }
-
-            [Fact]
             public void ShouldNotSaveWhenThereIsNoPackagesFolder()
             {
                 _fs.Setup(i => i.CurrentDirectory).Returns("C:/");

@@ -25,14 +25,7 @@ namespace ScriptCs
 
         public void SavePackages()
         {
-            var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
-
-            if (_fileSystem.FileExists(packagesFile))
-            {
-                _logger.Info("Packages.config already exists!");
-                return;
-            }
 
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {

@@ -92,19 +92,9 @@ namespace ScriptCs.Command
                     _scriptServices.PackageInstaller,
                     _scriptServices.Logger);
 
-                string currentDirectory = null;
-
-                currentDirectory = _scriptServices.FileSystem.CurrentDirectory;
-
-                var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
-
-                if (!_scriptServices.FileSystem.FileExists(packageFile))
-                {
-                    var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
-                    return new CompositeCommand(installCommand, saveCommand);
-                }
-
-                return installCommand;
+                var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
+                
+                return new CompositeCommand(installCommand, saveCommand);
             }
 
             if (args.Clean)
