@@ -371,7 +371,7 @@ namespace ScriptCs.Tests
                 const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, q));
+                    .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
