@@ -17,6 +17,8 @@ namespace ScriptCs.Contracts
 
         public AssemblyReferences Except(AssemblyReferences obj)
         {
+            Guard.AgainstNullArgument("obj", obj);
+
             var deltaObject = new AssemblyReferences
                 {
                     PathReferences = new HashSet<string>(PathReferences.Except(obj.PathReferences)),
