@@ -42,7 +42,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldResolvePathsFromTheAssemblyResolver()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => { }, c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
-                loader.Load(null, "c:\test", null);
+                loader.Load(null, new[] { "c:\test" }, null);
                 _mockAssemblyResolver.Verify(r => r.GetAssemblyPaths("c:\test"));
             }
 
@@ -50,8 +50,8 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldInvokeTheCatalogActionForEachFile()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
-                loader.Load(null, "c:\test", null);
-                _paths.Count.ShouldEqual(2);            
+                loader.Load(null, new[] { "c:\test" }, null);
+                _paths.Count.ShouldEqual(2);
             }
 
             [Fact]
