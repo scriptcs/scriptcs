@@ -26,6 +26,11 @@ namespace ScriptCs
         [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
+        [ArgShortcut("debug")]
+        [DefaultValue(false)]
+        [ArgDescription("Emits PDB symbols allowing for attaching a Visual Studio debugger")]
+        public bool Debug { get; set; }
+
         [ArgShortcut("cache")]
         [DefaultValue(false)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
