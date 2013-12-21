@@ -12,6 +12,8 @@ namespace ScriptCs
 
         IScriptServicesBuilder Repl(bool repl = true);
 
+        IScriptServicesBuilder Debug(bool debug);
+
         IScriptServicesBuilder LogLevel(LogLevel level);
 
         IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);

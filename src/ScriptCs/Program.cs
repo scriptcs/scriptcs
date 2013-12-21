@@ -25,6 +25,7 @@ namespace ScriptCs
  
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .Cache(commandArgs.Cache)
+                .Debug(commandArgs.Debug)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
