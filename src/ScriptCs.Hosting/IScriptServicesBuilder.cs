@@ -12,7 +12,7 @@ namespace ScriptCs
 
         IScriptServicesBuilder Repl(bool repl = true);
 
-        IScriptServicesBuilder Debug(bool debug);
+        IScriptServicesBuilder Debug(bool debug = true);
 
         IScriptServicesBuilder LogLevel(LogLevel level);
 

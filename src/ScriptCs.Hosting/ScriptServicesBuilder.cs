@@ -93,7 +93,7 @@ namespace ScriptCs
             return this;
         }
 
-        public IScriptServicesBuilder Debug(bool debug)
+        public IScriptServicesBuilder Debug(bool debug = true)
         {
             _debug = debug;
             return this;
