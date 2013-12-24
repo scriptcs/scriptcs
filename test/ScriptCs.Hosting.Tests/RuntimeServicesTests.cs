@@ -231,7 +231,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldLogAWarningOnAnAssemblyLoadFailure()
+            public void ShouldLogOnDebugAnAssemblyLoadFailure()
             {
                 var mock = new Mock<IAssemblyResolver>();
                 mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] {"foo.dll"});
@@ -240,8 +240,33 @@ namespace ScriptCs.Tests
                 var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
                 var container = runtimeServices.Container;
                 _mockLogger.Verify(l=>l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "foo.dll", "Could not load file or assembly 'foo.dll' or one of its dependencies. The system cannot find the file specified."));
-                _mockLogger.Verify(l=>l.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details"));
             }
+
+            [Fact]
+            public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningScript()
+            {
+                var mock = new Mock<IAssemblyResolver>();
+                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] { "foo.dll" });
+                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
+                var container = runtimeServices.Container;
+                _mockLogger.Verify(l => l.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details"));
+            }
+
+            [Fact]
+            public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningInRepl()
+            {
+                var mock = new Mock<IAssemblyResolver>();
+                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] { "foo.dll" });
+                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "");
+                var container = runtimeServices.Container;
+                _mockLogger.Verify(l => l.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"));
+            }
+
+
         }
     }
 }
