@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Linq;
-
+using System.Reflection;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
@@ -67,9 +68,20 @@ namespace ScriptCs
                 var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
 
                 var aggregateCatalog = new AggregateCatalog();
-
-                assemblies.Select(x => new AssemblyCatalog(x)).ToList()
-                    .ForEach(catalog => aggregateCatalog.Catalogs.Add(catalog));
+                foreach (var assembly in assemblies)
+                {
+                    try
+                    {
+                        var catalog = new AssemblyCatalog(assembly);
+                        catalog.Parts.ToList(); //force the Parts to be read
+                        aggregateCatalog.Catalogs.Add(catalog);
+                    }
+                    catch(Exception ex)
+                    {
+                        this.Logger.WarnFormat("Failed loading Assembly {0}", assembly);
+                        this.Logger.Debug(ex.Message);
+                    }
+                }
 
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
