@@ -8,7 +8,7 @@ namespace ScriptCs
 {
     internal static class Program
     {
-        private static int Main(string[] args)
+        internal static int Main(string[] args)
         {
             ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
             ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
