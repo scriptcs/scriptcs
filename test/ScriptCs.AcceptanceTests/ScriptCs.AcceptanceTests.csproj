@@ -76,6 +76,7 @@
     <Compile Include="NugetPackageInstallationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptExecutionTests.cs" />
+    <Compile Include="ScriptPackTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\ScriptCs\ScriptCs.csproj">
@@ -86,6 +87,9 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Files\adder\start.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Files\InstallPackagesFromPackagesConfigFile.packages.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -8,6 +8,7 @@ using Xbehave;
 using Xunit;
 using System.IO;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace ScriptCs.AcceptanceTests
 {
@@ -17,7 +18,7 @@ namespace ScriptCs.AcceptanceTests
         [Trait("AcceptanceTest", "RunningScriptsTests")]
         [Trait("Requires", "Internet Connection")]
         [Trait("Requires", "Administrator Privileges")]
-        public void RunningWebApiHostSampleEnablesWebAccessInLocalhost(string originalWorkingDirectory, Task<int> scriptTask)
+        public void RunningWebApiHostSampleEnablesWebAccessInLocalhost(string originalWorkingDirectory, string localDirectory, Task<int> scriptTask)
         {
             string methodName = AcceptanceTestHelpers.GetCurrentMethodName();
 
@@ -25,24 +26,30 @@ namespace ScriptCs.AcceptanceTests
             ._(() =>
             {
                 originalWorkingDirectory = Environment.CurrentDirectory;
-                var localDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(), methodName);
-                if (Directory.Exists(localDirectory)) Directory.Delete(localDirectory, true);
-
                 localDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(), methodName);
-
-                var webApiHostDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(),
-                @"Files\webapihost");
+                
+                var webApiHostDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(),  @"Files\webapihost");
                 Directory.CreateDirectory(localDirectory);
                 AcceptanceTestHelpers.CopyDirectory(webApiHostDirectory, localDirectory, true);
 
                 Environment.CurrentDirectory = localDirectory;
 
-                Program.Main("-install".Split(' '));
-            }).Teardown(() => Environment.CurrentDirectory = originalWorkingDirectory);
+                var process =  AcceptanceTestHelpers.LaunchScriptCs("-install");
+                process.WaitForExit();
+            }).Teardown(() =>
+            {
+                Environment.CurrentDirectory = originalWorkingDirectory;
+                Directory.Delete(localDirectory, true);
+            });
 
             "When the sample is executed"._(() =>
             {
-                scriptTask = Task.Run(() => Program.Main("start.csx".Split(' ')));
+                scriptTask = Task.Run(() =>
+                {
+                    var process =  AcceptanceTestHelpers.LaunchScriptCs("start.csx");
+                    process.WaitForExit();
+                    return process.ExitCode;
+                });
             });
 
             "Then the endpoint can be hit"._(() =>

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Should;
 using Xbehave;
 using Xunit;
+using System.Diagnostics;
 
 namespace ScriptCs.AcceptanceTests
 {
@@ -40,9 +41,10 @@ namespace ScriptCs.AcceptanceTests
 
             "When the packages are installed"._(() =>
             {
-                const string Args = "-install";
+                var process =  AcceptanceTestHelpers.LaunchScriptCs("-install");
+                process.WaitForExit();
 
-                result = Program.Main(Args.Split(' '));
+                result = process.ExitCode;
             });
 
             "Then the program executes successfully"._(() => result.ShouldEqual(0));
@@ -95,7 +97,10 @@ namespace ScriptCs.AcceptanceTests
             {
                 string args = string.Format("-install {0}", packageName);
 
-                result = Program.Main(args.Split(' '));
+                var process = AcceptanceTestHelpers.LaunchScriptCs(args);
+                process.WaitForExit();
+
+                result = process.ExitCode;
             });
 
             "Then the program executes successfully"._(() => result.ShouldEqual(0));

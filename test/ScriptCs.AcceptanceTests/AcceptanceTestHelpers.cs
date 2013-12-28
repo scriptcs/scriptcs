@@ -8,6 +8,11 @@ namespace ScriptCs.AcceptanceTests
 {
     internal class AcceptanceTestHelpers
     {
+        public static Process LaunchScriptCs(string arguments)
+        {
+            return Process.Start(new ProcessStartInfo { FileName = "scriptcs.exe", Arguments = arguments, CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true });
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetCurrentMethodName()
         {
