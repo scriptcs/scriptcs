@@ -26,8 +26,8 @@ namespace ScriptCs.Argument
             {
                 commandArgs = Args.Parse<ScriptCsArgs>(args);
 
-                //if there is only 1 arg and it is a loglevel (since it changed - Info is default), it's also REPL
-                if (args.Length == 2 && commandArgs.LogLevel != LogLevel.Info)
+                //if there is only 1 arg and it is a loglevel, it's also REPL
+                if (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-loglevel" || x.ToLowerInvariant() == "-log"))
                 {
                     commandArgs.Repl = true;
                 }
