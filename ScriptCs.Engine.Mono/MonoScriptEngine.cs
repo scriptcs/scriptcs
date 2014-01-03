@@ -62,14 +62,6 @@ namespace ScriptCs.Engine.Mono
                 evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
                 evaluator.InteractiveBaseClass = typeof(MonoHost);
 
-                //if (code.Contains("//exec"))
-                //{
-                //evaluator.Compile(parseResult.Declarations);
-                //code = parseResult.Evaluations;
-                //  evaluator.Compile(code.Split(new[] { "//exec" }, StringSplitOptions.RemoveEmptyEntries)[0]);
-                //code = code.Split(new[] { "//exec" }, StringSplitOptions.RemoveEmptyEntries)[1];
-                //}
-
                 if (parseResult.Declarations != null)
                 {
                     evaluator.Compile(parseResult.Declarations);
