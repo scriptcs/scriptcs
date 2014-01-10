@@ -92,14 +92,14 @@ namespace ScriptCs.Command
                     _scriptServices.PackageInstaller,
                     _scriptServices.Logger);
 
-                var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
+                var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver, _scriptServices.Logger);
                 
                 return new CompositeCommand(installCommand, saveCommand);
             }
 
             if (args.Clean)
             {
-                var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver);
+                var saveCommand = new SaveCommand(_scriptServices.PackageAssemblyResolver, _scriptServices.Logger);
 
                 if (args.Global)
                 {
@@ -121,7 +121,7 @@ namespace ScriptCs.Command
 
             if (args.Save)
             {
-                return new SaveCommand(_scriptServices.PackageAssemblyResolver);
+                return new SaveCommand(_scriptServices.PackageAssemblyResolver, _scriptServices.Logger);
             }
 
             if (args.Version)

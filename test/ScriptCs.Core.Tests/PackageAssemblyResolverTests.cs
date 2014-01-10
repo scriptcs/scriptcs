@@ -336,31 +336,12 @@ namespace ScriptCs.Tests
             public void ShouldSaveWhenThereIsNoPackagesConfigAndThereIsPackagesFolder()
             {
                 _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
-                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
                 _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
-                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string> { "package" });
                 var resolver = GetResolver();
 
                 resolver.SavePackages();
 
                 _pc.Verify(i => i.CreatePackageFile(), Times.Once());
-                _logger.Verify(i => i.Info(It.Is<string>(x => x == "Packages.config successfully created!")), Times.Once());
-                _logger.Verify(i => i.Info(It.Is<string>(x => x == "Added package")), Times.Once());
-            }
-
-            [Fact]
-            public void ShouldDisplayErrorWhenNoPackagesFound()
-            {
-                _fs.Setup(i => i.CurrentDirectory).Returns("C:/");
-                _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
-                _fs.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
-                _pc.Setup(i => i.CreatePackageFile()).Returns(new List<string>());
-                var resolver = GetResolver();
-
-                resolver.SavePackages();
-
-                _pc.Verify(i => i.CreatePackageFile(), Times.Once());
-                _logger.Verify(i => i.Info(It.Is<string>(x => x == "No packages found!")), Times.Once());
             }
         }
     }

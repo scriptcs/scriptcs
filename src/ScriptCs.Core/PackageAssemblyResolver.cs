@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -33,15 +32,7 @@ namespace ScriptCs
                 return;
             }
 
-            var result = _packageContainer.CreatePackageFile().ToList();
-            if (!result.Any())
-            {
-                _logger.Info("No packages found!");
-                return;
-            }
-
-            result.ForEach(i => _logger.Info(string.Format("Added {0}", i)));
-            _logger.Info("Packages.config successfully created!");
+            _packageContainer.CreatePackageFile();
         }
 
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)

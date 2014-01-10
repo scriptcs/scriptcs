@@ -1,4 +1,7 @@
 ﻿using System;
+
+using Common.Logging;
+
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -7,21 +10,25 @@ namespace ScriptCs.Command
     {
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
-        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver)
+        private readonly ILog _logger;
+
+        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
         {
             _packageAssemblyResolver = packageAssemblyResolver;
+            _logger = logger;
         }
 
         public CommandResult Execute()
         {
-            Console.WriteLine("Initiated saving packages into packages.config...");
+            _logger.InfoFormat("Saving packages in {0}...", Constants.PackagesFile);
+
             try
             {
                 _packageAssemblyResolver.SavePackages();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Save failed: {0}.", e.Message);
+                _logger.ErrorFormat("Save failed: {0}.", e, e.Message);
                 return CommandResult.Error;
             }
 
