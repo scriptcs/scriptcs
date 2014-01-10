@@ -71,5 +71,7 @@ namespace ScriptCs
         [ArgDescription("Defines config file name")]
         public string Config { get; set; }
 
+        public string PackageVersion { get; set; }
+
     }
 }
