@@ -76,7 +76,7 @@
 
   <Target Name="Test" DependsOnTargets="Build">
     <ItemGroup>
-      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
+      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*Tests.dll" />
     </ItemGroup>
     
     <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
