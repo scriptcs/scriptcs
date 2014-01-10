@@ -8,9 +8,17 @@ namespace ScriptCs.AcceptanceTests
 {
     internal class AcceptanceTestHelpers
     {
+        static AcceptanceTestHelpers()
+        {
+            ScriptcsDir = Environment.CurrentDirectory;
+        }
+
+        private static string ScriptcsDir { get; set; }
+
         public static Process LaunchScriptCs(string arguments)
         {
-            return Process.Start(new ProcessStartInfo { FileName = "scriptcs.exe", Arguments = arguments, CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true });
+            var scriptcsPath = Path.Combine(ScriptcsDir, "scriptcs.exe");
+            return Process.Start(new ProcessStartInfo { FileName = scriptcsPath, Arguments = arguments, CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true });
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
