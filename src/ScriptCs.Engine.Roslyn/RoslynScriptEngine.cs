@@ -111,6 +111,12 @@ namespace ScriptCs.Engine.Roslyn
             Guard.AgainstNullArgument("session", session);
 
             var result = new ScriptResult();
+
+            if (string.IsNullOrEmpty(code))
+            {
+                return result;
+            }
+
             try
             {
                 var submission = session.CompileSubmission<object>(code);
