@@ -8,7 +8,7 @@ namespace ScriptCs
     {
         private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {
-            PreserveReferencesHandling = PreserveReferencesHandling.None,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             MaxDepth = 4
         };
