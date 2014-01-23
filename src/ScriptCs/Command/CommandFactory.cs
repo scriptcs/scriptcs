@@ -70,6 +70,7 @@ namespace ScriptCs.Command
                 {
                     var installCommand = new InstallCommand(
                         null,
+                        null,
                         false,
                         fileSystem,
                         _scriptServices.PackageAssemblyResolver,
@@ -86,6 +87,7 @@ namespace ScriptCs.Command
             {
                 var installCommand = new InstallCommand(
                     args.Install,
+                    args.PackageVersion,
                     args.AllowPreRelease,
                     _scriptServices.FileSystem,
                     _scriptServices.PackageAssemblyResolver,

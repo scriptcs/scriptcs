@@ -12,6 +12,7 @@ namespace ScriptCs.Command
     internal class InstallCommand : IInstallCommand
     {
         private readonly string _name;
+        private readonly string _version;
 
         private readonly bool _allowPre;
 
@@ -25,6 +26,7 @@ namespace ScriptCs.Command
 
         public InstallCommand(
             string name,
+            string version,
             bool allowPre,
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
@@ -32,6 +34,7 @@ namespace ScriptCs.Command
             ILog logger)
         {
             _name = name;
+            _version = version ?? "";
             _allowPre = allowPre;
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
@@ -74,7 +77,7 @@ namespace ScriptCs.Command
                 yield break;
             }
 
-            yield return new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.0"), new Version());
+            yield return new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.0"), _version);
         }
     }
 }
