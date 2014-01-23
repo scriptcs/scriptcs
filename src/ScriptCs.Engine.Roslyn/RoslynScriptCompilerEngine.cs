@@ -33,6 +33,11 @@ namespace ScriptCs.Engine.Roslyn
 
             var scriptResult = new ScriptResult();
 
+            if (string.IsNullOrEmpty(code))
+            {
+                return scriptResult;
+            }
+
             if (ShouldCompile())
             {
                 CompileAndExecute(code, session, scriptResult);
