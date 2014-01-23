@@ -42,8 +42,9 @@ namespace ScriptCs.Argument
                 {
                     commandArgs.Repl = true;
                 }
-
-                commandArgs.PackageVersion = packageVersion;
+                
+                if (!string.IsNullOrWhiteSpace(packageVersion))
+                    commandArgs.PackageVersion = packageVersion;
             }
             catch(ArgException ex)
             {
