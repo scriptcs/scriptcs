@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-
 using Common.Logging;
-
 using NuGet;
 
 using ScriptCs.Contracts;
@@ -70,7 +68,7 @@ namespace ScriptCs.Hosting.Package
                 _logger.InfoFormat("Skipped {0} because it already exists.", package.Id);
             }
 
-            _logger.InfoFormat("Successfully {0} {1}...", (File.Exists(packagesFile) ? "updated" : "created"), Constants.PackagesFile);
+            _logger.InfoFormat("Successfully {0} {1}.", (File.Exists(packagesFile) ? "updated" : "created"), Constants.PackagesFile);
         }
 
         public IPackageObject FindPackage(string path, IPackageReference packageRef)
