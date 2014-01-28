@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using PowerArgs;
 using ScriptCs.Contracts;
 
@@ -24,6 +25,16 @@ namespace ScriptCs.Argument
 
             try
             {
+                var installArgPosition = Array.FindIndex(args, x => x.ToLowerInvariant() == "-install");
+                string packageVersion = null;
+                if (installArgPosition == 0 && args.Length > 2 && !args[installArgPosition+2].StartsWith("-"))
+                {
+                    packageVersion = args[installArgPosition + 2];
+                    var argsList = args.ToList();
+                    argsList.RemoveAt(installArgPosition + 2);
+                    args = argsList.ToArray();
+                }
+
                 commandArgs = Args.Parse<ScriptCsArgs>(args);
 
                 //if there is only 1 arg and it is a loglevel, it's also REPL
@@ -31,6 +42,9 @@ namespace ScriptCs.Argument
                 {
                     commandArgs.Repl = true;
                 }
+                
+                if (!string.IsNullOrWhiteSpace(packageVersion))
+                    commandArgs.PackageVersion = packageVersion;
             }
             catch(ArgException ex)
             {

@@ -45,7 +45,6 @@ namespace ScriptCs
         [ArgDescription("Installs and restores global packages which are specified in packages.config")]
         public bool Global { get; set; }
 
-
         [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
@@ -70,6 +69,10 @@ namespace ScriptCs
         [DefaultValue("scriptcs.opts")]
         [ArgDescription("Defines config file name")]
         public string Config { get; set; }
+        
+        [ArgShortcut("packageversion")]
+        [ArgDescription("Defines the version of the package to install. Used in conjunction with -install")]
+        public string PackageVersion { get; set; }
 
     }
 }
