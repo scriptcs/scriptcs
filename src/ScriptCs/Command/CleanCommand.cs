@@ -31,6 +31,9 @@ namespace ScriptCs.Command
             var packageFolder = Path.Combine(workingDirectory, Constants.PackagesFolder);
             _logger.TraceFormat("Packages folder: {0}", packageFolder);
 
+            var cacheFolder = Path.Combine(workingDirectory, Constants.DllCacheFolder);
+            _logger.TraceFormat("Cache folder: {0}", cacheFolder);
+
             try
             {
                 if (_fileSystem.DirectoryExists(packageFolder))
@@ -39,7 +42,13 @@ namespace ScriptCs.Command
                     _fileSystem.DeleteDirectory(packageFolder);
                 }
 
-                _logger.Info("Clean completed successfully.");
+                if (_fileSystem.DirectoryExists(cacheFolder))
+                {
+                    _logger.DebugFormat("Deleting cache directory: {0}", cacheFolder);
+                    _fileSystem.DeleteDirectory(cacheFolder);
+                }
+
+                _logger.Info("Clean completed.");
                 return CommandResult.Success;
             }
             catch (Exception e)
