@@ -1,7 +1,5 @@
 ﻿using Moq;
-
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using Xunit.Extensions;
@@ -12,8 +10,10 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [Theory, ScriptCsAutoData]
-            public void ShouldDeletePackagesFolder([Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
+            [ScriptCsAutoData(Constants.PackagesFolder)]
+            [ScriptCsAutoData(Constants.DllCacheFolder)]
+            [Theory]
+            public void ShouldDeletePackagesFolder(string folder, [Frozen] Mock<IFileSystem> fileSystem, CommandFactory factory)
             {
                 // Arrange
                 var args = new ScriptCsArgs { Clean = true };

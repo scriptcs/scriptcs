@@ -20,7 +20,7 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
-            [Theory, ScriptCsAutoData]
+            [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
                 var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
@@ -44,7 +44,7 @@ namespace ScriptCs.Tests
                 exception.Message.ShouldContain("InvalidOperationExceptionMessage");
             }
 
-            [Theory, ScriptCsAutoData]
+            [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
                 var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
