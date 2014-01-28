@@ -61,9 +61,11 @@
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
     <Compile Include="ArgumentParserTests.cs" />
+    <Compile Include="MockExtesions.cs" />
     <Compile Include="CleanCommandTests.cs" />
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="ConfigFileParserTests.cs" />
+    <Compile Include="ExecuteIsolatedScriptCommandTests.cs" />
     <Compile Include="ExecuteReplCommandTests.cs" />
     <Compile Include="ScriptArgsTests.cs" />
     <Compile Include="ArgumentHandlerTests.cs" />
