@@ -83,6 +83,18 @@ namespace ScriptCs.Tests
                 result.Repl.ShouldBeTrue();
                 result.LogLevel.ShouldEqual(LogLevel.Debug);
             }
+
+            [Fact]
+            public void ShouldAutmoaticallySetLogLevelDebugIfDebugFlagIsPassed()
+            {
+                string[] args = { "test.csx", "-debug" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.Debug.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
         }
     }
 }
