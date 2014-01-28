@@ -69,6 +69,8 @@ namespace ScriptCs
 
         public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string extension, params string[] moduleNames)
         {
+            if (modulePackagesPaths == null) return;
+
             _logger.Debug("Loading modules from: " + string.Join(", ", modulePackagesPaths.Select(i => i)));
             var paths = new List<string>();
             foreach (var modulePackagesPath in modulePackagesPaths)
