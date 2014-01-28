@@ -36,11 +36,11 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="DiskAssemblyLoader.cs" />
+    <Compile Include="InMemoryAssemblyLoader.cs" />
     <Compile Include="RoslynScriptCompilerEngine.cs" />
-    <Compile Include="RoslynScriptInMemoryEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynScriptEngine.cs" />
-    <Compile Include="RoslynScriptPersistentEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

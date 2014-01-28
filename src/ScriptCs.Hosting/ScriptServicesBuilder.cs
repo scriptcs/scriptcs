@@ -23,6 +23,7 @@ namespace ScriptCs
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
+        private Type _assemblyLoaderType;
         private ILog _logger;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
@@ -36,19 +37,20 @@ namespace ScriptCs
         public ScriptServices Build()
         {
             var defaultExecutorType = typeof(ScriptExecutor);
-            Type defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptInMemoryEngine);
 
-            defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
+            Type defaultEngineType = _repl ? typeof(RoslynScriptEngine) : typeof(RoslynScriptCompilerEngine);
+            Type defaultAssemblyLoaderType = _cache ? typeof(DiskAssemblyLoader) : typeof(InMemoryAssemblyLoader);
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _assemblyLoaderType = Overrides.ContainsKey(typeof(IAssemblyLoader)) ? (Type)Overrides[typeof(IAssemblyLoader)] : defaultAssemblyLoaderType;
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
             if (_runtimeServices == null)
             {
                 _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
-                                                                       _scriptEngineType, _scriptExecutorType,
+                                                                       _scriptEngineType, _scriptExecutorType, _assemblyLoaderType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices, _scriptName);
             }

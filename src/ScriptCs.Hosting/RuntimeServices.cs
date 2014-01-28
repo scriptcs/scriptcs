@@ -18,17 +18,28 @@ namespace ScriptCs
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
+        private readonly Type _assemblyLoaderType;
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
+        public RuntimeServices(ILog logger, 
+            IDictionary<Type, object> overrides, 
+            IList<Type> lineProcessors, 
+            IConsole console, 
+            Type scriptEngineType, 
+            Type scriptExecutorType,
+            Type assemblyLoaderType,
+            bool initDirectoryCatalog,
+            IInitializationServices initializationServices, 
+            string scriptName) : 
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
+            _assemblyLoaderType = assemblyLoaderType;
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
             _scriptName = scriptName;
@@ -42,6 +53,7 @@ namespace ScriptCs
             builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
+            builder.RegisterType(_assemblyLoaderType).As<IAssemblyLoader>();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
             RegisterLineProcessors(builder);

@@ -11,21 +11,17 @@ using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
+    public class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
-        protected const string CompiledScriptClass = "Submission#0";
-        protected const string CompiledScriptMethod = "<Factory>";
+        private const string CompiledScriptClass = "Submission#0";
+        private const string CompiledScriptMethod = "<Factory>";
+        private readonly IAssemblyLoader _assemblyLoader;
         
-        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger, IAssemblyLoader assemblyLoader)
             : base(scriptHostFactory, logger)
         {
+            _assemblyLoader = assemblyLoader;
         }
-
-        protected abstract bool ShouldCompile();
-
-        protected abstract Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes);
-
-        protected abstract Assembly LoadAssemblyFromCache();
 
         protected override ScriptResult Execute(string code, Session session)
         {
@@ -33,13 +29,15 @@ namespace ScriptCs.Engine.Roslyn
 
             var scriptResult = new ScriptResult();
 
-            if (ShouldCompile())
+            _assemblyLoader.SetContext(FileName, CacheDirectory);
+
+            if (_assemblyLoader.ShouldCompile())
             {
                 CompileAndExecute(code, session, scriptResult);
             }
             else
             {
-                var assembly = LoadAssemblyFromCache();
+                var assembly = _assemblyLoader.LoadFromCache();
                 InvokeEntryPointMethod(session, assembly, scriptResult);
             }
             
@@ -80,7 +78,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 if (compileSuccess)
                 {
-                    var assembly = LoadAssembly(exeBytes, pdbBytes);
+                    var assembly = _assemblyLoader.Load(exeBytes, pdbBytes);
 
                     InvokeEntryPointMethod(session, assembly, scriptResult);
                 }

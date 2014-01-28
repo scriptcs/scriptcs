@@ -16,15 +16,22 @@ namespace ScriptCs.Tests
 {
     using Should;
 
-    public class RoslynScriptInMemoryEngineTests
+    public class RoslynScriptCompilerEngineTests
     {
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
                 // Arrange
+                var hostFactory = new ScriptHostFactory();
+                var logger = new Mock<ILog>();
+
+                var scriptEngine = new RoslynScriptCompilerEngine(
+                    hostFactory,
+                    logger.Object, 
+                    new InMemoryAssemblyLoader(hostFactory, logger.Object));
+
                 var lines = new List<string>
                 {
                     "using System;",
@@ -47,9 +54,15 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
-
                 // Arrange
+                var hostFactory = new ScriptHostFactory();
+                var logger = new Mock<ILog>();
+
+                var scriptEngine = new RoslynScriptCompilerEngine(
+                    hostFactory,
+                    logger.Object,
+                    new InMemoryAssemblyLoader(hostFactory, logger.Object));
+                
                 var lines = new List<string>
                 {
                     "using Sysasdasdasdtem;"
