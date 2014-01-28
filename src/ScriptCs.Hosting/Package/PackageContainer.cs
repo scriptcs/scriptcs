@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
+using Common.Logging;
 using NuGet;
 
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 using PackageReference = ScriptCs.Package.PackageReference;
@@ -18,12 +18,15 @@ namespace ScriptCs.Hosting.Package
 
         private readonly IFileSystem _fileSystem;
 
-        public PackageContainer(IFileSystem fileSystem)
+        private readonly ILog _logger;
+
+        public PackageContainer(IFileSystem fileSystem, ILog logger)
         {
             _fileSystem = fileSystem;
+            _logger = logger;
         }
 
-        public IEnumerable<string> CreatePackageFile()
+        public void CreatePackageFile()
         {
             var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
             var packageReferenceFile = new PackageReferenceFile(packagesFile);
@@ -34,20 +37,38 @@ namespace ScriptCs.Hosting.Package
             var newestPackages = repository.GetPackages().GroupBy(p => p.Id)
                 .Select(g => g.OrderByDescending(p => p.Version).FirstOrDefault());
 
+            if (!newestPackages.Any())
+            {
+                _logger.Info("No packages found!");
+                return;
+            }
+
+            _logger.InfoFormat("{0} {1}...", (File.Exists(packagesFile) ? "Updating" : "Creating") , Constants.PackagesFile);
+
             foreach (var package in newestPackages)
             {
                 var newestFramework = GetNewestSupportedFramework(package);
-                packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
 
-                if (newestFramework == null)
+                if (!packageReferenceFile.EntryExists(package.Id, package.Version))
                 {
-                    yield return string.Format("{0}, Version {1}", package.Id, package.Version);
+                    packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+
+                    if (newestFramework == null)
+                    {
+                        _logger.InfoFormat("Added {0} (v{1}) to {2}", package.Id, package.Version, Constants.PackagesFile);
+                    }
+                    else
+                    {
+                        _logger.InfoFormat("Added {0} (v{1}, .NET {2}) to {3}", package.Id, package.Version, newestFramework.Version, Constants.PackagesFile);
+                    }
+  
+                    continue;
                 }
-                else
-                {
-                    yield return string.Format("{0}, Version {1}, .NET {2}", package.Id, package.Version, newestFramework.Version);
-                }
+
+                _logger.InfoFormat("Skipped {0} because it already exists.", package.Id);
             }
+
+            _logger.InfoFormat("Successfully {0} {1}.", (File.Exists(packagesFile) ? "updated" : "created"), Constants.PackagesFile);
         }
 
         public IPackageObject FindPackage(string path, IPackageReference packageRef)
