@@ -96,6 +96,9 @@
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />
+    <Compile Include="Command\CrossAppDomainExecuteScriptCommand.cs" />
+    <Compile Include="Command\FileWatcher.cs" />
+    <Compile Include="Command\WatchScriptCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
     <Compile Include="Command\ShowUsageCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Command\SaveCommand.cs" />
     <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
+    <Compile Include="ScriptServicesBuilderFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

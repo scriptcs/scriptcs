@@ -1,9 +1,11 @@
-﻿using PowerArgs;
+﻿using System;
+using PowerArgs;
 
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
+    [Serializable]
     [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
@@ -58,6 +60,9 @@ namespace ScriptCs
 
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
+
+        [ArgDescription("Watch the script file and reload it when changed")]
+        public bool Watch { get; set; }
 
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }

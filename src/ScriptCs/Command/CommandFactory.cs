@@ -64,14 +64,21 @@ namespace ScriptCs.Command
             if (args.ScriptName != null)
             {
                 scriptServices = _scriptServicesBuilder.Build();
-                var executeCommand = new ExecuteScriptCommand(
-                    args.ScriptName,
-                    scriptArgs,
-                    scriptServices.FileSystem,
-                    scriptServices.Executor,
-                    scriptServices.ScriptPackResolver,
-                    scriptServices.Logger,
-                    scriptServices.AssemblyResolver);
+                var executeCommand = args.Watch
+                    ? (ICommand)new WatchScriptCommand(
+                        args,
+                        scriptArgs,
+                        scriptServices.Console,
+                        scriptServices.FileSystem,
+                        scriptServices.Logger)
+                    : (ICommand)new ExecuteScriptCommand(
+                        args.ScriptName,
+                        scriptArgs,
+                        scriptServices.FileSystem,
+                        scriptServices.Executor,
+                        scriptServices.ScriptPackResolver,
+                        scriptServices.Logger,
+                        scriptServices.AssemblyResolver);
 
                 var currentDirectory = fileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
