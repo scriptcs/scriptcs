@@ -9,13 +9,13 @@ namespace ScriptCs
 {
     public class FileSystem : IFileSystem
     {
-             private readonly ILog _logger;
-       private Dictionary<string, FileSystemWatcher> watchers =  new Dictionary<string,FileSystemWatcher>();
+        private readonly ILog _logger;
+        private Dictionary<string, FileSystemWatcher> watchers =  new Dictionary<string,FileSystemWatcher>();
 
-       public FileSystem(ILog logger = null)
-       {
+        public FileSystem(ILog logger = null)
+        {
            _logger = logger;
-       }
+        }
 
         public void OnChanged(string path, string searchPattern, Action handler)
         {
