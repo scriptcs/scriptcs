@@ -61,10 +61,11 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
-
+            
             if (_initDirectoryCatalog)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var fileSystem = _initializationServices.GetFileSystem();
+                var currentDirectory = fileSystem.GetWorkingDirectory(_scriptName);
                 var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
 
                 var aggregateCatalog = new AggregateCatalog();
