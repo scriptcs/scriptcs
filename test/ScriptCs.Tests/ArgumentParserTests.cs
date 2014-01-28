@@ -59,6 +59,30 @@ namespace ScriptCs.Tests
                 result.Help.ShouldBeTrue();
                 result.LogLevel.ShouldEqual(LogLevel.Info);
             }
+
+            [Fact]
+            public void ShouldGoIntoReplIfOnlyLogLevelIsSet()
+            {
+                string[] args = { "-loglevel", "debug" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.Repl.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
+
+            [Fact]
+            public void ShouldGoIntoReplIfOnlyLogIsSet()
+            {
+                string[] args = { "-log", "debug" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.Repl.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
         }
     }
 }

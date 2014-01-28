@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Linq;
-
+using System.Reflection;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
@@ -60,17 +61,37 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
-
+            
             if (_initDirectoryCatalog)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var fileSystem = _initializationServices.GetFileSystem();
+                var currentDirectory = fileSystem.GetWorkingDirectory(_scriptName);
                 var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
 
                 var aggregateCatalog = new AggregateCatalog();
+                bool assemblyLoadFailures = false;
 
-                assemblies.Select(x => new AssemblyCatalog(x)).ToList()
-                    .ForEach(catalog => aggregateCatalog.Catalogs.Add(catalog));
-
+                foreach (var assembly in assemblies)
+                {
+                    try
+                    {
+                        var catalog = new AssemblyCatalog(assembly);
+                        catalog.Parts.ToList(); //force the Parts to be read
+                        aggregateCatalog.Catalogs.Add(catalog);
+                    }
+                    catch(Exception ex)
+                    {
+                        assemblyLoadFailures = true;
+                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly, ex.Message);
+                    }
+                }
+                if (assemblyLoadFailures)
+                {
+                    if (_scriptName == null || _scriptName.Length == 0)
+                        Logger.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
+                    else    
+                        Logger.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
+                }
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
 

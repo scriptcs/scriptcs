@@ -4,7 +4,7 @@ namespace ScriptCs.Contracts
 {
     public interface IPackageContainer
     {
-        IEnumerable<string> CreatePackageFile();
+        void CreatePackageFile();
 
         IEnumerable<IPackageReference> FindReferences(string path);
 

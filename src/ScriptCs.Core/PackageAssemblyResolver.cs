@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -25,14 +24,7 @@ namespace ScriptCs
 
         public void SavePackages()
         {
-            var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
-
-            if (_fileSystem.FileExists(packagesFile))
-            {
-                _logger.Info("Packages.config already exists!");
-                return;
-            }
 
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
@@ -40,15 +32,7 @@ namespace ScriptCs
                 return;
             }
 
-            var result = _packageContainer.CreatePackageFile().ToList();
-            if (!result.Any())
-            {
-                _logger.Info("No packages found!");
-                return;
-            }
-
-            result.ForEach(i => _logger.Info(string.Format("Added {0}", i)));
-            _logger.Info("Packages.config successfully created!");
+            _packageContainer.CreatePackageFile();
         }
 
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)

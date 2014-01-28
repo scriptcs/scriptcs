@@ -65,6 +65,22 @@ Hello, world!
 C:\>
 ```
 
+REPL supports all C# language constructs (i.e. class defnition, method definition), as well as multi-line input. For example:
+
+```batchfile
+C:\> scriptcs
+scriptcs (ctrl-c or blank to exit)
+
+> public class Test {
+    public string Name { get; set; }
+  }
+> var x = new Test { Name = "Hello" };
+> x
+{Name: "Hello"}
+
+C:\>
+```
+
 ### Writing a script
 
 * In an empty directory, create a new file named `app.csx`:
@@ -178,7 +194,7 @@ scriptcs server.csx
 
 ### Referencing assemblies
 
-You can reference additional assemblies from the GAC or from the bin folder in your script's directory using the [#r directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#referencing-assemblies):
+You can reference additional assemblies from the GAC or from the `bin` folder in your script's directory using the [#r directive](https://github.com/scriptcs/scriptcs/wiki/Writing-a-script#referencing-assemblies):
 
 ```c#
 #r "nunit.core.dll"
@@ -194,6 +210,37 @@ Console.ReadKey();
 ### Debugging
 
 Instructions for debugging scripts using Visual Studio can be found on the [wiki](https://github.com/scriptcs/scriptcs/wiki/Debugging-a-script).
+
+### Package installation
+
+You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the packages folder.
+
+Once the packages are installed, you can simply start using them in your script code directly (just import the namespaces - no additional bootstraping or DLL referencing is needed).
+
+The `install` command will also create a `packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
+
+ - `scriptcs -install {package name}` will install the desired package from NuGet. 
+ 	
+	For example: 
+
+		scriptcs -install ServiceStack
+		
+ - `scriptcs -install` (without package name) will look for the `packages.config` file located in the current execution directory, and install all the packages specified there. You only need to specify **top level** packages.
+
+For example, you might create the following `packages.config`:
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<packages>
+  		<package id="Nancy.Hosting.Self" version="0.16.1" targetFramework="net40" />
+  		<package id="Nancy.Bootstrappers.Autofac" version="0.16.1" targetFramework="net40" />
+  		<package id="Autofac" version="2.6.3.862" targetFramework="net40" />
+	</packages>
+
+And then just call:
+
+    scriptcs -install
+
+As a result, all packages specified in the `packages.config`, including all dependencies, will be downloaded and installed in the `packages` folder. 
 
 
 ## Contributing
@@ -216,6 +263,10 @@ Want to chat? In addition to Twitter, you can find us on [Google Groups](https:/
 * [Glenn Block](https://github.com/glennblock) ([@gblock](https://twitter.com/intent/user?screen_name=gblock))
 * [Justin Rusbatch](https://github.com/jrusbatch) ([@jrusbatch](https://twitter.com/intent/user?screen_name=jrusbatch))
 * [Filip Wojcieszyn](https://github.com/filipw) ([@filip_woj](https://twitter.com/intent/user?screen_name=filip_woj))
+
+
+## Core Committers
+
 * [Damian Schenkelman](http://github.com/dschenkelman) ([@dschenkelman](https://twitter.com/intent/user?screen_name=dschenkelman))
 * [Kristian Hellang](http://github.com/khellang) ([@khellang](https://twitter.com/intent/user?screen_name=khellang))
 

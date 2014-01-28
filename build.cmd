@@ -24,4 +24,4 @@ goto end
 
 :End
 echo.
-endlocal
+exit /b %ERRORLEVEL%

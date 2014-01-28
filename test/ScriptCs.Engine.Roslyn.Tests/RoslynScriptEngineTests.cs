@@ -2,7 +2,6 @@
 using System.Reflection;
 using Common.Logging;
 using Moq;
-
 using Ploeh.AutoFixture.Xunit;
 using Roslyn.Compilers;
 using Roslyn.Scripting;
@@ -10,6 +9,7 @@ using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using Should;
+using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -18,7 +18,7 @@ namespace ScriptCs.Tests
     {
         public class Constructor
         {
-            [Theory, ScriptCsAutoData]
+            [Fact]
             public void ShouldAddReferenceToCore()
             {
                 var engine = new RoslynTestScriptEngine(new Mock<IScriptHostFactory>().Object, new Mock<ILog>().Object);
