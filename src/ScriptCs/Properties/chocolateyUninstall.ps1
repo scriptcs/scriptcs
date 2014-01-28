@@ -1,5 +1,6 @@
 ﻿try {
     $paths = @(
+        "$env:chocolatey_bin_root\scriptcs",
         "$env:APPDATA\scriptcs",
         "$env:LOCALAPPDATA\scriptcs"
     )
