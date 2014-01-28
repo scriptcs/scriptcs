@@ -1,13 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Threading;
+using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public class FileSystem : IFileSystem
     {
+             private readonly ILog _logger;
+       private Dictionary<string, FileSystemWatcher> watchers =  new Dictionary<string,FileSystemWatcher>();
+
+       public FileSystem(ILog logger = null)
+       {
+           _logger = logger;
+       }
+
+        public void OnChanged(string path, string searchPattern, Action handler)
+        {
+            FileSystemWatcher watcher;
+            var fullPath = Path.Combine(path, searchPattern).ToString();
+            if (watchers.TryGetValue(fullPath, out watcher))
+            {
+                _logger.Info("There is already a watcher for " + fullPath);
+                return;
+            }
+            var timer = new Timer(state =>
+            {
+                var self = (Timer) state;
+                try
+                {
+                    self.Change(Timeout.Infinite, Timeout.Infinite);
+                    _logger.Info("File changed handler for " + fullPath);
+                    handler();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
+                }
+            });
+            watcher = new FileSystemWatcher(path, searchPattern)
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                EnableRaisingEvents = true
+            };
+            watcher.Error += (sender, args) => _logger.Error(args.GetException());
+            watcher.Changed += (sender, args) =>
+            {
+                _logger.Info("File changed notification for " + args.FullPath);
+                const int Delay = 1000;
+                timer.Change(Delay, Timeout.Infinite);
+            };
+            watchers.Add(fullPath, watcher);
+        }
+
         public IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
             return Directory.EnumerateFiles(dir, searchPattern, searchOption);

@@ -52,7 +52,17 @@ namespace ScriptCs.Command
 
             if (args.ScriptName != null)
             {
-                var executeCommand = new ExecuteScriptCommand(
+                
+                var executeCommand = args.Isolated ?
+                     new ExecuteIsolatedScriptCommand(
+                     args.ScriptName,
+                     scriptArgs,
+                     _scriptServices.FileSystem,
+                     _scriptServices.Executor,
+                     _scriptServices.ScriptPackResolver,
+                     _scriptServices.Logger,
+                     _scriptServices.AssemblyResolver) { IsolatedHelper = new IsolatedHelper { CommandArgs = args, Script = args.ScriptName, ScriptArgs = scriptArgs } }
+                     : new ExecuteScriptCommand(
                     args.ScriptName,
                     scriptArgs,
                     _scriptServices.FileSystem,
