@@ -266,7 +266,24 @@ namespace ScriptCs.Tests
                 _mockLogger.Verify(l => l.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"));
             }
 
+            [Fact]
+            public void ShouldResolveAssembliesBasedOnScriptWorkignDirectory()
+            {
+                var fsmock = new Mock<IFileSystem>();
+                fsmock.Setup(a => a.GetWorkingDirectory(It.IsAny<string>())).Returns("c:/scripts");
 
+                var resolvermock = new Mock<IAssemblyResolver>();
+                resolvermock.Setup(a => a.GetAssemblyPaths("c:/scripts")).Returns(new[] {"foo.dll"});
+
+                _overrides[typeof(IFileSystem)] = fsmock.Object;
+                _overrides[typeof(IAssemblyResolver)] = resolvermock.Object;
+
+                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "c:/scriptcs/script.csx");
+                var container = runtimeServices.Container;
+
+                resolvermock.Verify(x => x.GetAssemblyPaths("c:/scripts"), Times.Exactly(1));
+            }
         }
     }
 }
