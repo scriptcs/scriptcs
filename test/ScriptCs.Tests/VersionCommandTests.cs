@@ -29,7 +29,7 @@ namespace ScriptCs.Tests
                 factory.CreateCommand(args, new string[0]).Execute();
 
                 // Assert
-                console.Verify(x => x.WriteLine(It.Is<string>(y => y.Contains(currentVersion.ToString()))));
+                console.Verify(x => x.Write(It.Is<string>(y => y.Contains(currentVersion.ToString()))));
             }
         }
     }
