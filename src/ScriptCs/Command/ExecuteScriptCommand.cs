@@ -1,25 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
     internal class ExecuteScriptCommand : IScriptCommand
     {
-        private readonly IScriptPackResolver _scriptPackResolver;
-
         private readonly IAssemblyResolver _assemblyResolver;
-
+        protected readonly IFileSystem FileSystem;
+        protected readonly ILog Logger;
+        protected readonly string Script;
         private readonly IScriptExecutor _scriptExecutor;
 
-        private readonly IFileSystem _fileSystem;
-
-        private readonly string _script;
-
-        private readonly ILog _logger;
+        private readonly IScriptPackResolver _scriptPackResolver;
 
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,
@@ -29,12 +23,12 @@ namespace ScriptCs.Command
             ILog logger,
             IAssemblyResolver assemblyResolver)
         {
-            _script = script;
-            _fileSystem = fileSystem;
+            Script = script;
+            FileSystem = fileSystem;
             ScriptArgs = scriptArgs;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
-            _logger = logger;
+            Logger = logger;
             _assemblyResolver = assemblyResolver;
         }
 
@@ -44,30 +38,28 @@ namespace ScriptCs.Command
         {
             try
             {
-                var assemblyPaths = Enumerable.Empty<string>();
+                string[] assemblyPaths = null;
 
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                string workingDirectory = FileSystem.GetWorkingDirectory(Script);
                 if (workingDirectory != null)
                 {
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
 
-                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
-                var result = _scriptExecutor.Execute(_script, ScriptArgs);
-                _scriptExecutor.Terminate();
+                ScriptResult result = Execute(workingDirectory, assemblyPaths ?? new string[0]);
 
                 if (result == null) return CommandResult.Error;
 
                 if (result.CompileExceptionInfo != null)
                 {
-                    _logger.Error(result.CompileExceptionInfo.SourceException.Message);
-                    _logger.Debug(result.CompileExceptionInfo.SourceException);
+                    Logger.Error(result.CompileExceptionInfo.SourceException.Message);
+                    Logger.Debug(result.CompileExceptionInfo.SourceException);
                     return CommandResult.Error;
                 }
 
                 if (result.ExecuteExceptionInfo != null)
                 {
-                    _logger.Error(result.ExecuteExceptionInfo.SourceException);
+                    Logger.Error(result.ExecuteExceptionInfo.SourceException);
                     return CommandResult.Error;
                 }
 
@@ -75,14 +67,23 @@ namespace ScriptCs.Command
             }
             catch (FileNotFoundException fnfex)
             {
-                _logger.ErrorFormat("{0} - {1}", fnfex.Message, fnfex.FileName);
+                Logger.ErrorFormat("{0} - {1}", fnfex.Message, fnfex.FileName);
                 return CommandResult.Error;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                Logger.Error(ex.Message);
                 return CommandResult.Error;
             }
+        }
+
+
+        protected virtual ScriptResult Execute(string workingDirectory, string[] assemblyPaths)
+        {
+            _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+            ScriptResult result = _scriptExecutor.Execute(Script, ScriptArgs);
+            _scriptExecutor.Terminate();
+            return result;
         }
     }
 }

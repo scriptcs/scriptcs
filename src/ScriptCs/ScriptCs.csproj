@@ -75,7 +75,10 @@
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
     <Compile Include="Command\CompositeCommand.cs" />
+    <Compile Include="Command\ExecuteIsolatedScriptCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
+    <Compile Include="Command\IIsolatedHelper.cs" />
+    <Compile Include="Command\IsolatedHelper.cs" />
     <Compile Include="Command\ShowUsageCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptCsArgs.cs" />
+    <Compile Include="ScriptServicesFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

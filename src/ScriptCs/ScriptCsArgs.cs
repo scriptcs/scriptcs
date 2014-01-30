@@ -1,10 +1,13 @@
-﻿using PowerArgs;
-
+﻿using System;
+using System.IO;
+using PowerArgs;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
+    [Serializable]
+    [ArgExample("scriptcs server.csx -logLevel debug",
+        "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
         public ScriptCsArgs()
@@ -14,7 +17,8 @@ namespace ScriptCs
         }
 
         [ArgShortcut("repl")]
-        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
+        [ArgDescription(
+            "Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
@@ -60,6 +64,10 @@ namespace ScriptCs
         [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
+
+        [ArgShortcut("isolated")]
+        [ArgDescription("Runs the script in an isolated AppDomain")]
+        public bool Isolated { get; set; }
 
         [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
