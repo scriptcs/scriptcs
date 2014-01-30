@@ -14,6 +14,8 @@ namespace ScriptCs
 
             var console = new ScriptConsole();
 
+            console.WriteAsciiArt();
+
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
             var arguments = parser.Parse(args);
             var commandArgs = arguments.CommandArguments;
