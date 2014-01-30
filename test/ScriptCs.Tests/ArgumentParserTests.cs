@@ -85,6 +85,30 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldSetVersionIfPackageVersionNumberFollowsPackageToInstallName()
+            {
+                string[] args = { "-install", "glimpse.scriptcs", "1.0.1" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.PackageVersion.ShouldEqual("1.0.1");
+                result.Install.ShouldEqual("glimpse.scriptcs");
+            }
+
+            [Fact]
+            public void ShouldSetVersionIfPackageVersionNumberSpecifiedExplicitly()
+            {
+                string[] args = { "-install", "glimpse.scriptcs", "-packageversion", "1.0.1" };
+
+                var parser = new ArgumentParser(new ScriptConsole());
+                var result = parser.Parse(args);
+
+                result.PackageVersion.ShouldEqual("1.0.1");
+                result.Install.ShouldEqual("glimpse.scriptcs");
+            }
+
+            [Fact]
             public void ShouldAutmoaticallySetLogLevelDebugIfDebugFlagIsPassed()
             {
                 string[] args = { "test.csx", "-debug" };
