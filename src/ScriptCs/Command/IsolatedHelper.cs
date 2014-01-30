@@ -14,7 +14,8 @@ namespace ScriptCs.Command
 
         public void Execute()
         {
-            var scriptServiceRoot = CommandArgs.CreateServices();
+            var scriptServicesFactory = new ScriptServicesFactory(CommandArgs);
+            var scriptServiceRoot = scriptServicesFactory.Create();
             scriptServiceRoot.Logger.Debug("Creating isolated ScriptServiceRoot");
             var executor = scriptServiceRoot.Executor;
             executor.Initialize(AssemblyPaths, scriptServiceRoot.ScriptPackResolver.GetPacks());
