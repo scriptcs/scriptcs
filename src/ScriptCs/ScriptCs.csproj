@@ -71,6 +71,7 @@
     <Compile Include="Argument\IArgumentHandler.cs" />
     <Compile Include="Argument\IArgumentParser.cs" />
     <Compile Include="Argument\IConfigFileParser.cs" />
+    <Compile Include="AsciiArt.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
