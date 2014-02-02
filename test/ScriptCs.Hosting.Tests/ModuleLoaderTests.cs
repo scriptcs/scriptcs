@@ -42,7 +42,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldResolvePathsFromTheAssemblyResolver()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => { }, c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
-                loader.Load(null, "c:\test", null);
+                loader.Load(null, new[] { "c:\test" }, null);
                 _mockAssemblyResolver.Verify(r => r.GetAssemblyPaths("c:\test"));
             }
 
@@ -50,15 +50,15 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldInvokeTheCatalogActionForEachFile()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
-                loader.Load(null, "c:\test", null);
-                _paths.Count.ShouldEqual(2);            
+                loader.Load(null, new[] { "c:\test" }, null);
+                _paths.Count.ShouldEqual(2);
             }
 
             [Fact]
             public void ShouldInitializeModulesThatMatchOnExtension()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
-                loader.Load(null, null, "ext1");
+                loader.Load(null, new string[0], "ext1");
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule3.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
@@ -68,7 +68,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldInitializeModulesTheMatchBasedOnName()
             {
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
-                loader.Load(null, null, null, "module3");
+                loader.Load(null, new string[0], null, "module3");
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule3.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());

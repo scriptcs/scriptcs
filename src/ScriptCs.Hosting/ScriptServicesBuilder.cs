@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,9 @@ namespace ScriptCs
         private readonly IInitializationServices _initializationServices;
         private IRuntimeServices _runtimeServices;
         private readonly IConsole _console;
-        private bool _repl = false;
-        private bool _cache = false;
+        private bool _repl;
+        private bool _cache;
+        private bool _debug;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
@@ -36,8 +38,8 @@ namespace ScriptCs
         public ScriptServices Build()
         {
             var defaultExecutorType = typeof(ScriptExecutor);
-            Type defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptInMemoryEngine);
-
+            var defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
+            defaultEngineType = _debug ? typeof(RoslynScriptInMemoryEngine) : defaultEngineType;
             defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
 
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
@@ -60,7 +62,10 @@ namespace ScriptCs
         {
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
-            loader.Load(config, _initializationServices.GetFileSystem().ModulesFolder, extension, moduleNames);
+
+            var fs = _initializationServices.GetFileSystem();
+            var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
+            loader.Load(config, folders, extension, moduleNames);
             return this;
         }
 
@@ -85,6 +90,12 @@ namespace ScriptCs
         public IScriptServicesBuilder LogLevel(LogLevel level)
         {
             _logLevel = level;
+            return this;
+        }
+
+        public IScriptServicesBuilder Debug(bool debug = true)
+        {
+            _debug = debug;
             return this;
         }
     }

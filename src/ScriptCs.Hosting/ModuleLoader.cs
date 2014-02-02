@@ -67,10 +67,18 @@ namespace ScriptCs
             _getModules = getModules;
         }
 
-        public void Load(IModuleConfiguration config, string modulePackagesPath, string extension, params string[] moduleNames)
+        public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string extension, params string[] moduleNames)
         {
-            _logger.Debug("Loading modules from: " + modulePackagesPath);
-            var paths = _resolver.GetAssemblyPaths(modulePackagesPath);
+            if (modulePackagesPaths == null) return;
+
+            _logger.Debug("Loading modules from: " + string.Join(", ", modulePackagesPaths.Select(i => i)));
+            var paths = new List<string>();
+            foreach (var modulePackagesPath in modulePackagesPaths)
+            {
+                var modulePaths = _resolver.GetAssemblyPaths(modulePackagesPath);
+                paths.AddRange(modulePaths);
+            }
+
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
             {
@@ -87,7 +95,7 @@ namespace ScriptCs
             _logger.Debug("Initializing modules");
             foreach (var module in modules)
             {
-                _logger.Debug(string.Format("Initializing module:{0}", module.GetType().FullName));
+                _logger.Debug(string.Format("Initializing module: {0}", module.GetType().FullName));
                 module.Initialize(config);
             }
 
