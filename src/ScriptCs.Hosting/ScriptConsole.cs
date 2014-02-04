@@ -7,10 +7,15 @@ namespace ScriptCs.Hosting
     {
         public ScriptConsole()
         {
-            Console.CancelKeyPress += HandleCancelKeyPress;
+            Initialize();
         }
 
         public void Write(string value)
+        {
+            Console.Write(value);
+        }
+
+        public void Write(char value)
         {
             Console.Write(value);
         }
@@ -28,6 +33,11 @@ namespace ScriptCs.Hosting
         public string ReadLine()
         {
             return Console.ReadLine();
+        }
+
+        public ConsoleKeyInfo ReadKey()
+        {
+            return Console.ReadKey(true);
         }
 
         public void Clear()
@@ -55,6 +65,11 @@ namespace ScriptCs.Hosting
         {
             get { return Console.ForegroundColor; }
             set { Console.ForegroundColor = value; }
+        }
+
+        private void Initialize()
+        {
+            Console.CancelKeyPress += HandleCancelKeyPress;
         }
     }
 }

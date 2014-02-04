@@ -14,6 +14,7 @@ namespace ScriptCs
             ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
 
             var console = new ScriptConsole();
+            var inputLine = new InputLine(new LineStateMachine());
 
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
             var arguments = parser.Parse(args);
@@ -25,7 +26,7 @@ namespace ScriptCs
             configurator.Configure(console);
             var logger = configurator.GetLogger();
  
-            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, inputLine, logger)
                 .Cache(commandArgs.Cache)
                 .Debug(commandArgs.Debug)
                 .LogLevel(commandArgs.LogLevel)

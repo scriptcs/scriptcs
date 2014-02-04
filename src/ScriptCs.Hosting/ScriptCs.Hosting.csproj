@@ -57,6 +57,7 @@
     <Compile Include="InitializationServices.cs" />
     <Compile Include="IRuntimeServices.cs" />
     <Compile Include="IScriptServicesBuilder.cs" />
+    <Compile Include="LineStateMachine.cs" />
     <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
     <Compile Include="ObjectSerializer.cs" />
+    <Compile Include="InputLine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

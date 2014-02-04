@@ -17,6 +17,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IConsole _console;
         private readonly ILog _logger;
+        private readonly IInputLine _inputLine;
 
         public ExecuteReplCommand(
             string scriptName,
@@ -28,7 +29,8 @@ namespace ScriptCs.Command
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            IInputLine inputLine)
         {
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -40,6 +42,7 @@ namespace ScriptCs.Command
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
+            _inputLine = inputLine;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -90,7 +93,7 @@ namespace ScriptCs.Command
             
             try
             {
-                line = _console.ReadLine();
+                line = (_inputLine != null) ? _inputLine.ReadLine(_console, repl) : _console.ReadLine();
             }
             catch
             {

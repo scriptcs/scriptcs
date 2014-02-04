@@ -6,11 +6,15 @@ namespace ScriptCs.Contracts
     {
         void Write(string value);
 
+        void Write(char value);
+
         void WriteLine();
 
         void WriteLine(string value);
 
         string ReadLine();
+
+        ConsoleKeyInfo ReadKey();
 
         void Clear();
 

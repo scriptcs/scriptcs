@@ -36,6 +36,7 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IInstallationProvider.cs" />
     <Compile Include="ILineProcessor.cs" />
+    <Compile Include="ILineStateMachine.cs" />
     <Compile Include="IModule.cs" />
     <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleMetadata.cs" />
@@ -61,6 +62,7 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="IServiceOverrides.cs" />
+    <Compile Include="IInputLine.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
