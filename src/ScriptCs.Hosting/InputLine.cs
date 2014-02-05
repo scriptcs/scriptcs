@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ScriptCs.Contracts;
@@ -7,11 +8,11 @@ namespace ScriptCs
 {
     public class InputLine : IInputLine
     {
-        private readonly ILineStateMachine _lineStateMachine;
+        private readonly ILineAnalyzer _lineAnalyzer;
 
-        public InputLine(ILineStateMachine lineStateMachine)
+        public InputLine(ILineAnalyzer lineAnalyzer)
         {
-            _lineStateMachine = lineStateMachine;
+            _lineAnalyzer = lineAnalyzer;
         }
 
         public string ReadLine(IConsole console, IScriptExecutor executor)
@@ -37,12 +38,12 @@ namespace ScriptCs
                             buffer.Back();
                         break;
                     case ConsoleKey.Tab:
-                        if (_lineStateMachine.CurrentState == LineState.FilePath)
+                        if (_lineAnalyzer.CurrentState == LineState.FilePath)
                         {
                             if (!isCompletingWord)
                             {
-                                var pathFragment = _lineStateMachine.CurrentName;
-                                possibleCompletions = FindPossibleFilePaths(pathFragment);
+                                var pathFragment = _lineAnalyzer.CurrentText;
+                                possibleCompletions = FindPossibleFilePaths(pathFragment, executor.FileSystem);
                                 currentCompletion = 0;
                                 isCompletingWord = true;
                             }
@@ -51,7 +52,7 @@ namespace ScriptCs
                                 currentCompletion = (currentCompletion + 1) % possibleCompletions.Length;
                             }
 
-                            buffer.ResetTo(_lineStateMachine.StateStartPosition);
+                            buffer.ResetTo(_lineAnalyzer.TextPosition);
                             buffer.Append(possibleCompletions[currentCompletion]);
                         }
                         break;
@@ -61,15 +62,18 @@ namespace ScriptCs
                         break;
                 }
 
-                _lineStateMachine.Consume(keyInfo);
+                _lineAnalyzer.Analyze(buffer.Line);
             }
 
             return buffer.Line;
         }
 
-        private string[] FindPossibleFilePaths(string pathFragment)
+        private string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
         {
-            throw new NotImplementedException();
+            return fileSystem.EnumerateFiles(fileSystem.CurrentDirectory,
+                                             pathFragment + "*",
+                                             SearchOption.TopDirectoryOnly
+                   ).ToArray();
         }
 
         internal class Buffer

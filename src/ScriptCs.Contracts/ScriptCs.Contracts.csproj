@@ -36,7 +36,7 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IInstallationProvider.cs" />
     <Compile Include="ILineProcessor.cs" />
-    <Compile Include="ILineStateMachine.cs" />
+    <Compile Include="ILineAnalyzer.cs" />
     <Compile Include="IModule.cs" />
     <Compile Include="IModuleConfiguration.cs" />
     <Compile Include="IModuleMetadata.cs" />

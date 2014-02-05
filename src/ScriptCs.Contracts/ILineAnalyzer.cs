@@ -2,13 +2,13 @@
 
 namespace ScriptCs.Contracts
 {
-    public interface ILineStateMachine
+    public interface ILineAnalyzer
     {
-        string CurrentName { get; }
+        string CurrentText { get; }
         LineState CurrentState { get; }
-        int StateStartPosition { get; }
+        int TextPosition { get; }
 
-        void Consume(ConsoleKeyInfo keyInfo);
+        void Analyze(string line);
     }
 
     public enum LineState { FilePath, AssemblyName, Identifier, Member, Unknown }
