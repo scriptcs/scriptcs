@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace ScriptCs
     public class InputLine : IInputLine
     {
         private readonly ILineAnalyzer _lineAnalyzer;
+        private readonly char[] SLASHES = {'\\', '/'};
+        private enum Token { Backspace, Tab, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
 
         public InputLine(ILineAnalyzer lineAnalyzer)
         {
@@ -18,26 +21,28 @@ namespace ScriptCs
         public string ReadLine(IConsole console, IScriptExecutor executor)
         {
             var buffer = new Buffer(console);
-            bool isEOL = false;
+            bool isEol = false;
             bool isCompletingWord = false;
             string[] possibleCompletions = null;
             int currentCompletion = 0;
 
-            while (!isEOL)
+            while (!isEol)
             {
                 var keyInfo = console.ReadKey();
 
-                switch (keyInfo.Key)
+                switch (Tokenize(keyInfo))
                 {
-                    case ConsoleKey.Enter:
-                        isEOL = true;
+                    case Token.Enter:
+                        isEol = true;
                         console.WriteLine();
+                        isCompletingWord = false;
                         break;
-                    case ConsoleKey.Backspace:
+                    case Token.Backspace:
                         if (buffer.Position > 0)
                             buffer.Back();
+                        isCompletingWord = false;
                         break;
-                    case ConsoleKey.Tab:
+                    case Token.Tab:
                         if (_lineAnalyzer.CurrentState == LineState.FilePath)
                         {
                             if (!isCompletingWord)
@@ -47,18 +52,42 @@ namespace ScriptCs
                                 currentCompletion = 0;
                                 isCompletingWord = true;
                             }
-                            else
+                            else if (possibleCompletions.Any())
                             {
                                 currentCompletion = (currentCompletion + 1) % possibleCompletions.Length;
                             }
 
-                            buffer.ResetTo(_lineAnalyzer.TextPosition);
-                            buffer.Append(possibleCompletions[currentCompletion]);
+                            if (possibleCompletions.Any())
+                            {
+                                buffer.ResetTo(_lineAnalyzer.TextPosition);
+                                buffer.Append(possibleCompletions[currentCompletion]); 
+                            }
+                        }
+                        else if (_lineAnalyzer.CurrentState == LineState.AssemblyName)
+                        {
+                            if (!isCompletingWord)
+                            {
+                                var nameFragment = _lineAnalyzer.CurrentText;
+                                possibleCompletions = FindPossibleAssemblyNames(nameFragment, executor.FileSystem);
+                                currentCompletion = 0;
+                                isCompletingWord = true;
+                            }
+                            else if (possibleCompletions.Any())
+                            {
+                                currentCompletion = (currentCompletion + 1) % possibleCompletions.Length;
+                            }
+
+                            if (possibleCompletions.Any())
+                            {
+                                buffer.ResetTo(_lineAnalyzer.TextPosition);
+                                buffer.Append(possibleCompletions[currentCompletion]);
+                            }
                         }
                         break;
-                    default:
+                    case Token.Other:
                         var ch = keyInfo.KeyChar;
                         buffer.Append(ch);
+                        isCompletingWord = false;
                         break;
                 }
 
@@ -67,60 +96,84 @@ namespace ScriptCs
 
             return buffer.Line;
         }
+        
+        private Token Tokenize(ConsoleKeyInfo keyInfo)
+        {
+            if (keyInfo.Key == ConsoleKey.Tab) return Token.Tab;
+            if (keyInfo.Key == ConsoleKey.Enter) return Token.Enter;
+            if (keyInfo.Key == ConsoleKey.Backspace) return Token.Backspace;
+            if (keyInfo.Key == ConsoleKey.Delete) return Token.Delete;
+            if (keyInfo.Key == ConsoleKey.LeftArrow) return Token.LeftArrow;
+            if (keyInfo.Key == ConsoleKey.UpArrow) return Token.UpArrow;
+            if (keyInfo.Key == ConsoleKey.DownArrow) return Token.DownArrow;
+            if (keyInfo.Key == ConsoleKey.RightArrow) return Token.RightArrow;
+
+            return Token.Other;
+        }
+
+        private string[] FindPossibleAssemblyNames(string nameFragment, IFileSystem fileSystem)
+        {
+            var roots = new[]
+            {
+                fileSystem.CurrentDirectory,
+                @"C:\Windows\assembly"
+            };
+
+
+
+            return FindPossiblePaths(nameFragment, roots, fileSystem);
+        }
 
         private string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
         {
-            return fileSystem.EnumerateFiles(fileSystem.CurrentDirectory,
-                                             pathFragment + "*",
-                                             SearchOption.TopDirectoryOnly
-                   ).ToArray();
+            return FindPossiblePaths(pathFragment, new[] { fileSystem.CurrentDirectory }, fileSystem);
         }
 
-        internal class Buffer
+        private string[] FindPossiblePaths(string pathFragment, IEnumerable<string> roots, IFileSystem fileSystem)
         {
-            internal string Line { get { return buffer.ToString(); } }
-            internal int Position { get { return buffer.Length; } }
+            int lastSlashIndex = pathFragment.LastIndexOfAny(SLASHES);
 
-            private readonly StringBuilder buffer = new StringBuilder();
-            private readonly IConsole _console;
+            var possiblePaths = new List<string>();
 
-            internal Buffer(IConsole console)
+            foreach (var r in roots)
             {
-                _console = console;
-            }
+                string path;
+                string pattern;
+                var partialPath = pathFragment.Substring(0, lastSlashIndex + 1); 
 
-            internal void Back(int count = 1)
-            {
-                int steps = Math.Min(count, Position);
-
-                if (steps > 0)
+                if (lastSlashIndex >= 0)
                 {
-                    buffer.Remove(Position - steps, steps);
-                    foreach (int i in Enumerable.Range(1, steps))
-                    {
-                        _console.Write("\b \b");
-                    }
+                    path = Path.Combine(r, partialPath);
+                    pattern = pathFragment.Substring(lastSlashIndex + 1);
+                }
+                else
+                {
+                    path = r;
+                    pattern = pathFragment;
+                }
+
+                try
+                {
+                    possiblePaths.AddRange(fileSystem.EnumerateFilesAndDirectories(
+                        path,
+                        pattern + "*",
+                        SearchOption.TopDirectoryOnly).Select(p => AugmentPathFragment(partialPath, pattern, p)));
+                }
+                catch (Exception)
+                {
+                    //
                 }
             }
 
-            internal void ResetTo(int newPosition)
-            {
-                int stepCount = Position - newPosition;
+            return possiblePaths.Any() ? possiblePaths.ToArray() : new[] { pathFragment };
+        }
 
-                Back(stepCount);
-            }
+        private string AugmentPathFragment(string partialPath, string nameFragment, string completePath)
+        {
+            int lastSlashIndex = completePath.LastIndexOfAny(SLASHES);
+            var name = completePath.Substring(lastSlashIndex + 1);
 
-            internal void Append(char ch)
-            {
-                buffer.Append(ch);
-                _console.Write(ch);
-            }
-
-            internal void Append(string str)
-            {
-                buffer.Append(str);
-                _console.Write(str);
-            }
+            return Path.Combine(partialPath, name);
         }
     }
 }

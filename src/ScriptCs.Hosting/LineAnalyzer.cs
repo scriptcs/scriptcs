@@ -34,15 +34,19 @@ namespace ScriptCs
                     TextPosition = g.Index;
                     CurrentState = p.Value;
 
-                    break;
+                    return;
                 }
             }
+
+            CurrentText = null;
+            TextPosition = -1;
+            CurrentState = LineState.Unknown;
         }
 
         private void PopulatePatternList()
         {
-            patternMap[new Regex(@"#r\s+(.*)")] = LineState.AssemblyName;
-            patternMap[new Regex(@"#load\s+(.*)")] = LineState.FilePath;
+            patternMap[new Regex(@"^\s*#r\s+(.*)$")] = LineState.AssemblyName;
+            patternMap[new Regex(@"^\s*#load\s+(.*)$")] = LineState.FilePath;
         }
     }
 }
