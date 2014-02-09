@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="AssemblyResolverTests.cs" />
     <Compile Include="DirectiveLineProcessorTests.cs" />
+    <Compile Include="FakeScriptPack1.cs" />
     <Compile Include="PackageReferenceTests.cs" />
     <Compile Include="ReferenceLineProcessorTests.cs" />
     <Compile Include="LoadLineProcessorTests.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="ScriptPackFilePreProcessorTests.cs" />
     <Compile Include="ScriptPackResolverTests.cs" />
     <Compile Include="ScriptPackSessionTests.cs" />
+    <Compile Include="ScriptPackTemplateTests.cs" />
     <Compile Include="UsingLineProcessorTests.cs" />
   </ItemGroup>
   <ItemGroup>

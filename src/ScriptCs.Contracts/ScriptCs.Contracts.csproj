@@ -60,6 +60,9 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="IScriptPackSettings.cs" />
+    <Compile Include="IScriptPackSettingsImports.cs" />
+    <Compile Include="IScriptPackSettingsReferences.cs" />
     <Compile Include="IServiceOverrides.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />

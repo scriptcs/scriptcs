@@ -53,6 +53,8 @@
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
+    <Compile Include="ScriptPackSettings.cs" />
+    <Compile Include="ScriptPackTemplate.cs" />
     <Compile Include="ScriptServices.cs" />
     <Compile Include="SessionState.cs" />
     <Compile Include="UsingLineProcessor.cs" />
