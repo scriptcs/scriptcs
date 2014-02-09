@@ -78,10 +78,8 @@
     <Compile Include="ReplTests.cs" />
     <Compile Include="ScriptExecutorTests.cs" />
     <Compile Include="ScriptHostTests.cs" />
-    <Compile Include="ScriptPackFilePreProcessorTests.cs" />
     <Compile Include="ScriptPackResolverTests.cs" />
     <Compile Include="ScriptPackSessionTests.cs" />
-    <Compile Include="ScriptPackTemplateTests.cs" />
     <Compile Include="UsingLineProcessorTests.cs" />
   </ItemGroup>
   <ItemGroup>
