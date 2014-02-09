@@ -49,6 +49,7 @@
     <Compile Include="ScriptExecutorExtensions.cs" />
     <Compile Include="ScriptHost.cs" />
     <Compile Include="ScriptHostFactory.cs" />
+    <Compile Include="ScriptPackFilePreProcessor.cs" />
     <Compile Include="ScriptPackManager.cs" />
     <Compile Include="ScriptPackResolver.cs" />
     <Compile Include="ScriptExecutor.cs" />
