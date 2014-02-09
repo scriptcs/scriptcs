@@ -88,7 +88,7 @@ namespace ScriptCs.Tests
                 var body = String.Join("", context.BodyLines);
                 var regex = new Regex("(public class .+ : ScriptPackTemplate {)");
                 var matches = regex.Match(body);
-                matches.Groups.Count.ShouldEqual(0);
+                matches.Success.ShouldBeFalse();
                 
             }
 

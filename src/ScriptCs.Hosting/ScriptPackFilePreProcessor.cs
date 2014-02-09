@@ -29,11 +29,10 @@ namespace ScriptCs
             {
                 _processed.Add(currentFile);
                 var body = context.BodyLines;
-                body.Insert(injectionLine, string.Format("public class {0} : ScriptPackTemplate {{\r\n", className));
-                body.Add("\r\n}\r\n");
+                body.Insert(injectionLine, string.Format("public class {0} : ScriptPackTemplate {{{1}", className, Environment.NewLine));
+                body.Add(string.Format("{0}}}{1}", Environment.NewLine, Environment.NewLine));
                 injectionLine = body.Count;
             }
-
         }
     }
 }
