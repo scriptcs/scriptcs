@@ -20,7 +20,7 @@ namespace ScriptCs.Tests
     {
         public class ParseScriptMethod
         {
-            private Mock<ScriptCs.Contracts.IFileSystem> _fileSystem = new Mock<IFileSystem>();
+            private Mock<IFileSystem> _fileSystem = new Mock<IFileSystem>();
             private ILog _log = Mock.Of<ILog>();
             private ScriptPackFilePreProcessor _preProcessor;
 
