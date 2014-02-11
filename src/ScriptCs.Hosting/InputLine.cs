@@ -113,15 +113,27 @@ namespace ScriptCs
 
         private string[] FindPossibleAssemblyNames(string nameFragment, IFileSystem fileSystem)
         {
-            var roots = new[]
+            var roots = new List<string>
             {
-                fileSystem.CurrentDirectory,
-                @"C:\Windows\assembly"
+                fileSystem.CurrentDirectory,                
             };
 
-
+            AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, fileSystem);
 
             return FindPossiblePaths(nameFragment, roots, fileSystem);
+        }
+
+        private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)
+        {
+            if (fileSystem.EnumerateFiles(node, "*.dll", SearchOption.TopDirectoryOnly).Any()) roots.Add(node);
+
+            var subDirs = fileSystem.EnumerateDirectories(node, "*", SearchOption.TopDirectoryOnly);
+
+            foreach (var dir in subDirs)
+            {
+                AddGACRoots(dir, roots, fileSystem);
+            }
+       
         }
 
         private string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
