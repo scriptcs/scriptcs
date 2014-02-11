@@ -67,6 +67,17 @@ namespace ScriptCs
                     return new ScriptResult();
                 }
 
+                if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
+                {
+                    var dir = FileSystem.CurrentDirectory;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+
+                    Console.WriteLine(dir);
+
+                    return new ScriptResult();
+                }
+
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
