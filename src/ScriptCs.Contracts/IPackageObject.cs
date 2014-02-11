@@ -19,5 +19,7 @@ namespace ScriptCs.Contracts
         FrameworkName FrameworkName { get; }
 
         IEnumerable<IPackageObject> Dependencies { get; }
+
+        string GetScriptBasedScriptPack();
     }
 }

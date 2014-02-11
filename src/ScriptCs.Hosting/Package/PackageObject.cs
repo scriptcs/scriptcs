@@ -58,5 +58,11 @@ namespace ScriptCs.Hosting.Package
 
             return compatibleFiles != null ? compatibleFiles.Select(i => i.Path) : null;
         }
+
+        public string GetScriptBasedScriptPack()
+        {
+           return  _package.GetContentFiles()
+                .Where(c => c.Path.EndsWith("ScriptPack.csx", StringComparison.OrdinalIgnoreCase)).Select(p=>p.Path).FirstOrDefault();
+        } 
     }
 }

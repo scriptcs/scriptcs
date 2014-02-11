@@ -17,12 +17,12 @@ namespace ScriptCs
             _contextType = contextType;
         }
 
-        public IList<string> GetReferences()
+        public IEnumerable<string> GetReferences()
         {
             return _references;
         }
 
-        public IList<string> GetImports()
+        public IEnumerable<string> GetImports()
         {
             return _imports;
         }

@@ -22,15 +22,15 @@ namespace ScriptCs
             var init = this.GetType().GetMethod("Init", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             if (init == null)
             {
-                throw new InvalidOperationException("Cannot load script pack as init method is missing");
+                throw new InvalidOperationException("Cannot load script pack as 'Init' method is missing");
             }
             init.Invoke(this, null);
         }
 
         void IScriptPack.Initialize(IScriptPackSession session)
         {
-            ((List<string>)_settings.GetImports()).ForEach(session.ImportNamespace);
-            ((List<string>)_settings.GetReferences()).ForEach(session.AddReference);
+            (_settings.GetImports().ToList()).ForEach(session.ImportNamespace);
+            ((_settings.GetReferences().ToList())).ForEach(session.AddReference);
         }
 
         void IScriptPack.Terminate()

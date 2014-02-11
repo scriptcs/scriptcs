@@ -24,8 +24,8 @@ namespace ScriptCs
         {
             var className = Guid.NewGuid().ToString("N");
             base.ParseScript(scriptLines, context);
-            var currentFile = context.LoadedScripts.LastOrDefault().ToUpper();
-            if (currentFile.EndsWith("SCRIPTPACK.CSX") && !_processed.Contains(currentFile))  
+            var currentFile = context.LoadedScripts.LastOrDefault();
+            if (currentFile.EndsWith("ScriptPack.csx", StringComparison.OrdinalIgnoreCase) && !_processed.Contains(currentFile))  
             {
                 _processed.Add(currentFile);
                 var body = context.BodyLines;

@@ -8,8 +8,8 @@ namespace ScriptCs.Contracts
 {
     public interface IScriptPackSettings : IScriptPackSettingsReferences, IScriptPackSettingsImports
     {
-        IList<string> GetReferences();
-        IList<string> GetImports();
+        IEnumerable<string> GetReferences();
+        IEnumerable<string> GetImports();
         Type GetContextType();
     }
 }

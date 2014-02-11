@@ -1,4 +1,5 @@
-﻿using ScriptCs.Contracts;
+﻿using System;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -17,6 +18,11 @@ namespace ScriptCs
         public T Require<T>() where T : IScriptPackContext
         {
             return _scriptPackManager.Get<T>();
+        }
+
+        public IScriptPackContext Require(Type context)
+        {
+            return _scriptPackManager.Get(context);
         }
     }
 }

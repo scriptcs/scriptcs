@@ -127,6 +127,7 @@ namespace ScriptCs.Tests
             {
             }
 
+            //Init is only virtual here to allow mocking with Moq.
             public virtual void Init()
             {
             }
