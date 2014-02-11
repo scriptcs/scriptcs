@@ -47,6 +47,7 @@ namespace ScriptCs
         {
             patternMap[new Regex(@"^\s*#r\s+(.*)$")] = LineState.AssemblyName;
             patternMap[new Regex(@"^\s*#load\s+(.*)$")] = LineState.FilePath;
+            patternMap[new Regex(@"^\s*:cd\s+(.*)$")] = LineState.FilePath;
         }
     }
 }
