@@ -1,9 +1,9 @@
 ﻿using System;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Hosting
+namespace ScriptCs
 {
-    public interface IScriptPackAuthoringHost
+    public interface IExtendedScriptHost
     {
         ScriptPackSettings ScriptPackSettings { get; set; }
 

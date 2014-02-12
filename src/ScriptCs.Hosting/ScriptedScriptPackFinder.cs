@@ -9,7 +9,7 @@ using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 using ScriptCs.Package;
 
-namespace ScriptCs.Hosting
+namespace ScriptCs
 {
     public class ScriptedScriptPackFinder
     {

@@ -9,22 +9,22 @@ using ScriptCs.Tests;
 using Should;
 using Xunit;
 
-namespace ScriptCs.Hosting.Tests
+namespace ScriptCs.Tests
 {
-    public class ScriptPackAuthoringHostTests
+    public class ExtendedScriptHostTests
     {
         public class TheScriptPackMethod
         {
-            private IScriptPackAuthoringHost _host1;
+            private IExtendedScriptHost _host1;
             private IScriptPackSettings _settings;
             private IScriptPackSettingsReferences _scriptPackSettingsReferences1;
             private IScriptPackSettingsReferences _scriptPackSettingsReferences2;
-            private IScriptPackAuthoringHost _host2;          
+            private IExtendedScriptHost _host2;          
 
             public TheScriptPackMethod()
             {
-                _host1 = new ScriptPackAuthoringHost(null, null);
-                _host2 = new ScriptPackAuthoringHost(null, null);
+                _host1 = new ExtendedScriptHost(null, null);
+                _host2 = new ExtendedScriptHost(null, null);
                 _scriptPackSettingsReferences1 = _host1.ScriptPack<FakeScriptPackContext>();
                 _settings = (IScriptPackSettings)_scriptPackSettingsReferences1;
                 _scriptPackSettingsReferences2 = _host2.ScriptPack<FakeScriptPack>();
@@ -57,7 +57,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldFailIfPassedATypeWhichIsNotAScriptPackContext()
             {
-                var host = new ScriptPackAuthoringHost(null, null);
+                var host = new ExtendedScriptHost(null, null);
                 Assert.Throws<ArgumentException>(()=>{
                     host.ScriptPack<string>();
                 });

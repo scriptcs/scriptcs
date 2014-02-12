@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Hosting
+namespace ScriptCs
 {
-    public class ScriptPackAuthoringHost : ScriptHost, IScriptPackAuthoringHost
+    public class ExtendedScriptHost : ScriptHost, IExtendedScriptHost
     {
-        ScriptPackSettings IScriptPackAuthoringHost.ScriptPackSettings { get; set; }
+        ScriptPackSettings IExtendedScriptHost.ScriptPackSettings { get; set; }
 
-        Type IScriptPackAuthoringHost.ScriptPackType { get; set; }
+        Type IExtendedScriptHost.ScriptPackType { get; set; }
 
-        public ScriptPackAuthoringHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment) : base(scriptPackManager, environment)
+        public ExtendedScriptHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment) : base(scriptPackManager, environment)
         {
         }
 
         public IScriptPackSettingsReferences ScriptPack<TScriptPack>()
         {
-            var host = (IScriptPackAuthoringHost) this;
+            var host = (IExtendedScriptHost) this;
 
             if (typeof(IScriptPack).IsAssignableFrom(typeof(TScriptPack)))
             {
@@ -36,7 +36,5 @@ namespace ScriptCs.Hosting
             throw new ArgumentException(
                     string.Format("'{0}' is not a valid type as it does not implement IScriptPack or IScriptPackContext", typeof(TScriptPack)));
         }
-
-
     }
 }

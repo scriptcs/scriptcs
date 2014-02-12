@@ -73,7 +73,7 @@
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeServicesTests.cs" />
-    <Compile Include="ScriptPackAuthoringHostTests.cs" />
+    <Compile Include="ExtendedScriptHostTests.cs" />
     <Compile Include="ScriptedScriptPackFinderTests.cs" />
     <Compile Include="ScriptPackTemplateTests.cs" />
     <Compile Include="ScriptServicesBuilderTests.cs" />

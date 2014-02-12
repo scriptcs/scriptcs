@@ -13,11 +13,11 @@ using IFileSystem = ScriptCs.Contracts.IFileSystem;
 using PackageReference = ScriptCs.Package.PackageReference;
 
 
-namespace ScriptCs.Hosting.Tests
+namespace ScriptCs.Tests
 {
     public class ScriptedScriptPackFinderTests
     {
-        public class TheGetLoaderScriptMethod
+        public class TheGetScriptedScriptPacksMethod
         {
             private readonly Mock<ILog> _logger;
             private readonly Mock<IFileSystem> _filesystem;
@@ -26,7 +26,7 @@ namespace ScriptCs.Hosting.Tests
             private readonly List<IPackageReference> _packageIds;
             private readonly string _workingDirectory;
 
-            public TheGetLoaderScriptMethod()
+            public TheGetScriptedScriptPacksMethod()
             {
                 _workingDirectory = "c:\\test";
 
@@ -59,7 +59,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 var generator = new ScriptedScriptPackFinder(_filesystem.Object, _packageContainer.Object, _logger.Object);
                 var packs = generator.GetScriptedScriptPacks(_workingDirectory);
-                
+                packs.ShouldContain(@"c:\test\Pack1\Pack1ScriptPack.csx");
             }
 
             [Fact]
