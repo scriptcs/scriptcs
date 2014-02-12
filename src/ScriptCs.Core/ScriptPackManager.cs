@@ -7,11 +7,21 @@ namespace ScriptCs
 {
     public class ScriptPackManager : IScriptPackManager, IRequirer
     {
-        private readonly IDictionary<Type, IScriptPackContext> _contexts = new Dictionary<Type, IScriptPackContext>(); 
+        private readonly IDictionary<Type, IScriptPackContext> _contexts = new Dictionary<Type, IScriptPackContext>();
 
         public ScriptPackManager(IEnumerable<IScriptPackContext> contexts)
+            :this(contexts, null)
+        {
+        }
+
+        public ScriptPackManager(IEnumerable<IScriptPackContext> contexts, IDictionary<Type, IScriptPackContext> contextLookup)
         {
             Guard.AgainstNullArgument("contexts", contexts);
+            
+            if (contextLookup == null)
+                contextLookup = new Dictionary<Type, IScriptPackContext>();
+
+            _contexts = contextLookup;
 
             foreach (var context in contexts)
             {
@@ -26,7 +36,11 @@ namespace ScriptCs
 
         public IScriptPackContext Get(Type contextType)
         {
-            return _contexts[contextType];
+            IScriptPackContext context;
+            if (_contexts.TryGetValue(contextType, out context))
+                return context;
+
+            return null;
         }
 
         T IRequirer.Require<T>()
