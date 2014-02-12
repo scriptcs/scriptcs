@@ -33,5 +33,10 @@ namespace ScriptCs
         {
             return Get<T>();
         }
+
+        IScriptPackContext IRequirer.Require(Type context)
+        {
+            return Get(context);
+        }
     }
 }

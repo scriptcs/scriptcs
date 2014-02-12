@@ -9,6 +9,8 @@ namespace ScriptCs.Contracts
     public interface IRequirer
     {
         T Require<T>() where T : IScriptPackContext;
+
+        IScriptPackContext Require(Type context);
     }
 }
 

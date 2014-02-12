@@ -3,7 +3,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptHost : IScriptHost
+    public class ScriptHost : IScriptHost, IRequirer
     {
         private readonly IScriptPackManager _scriptPackManager;
 
