@@ -7,15 +7,36 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting
 {
-    public class ScriptPackAuthoringHost : ScriptHost
+    public class ScriptPackAuthoringHost : ScriptHost, IScriptPackAuthoringHost
     {
+        ScriptPackSettings IScriptPackAuthoringHost.ScriptPackSettings { get; set; }
+
+        Type IScriptPackAuthoringHost.ScriptPackType { get; set; }
+
         public ScriptPackAuthoringHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment) : base(scriptPackManager, environment)
         {
         }
 
-        public IScriptPackSettingsReferences ScriptPack<TScriptPackContext>() where TScriptPackContext : IScriptPackContext
+        public IScriptPackSettingsReferences ScriptPack<TScriptPack>()
         {
-            return new ScriptPackSettings(typeof(TScriptPackContext));
+            var host = (IScriptPackAuthoringHost) this;
+
+            if (typeof(IScriptPack).IsAssignableFrom(typeof(TScriptPack)))
+            {
+                host.ScriptPackType = typeof (TScriptPack);
+                return null;
+            }
+            
+            if (typeof (IScriptPackContext).IsAssignableFrom(typeof(TScriptPack)))
+            {
+                host.ScriptPackSettings = new ScriptPackSettings(typeof (TScriptPack));
+                return host.ScriptPackSettings;
+            }
+                
+            throw new ArgumentException(
+                    string.Format("'{0}' is not a valid type as it does not implement IScriptPack or IScriptPackContext", typeof(TScriptPack)));
         }
+
+
     }
 }

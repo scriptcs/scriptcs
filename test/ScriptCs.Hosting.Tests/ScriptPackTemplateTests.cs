@@ -76,13 +76,5 @@ namespace ScriptCs.Tests
             {
             }
         }
-
-        public class FakeScriptPack2 : ScriptPackTemplate
-        {
-            public FakeScriptPack2(IScriptPackSettings settings):base(settings)
-            {
-            }
-            
-        }
     }
 }
