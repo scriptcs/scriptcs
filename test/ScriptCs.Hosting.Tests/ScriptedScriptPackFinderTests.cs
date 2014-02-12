@@ -15,7 +15,7 @@ using PackageReference = ScriptCs.Package.PackageReference;
 
 namespace ScriptCs.Hosting.Tests
 {
-    public class ScriptPackLoaderGeneratorTests
+    public class ScriptedScriptPackFinderTests
     {
         public class TheGetLoaderScriptMethod
         {
@@ -57,8 +57,8 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldReturnTopLevelPackageScript()
             {
-                var generator = new ScriptPackLoaderGenerator(_filesystem.Object, _packageContainer.Object, _logger.Object);
-                var loader = generator.GetLoaderScript(_workingDirectory);
+                var generator = new ScriptedScriptPackFinder(_filesystem.Object, _packageContainer.Object, _logger.Object);
+                var packs = generator.GetScriptedScriptPacks(_workingDirectory);
                 
             }
 

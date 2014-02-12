@@ -11,7 +11,7 @@ using ScriptCs.Package;
 
 namespace ScriptCs.Hosting
 {
-    public class ScriptPackLoaderGenerator
+    public class ScriptedScriptPackFinder
     {
         private readonly IFileSystem _fileSystem;
         private readonly IPackageContainer _packageContainer;
@@ -19,7 +19,7 @@ namespace ScriptCs.Hosting
         private IList<string> _scripts;
         private List<IPackageReference> _topLevelPackages;
 
-        public ScriptPackLoaderGenerator(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger)
+        public ScriptedScriptPackFinder(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger)
         {
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
@@ -37,7 +37,7 @@ namespace ScriptCs.Hosting
             return packages;
         }
 
-        public string GetLoaderScript(string workingDirectory)
+        public IEnumerable<string> GetScriptedScriptPacks(string workingDirectory)
         {
             var packages = GetPackages(workingDirectory).ToList();
             if (!packages.Any())
@@ -58,8 +58,7 @@ namespace ScriptCs.Hosting
                 var missingPackagesString = string.Join(",", missingPackages.Select(i => i.PackageId + " " + i.FrameworkName.FullName));
                 throw new MissingAssemblyException(string.Format("Missing: {0}", missingPackagesString));
             }
-            var loaderScript = string.Join("", foundScriptPacks.Select(s=>String.Format("#load {0}{1}", s, Environment.NewLine)));
-            return loaderScript;
+            return foundScriptPacks;
         }
 
         private void FindScripts(string packageDir, IEnumerable<IPackageReference> packageReferences, List<IPackageReference> missingPackages, List<string> foundScriptPacks, bool strictLoad = true)
