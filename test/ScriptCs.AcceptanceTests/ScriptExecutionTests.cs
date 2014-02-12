@@ -16,21 +16,22 @@ namespace ScriptCs.AcceptanceTests
     {
         [Scenario]
         [Trait("AcceptanceTest", "RunningScriptsTests")]
-        [Trait("Requires", "Internet Connection")]
-        [Trait("Requires", "Administrator Privileges")]
-        public void RunningWebApiHostSampleEnablesWebAccessInLocalhost(string originalWorkingDirectory, string localDirectory, Task<int> scriptTask)
+        public void RunningWebApiHostSampleEnablesWebAccessInLocalhost(
+            string originalWorkingDirectory, 
+            string localDirectory,
+            int scriptResult)
         {
             string methodName = AcceptanceTestHelpers.GetCurrentMethodName();
 
-            "Given an existing Web API host sample (similar to https://github.com/scriptcs/scriptcs-samples/tree/master/webapihost)"
+            "Given an existing set of scripts"
             ._(() =>
             {
                 originalWorkingDirectory = Environment.CurrentDirectory;
                 localDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(), methodName);
                 
-                var webApiHostDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(),  @"Files\webapihost");
+                var scriptsDirectory = Path.Combine(AcceptanceTestHelpers.GetExecutingAssemblyDirectory(),  @"Files\scripts");
                 Directory.CreateDirectory(localDirectory);
-                AcceptanceTestHelpers.CopyDirectory(webApiHostDirectory, localDirectory, true);
+                AcceptanceTestHelpers.CopyDirectory(scriptsDirectory, localDirectory, true);
 
                 Environment.CurrentDirectory = localDirectory;
 
@@ -44,27 +45,25 @@ namespace ScriptCs.AcceptanceTests
 
             "When the sample is executed"._(() =>
             {
-                scriptTask = Task.Run(() =>
+                if (File.Exists("result.txt"))
                 {
-                    var process =  AcceptanceTestHelpers.LaunchScriptCs("start.csx");
-                    process.WaitForExit();
-                    return process.ExitCode;
-                });
+                    File.Delete("result.txt");
+                }
+
+                var process =  AcceptanceTestHelpers.LaunchScriptCs("start.csx");
+                process.WaitForExit();
+                scriptResult = process.ExitCode;
             });
 
-            "Then the endpoint can be hit"._(() =>
+            "Then the result is stored in a file"._(() =>
             {
-                Task.Delay(10000).Wait();
-                var client = new HttpClient();
-                var getResult = client.GetStringAsync("http://localhost:8080/api/test").Result;
-
-                getResult.ShouldContain("Hello world!");
+                var result = Convert.ToInt32(File.ReadAllText("result.txt"));
+                result.ShouldEqual(42);
             });
 
             "And the program terminates correctly"._(() =>
             {
-                var result = scriptTask.Result;
-                result.ShouldEqual(0);
+                scriptResult.ShouldEqual(0);
             });
         }
     }

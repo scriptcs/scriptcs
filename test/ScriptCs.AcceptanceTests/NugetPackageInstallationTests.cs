@@ -118,12 +118,11 @@ namespace ScriptCs.AcceptanceTests
 
                 var packagesDirectoriesNames = packagesDir.EnumerateDirectories().Select(pd => pd.Name).ToArray();
 
-                packagesDirectoriesNames.Length.ShouldEqual(4);
+                packagesDirectoriesNames.Length.ShouldEqual(3);
 
                 packagesDirectoriesNames.Count(n => Regex.IsMatch(n, @"Common\.Logging\.[0-9]+\.[0-9]+\.[0-9]+")).ShouldEqual(1);
                 packagesDirectoriesNames.Count(n => Regex.IsMatch(n, @"ScriptCs\.Contracts\.[0-9]+\.[0-9]+\.[0-9]+")).ShouldEqual(1);
                 packagesDirectoriesNames.Count(n => Regex.IsMatch(n, @"ScriptCs\.Core\.[0-9]+\.[0-9]+\.[0-9]+")).ShouldEqual(1);
-                packagesDirectoriesNames.Count(n => Regex.IsMatch(n, @"ServiceStack\.Text\.[0-9]+\.[0-9]+\.[0-9]+")).ShouldEqual(1);
             });
         }
     }
