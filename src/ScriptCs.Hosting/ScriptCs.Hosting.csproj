@@ -71,10 +71,10 @@
     <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeServices.cs" />
+    <Compile Include="ScriptPackAuthoringHost.cs" />
     <Compile Include="ScriptPackLoaderGenerator.cs" />
     <Compile Include="ScriptConsole.cs" />
     <Compile Include="ScriptConsoleAppender.cs" />
-    <Compile Include="ScriptPackFilePreProcessor.cs" />
     <Compile Include="ScriptPackSettings.cs" />
     <Compile Include="ScriptPackTemplate.cs" />
     <Compile Include="ScriptServicesRegistration.cs" />

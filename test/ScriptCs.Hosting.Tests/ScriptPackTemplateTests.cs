@@ -13,27 +13,6 @@ namespace ScriptCs.Tests
 {
     public class ScriptPackTemplateTests
     {
-        public class TheConstructor
-        {
-            [Fact]
-            public void ShouldInvokeTheInitMethodOnTheScriptPack()
-            {
-                var scriptPackMock = new Mock<FakeScriptPack1>();
-                var scriptPack = scriptPackMock.Object;
-                scriptPackMock.Verify(s=>s.Init(), Times.Once());
-            }
-
-            [Fact]
-            public void ShouldFailIfInitMethodIsNotPresent()
-            {
-                var scriptPackMock = new Mock<FakeScriptPack2>();
-                Assert.Throws<TargetInvocationException>(() =>
-                {
-                    var scriptPack = scriptPackMock.Object;
-                });
-            }
-        }
-
         public class TheInitializeMethod
         {
             private Mock<IScriptPackSettings> _settingsMock = new Mock<IScriptPackSettings>();
@@ -62,32 +41,6 @@ namespace ScriptCs.Tests
             }
         }
 
-        public class TheScriptPackMethod
-        {
-            private FakeScriptPack1 _template;
-            private IScriptPackSettings _settings;
-            private IScriptPackSettingsReferences _scriptPackSettingsReferences;
-
-            public TheScriptPackMethod()
-            {
-                _template = new FakeScriptPack1();
-                _scriptPackSettingsReferences = _template.ScriptPack<FakeScriptPackContext>();
-                _settings = (IScriptPackSettings) _scriptPackSettingsReferences;
-            }
-
-            [Fact]
-            public void ShouldReturnAScriptPackSettingsInstance()
-            {
-                _scriptPackSettingsReferences.ShouldNotBeNull();
-            }
-
-            [Fact]
-            public void ShouldSetTheScriptPackContext()
-            {
-                _settings.GetContextType().ShouldEqual(typeof(FakeScriptPackContext));
-            }
-        }
-
         public class TheGetContextMethod
         {
             private FakeScriptPack1 _template;
@@ -96,7 +49,7 @@ namespace ScriptCs.Tests
             
             public TheGetContextMethod()
             {
-                _template = new FakeScriptPack1();
+                _template = new FakeScriptPack1(null);
                 _template.ContextResolver = t =>
                 {
                     _called = true;
@@ -105,6 +58,7 @@ namespace ScriptCs.Tests
                 _context = _template.ContextResolver(typeof (FakeScriptPackContext));
             }
 
+            [Fact]
             public void ShouldResolveTheContext()
             {
                 _called.ShouldBeTrue();
@@ -114,27 +68,20 @@ namespace ScriptCs.Tests
 
         public class FakeScriptPackContext : IScriptPackContext
         {
-            
         }
 
         public class FakeScriptPack1 : ScriptPackTemplate
         {
-            public FakeScriptPack1()
-            {
-            }
-
             public FakeScriptPack1(IScriptPackSettings settings):base(settings)
-            {
-            }
-
-            //Init is only virtual here to allow mocking with Moq.
-            public virtual void Init()
             {
             }
         }
 
         public class FakeScriptPack2 : ScriptPackTemplate
         {
+            public FakeScriptPack2(IScriptPackSettings settings):base(settings)
+            {
+            }
             
         }
     }

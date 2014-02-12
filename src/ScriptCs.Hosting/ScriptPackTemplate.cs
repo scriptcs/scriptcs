@@ -8,23 +8,13 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public abstract class ScriptPackTemplate : IScriptPack
+    public class ScriptPackTemplate : IScriptPack
     {
         private IScriptPackSettings _settings;
 
-        public ScriptPackTemplate(IScriptPackSettings settings) : this()
+        public ScriptPackTemplate(IScriptPackSettings settings)
         {
             _settings = settings;
-        }
-
-        public ScriptPackTemplate()
-        {
-            var init = this.GetType().GetMethod("Init", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            if (init == null)
-            {
-                throw new InvalidOperationException("Cannot load script pack as 'Init' method is missing");
-            }
-            init.Invoke(this, null);
         }
 
         void IScriptPack.Initialize(IScriptPackSession session)
@@ -42,15 +32,6 @@ namespace ScriptCs
         IScriptPackContext IScriptPack.GetContext()
         {
             return ContextResolver(_settings.GetContextType());
-        }
-
-        public IScriptPackSettingsReferences ScriptPack<TScriptPackContext>() where TScriptPackContext : IScriptPackContext
-        {
-            if (_settings == null)
-            {
-                _settings = new ScriptPackSettings(typeof(TScriptPackContext));
-            }
-            return _settings;
         }
     }
 }
