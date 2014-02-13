@@ -11,7 +11,7 @@ using ScriptCs.Package;
 
 namespace ScriptCs
 {
-    public class ScriptedScriptPackFinder
+    public class ScriptedScriptPackFinder : IScriptedScriptPackFinder
     {
         private readonly IFileSystem _fileSystem;
         private readonly IPackageContainer _packageContainer;

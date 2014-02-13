@@ -330,7 +330,7 @@ namespace ScriptCs.Tests
                 executor.References.Assemblies.ShouldContain(calling);
                 executor.References.Assemblies.ShouldContain(executing);
                 executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(4);
+                executor.References.Assemblies.Count.ShouldEqual(3);
             }           
         }
 
@@ -348,7 +348,7 @@ namespace ScriptCs.Tests
                 executor.References.Assemblies.ShouldNotContain(calling);
                 executor.References.Assemblies.ShouldNotContain(executing);
                 executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(2);
+                executor.References.Assemblies.Count.ShouldEqual(1);
             }
         }
     }

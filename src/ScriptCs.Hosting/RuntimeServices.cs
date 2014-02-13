@@ -60,6 +60,7 @@ namespace ScriptCs
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
             RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
+            RegisterOverrideOrDefault<IScriptedScriptPackFinder>(builder, b => b.RegisterType<ScriptedScriptPackFinder>().As<IScriptedScriptPackFinder>());
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
             

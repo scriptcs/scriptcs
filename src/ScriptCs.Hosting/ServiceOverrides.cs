@@ -119,5 +119,11 @@ namespace ScriptCs
             LineProcessors.Add(typeof(T));
             return _this;
         }
+
+        public TConfig ScriptedScriptPackFinder<T>() where T : IScriptedScriptPackFinder
+        {
+            Overrides[typeof (IScriptedScriptPackFinder)] = typeof (T);
+            return _this;
+        }
     }
 }
