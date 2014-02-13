@@ -125,5 +125,12 @@ namespace ScriptCs
             Overrides[typeof (IScriptedScriptPackFinder)] = typeof (T);
             return _this;
         }
+
+        public TConfig ScriptScriptPackLoader<T>() where T : IScriptedScriptPackLoader
+        {
+            Overrides[typeof (IScriptedScriptPackLoader)] = typeof (T);
+            return _this;
+        }
+
     }
 }

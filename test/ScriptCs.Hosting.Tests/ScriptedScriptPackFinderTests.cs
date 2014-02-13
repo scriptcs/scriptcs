@@ -61,20 +61,8 @@ namespace ScriptCs.Tests
                 _packageContainer = new Mock<IPackageContainer>();
                 _packageContainer.Setup(i => i.FindReferences(It.IsAny<string>())).Returns(new List<IPackageReference>{ref1});
 
-                //need to do this because PackageReference doesn't override Equals and GetHashCode.
-                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<PackageReference>()))
-                    .Returns((string path, PackageReference r) =>
-                    {
-                        switch (r.PackageId)
-                        {
-                            case "Pack1":
-                                return _package1.Object;
-                            case "Pack2":
-                                return _package2.Object;
-                            default:
-                                return null;
-                        }
-                    });
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<PackageReference>(p=>p.PackageId == "Pack1"))).Returns(_package1.Object);
+                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<PackageReference>(p => p.PackageId == "Pack2"))).Returns(_package2.Object);
             }
 
             [Fact]

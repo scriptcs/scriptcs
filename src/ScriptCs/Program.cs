@@ -22,13 +22,14 @@ namespace ScriptCs
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
- 
+
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .Cache(commandArgs.Cache)
                 .Debug(commandArgs.Debug)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
-                .Repl(commandArgs.Repl);
+                .Repl(commandArgs.Repl)
+                .LoadScriptedScriptPacks();
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);

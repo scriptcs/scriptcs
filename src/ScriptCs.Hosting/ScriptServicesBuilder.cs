@@ -26,6 +26,7 @@ namespace ScriptCs
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
+        private bool _loadScriptedScriptPacks;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
@@ -55,7 +56,12 @@ namespace ScriptCs
                                                                        _initializationServices, _scriptName);
             }
 
-            return _runtimeServices.GetScriptServices();
+            var services = _runtimeServices.GetScriptServices();
+
+            if (_loadScriptedScriptPacks == true)
+                services.ScriptedScriptPackLoader.Load();
+
+            return services;
         }
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
@@ -66,6 +72,12 @@ namespace ScriptCs
             var fs = _initializationServices.GetFileSystem();
             var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
             loader.Load(config, folders, extension, moduleNames);
+            return this;
+        }
+
+        public IScriptServicesBuilder LoadScriptedScriptPacks()
+        {
+            _loadScriptedScriptPacks = true;
             return this;
         }
 

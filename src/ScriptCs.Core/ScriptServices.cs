@@ -18,7 +18,8 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
-            IInstallationProvider installationProvider = null)
+            IInstallationProvider installationProvider = null,
+            IScriptedScriptPackLoader scriptedScriptPackLoader = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -32,6 +33,7 @@ namespace ScriptCs
             Console = console;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
+            ScriptedScriptPackLoader = scriptedScriptPackLoader;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -46,5 +48,6 @@ namespace ScriptCs
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
 		public IInstallationProvider InstallationProvider { get; private set; }
+        public IScriptedScriptPackLoader ScriptedScriptPackLoader { get; private set; }
     }
 }
