@@ -120,7 +120,7 @@ namespace ScriptCs
 
             AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, fileSystem);
 
-            return FindPossiblePaths(nameFragment, roots, fileSystem);
+            return FindPossiblePaths(nameFragment, roots.Distinct(), fileSystem);
         }
 
         private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)
