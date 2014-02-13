@@ -29,8 +29,8 @@ namespace ScriptCs.Argument
             var sr = SplitScriptArgs(args);
 
             var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : null));
-            var finalArguments = ReconcileArguments(configArgs, commandArgs, sr);
+            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : "scriptcs.opts"));
+            var finalArguments = ReconcileArguments(configArgs ?? new ScriptCsArgs(), commandArgs, sr);
 
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
         }
