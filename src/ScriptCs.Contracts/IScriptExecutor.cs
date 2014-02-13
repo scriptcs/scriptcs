@@ -14,7 +14,7 @@ namespace ScriptCs.Contracts
         void AddReferences(params string[] references);
         void RemoveReferences(params string[] references);
 
-        void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs);
+        IScriptHost Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs);
 
         void Reset();
 

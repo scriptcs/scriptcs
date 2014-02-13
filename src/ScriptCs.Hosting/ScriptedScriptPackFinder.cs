@@ -77,7 +77,7 @@ namespace ScriptCs
                 var scriptPack = nugetPackage.GetScriptBasedScriptPack();
                 if (scriptPack != null && !foundScriptPacks.Contains(scriptPack))
                 {
-                    foundScriptPacks.Add(scriptPack);
+                    foundScriptPacks.Add(string.Format(@"{0}\{1}", packageDir, scriptPack));
                     _logger.Debug("Found: " + scriptPack);
 
                 }

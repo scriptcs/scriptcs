@@ -19,7 +19,8 @@ namespace ScriptCs
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
             IInstallationProvider installationProvider = null,
-            IScriptedScriptPackLoader scriptedScriptPackLoader = null)
+            IScriptedScriptPackLoader scriptedScriptPackLoader = null,
+            IScriptHostFactory scriptHostFactory = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -34,6 +35,7 @@ namespace ScriptCs
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
             ScriptedScriptPackLoader = scriptedScriptPackLoader;
+            ScriptHostFactory = scriptHostFactory;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -49,5 +51,6 @@ namespace ScriptCs
         public IAssemblyResolver AssemblyResolver { get; private set; }
 		public IInstallationProvider InstallationProvider { get; private set; }
         public IScriptedScriptPackLoader ScriptedScriptPackLoader { get; private set; }
+        public IScriptHostFactory ScriptHostFactory { get; private set; }
     }
 }

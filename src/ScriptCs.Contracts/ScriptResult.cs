@@ -38,5 +38,7 @@ namespace ScriptCs.Contracts
             ExpectingClosingChar = closingChar;
             IsPendingClosingChar = closingChar.HasValue;
         }
+
+        public IScriptHost ScriptHost { get; private set; }
     }
 }

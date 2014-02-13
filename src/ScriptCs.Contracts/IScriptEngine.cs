@@ -11,5 +11,7 @@ namespace ScriptCs.Contracts
         string FileName { get; set; }
         
         ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession);
+
+        void Initialize(IScriptHost host);
     }
 }

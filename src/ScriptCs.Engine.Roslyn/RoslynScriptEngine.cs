@@ -15,6 +15,7 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected readonly ScriptEngine ScriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
+        private IScriptHost _host;
 
         public const string SessionKey = "Session";
 
@@ -38,6 +39,11 @@ namespace ScriptCs.Engine.Roslyn
 
         public string FileName { get; set; }
 
+        public void Initialize(IScriptHost host)
+        {
+            _host = host;
+        }
+
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
@@ -51,12 +57,11 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 Logger.Debug("Creating session");
 
-                var hostType = host.GetType();
+                var hostType = _host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
-                var session = ScriptEngine.CreateSession(host, hostType);
+                var session = ScriptEngine.CreateSession(_host, hostType);
 
                 foreach (var reference in references.PathReferences)
                 {

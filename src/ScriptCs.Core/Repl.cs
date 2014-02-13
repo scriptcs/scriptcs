@@ -19,7 +19,8 @@ namespace ScriptCs
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor,
+            IScriptHostFactory factory) : base(fileSystem, filePreProcessor, scriptEngine, factory, logger)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;

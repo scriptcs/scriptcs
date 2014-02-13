@@ -11,6 +11,7 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
+        private readonly IScriptHostFactory _hostFactory;
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq"};
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
@@ -28,8 +29,9 @@ namespace ScriptCs
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory hostFactory, ILog logger)
         {
+            _hostFactory = hostFactory;
             References = new AssemblyReferences();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
@@ -100,7 +102,7 @@ namespace ScriptCs
             }
         }
 
-        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
+        public virtual IScriptHost Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, Constants.BinFolder);
@@ -114,6 +116,9 @@ namespace ScriptCs
 
             scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;
+            var host = _hostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+            ScriptEngine.Initialize(host);
+            return host;
         }
 
         public virtual void Reset()

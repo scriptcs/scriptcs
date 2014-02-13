@@ -25,6 +25,7 @@ namespace ScriptCs.Tests
                 ScriptPack = new Mock<IScriptPack>();
                 FilePreProcessor = new Mock<IFilePreProcessor>();
                 ObjectSerializer = new Mock<IObjectSerializer>();
+                ScriptHostFactory = new Mock<IScriptHostFactory>();
             }
 
             public Mock<IObjectSerializer> ObjectSerializer { get; private set; }
@@ -40,11 +41,13 @@ namespace ScriptCs.Tests
             public Mock<IScriptPack> ScriptPack { get; private set; }
 
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
+
+            public Mock<IScriptHostFactory> ScriptHostFactory { get; private set; }
         }
 
         public static Repl GetRepl(Mocks mocks)
         {
-            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.ObjectSerializer.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object);
+            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.ObjectSerializer.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object, mocks.ScriptHostFactory.Object);
         }
 
         public class TheConstructor

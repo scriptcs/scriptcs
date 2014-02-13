@@ -61,8 +61,8 @@ namespace ScriptCs.Hosting.Package
 
         public string GetScriptBasedScriptPack()
         {
-           return  _package.GetContentFiles()
-                .Where(c => c.Path.EndsWith("ScriptPack.csx", StringComparison.OrdinalIgnoreCase)).Select(p=>p.Path).FirstOrDefault();
-        } 
+            return _package.GetContentFiles()
+                 .Where(c => c.Path.EndsWith("ScriptPack.csx", StringComparison.OrdinalIgnoreCase)).Select(p => string.Format(@"{0}\{1}", this.FullName, p.Path)).FirstOrDefault();
+        }
     }
 }
