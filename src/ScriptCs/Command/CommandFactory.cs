@@ -60,7 +60,7 @@ namespace ScriptCs.Command
                     _scriptServices.Executor,
                     _scriptServices.ScriptPackResolver,
                     _scriptServices.Logger,
-                    _scriptServices.AssemblyResolver);
+                    _scriptServices.AssemblyResolver, _scriptServices.ScriptedScriptPackLoader);
 
                 var fileSystem = _scriptServices.FileSystem;
                 var currentDirectory = fileSystem.CurrentDirectory;

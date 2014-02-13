@@ -28,8 +28,7 @@ namespace ScriptCs
                 .Debug(commandArgs.Debug)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
-                .Repl(commandArgs.Repl)
-                .LoadScriptedScriptPacks();
+                .Repl(commandArgs.Repl);
 
             var modules = GetModuleList(commandArgs.Modules);
             var extension = Path.GetExtension(commandArgs.ScriptName);

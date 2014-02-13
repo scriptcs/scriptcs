@@ -23,5 +23,7 @@ namespace ScriptCs.Contracts
         ScriptResult Execute(string script, params string[] scriptArgs);
 
         ScriptResult ExecuteScript(string script, params string[] scriptArgs);
+
+        IScriptHost ScriptHost { get; }
     }
 }

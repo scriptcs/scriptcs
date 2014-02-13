@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -12,6 +13,8 @@ namespace ScriptCs.Command
         private readonly IScriptPackResolver _scriptPackResolver;
 
         private readonly IAssemblyResolver _assemblyResolver;
+        
+        private readonly IScriptedScriptPackLoader _scriptedScriptPackLoader;
 
         private readonly IScriptExecutor _scriptExecutor;
 
@@ -21,13 +24,18 @@ namespace ScriptCs.Command
 
         private readonly ILog _logger;
 
+        private List<IScriptPack> _scriptedScriptPacks; 
+
+
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
             ILog logger,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            IScriptedScriptPackLoader scriptedScriptPackLoader
+            )
         {
             _script = script;
             _fileSystem = fileSystem;
@@ -36,6 +44,9 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
             _assemblyResolver = assemblyResolver;
+            _scriptedScriptPackLoader = scriptedScriptPackLoader;
+            _scriptedScriptPacks = new List<IScriptPack>();
+
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -53,6 +64,7 @@ namespace ScriptCs.Command
                 }
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+                var results =_scriptedScriptPackLoader.Load();
                 var result = _scriptExecutor.Execute(_script, ScriptArgs);
                 _scriptExecutor.Terminate();
 

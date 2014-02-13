@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -25,13 +26,19 @@ namespace ScriptCs
             _logger = logger;
         }
 
+        public class ScriptedScriptPackLoadResult
+        {
+            public IEnumerable<IScriptPack> ScriptPacks { get; private set; } 
+            public IEnumerable<Tuple<string, ScriptResult>> Results { get; private set; } 
+        }
+
         public IEnumerable<Tuple<String, ScriptResult>> Load()
         {
             var scriptResults = new List<Tuple<String, ScriptResult>>();
+            var scriptPacks = new List<IScriptPack>();
             
             _logger.Info("Finding scripted script packs");
             var scriptPaths = _finder.GetScriptedScriptPacks(_fileSystem.CurrentDirectory);
-            
 
             _executor.AddReferences(typeof(IScriptPackContext).Assembly);
             _executor.ImportNamespaces("ScriptCs.Contracts");
@@ -40,7 +47,21 @@ namespace ScriptCs
             {
                 _fileSystem.CurrentDirectory = Path.GetDirectoryName(path);
                 var result = _executor.Execute(path);
-                
+                var host = (IExtendedScriptHost) _executor.ScriptHost;
+                var settings = host.ScriptPackSettings;
+                if (settings != null)
+                {
+                    var scriptPack = new ScriptPackTemplate(settings);
+                    //need to inject a locator for retrieving the context from the container
+                    //scriptPack.ContextResolver = 
+                    scriptPacks.Add(scriptPack);
+                }
+                else
+                {
+                    
+                }
+               
+                scriptResults.Add(new Tuple<string, ScriptResult>(path, result));   
             }
             return null;
         } 
