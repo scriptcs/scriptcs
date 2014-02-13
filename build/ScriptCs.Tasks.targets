@@ -28,39 +28,4 @@
       </Code>
     </Task>
   </UsingTask>
-
-  <UsingTask TaskName="CombinePackageConfigs" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-    <ParameterGroup>
-      <PackageConfigFiles ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <OutputPath ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Reference Include="System.Xml" />
-      <Reference Include="System.Xml.Linq" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Linq" />
-      <Using Namespace="System.Xml" />
-      <Using Namespace="System.Xml.Linq" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-        var packages = 
-          PackageConfigFiles.AsParallel()
-                            .Where(x => File.Exists(x.GetMetadata("FullPath")))
-                            .Select(x => XDocument.Load(x.GetMetadata("FullPath")))
-                            .SelectMany(x => x.Root.Elements("package"))
-                            .Select(x => new { Id = x.Attribute("id").Value, Version = x.Attribute("version").Value })
-                            .Distinct()
-                            .OrderBy(x => x.Id);
-        
-        var document =
-            new XDocument(
-                new XDeclaration("1.0", "utf-8", "true"),
-                new XElement("packages", 
-                    packages.Select(x => new XElement("package", new XAttribute("id", x.Id), new XAttribute("version", x.Version)))));
-
-        document.Save(OutputPath);
-        ]]>
-      </Code>
-    </Task>
-  </UsingTask>
 </Project>
