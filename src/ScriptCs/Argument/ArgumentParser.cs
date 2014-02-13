@@ -21,7 +21,7 @@ namespace ScriptCs.Argument
                 return new ScriptCsArgs { Repl = true };
 
             ScriptCsArgs commandArgs = null;
-            const string unexpectedArgumentMessage = "Unexpected Argument: ";
+            const string unexpectedArgumentMessage = "unexpected named argument: ";
 
             try
             {
@@ -53,7 +53,7 @@ namespace ScriptCs.Argument
             }
             catch(ArgException ex)
             {
-                if(ex.Message.StartsWith(unexpectedArgumentMessage))
+                if(ex.Message.ToLower().StartsWith(unexpectedArgumentMessage))
                 {
                     var token = ex.Message.Substring(unexpectedArgumentMessage.Length);
                     _console.WriteLine(string.Format("Parameter \"{0}\" is not supported!", token));
