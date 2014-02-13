@@ -63,6 +63,9 @@ namespace ScriptCs
                
                 scriptResults.Add(new Tuple<string, ScriptResult>(path, result));   
             }
+            _executor.RemoveReferences(typeof(IScriptPackContext).Assembly);
+            _executor.RemoveNamespaces("ScriptCs.Contracts");
+
             return null;
         } 
     }
