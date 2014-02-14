@@ -23,7 +23,11 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
+                var mockScriptPackManager = new Mock<IScriptPackManager>();
+                var host = new ScriptHost(mockScriptPackManager.Object, new ScriptEnvironment(null));
                 var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                scriptEngine.Initialize(host);
+
                 // Arrange
                 var lines = new List<string>
                 {
@@ -47,7 +51,10 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
+                var mockScriptPackManager = new Mock<IScriptPackManager>();
+                var host = new ScriptHost(mockScriptPackManager.Object, new ScriptEnvironment(null));
                 var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                scriptEngine.Initialize(host);
 
                 // Arrange
                 var lines = new List<string>

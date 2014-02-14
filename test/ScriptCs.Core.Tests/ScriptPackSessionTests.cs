@@ -14,7 +14,6 @@ namespace ScriptCs.Tests
             private ScriptPackSession _scriptPackSession;
             private Mock<IScriptPack> _scriptPackMock;
             private Mock<IScriptPackContext> _contextMock;
-
             public TheConstructor()
             {
                 _scriptPackMock = new Mock<IScriptPack>();

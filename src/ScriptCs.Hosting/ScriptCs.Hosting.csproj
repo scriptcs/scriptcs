@@ -78,6 +78,8 @@
     <Compile Include="ScriptConsole.cs" />
     <Compile Include="ScriptConsoleAppender.cs" />
     <Compile Include="ScriptedScriptPackLoader.cs" />
+    <Compile Include="ScriptPackContextRegistry.cs" />
+    <Compile Include="ScriptPackContextResolver.cs" />
     <Compile Include="ScriptPackSettings.cs" />
     <Compile Include="ScriptPackTemplate.cs" />
     <Compile Include="ScriptServicesRegistration.cs" />

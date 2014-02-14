@@ -27,11 +27,11 @@ namespace ScriptCs
         {
         }
 
-        public Func<Type, IScriptPackContext> ContextResolver { get; set; }
+        public IScriptPackContextResolver ContextResolver { get; set; }
 
         IScriptPackContext IScriptPack.GetContext()
         {
-            return ContextResolver(_settings.GetContextType());
+            return ContextResolver.Resolve(_settings.GetContextType());
         }
     }
 }

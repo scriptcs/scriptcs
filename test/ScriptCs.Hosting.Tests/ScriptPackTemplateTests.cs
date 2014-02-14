@@ -45,23 +45,20 @@ namespace ScriptCs.Tests
         {
             private FakeScriptPack1 _template;
             private IScriptPackContext _context;
-            private bool _called = false;
+            private Mock<IScriptPackContextResolver> _mockScriptPackContextResolver = new Mock<IScriptPackContextResolver>();
+            
             
             public TheGetContextMethod()
             {
                 _template = new FakeScriptPack1(null);
-                _template.ContextResolver = t =>
-                {
-                    _called = true;
-                    return new FakeScriptPackContext();
-                };
-                _context = _template.ContextResolver(typeof (FakeScriptPackContext));
+                _mockScriptPackContextResolver.Setup(c=>c.Resolve(It.IsAny<Type>())).Returns(new ExtendedScriptHostTests.FakeScriptPackContext());
+                _template.ContextResolver = _mockScriptPackContextResolver.Object;
+                _context = _template.ContextResolver.Resolve(typeof (FakeScriptPackContext));
             }
 
             [Fact]
             public void ShouldResolveTheContext()
             {
-                _called.ShouldBeTrue();
                 _context.ShouldNotBeNull();
             }
         }

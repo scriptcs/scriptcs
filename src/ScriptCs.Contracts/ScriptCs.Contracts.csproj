@@ -54,6 +54,8 @@
     <Compile Include="IScriptHostFactory.cs" />
     <Compile Include="IScriptPack.cs" />
     <Compile Include="IScriptPackContext.cs" />
+    <Compile Include="IScriptPackContextRegistry.cs" />
+    <Compile Include="IScriptPackContextResolver.cs" />
     <Compile Include="IScriptPackManager.cs" />
     <Compile Include="IScriptPackResolver.cs" />
     <Compile Include="IScriptPackSession.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="ModuleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptedScriptPackLoadResult.cs" />
     <Compile Include="ScriptPack.cs" />
     <Compile Include="ScriptPackContext.cs" />
     <Compile Include="ScriptPackSession.cs" />

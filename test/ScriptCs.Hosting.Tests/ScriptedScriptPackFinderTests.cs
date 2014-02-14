@@ -43,14 +43,14 @@ namespace ScriptCs.Tests
                 _package1.SetupGet(i => i.Version).Returns(new Version("1.0"));
                 _package1.SetupGet(i => i.TextVersion).Returns("1.0");
                 _package1.SetupGet(i => i.FullName).Returns(_package1.Object.Id + "." + _package1.Object.Version);
-                _package1.Setup(i => i.GetScriptBasedScriptPack()).Returns(@"c:\test\Pack1\Pack1ScriptPack.csx");
+                _package1.Setup(i => i.GetScriptBasedScriptPack()).Returns(@"Pack1\Pack1ScriptPack.csx");
 
                 _package2 = new Mock<IPackageObject>();
                 _package2.SetupGet(i => i.Id).Returns("Pack2");
                 _package2.SetupGet(i => i.Version).Returns(new Version("1.0"));
                 _package2.SetupGet(i => i.TextVersion).Returns("1.0");
                 _package2.SetupGet(i => i.FullName).Returns(_package2.Object.Id + "." + _package2.Object.Version);
-                _package2.Setup(i => i.GetScriptBasedScriptPack()).Returns(@"c:\test\Pack2\Pack2ScriptPack.csx");
+                _package2.Setup(i => i.GetScriptBasedScriptPack()).Returns(@"Pack2\Pack2ScriptPack.csx");
                 _package2.Setup(i => i.FrameworkName).Returns(VersionUtility.ParseFrameworkName("net40"));
                 _package1.Setup(i => i.Dependencies).Returns(new List<IPackageObject>() { _package2.Object });
 
@@ -70,7 +70,7 @@ namespace ScriptCs.Tests
             {
                 var generator = new ScriptedScriptPackFinder(_filesystem.Object, _packageContainer.Object, _logger.Object);
                 var packs = generator.GetScriptedScriptPacks(_workingDirectory);
-                packs.ShouldContain(@"c:\test\Pack1\Pack1ScriptPack.csx");
+                packs.ShouldContain(@"c:\test\packages\Pack1\Pack1ScriptPack.csx");
             }
 
             [Fact]
@@ -78,7 +78,7 @@ namespace ScriptCs.Tests
             {
                 var generator = new ScriptedScriptPackFinder(_filesystem.Object, _packageContainer.Object, _logger.Object);
                 var packs = generator.GetScriptedScriptPacks(_workingDirectory);
-                packs.ShouldContain(@"c:\test\Pack2\Pack2ScriptPack.csx");
+                packs.ShouldContain(@"c:\test\packages\Pack2\Pack2ScriptPack.csx");
             }
         }
     }

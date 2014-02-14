@@ -8,7 +8,6 @@ using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Hosting;
 using ScriptCs.Hosting.Package;
 
 namespace ScriptCs
@@ -63,6 +62,9 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IScriptedScriptPackFinder>(builder, b => b.RegisterType<ScriptedScriptPackFinder>().As<IScriptedScriptPackFinder>());
             RegisterOverrideOrDefault<IScriptedScriptPackLoader>(builder, b => b.RegisterType<ScriptedScriptPackLoader>().As<IScriptedScriptPackLoader>());
 
+            builder.RegisterType<ScriptPackContextResolver>().As<IScriptPackContextResolver>().SingleInstance();
+            builder.RegisterType<ScriptPackContextRegistry>().As<IScriptPackContextRegistry>().SingleInstance();
+
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
             
             if (_initDirectoryCatalog)
@@ -90,15 +92,22 @@ namespace ScriptCs
                 }
                 if (assemblyLoadFailures)
                 {
-                    if (_scriptName == null || _scriptName.Length == 0)
+                    if (string.IsNullOrEmpty(_scriptName))
                         Logger.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
                     else    
                         Logger.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
                 }
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
+            
+            var container = builder.Build();
 
-            return builder.Build();
+            var contextRegistry = (ScriptPackContextRegistry) container.Resolve<IScriptPackContextRegistry>();
+            contextRegistry.Initialze(container);
+            var contextResolver = (ScriptPackContextResolver) container.Resolve<IScriptPackContextResolver>();
+            contextResolver.Initialize(container);
+
+            return container;
         }
 
         private void RegisterLineProcessors(ContainerBuilder builder)

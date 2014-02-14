@@ -7,5 +7,7 @@
         void AddReference(string assemblyDisplayNameOrPath);
 
         void ImportNamespace(string @namespace);
+
+        void AddScriptPack(IScriptPack pack);
     }
 }

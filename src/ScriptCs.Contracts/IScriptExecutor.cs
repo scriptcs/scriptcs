@@ -25,5 +25,9 @@ namespace ScriptCs.Contracts
         ScriptResult ExecuteScript(string script, params string[] scriptArgs);
 
         IScriptHost ScriptHost { get; }
+
+        ScriptPackSession ScriptPackSession { get; }
+
+        IScriptPackManager ScriptPackManager { get; }
     }
 }

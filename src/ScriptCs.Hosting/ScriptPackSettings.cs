@@ -15,6 +15,8 @@ namespace ScriptCs
         public ScriptPackSettings(Type contextType)
         {
             _contextType = contextType;
+            _references = new List<string>();
+            _imports = new List<string>();
         }
 
         public IEnumerable<string> GetReferences()

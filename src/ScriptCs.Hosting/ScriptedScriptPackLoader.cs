@@ -17,27 +17,25 @@ namespace ScriptCs
         private readonly IScriptExecutor _executor;
         private readonly IFileSystem _fileSystem;
         private readonly ILog _logger;
+        private readonly IScriptPackContextResolver _contextResolver;
+        private readonly IScriptPackContextRegistry _contextRegistry;
 
-        public ScriptedScriptPackLoader(IScriptedScriptPackFinder finder, IScriptExecutor executor, IFileSystem fileSystem, ILog logger)
+        public ScriptedScriptPackLoader(IScriptedScriptPackFinder finder, IScriptExecutor executor, IFileSystem fileSystem, ILog logger, IScriptPackContextResolver contextResolver, IScriptPackContextRegistry contextRegistry)
         {
             _finder = finder;
             _executor = executor;
             _fileSystem = fileSystem;
             _logger = logger;
+            _contextResolver = contextResolver;
+            _contextRegistry = contextRegistry;
         }
 
-        public class ScriptedScriptPackLoadResult
-        {
-            public IEnumerable<IScriptPack> ScriptPacks { get; private set; } 
-            public IEnumerable<Tuple<string, ScriptResult>> Results { get; private set; } 
-        }
-
-        public IEnumerable<Tuple<String, ScriptResult>> Load()
+        public ScriptedScriptPackLoadResult Load()
         {
             var scriptResults = new List<Tuple<String, ScriptResult>>();
             var scriptPacks = new List<IScriptPack>();
             
-            _logger.Info("Finding scripted script packs");
+            _logger.Debug("Finding scripted script packs");
             var scriptPaths = _finder.GetScriptedScriptPacks(_fileSystem.CurrentDirectory);
 
             _executor.AddReferences(typeof(IScriptPackContext).Assembly);
@@ -47,26 +45,25 @@ namespace ScriptCs
             {
                 _fileSystem.CurrentDirectory = Path.GetDirectoryName(path);
                 var result = _executor.Execute(path);
+                scriptResults.Add(new Tuple<string, ScriptResult>(path, result));   
                 var host = (IExtendedScriptHost) _executor.ScriptHost;
                 var settings = host.ScriptPackSettings;
                 if (settings != null)
                 {
-                    var scriptPack = new ScriptPackTemplate(settings);
-                    //need to inject a locator for retrieving the context from the container
-                    //scriptPack.ContextResolver = 
+                    _contextRegistry.Register(settings.GetContextType());
+                    var scriptPack = new ScriptPackTemplate(settings) {ContextResolver = _contextResolver};
                     scriptPacks.Add(scriptPack);
                 }
                 else
                 {
                     
                 }
-               
-                scriptResults.Add(new Tuple<string, ScriptResult>(path, result));   
             }
             _executor.RemoveReferences(typeof(IScriptPackContext).Assembly);
             _executor.RemoveNamespaces("ScriptCs.Contracts");
-
-            return null;
+            var loadResult = new ScriptedScriptPackLoadResult(scriptPacks,scriptResults);
+            _fileSystem.CurrentDirectory = saveDir;
+            return loadResult;
         } 
     }
 }

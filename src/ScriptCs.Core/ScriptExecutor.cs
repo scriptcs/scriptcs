@@ -31,6 +31,8 @@ namespace ScriptCs
 
         public IScriptHost ScriptHost { get; protected set; }
 
+        public IScriptPackManager ScriptPackManager { get; private set; }
+
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, IScriptHostFactory hostFactory, ILog logger)
         {
             _hostFactory = hostFactory;
@@ -118,7 +120,8 @@ namespace ScriptCs
 
             scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;
-            var host = _hostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+            ScriptPackManager = new ScriptPackManager(scriptPackSession.Contexts);
+            var host = _hostFactory.CreateScriptHost(ScriptPackManager, scriptArgs);
             ScriptEngine.Initialize(host);
             ScriptHost = host;
             return host;

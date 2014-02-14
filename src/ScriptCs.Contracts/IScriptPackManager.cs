@@ -6,5 +6,6 @@ namespace ScriptCs.Contracts
     {
         TContext Get<TContext>() where TContext : IScriptPackContext;
         IScriptPackContext Get(Type contextType);
+        void AddContext(IScriptPackContext context);
     }
 }

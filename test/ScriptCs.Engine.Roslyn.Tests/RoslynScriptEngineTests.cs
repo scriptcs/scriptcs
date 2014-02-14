@@ -28,6 +28,7 @@ namespace ScriptCs.Tests
 
         public class TheExecuteMethod 
         {
+            /*
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
@@ -50,7 +51,7 @@ namespace ScriptCs.Tests
                 // Assert
                 scriptHostFactory.Verify(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()));
             }
-
+            */
             [Theory, ScriptCsAutoData]
             public void ShouldReuseExistingSessionIfProvided(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
@@ -73,6 +74,7 @@ namespace ScriptCs.Tests
                 engine.Session.ShouldEqual(session.Session);
             }
 
+            /*
             [Theory, ScriptCsAutoData]
             public void ShouldCreateNewSessionIfNotProvided(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
@@ -90,7 +92,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 engine.Session.ShouldNotBeNull();
-            }
+            }*/
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddNewReferencesIfTheyAreProvided(

@@ -52,5 +52,10 @@ namespace ScriptCs
         {
             return Get(context);
         }
+
+        public void AddContext(IScriptPackContext context)
+        {
+            _contexts.Add(context.GetType(), context);
+        }
     }
 }

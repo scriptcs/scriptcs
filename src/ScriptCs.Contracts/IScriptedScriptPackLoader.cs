@@ -5,6 +5,6 @@ namespace ScriptCs.Contracts
 {
     public interface IScriptedScriptPackLoader
     {
-        IEnumerable<Tuple<String, ScriptResult>> Load();
+        ScriptedScriptPackLoadResult Load();
     }
 }

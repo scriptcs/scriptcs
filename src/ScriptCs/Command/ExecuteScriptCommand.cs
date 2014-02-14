@@ -63,23 +63,31 @@ namespace ScriptCs.Command
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
 
-                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
-                var results =_scriptedScriptPackLoader.Load();
-                var result = _scriptExecutor.Execute(_script, ScriptArgs);
+                var packs = _scriptPackResolver.GetPacks();
+                _scriptExecutor.Initialize(assemblyPaths, packs, ScriptArgs);
+                var loaderResult =_scriptedScriptPackLoader.Load();
+                foreach (var pack in loaderResult.ScriptPacks)
+                {
+                    _scriptExecutor.ScriptPackSession.AddScriptPack(pack);
+                    _scriptExecutor.ScriptPackManager.AddContext(pack.GetContext());
+                }
+
+                var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
+                
                 _scriptExecutor.Terminate();
 
-                if (result == null) return CommandResult.Error;
+                if (scriptResult == null) return CommandResult.Error;
 
-                if (result.CompileExceptionInfo != null)
+                if (scriptResult.CompileExceptionInfo != null)
                 {
-                    _logger.Error(result.CompileExceptionInfo.SourceException.Message);
-                    _logger.Debug(result.CompileExceptionInfo.SourceException);
+                    _logger.Error(scriptResult.CompileExceptionInfo.SourceException.Message);
+                    _logger.Debug(scriptResult.CompileExceptionInfo.SourceException);
                     return CommandResult.Error;
                 }
 
-                if (result.ExecuteExceptionInfo != null)
+                if (scriptResult.ExecuteExceptionInfo != null)
                 {
-                    _logger.Error(result.ExecuteExceptionInfo.SourceException);
+                    _logger.Error(scriptResult.ExecuteExceptionInfo.SourceException);
                     return CommandResult.Error;
                 }
 
