@@ -12,10 +12,12 @@ namespace ScriptCs
         private readonly ILineAnalyzer _lineAnalyzer;
         private readonly char[] SLASHES = {'\\', '/'};
         private enum Token { Backspace, Tab, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
+        private readonly IReplHistory _replHistory;
 
-        public InputLine(ILineAnalyzer lineAnalyzer)
+        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory)
         {
             _lineAnalyzer = lineAnalyzer;
+            _replHistory = replHistory;
         }
 
         public string ReadLine(IConsole console, IScriptExecutor executor)
@@ -25,6 +27,7 @@ namespace ScriptCs
             bool isCompletingWord = false;
             string[] possibleCompletions = null;
             int currentCompletion = 0;
+            
 
             while (!isEol)
             {
@@ -36,6 +39,12 @@ namespace ScriptCs
                         isEol = true;
                         console.WriteLine();
                         isCompletingWord = false;
+                        break;
+                    case Token.UpArrow:
+                        buffer.Line = _replHistory.GetPreviousLine();
+                        break;
+                    case Token.DownArrow:
+                        buffer.Line = _replHistory.GetNextLine();
                         break;
                     case Token.Backspace:
                         if (buffer.Position > 0)
@@ -93,6 +102,8 @@ namespace ScriptCs
 
                 _lineAnalyzer.Analyze(buffer.Line);
             }
+
+            if (buffer.Line.Length > 0) _replHistory.AddLine(buffer.Line);
 
             return buffer.Line;
         }

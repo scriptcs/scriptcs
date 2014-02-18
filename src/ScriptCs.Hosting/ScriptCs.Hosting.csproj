@@ -68,6 +68,7 @@
     <Compile Include="Package\PackageInstaller.cs" />
     <Compile Include="Package\PackageObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplHistory.cs" />
     <Compile Include="RuntimeServices.cs" />
     <Compile Include="ScriptConsole.cs" />
     <Compile Include="ScriptConsoleAppender.cs" />

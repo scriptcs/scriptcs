@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using ScriptCs.Contracts;
@@ -7,7 +8,7 @@ namespace ScriptCs
 {
     public class Buffer
     {
-        internal string Line { get { return _buffer.ToString(); } }
+        internal string Line { get { return _buffer.ToString(); } set { ResetTo(0); Append(value); } }
         internal int Position { get { return _buffer.Length; } }
 
         private readonly StringBuilder _buffer = new StringBuilder();
