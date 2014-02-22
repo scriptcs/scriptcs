@@ -63,10 +63,15 @@
     <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
+    <Compile Include="InputLineAutoDataAttribute.cs" />
+    <Compile Include="InputLineTests.cs" />
+    <Compile Include="LineAnalyzerTests.cs" />
     <Compile Include="ModuleLoaderTests.cs" />
     <Compile Include="ObjectSerializerTests.cs" />
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplBufferTests.cs" />
+    <Compile Include="ReplHistoryTests.cs" />
     <Compile Include="RuntimeServicesTests.cs" />
     <Compile Include="ScriptServicesBuilderTests.cs" />
   </ItemGroup>

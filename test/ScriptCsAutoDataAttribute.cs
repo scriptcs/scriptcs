@@ -15,5 +15,14 @@ namespace ScriptCs.Tests
             )
         {
         }
+
+        internal ScriptCsAutoDataAttribute(ICustomization cust, params object[] values)
+            : base(
+            new InlineDataAttribute(values),
+            new AutoDataAttribute(
+                new Fixture().Customize(cust).Customize(new AutoMoqCustomization()))
+            )
+        {
+        }
     }
 }

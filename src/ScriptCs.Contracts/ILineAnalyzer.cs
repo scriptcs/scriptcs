@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScriptCs.Contracts
+﻿namespace ScriptCs.Contracts
 {
     public interface ILineAnalyzer
     {

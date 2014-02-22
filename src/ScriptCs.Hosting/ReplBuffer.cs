@@ -11,7 +11,7 @@ namespace ScriptCs
         public int Position { get { return _buffer.Length; } }
 
         private readonly StringBuilder _buffer = new StringBuilder();
-        private IConsole _console;
+        private readonly IConsole _console;
 
         public ReplBuffer(IConsole console)
         {
