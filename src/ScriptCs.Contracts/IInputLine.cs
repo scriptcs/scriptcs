@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace ScriptCs.Contracts
+﻿namespace ScriptCs.Contracts
 {
     public interface IInputLine
     {
-        string ReadLine(IConsole console, IScriptExecutor executor);
+        string ReadLine(IScriptExecutor executor);
     }
 }

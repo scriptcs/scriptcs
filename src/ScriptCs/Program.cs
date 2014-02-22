@@ -14,7 +14,7 @@ namespace ScriptCs
             ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
 
             var console = new ScriptConsole();
-            var inputLine = new InputLine(new LineAnalyzer(), new ReplHistory());
+            var inputLine = new InputLine(new LineAnalyzer(), new ReplHistory(), new ReplBuffer(console), console);
 
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
             var arguments = parser.Parse(args);

@@ -13,42 +13,46 @@ namespace ScriptCs
         private readonly char[] SLASHES = {'\\', '/'};
         private enum Token { Backspace, Tab, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
         private readonly IReplHistory _replHistory;
+        private readonly IReplBuffer _buffer;
+        private readonly IConsole _console;
 
-        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory)
+        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory, IReplBuffer buffer, IConsole console)
         {
+            _console = console;
+            _buffer = buffer;
             _lineAnalyzer = lineAnalyzer;
             _replHistory = replHistory;
         }
 
-        public string ReadLine(IConsole console, IScriptExecutor executor)
+        public string ReadLine(IScriptExecutor executor)
         {
-            var buffer = new Buffer(console);
             bool isEol = false;
             bool isCompletingWord = false;
             string[] possibleCompletions = null;
             int currentCompletion = 0;
-            
+
+            _buffer.StartLine();
 
             while (!isEol)
             {
-                var keyInfo = console.ReadKey();
+                var keyInfo = _console.ReadKey();
 
                 switch (Tokenize(keyInfo))
                 {
                     case Token.Enter:
                         isEol = true;
-                        console.WriteLine();
+                        _console.WriteLine();
                         isCompletingWord = false;
                         break;
                     case Token.UpArrow:
-                        buffer.Line = _replHistory.GetPreviousLine();
+                        _buffer.Line = _replHistory.GetPreviousLine();
                         break;
                     case Token.DownArrow:
-                        buffer.Line = _replHistory.GetNextLine();
+                        _buffer.Line = _replHistory.GetNextLine();
                         break;
                     case Token.Backspace:
-                        if (buffer.Position > 0)
-                            buffer.Back();
+                        if (_buffer.Position > 0)
+                            _buffer.Back();
                         isCompletingWord = false;
                         break;
                     case Token.Tab:
@@ -68,8 +72,8 @@ namespace ScriptCs
 
                             if (possibleCompletions.Any())
                             {
-                                buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                buffer.Append(possibleCompletions[currentCompletion]); 
+                                _buffer.ResetTo(_lineAnalyzer.TextPosition);
+                                _buffer.Append(possibleCompletions[currentCompletion]); 
                             }
                         }
                         else if (_lineAnalyzer.CurrentState == LineState.AssemblyName)
@@ -88,24 +92,24 @@ namespace ScriptCs
 
                             if (possibleCompletions.Any())
                             {
-                                buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                buffer.Append(possibleCompletions[currentCompletion]);
+                                _buffer.ResetTo(_lineAnalyzer.TextPosition);
+                                _buffer.Append(possibleCompletions[currentCompletion]);
                             }
                         }
                         break;
                     case Token.Other:
                         var ch = keyInfo.KeyChar;
-                        buffer.Append(ch);
+                        _buffer.Append(ch);
                         isCompletingWord = false;
                         break;
                 }
 
-                _lineAnalyzer.Analyze(buffer.Line);
+                _lineAnalyzer.Analyze(_buffer.Line);
             }
 
-            if (buffer.Line.Length > 0) _replHistory.AddLine(buffer.Line);
+            if (_buffer.Line.Length > 0) _replHistory.AddLine(_buffer.Line);
 
-            return buffer.Line;
+            return _buffer.Line;
         }
         
         private Token Tokenize(ConsoleKeyInfo keyInfo)
