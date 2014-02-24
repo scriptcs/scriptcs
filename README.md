@@ -6,7 +6,7 @@ This is an implementation of a scriptcs scripting engine using *Mono.CSharp* and
 ## Running this
 
 1. Build from source. Package restore is enabled, but you will need the [scriptcs nightly build](https://www.myget.org/gallery/scriptcsnightly).
-2. Install as scriptcs module. Eiether create a local nuget package and install `scriptcs -install [packagename] -g` or use [this scriptcs build](https://github.com/filipw/scriptcs/tree/friendly-module-loader). In the latter case, simply copy the binaries to `/bin` folder relative to your script
+2. Install as scriptcs module. Eiether create a local nuget package and install `scriptcs -install [packagename] -g` or use latest version of scriptcs (0.9.0). In the latter case, simply copy the binaries to `/bin` folder relative to your script but remember to run with `-debug` flag.
 3. Run. For example, create a `test.csx`:
       
         public class Test {
