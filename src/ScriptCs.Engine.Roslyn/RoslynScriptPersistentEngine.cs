@@ -23,8 +23,12 @@ namespace ScriptCs.Engine.Roslyn
         protected override bool ShouldCompile()
         {
             var dllPath = GetDllTargetPath();
+            var fileInfoAssembly = new FileInfo(dllPath);            
+            var scriptPath = GetScriptTargetPath();
+            var fileInfoScript = new FileInfo(scriptPath);
+            var cachedAssemblyOutOfDate = fileInfoScript.LastWriteTimeUtc > fileInfoAssembly.LastWriteTimeUtc;
 
-            return !_fileSystem.FileExists(dllPath);
+            return !_fileSystem.FileExists(dllPath) || cachedAssemblyOutOfDate;
         }
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
@@ -57,6 +61,12 @@ namespace ScriptCs.Engine.Roslyn
             var dllName = FileName.Replace(Path.GetExtension(FileName), ".dll");
             var dllPath = Path.Combine(CacheDirectory, dllName);
             return dllPath;
+        }
+
+        private string GetScriptTargetPath()
+        {
+          var scriptPath = Path.Combine(_fileSystem.CurrentDirectory, FileName);
+          return scriptPath;
         }
     }
 }
