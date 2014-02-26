@@ -15,10 +15,11 @@ namespace ScriptCs.Command
         public CommandResult Execute()
         {
             var assembly = typeof(Program).Assembly;
-            var productVersion = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
-            var message = string.Format("scriptcs v{0}", productVersion);
 
-            _console.WriteLine(message);
+            var productVersion = FileVersionInfo
+                .GetVersionInfo(assembly.Location).ProductVersion;
+
+            _console.WriteAsciiArt(productVersion);
 
             return CommandResult.Success;
         }
