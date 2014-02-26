@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Autofac;
+using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Tests;
@@ -22,6 +23,16 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.StartLine();
 
                 replBuffer.Line.ShouldBeEmpty();
+            }
+
+            [Theory, InputLineAutoData]
+            public void ShouldResetThePosition(ReplBuffer replBuffer, string testString)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.StartLine();
+
+                replBuffer.Position.ShouldEqual(0);
             }
         }
 
@@ -56,11 +67,21 @@ namespace ScriptCs.Hosting.Tests
         public class ThePositionProperty
         {
             [Theory, InputLineAutoData]
-            public void ShouldReturnTheLineLength(ReplBuffer replBuffer, string testString)
+            public void ShouldReturnTheLineLengthIfCursorNotMoved(ReplBuffer replBuffer, string testString)
             {
                 replBuffer.Line = testString;
 
                 replBuffer.Position.ShouldEqual(testString.Length);
+            }
+
+            [Theory, InputLineAutoData]
+            public void ShouldReturnCurrentPositionIfCurserHasMoved(ReplBuffer replBuffer, string testString)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+
+                replBuffer.Position.ShouldEqual(testString.Length - 1);
             }
         }
 
@@ -167,6 +188,18 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Line.ShouldEqual(testString + testChar);
             }
 
+            [Theory, InputLineAutoData("foobar")]
+            public void ShouldInsertCharacterToTheLineAtPosition(string testString, char testChar, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+
+                replBuffer.Append(testChar);
+
+                replBuffer.Line.ShouldEqual("fooba" + testChar + "r");
+            }
+
             [Theory, InputLineAutoData]
             public void ShouldAddCharacterToTheConsoleLine(char testChar, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
@@ -185,12 +218,142 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Line.ShouldEqual(firstString + secondString);
             }
 
+            [Theory, InputLineAutoData("foobar")]
+            public void ShouldInsertStringToTheLineAtPosition(string testString, string newString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+
+                replBuffer.Append(newString);
+
+                replBuffer.Line.ShouldEqual("fooba" + newString + "r");
+            }
+
             [Theory, InputLineAutoData]
             public void ShouldAddStringToTheConsoleLine(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 replBuffer.Append(testString);
 
                 consoleMock.Verify(c => c.Write(testString), Times.Once());
+            }
+        }
+
+        public class MoveLeft 
+        {
+            [Theory, InputLineAutoData]
+            public void ShouldMovePositionToTheLeft(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+
+                replBuffer.Position.ShouldEqual(testString.Length - 2);
+            }
+
+            [Theory, InputLineAutoData("foo")]
+            public void ShouldNotMovePositionTooFarLeft(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+
+                replBuffer.Position.ShouldEqual(0);
+            }
+
+            [Theory, InputLineAutoData]
+            public void ShouldMoveCursorToTheLeft(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                var cursorPos = testString.Length;
+                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+
+                consoleMock.Object.Position.ShouldEqual(testString.Length - 2);
+            }
+
+            [Theory, InputLineAutoData("foo")]
+            public void ShouldNotMoveCursorTooFarLeft(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                var cursorPos = testString.Length;
+                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+
+                consoleMock.Object.Position.ShouldEqual(0);
+            }
+        }
+
+        public class MoveRight
+        {
+            [Theory, InputLineAutoData]
+            public void ShouldMovePositionToTheRight(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveRight();
+
+                replBuffer.Position.ShouldEqual(testString.Length - 1);
+            }
+
+            [Theory, InputLineAutoData]
+            public void ShouldNotMovePositionTooFarRight(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveRight();
+                replBuffer.MoveRight();
+
+                replBuffer.Position.ShouldEqual(testString.Length);
+            }
+
+            [Theory, InputLineAutoData]
+            public void ShouldMoveCursorToTheRight(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                var cursorPos = testString.Length;
+                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.MoveRight();
+
+                consoleMock.Object.Position.ShouldEqual(testString.Length - 1);
+            }
+
+            [Theory, InputLineAutoData("foo")]
+            public void ShouldNotMoveCursorTooFarRight(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                var cursorPos = testString.Length;
+                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveRight();
+                replBuffer.MoveRight();
+
+                consoleMock.Object.Position.ShouldEqual(testString.Length);
             }
         }
     }

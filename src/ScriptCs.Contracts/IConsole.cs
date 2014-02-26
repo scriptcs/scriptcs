@@ -23,5 +23,7 @@ namespace ScriptCs.Contracts
         void ResetColor();
 
         ConsoleColor ForegroundColor { get; set; }
+
+        int Position { get; set; }
     }
 }

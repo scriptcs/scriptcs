@@ -8,7 +8,7 @@ namespace ScriptCs
     public class ReplBuffer : IReplBuffer
     {
         public string Line { get { return _buffer.ToString(); } set { ResetTo(0); Append(value); } }
-        public int Position { get { return _buffer.Length; } }
+        public int Position { get; private set; }
 
         private readonly StringBuilder _buffer = new StringBuilder();
         private readonly IConsole _console;
@@ -21,6 +21,7 @@ namespace ScriptCs
         public void StartLine()
         {
             _buffer.Clear();
+            Position = 0;
         }
 
         public void Back(int count = 1)
@@ -34,6 +35,25 @@ namespace ScriptCs
                 {
                     _console.Write("\b \b");
                 }
+                Position -= steps;
+            }
+        }
+
+        public void MoveLeft()
+        {
+            if (Position > 0)
+            {
+                Position--;
+                _console.Position--;
+            }
+        }
+
+        public void MoveRight()
+        {
+            if (Position < _buffer.Length)
+            {
+                Position++;
+                _console.Position++; 
             }
         }
 
@@ -46,14 +66,16 @@ namespace ScriptCs
 
         public void Append(char ch)
         {
-            _buffer.Append(ch);
+            _buffer.Insert(Position, ch);
             _console.Write(ch);
+            Position++;
         }
 
         public void Append(string str)
         {
-            _buffer.Append(str);
+            _buffer.Insert(Position, str);
             _console.Write(str);
+            Position += str.Length;
         }
     }
 }

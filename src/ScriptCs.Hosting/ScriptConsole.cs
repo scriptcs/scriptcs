@@ -67,6 +67,12 @@ namespace ScriptCs.Hosting
             set { Console.ForegroundColor = value; }
         }
 
+        public int Position
+        {
+            get { return Console.CursorLeft; }
+            set { Console.CursorLeft = value; }
+        }
+
         private void Initialize()
         {
             Console.CancelKeyPress += HandleCancelKeyPress;
