@@ -1,4 +1,5 @@
-﻿using ScriptCs.Argument;
+﻿using Moq;
+using ScriptCs.Argument;
 using ScriptCs.Contracts;
 using Should;
 using Xunit;
@@ -20,6 +21,19 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldEqual("server.csx");
                 result.LogLevel.ShouldEqual(LogLevel.Error);
+            }
+
+            [Fact]
+            public void ShouldPrintHelpMessageForUnsupportedArgs()
+            {
+                var console = new Mock<IConsole>();
+                string[] args = { "-foo" };
+
+                var parser = new ArgumentParser(console.Object);
+                var result = parser.Parse(args);
+
+                console.Verify(x => x.WriteLine(It.Is<string>(i => i.StartsWith("Parameter \"foo\" is not supported!"))));
+                result.ShouldBeNull();
             }
 
             [Fact]

@@ -9,13 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests", "test\Scri
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A59C6538-62EA-4BF6-AA00-E0E9A2892D47}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E95E5426-BF99-458E-AE6F-544DBBA9BC9E}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core", "src\ScriptCs.Core\ScriptCs.Core.csproj", "{E590E710-E159-48E6-A3E6-1A83D3FE732C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"

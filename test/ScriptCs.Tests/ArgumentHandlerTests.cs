@@ -76,18 +76,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleInvalidCommandLineArguments()
-            {
-                string[] args = { "-version", "-foo", "-bar" };
-
-                var argumentHandler = Setup(null, "test.txt", false);
-                var result = argumentHandler.Parse(args);
-
-                result.CommandArguments.ShouldBeNull();
-                result.Arguments.Length.ShouldEqual<int>(3);
-            }
-
-            [Fact]
             public void ShouldHandleOnlyCommandLineArguments()
             {
                 string[] args = { "server.csx", "--", "-port", "8080" };
@@ -145,6 +133,22 @@ namespace ScriptCs.Tests
                 result.Arguments.ShouldEqual(args);
                 result.CommandArguments.ScriptName.ShouldBeNull();
                 result.CommandArguments.Help.ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldUseScriptOptsIfParsingFailed()
+            {
+                var parser = new Mock<IArgumentParser>();
+                parser.Setup(x => x.Parse(It.IsAny<string[]>())).Returns<ScriptCsArgs>(null);
+                var system = new Mock<IFileSystem>();
+                system.Setup(x => x.CurrentDirectory).Returns(@"C:");
+
+                var configParser = new Mock<IConfigFileParser>();
+                var argumentHandler = new ArgumentHandler(parser.Object, configParser.Object, system.Object);
+
+                var result = argumentHandler.Parse(new string[0]);
+
+                system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
             }
         }
     }
