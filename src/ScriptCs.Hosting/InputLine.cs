@@ -50,6 +50,12 @@ namespace ScriptCs
                     case Token.DownArrow:
                         _buffer.Line = _replHistory.GetNextLine();
                         break;
+                    case Token.LeftArrow:
+                        _buffer.MoveLeft();
+                        break;
+                    case Token.RightArrow:
+                        _buffer.MoveRight();
+                        break;
                     case Token.Backspace:
                         if (_buffer.Position > 0)
                             _buffer.Back();
@@ -73,7 +79,7 @@ namespace ScriptCs
                             if (possibleCompletions.Any())
                             {
                                 _buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                _buffer.Append(possibleCompletions[currentCompletion]); 
+                                _buffer.Insert(possibleCompletions[currentCompletion]); 
                             }
                         }
                         else if (_lineAnalyzer.CurrentState == LineState.AssemblyName)
@@ -93,13 +99,13 @@ namespace ScriptCs
                             if (possibleCompletions.Any())
                             {
                                 _buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                _buffer.Append(possibleCompletions[currentCompletion]);
+                                _buffer.Insert(possibleCompletions[currentCompletion]);
                             }
                         }
                         break;
                     case Token.Other:
                         var ch = keyInfo.KeyChar;
-                        _buffer.Append(ch);
+                        _buffer.Insert(ch);
                         isCompletingWord = false;
                         break;
                 }

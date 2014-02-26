@@ -7,7 +7,7 @@ namespace ScriptCs
 {
     public class ReplBuffer : IReplBuffer
     {
-        public string Line { get { return _buffer.ToString(); } set { ResetTo(0); Append(value); } }
+        public string Line { get { return _buffer.ToString(); } set { ResetTo(0); Insert(value); } }
         public int Position { get; private set; }
 
         private readonly StringBuilder _buffer = new StringBuilder();
@@ -64,17 +64,17 @@ namespace ScriptCs
             Back(stepCount);
         }
 
-        public void Append(char ch)
+        public void Insert(char ch)
         {
+            _console.Write(ch + _buffer.ToString().Substring(Position));
             _buffer.Insert(Position, ch);
-            _console.Write(ch);
             Position++;
         }
 
-        public void Append(string str)
+        public void Insert(string str)
         {
+            _console.Write(str + _buffer.ToString().Substring(Position));
             _buffer.Insert(Position, str);
-            _console.Write(str);
             Position += str.Length;
         }
     }

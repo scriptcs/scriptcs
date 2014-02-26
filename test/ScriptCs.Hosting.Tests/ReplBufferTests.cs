@@ -176,14 +176,14 @@ namespace ScriptCs.Hosting.Tests
             }
         }
 
-        public class TheAppendMethod
+        public class TheInsertMethod
         {
             [Theory, InputLineAutoData]
             public void ShouldAddCharacterToTheLine(string testString, char testChar, ReplBuffer replBuffer)
             {
                 replBuffer.Line = testString;
 
-                replBuffer.Append(testChar);
+                replBuffer.Insert(testChar);
 
                 replBuffer.Line.ShouldEqual(testString + testChar);
             }
@@ -195,7 +195,7 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.MoveLeft();
 
-                replBuffer.Append(testChar);
+                replBuffer.Insert(testChar);
 
                 replBuffer.Line.ShouldEqual("fooba" + testChar + "r");
             }
@@ -203,9 +203,21 @@ namespace ScriptCs.Hosting.Tests
             [Theory, InputLineAutoData]
             public void ShouldAddCharacterToTheConsoleLine(char testChar, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
-                replBuffer.Append(testChar);
+                replBuffer.Insert(testChar);
 
-                consoleMock.Verify(c => c.Write(testChar), Times.Once());
+                consoleMock.Verify(c => c.Write("" + testChar), Times.Once());
+            }
+
+            [Theory, InputLineAutoData("foobar")]
+            public void ShouldInsertCharacterToTheConsoleAtPosition(string testString, char testChar, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+
+                replBuffer.Insert(testChar);
+
+                consoleMock.Verify(c => c.Write(testChar + "r"), Times.Once());
             }
 
             [Theory, InputLineAutoData]
@@ -213,7 +225,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 replBuffer.Line = firstString;
 
-                replBuffer.Append(secondString);
+                replBuffer.Insert(secondString);
 
                 replBuffer.Line.ShouldEqual(firstString + secondString);
             }
@@ -225,7 +237,7 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.MoveLeft();
 
-                replBuffer.Append(newString);
+                replBuffer.Insert(newString);
 
                 replBuffer.Line.ShouldEqual("fooba" + newString + "r");
             }
@@ -233,9 +245,21 @@ namespace ScriptCs.Hosting.Tests
             [Theory, InputLineAutoData]
             public void ShouldAddStringToTheConsoleLine(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
-                replBuffer.Append(testString);
+                replBuffer.Insert(testString);
 
                 consoleMock.Verify(c => c.Write(testString), Times.Once());
+            }
+
+            [Theory, InputLineAutoData("foobar")]
+            public void ShouldInsertStringToTheCursorAtPosition(string testString, string newString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+
+                replBuffer.Insert(newString);
+
+                consoleMock.Verify(c => c.Write(newString + "r"), Times.Once());
             }
         }
 

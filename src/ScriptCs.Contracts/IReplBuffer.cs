@@ -9,7 +9,7 @@
         void MoveLeft();
         void MoveRight();
         void ResetTo(int newPosition);
-        void Append(char ch);
-        void Append(string str);
+        void Insert(char ch);
+        void Insert(string str);
     }
 }

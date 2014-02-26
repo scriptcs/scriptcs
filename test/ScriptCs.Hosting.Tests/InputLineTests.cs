@@ -130,7 +130,7 @@ namespace ScriptCs.Hosting.Tests
                     _buffer.Clear();
                     _buffer.Append(str);
                 });
-                _replBufferMock.Setup(rb => rb.Append(It.IsAny<char>())).Callback((char c) => _buffer.Append(c));
+                _replBufferMock.Setup(rb => rb.Insert(It.IsAny<char>())).Callback((char c) => _buffer.Append(c));
                 _replBufferMock.Setup(rb => rb.Line).Returns(() => _buffer.ToString());
             }
 
