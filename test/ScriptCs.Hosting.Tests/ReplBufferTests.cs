@@ -1,10 +1,8 @@
-﻿using Autofac;
-using Moq;
+﻿using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Tests;
 using Should;
-using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Hosting.Tests
