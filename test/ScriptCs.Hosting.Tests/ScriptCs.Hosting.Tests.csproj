@@ -63,7 +63,11 @@
     <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
-    <Compile Include="InputLineAutoDataAttribute.cs" />
+    <Compile Include="ConsoleMockBuilder.cs" />
+    <Compile Include="HistoryMockBuilder.cs" />
+    <Compile Include="ReplBufferMockBuilder.cs" />
+    <Compile Include="WithMockBuildersAttribute.cs" />
+    <Compile Include="WithoutReplBufferLineAttribute.cs" />
     <Compile Include="InputLineTests.cs" />
     <Compile Include="LineAnalyzerTests.cs" />
     <Compile Include="ModuleLoaderTests.cs" />
