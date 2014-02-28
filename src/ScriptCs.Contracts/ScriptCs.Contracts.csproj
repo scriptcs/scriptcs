@@ -30,6 +30,7 @@
     <Compile Include="FilePreProcessorResult.cs" />
     <Compile Include="IAssemblyResolver.cs" />
     <Compile Include="IAssemblyUtility.cs" />
+    <Compile Include="ICompletionHandler.cs" />
     <Compile Include="IFilePathFinder.cs" />
     <Compile Include="IReplBuffer.cs" />
     <Compile Include="IConsole.cs" />

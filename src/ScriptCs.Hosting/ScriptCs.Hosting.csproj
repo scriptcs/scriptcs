@@ -52,6 +52,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="CompletionHandler.cs" />
     <Compile Include="FilePathFinder.cs" />
     <Compile Include="ReplBuffer.cs" />
     <Compile Include="IInitializationServices.cs" />

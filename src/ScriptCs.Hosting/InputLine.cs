@@ -16,9 +16,11 @@ namespace ScriptCs
         private readonly IReplBuffer _buffer;
         private readonly IConsole _console;
         private readonly IFilePathFinder _filePathFinder;
+        private readonly ICompletionHandler _completionHandler;
 
-        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory, IReplBuffer buffer, IConsole console, IFilePathFinder filePathFinder)
+        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory, IReplBuffer buffer, IConsole console, IFilePathFinder filePathFinder, ICompletionHandler completionHandler)
         {
+            _completionHandler = completionHandler;
             _console = console;
             _buffer = buffer;
             _lineAnalyzer = lineAnalyzer;
@@ -29,9 +31,6 @@ namespace ScriptCs
         public string ReadLine(IScriptExecutor executor)
         {
             bool isEol = false;
-            bool isCompletingWord = false;
-            string[] possibleCompletions = null;
-            int currentCompletion = 0;
 
             _buffer.StartLine();
             _lineAnalyzer.Reset();
@@ -45,80 +44,48 @@ namespace ScriptCs
                     case Token.Enter:
                         isEol = true;
                         _console.WriteLine();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.UpArrow:
                         _buffer.Line = _replHistory.GetPreviousLine();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.DownArrow:
                         _buffer.Line = _replHistory.GetNextLine();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.LeftArrow:
                         _buffer.MoveLeft();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.RightArrow:
                         _buffer.MoveRight();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.Backspace:
                         if (_buffer.Position > 0)
                             _buffer.Back();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.Delete:
                         if (_buffer.Position < _buffer.Line.Length)
                             _buffer.Delete();
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                     case Token.Tab:
                         if (_lineAnalyzer.CurrentState == LineState.FilePath)
                         {
-                            if (!isCompletingWord)
-                            {
-                                var pathFragment = _lineAnalyzer.CurrentText;
-                                possibleCompletions = _filePathFinder.FindPossibleFilePaths(pathFragment, executor.FileSystem);
-                                currentCompletion = 0;
-                                isCompletingWord = true;
-                            }
-                            else if (possibleCompletions.Any())
-                            {
-                                currentCompletion = (currentCompletion + 1) % possibleCompletions.Length;
-                            }
-
-                            if (possibleCompletions.Any())
-                            {
-                                _buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                _buffer.Insert(possibleCompletions[currentCompletion]); 
-                            }
+                            _completionHandler.UpdateBufferWithCompletion(pathFragment => _filePathFinder.FindPossibleFilePaths(pathFragment, executor.FileSystem));
                         }
                         else if (_lineAnalyzer.CurrentState == LineState.AssemblyName)
                         {
-                            if (!isCompletingWord)
-                            {
-                                var nameFragment = _lineAnalyzer.CurrentText;
-                                possibleCompletions = _filePathFinder.FindPossibleAssemblyNames(nameFragment, executor.FileSystem);
-                                currentCompletion = 0;
-                                isCompletingWord = true;
-                            }
-                            else if (possibleCompletions.Any())
-                            {
-                                currentCompletion = (currentCompletion + 1) % possibleCompletions.Length;
-                            }
-
-                            if (possibleCompletions.Any())
-                            {
-                                _buffer.ResetTo(_lineAnalyzer.TextPosition);
-                                _buffer.Insert(possibleCompletions[currentCompletion]);
-                            }
+                            _completionHandler.UpdateBufferWithCompletion(nameFragment => _filePathFinder.FindPossibleAssemblyNames(nameFragment, executor.FileSystem));
                         }
                         break;
                     case Token.Other:
                         var ch = keyInfo.KeyChar;
                         _buffer.Insert(ch);
-                        isCompletingWord = false;
+                        _completionHandler.Reset();
                         break;
                 }
 
