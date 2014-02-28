@@ -10,18 +10,20 @@ namespace ScriptCs
     public class InputLine : IInputLine
     {
         private readonly ILineAnalyzer _lineAnalyzer;
-        private readonly char[] SLASHES = {'\\', '/'};
+
         private enum Token { Backspace, Tab, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
         private readonly IReplHistory _replHistory;
         private readonly IReplBuffer _buffer;
         private readonly IConsole _console;
+        private readonly IFilePathFinder _filePathFinder;
 
-        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory, IReplBuffer buffer, IConsole console)
+        public InputLine(ILineAnalyzer lineAnalyzer, IReplHistory replHistory, IReplBuffer buffer, IConsole console, IFilePathFinder filePathFinder)
         {
             _console = console;
             _buffer = buffer;
             _lineAnalyzer = lineAnalyzer;
             _replHistory = replHistory;
+            _filePathFinder = filePathFinder;
         }
 
         public string ReadLine(IScriptExecutor executor)
@@ -77,7 +79,7 @@ namespace ScriptCs
                             if (!isCompletingWord)
                             {
                                 var pathFragment = _lineAnalyzer.CurrentText;
-                                possibleCompletions = FindPossibleFilePaths(pathFragment, executor.FileSystem);
+                                possibleCompletions = _filePathFinder.FindPossibleFilePaths(pathFragment, executor.FileSystem);
                                 currentCompletion = 0;
                                 isCompletingWord = true;
                             }
@@ -97,7 +99,7 @@ namespace ScriptCs
                             if (!isCompletingWord)
                             {
                                 var nameFragment = _lineAnalyzer.CurrentText;
-                                possibleCompletions = FindPossibleAssemblyNames(nameFragment, executor.FileSystem);
+                                possibleCompletions = _filePathFinder.FindPossibleAssemblyNames(nameFragment, executor.FileSystem);
                                 currentCompletion = 0;
                                 isCompletingWord = true;
                             }
@@ -140,83 +142,6 @@ namespace ScriptCs
             if (keyInfo.Key == ConsoleKey.RightArrow) return Token.RightArrow;
 
             return Token.Other;
-        }
-
-        private string[] FindPossibleAssemblyNames(string nameFragment, IFileSystem fileSystem)
-        {
-            var roots = new List<string>
-            {
-                fileSystem.CurrentDirectory,                
-            };
-
-            AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, fileSystem);
-
-            return FindPossiblePaths(nameFragment, ".dll", roots.Distinct(), fileSystem);
-        }
-
-        private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)
-        {
-            if (fileSystem.EnumerateFiles(node, "*.dll", SearchOption.TopDirectoryOnly).Any()) roots.Add(node);
-
-            var subDirs = fileSystem.EnumerateDirectories(node, "*", SearchOption.TopDirectoryOnly);
-
-            foreach (var dir in subDirs)
-            {
-                AddGACRoots(dir, roots, fileSystem);
-            }
-       
-        }
-
-        private string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
-        {
-            return FindPossiblePaths(pathFragment, "", new[] { fileSystem.CurrentDirectory }, fileSystem);
-        }
-
-        private string[] FindPossiblePaths(string pathFragment, string suffix, IEnumerable<string> roots, IFileSystem fileSystem)
-        {
-            int lastSlashIndex = pathFragment.LastIndexOfAny(SLASHES);
-
-            var possiblePaths = new List<string>();
-
-            foreach (var r in roots)
-            {
-                string path;
-                string pattern;
-                var partialPath = pathFragment.Substring(0, lastSlashIndex + 1); 
-
-                if (lastSlashIndex >= 0)
-                {
-                    path = Path.Combine(r, partialPath);
-                    pattern = pathFragment.Substring(lastSlashIndex + 1);
-                }
-                else
-                {
-                    path = r;
-                    pattern = pathFragment;
-                }
-
-                try
-                {
-                    possiblePaths.AddRange(fileSystem.EnumerateFilesAndDirectories(
-                        path,
-                        pattern + "*",
-                        SearchOption.TopDirectoryOnly).Where(p => p.EndsWith(suffix)).Select(p => AugmentPathFragment(partialPath, pattern, p)));
-                }
-                catch (Exception)
-                {
-                    //
-                }
-            }
-
-            return possiblePaths.Any() ? possiblePaths.Distinct().ToArray() : new[] { pathFragment };
-        }
-
-        private string AugmentPathFragment(string partialPath, string nameFragment, string completePath)
-        {
-            int lastSlashIndex = completePath.LastIndexOfAny(SLASHES);
-            var name = completePath.Substring(lastSlashIndex + 1);
-
-            return Path.Combine(partialPath, name);
         }
     }
 }
