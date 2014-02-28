@@ -47,5 +47,24 @@ namespace ScriptCs.Hosting.Tests
                 _analyzer.CurrentState.ShouldEqual(LineState.Unknown);
             }
         }
+
+        public class TheResetMethod
+        {
+            private readonly ILineAnalyzer _analyzer;
+
+            public TheResetMethod()
+            {
+                _analyzer = new LineAnalyzer();
+            }
+
+            [Fact]
+            public void ShouldSetCurrentStateToUnknown()
+            {
+                _analyzer.Analyze(":cd home");
+                _analyzer.Reset();
+
+                _analyzer.CurrentState.ShouldEqual(LineState.Unknown);
+            }
+        }
     }
 }

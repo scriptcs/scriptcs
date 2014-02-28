@@ -32,6 +32,7 @@ namespace ScriptCs
             int currentCompletion = 0;
 
             _buffer.StartLine();
+            _lineAnalyzer.Reset();
 
             while (!isEol)
             {
@@ -150,7 +151,7 @@ namespace ScriptCs
 
             AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, fileSystem);
 
-            return FindPossiblePaths(nameFragment, roots.Distinct(), fileSystem);
+            return FindPossiblePaths(nameFragment, ".dll", roots.Distinct(), fileSystem);
         }
 
         private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)
@@ -168,10 +169,10 @@ namespace ScriptCs
 
         private string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
         {
-            return FindPossiblePaths(pathFragment, new[] { fileSystem.CurrentDirectory }, fileSystem);
+            return FindPossiblePaths(pathFragment, "", new[] { fileSystem.CurrentDirectory }, fileSystem);
         }
 
-        private string[] FindPossiblePaths(string pathFragment, IEnumerable<string> roots, IFileSystem fileSystem)
+        private string[] FindPossiblePaths(string pathFragment, string suffix, IEnumerable<string> roots, IFileSystem fileSystem)
         {
             int lastSlashIndex = pathFragment.LastIndexOfAny(SLASHES);
 
@@ -199,7 +200,7 @@ namespace ScriptCs
                     possiblePaths.AddRange(fileSystem.EnumerateFilesAndDirectories(
                         path,
                         pattern + "*",
-                        SearchOption.TopDirectoryOnly).Select(p => AugmentPathFragment(partialPath, pattern, p)));
+                        SearchOption.TopDirectoryOnly).Where(p => p.EndsWith(suffix)).Select(p => AugmentPathFragment(partialPath, pattern, p)));
                 }
                 catch (Exception)
                 {
@@ -207,7 +208,7 @@ namespace ScriptCs
                 }
             }
 
-            return possiblePaths.Any() ? possiblePaths.ToArray() : new[] { pathFragment };
+            return possiblePaths.Any() ? possiblePaths.Distinct().ToArray() : new[] { pathFragment };
         }
 
         private string AugmentPathFragment(string partialPath, string nameFragment, string completePath)

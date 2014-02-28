@@ -10,7 +10,7 @@ namespace ScriptCs
         public LineState CurrentState { get; private set; }
         public int TextPosition { get; private set; }
         
-        private readonly IDictionary<Regex, LineState> patternMap = new Dictionary<Regex, LineState>();
+        private readonly IDictionary<Regex, LineState> _patternMap = new Dictionary<Regex, LineState>();
 
         public LineAnalyzer()
         {
@@ -23,7 +23,7 @@ namespace ScriptCs
 
         public void Analyze(string line)
         {
-            foreach (var p in patternMap)
+            foreach (var p in _patternMap)
             {
                 var m = p.Key.Match(line);
 
@@ -38,6 +38,11 @@ namespace ScriptCs
                 }
             }
 
+            Reset();
+        }
+
+        public void Reset()
+        {
             CurrentText = null;
             TextPosition = -1;
             CurrentState = LineState.Unknown;
@@ -45,9 +50,9 @@ namespace ScriptCs
 
         private void PopulatePatternList()
         {
-            patternMap[new Regex(@"^\s*#r\s+(.*)$")] = LineState.AssemblyName;
-            patternMap[new Regex(@"^\s*#load\s+(.*)$")] = LineState.FilePath;
-            patternMap[new Regex(@"^\s*:cd\s+(.*)$")] = LineState.FilePath;
+            _patternMap[new Regex(@"^\s*#r\s+(.*)$")] = LineState.AssemblyName;
+            _patternMap[new Regex(@"^\s*#load\s+(.*)$")] = LineState.FilePath;
+            _patternMap[new Regex(@"^\s*:cd\s+(.*)$")] = LineState.FilePath;
         }
     }
 }

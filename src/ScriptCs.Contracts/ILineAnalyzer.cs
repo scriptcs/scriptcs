@@ -7,6 +7,7 @@
         int TextPosition { get; }
 
         void Analyze(string line);
+        void Reset();
     }
 
     public enum LineState { FilePath, AssemblyName, Identifier, Member, Unknown }
