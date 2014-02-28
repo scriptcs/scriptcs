@@ -87,6 +87,42 @@ namespace ScriptCs.Hosting.Tests
 
                 line.ShouldEqual(str2);
             }
+
+            [Theory, WithMockBuilders]
+            public void ShouldMoveCursorLeftOnLeftArrow(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.LeftArrow);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.MoveLeft(), Times.Once());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldMoveCursorRightOnRightArrow(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.RightArrow);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.MoveRight(), Times.Once());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldBackCursorOnBackspace(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.Backspace);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.Back(), Times.Once());
+            }
         }
     }
 }
