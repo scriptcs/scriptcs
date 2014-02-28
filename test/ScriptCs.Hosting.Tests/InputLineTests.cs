@@ -123,6 +123,43 @@ namespace ScriptCs.Hosting.Tests
 
                 bufferMock.Verify(b => b.Back(), Times.Once());
             }
+
+            [Theory, WithMockBuilders]
+            public void ShouldDeleteOneCharacterOn(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.LeftArrow);
+                consoleMockBuilder.Add(ConsoleKey.LeftArrow);
+                consoleMockBuilder.Add(ConsoleKey.Delete);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.Delete(), Times.Once());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldNotDeleteCharacterWhenAtEndOfTheLine(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.Delete);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.Delete(), Times.Never());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldNotDeleteCharacterWhenLineIsEmpty(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(ConsoleKey.Delete);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                bufferMock.Verify(b => b.Delete(), Times.Never());
+            }
         }
     }
 }

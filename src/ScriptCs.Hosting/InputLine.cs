@@ -46,19 +46,28 @@ namespace ScriptCs
                         break;
                     case Token.UpArrow:
                         _buffer.Line = _replHistory.GetPreviousLine();
+                        isCompletingWord = false;
                         break;
                     case Token.DownArrow:
                         _buffer.Line = _replHistory.GetNextLine();
+                        isCompletingWord = false;
                         break;
                     case Token.LeftArrow:
                         _buffer.MoveLeft();
+                        isCompletingWord = false;
                         break;
                     case Token.RightArrow:
                         _buffer.MoveRight();
+                        isCompletingWord = false;
                         break;
                     case Token.Backspace:
                         if (_buffer.Position > 0)
                             _buffer.Back();
+                        isCompletingWord = false;
+                        break;
+                    case Token.Delete:
+                        if (_buffer.Position < _buffer.Line.Length)
+                            _buffer.Delete();
                         isCompletingWord = false;
                         break;
                     case Token.Tab:

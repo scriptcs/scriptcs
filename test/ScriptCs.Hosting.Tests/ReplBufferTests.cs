@@ -138,6 +138,51 @@ namespace ScriptCs.Hosting.Tests
             }
         }
 
+        public class TheDeleteMethod
+        {
+            [Theory, WithoutReplBufferLine("foobar")]
+            public void ShouldDeleteOneCharacterInTheBuffer(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.Delete();
+
+                replBuffer.Line.ShouldEqual("foobr");
+            }
+
+            [Theory, WithoutReplBufferLine("foobar")]
+            public void ShouldDeleteOneCharacterInTheConsole(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.MoveLeft();
+                replBuffer.MoveLeft();
+                replBuffer.Delete();
+
+                consoleMock.Verify(c => c.Write("r "));
+            }
+
+            [Theory, WithoutReplBufferLine("foobar")]
+            public void ShouldDoNothingIfAtEndOfTheLine(string testString, ReplBuffer replBuffer)
+            {
+                replBuffer.Line = testString;
+
+                replBuffer.Delete();
+
+                replBuffer.Line.ShouldEqual("foobar");
+            }
+
+            [Theory, WithoutReplBufferLine]
+            public void ShouldDoNothingIfEmptyLine(ReplBuffer replBuffer)
+            {
+                replBuffer.Delete();
+
+                replBuffer.Line.ShouldEqual("");
+            }
+        }
+
         public class TheResetToMethod
         {
             [Theory, WithoutReplBufferLine("foobar")]

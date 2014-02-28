@@ -28,7 +28,7 @@ namespace ScriptCs
         {
             Back(1);
         }
-        
+
         public void Back(int count)
         {
             int steps = Math.Min(count, Position);
@@ -41,6 +41,15 @@ namespace ScriptCs
                     _console.Write("\b \b");
                 }
                 Position -= steps;
+            }
+        }
+
+        public void Delete()
+        {
+            if (Position < _buffer.Length)
+            {
+                _buffer.Remove(Position, 1);
+                _console.Write(_buffer.ToString().Substring(Position) + " ");
             }
         }
 
