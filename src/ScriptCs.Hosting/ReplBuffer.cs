@@ -24,7 +24,12 @@ namespace ScriptCs
             Position = 0;
         }
 
-        public void Back(int count = 1)
+        public void Back() // Moq does not like optional parameters
+        {
+            Back(1);
+        }
+        
+        public void Back(int count)
         {
             int steps = Math.Min(count, Position);
 

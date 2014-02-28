@@ -5,7 +5,8 @@
         string Line { get; set; }
         int Position { get; }
         void StartLine();
-        void Back(int count = 1);
+        void Back(int count);
+        void Back();
         void MoveLeft();
         void MoveRight();
         void ResetTo(int newPosition);
