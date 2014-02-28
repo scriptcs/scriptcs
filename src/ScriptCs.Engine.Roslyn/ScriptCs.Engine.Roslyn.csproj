@@ -41,6 +41,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynScriptEngine.cs" />
     <Compile Include="RoslynScriptPersistentEngine.cs" />
+    <Compile Include="StringRewriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

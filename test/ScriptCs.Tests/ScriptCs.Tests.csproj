@@ -29,6 +29,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\AutoFixture.Xunit.3.6.5\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
     </Reference>
+    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
+    </Reference>
+    <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Should, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Should.1.1.20\lib\Should.dll</HintPath>
@@ -65,6 +73,7 @@
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="ConfigFileParserTests.cs" />
     <Compile Include="ExecuteReplCommandTests.cs" />
+    <Compile Include="RewritingFileProcessorTests.cs" />
     <Compile Include="ScriptArgsTests.cs" />
     <Compile Include="ArgumentHandlerTests.cs" />
     <Compile Include="VersionCommandTests.cs" />
