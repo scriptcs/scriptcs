@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Tests;
 using Should;
-using Xunit;
 using Moq;
 using Xunit.Extensions;
 
@@ -112,6 +110,19 @@ namespace ScriptCs.Hosting.Tests
                 bufferMock.Verify(b => b.MoveRight(), Times.Once());
             }
 
+            [Theory, WithMockBuilders("foobar")]
+            public void ShouldInsertCharacterAtCursor(string str, ConsoleMockBuilder consoleMockBuilder, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(str);
+                consoleMockBuilder.Add(ConsoleKey.LeftArrow);
+                consoleMockBuilder.Add('x');
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                var line = inputLine.ReadLine(_scriptExec);
+
+                line.ShouldEqual("foobaxr");
+            }
+
             [Theory, WithMockBuilders]
             public void ShouldBackCursorOnBackspace(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
             {
@@ -125,7 +136,7 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, WithMockBuilders]
-            public void ShouldDeleteOneCharacterOn(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            public void ShouldDeleteOneCharacterOnDelete(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
             {
                 consoleMockBuilder.Add(str);
                 consoleMockBuilder.Add(ConsoleKey.LeftArrow);
@@ -151,7 +162,7 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, WithMockBuilders]
-            public void ShouldNotDeleteCharacterWhenLineIsEmpty(string str, ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
+            public void ShouldNotDeleteCharacterWhenLineIsEmpty(ConsoleMockBuilder consoleMockBuilder, Mock<IReplBuffer> bufferMock, InputLine inputLine)
             {
                 consoleMockBuilder.Add(ConsoleKey.Delete);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
@@ -159,6 +170,32 @@ namespace ScriptCs.Hosting.Tests
                 inputLine.ReadLine(_scriptExec);
 
                 bufferMock.Verify(b => b.Delete(), Times.Never());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldGetWordCompletionOnTabWhenLoadingAssembly(ConsoleMockBuilder consoleMockBuilder, [Frozen] Mock<ILineAnalyzer> lineAnalyserMock, [Frozen] Mock<ICompletionHandler> completionMock, InputLine inputLine)
+            {
+                lineAnalyserMock.Setup(la => la.CurrentState).Returns(LineState.AssemblyName);
+
+                consoleMockBuilder.Add(ConsoleKey.Tab);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                completionMock.Verify(c => c.UpdateBufferWithCompletion(It.IsAny<Func<string, string[]>>()), Times.Once());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldGetWordCompletionOnTabWhenEnteringFilePath(ConsoleMockBuilder consoleMockBuilder, [Frozen] Mock<ILineAnalyzer> lineAnalyserMock, [Frozen] Mock<ICompletionHandler> completionMock, InputLine inputLine)
+            {
+                lineAnalyserMock.Setup(la => la.CurrentState).Returns(LineState.FilePath);
+
+                consoleMockBuilder.Add(ConsoleKey.Tab);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                completionMock.Verify(c => c.UpdateBufferWithCompletion(It.IsAny<Func<string, string[]>>()), Times.Once());
             }
         }
     }

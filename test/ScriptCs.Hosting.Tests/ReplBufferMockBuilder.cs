@@ -30,7 +30,7 @@ namespace ScriptCs.Hosting.Tests
                 _position = str.Length;
             });
 
-            mock.Setup(rb => rb.Insert(It.IsAny<char>())).Callback((char c) => { _buffer.Append(c); _position++; });
+            mock.Setup(rb => rb.Insert(It.IsAny<char>())).Callback((char c) => { _buffer.Insert(_position, c); _position++; });
 
             mock.Setup(rb => rb.Line).Returns(() => _buffer.ToString());
 

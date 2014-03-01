@@ -63,7 +63,9 @@
     <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
+    <Compile Include="CompletionHandlerTests.cs" />
     <Compile Include="ConsoleMockBuilder.cs" />
+    <Compile Include="FilePathFinderTests.cs" />
     <Compile Include="HistoryMockBuilder.cs" />
     <Compile Include="ReplBufferMockBuilder.cs" />
     <Compile Include="WithMockBuildersAttribute.cs" />
