@@ -51,7 +51,7 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.Line = str2;
 
-                consoleMock.VerifySet(c => c.Position = 0, Times.Exactly(2));
+                consoleMock.VerifySet(c => c.HorizontalPosition = 0, Times.Exactly(2));
                 consoleMock.Verify(c => c.Write("      "), Times.Once());
                 consoleMock.Verify(c => c.Write(str2), Times.Once());
             }
@@ -107,7 +107,7 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.Back(4);
 
-                consoleMock.VerifySet(c => c.Position = 2, Times.Exactly(2));
+                consoleMock.VerifySet(c => c.HorizontalPosition = 2, Times.Exactly(2));
                 consoleMock.Verify(c => c.Write("    "), Times.Once());
             }
 
@@ -198,7 +198,7 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.ResetTo(4);
 
-                consoleMock.VerifySet(c => c.Position = 4, Times.Exactly(2));
+                consoleMock.VerifySet(c => c.HorizontalPosition = 4, Times.Exactly(2));
                 consoleMock.Verify(c => c.Write("  "), Times.Once());
             }
 
@@ -210,7 +210,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.ResetTo(-4);
 
                 replBuffer.Line.ShouldBeEmpty();
-                consoleMock.VerifySet(c => c.Position = 0, Times.Exactly(2));
+                consoleMock.VerifySet(c => c.HorizontalPosition = 0, Times.Exactly(2));
                 consoleMock.Verify(c => c.Write("   "), Times.Once());
             }
 
@@ -269,7 +269,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Insert(testChar);
 
                 consoleMock.Verify(c => c.Write(testChar + "r"), Times.Once());
-                consoleMock.VerifySet(c => c.Position = 6, Times.Exactly(2)); // Once at setup
+                consoleMock.VerifySet(c => c.HorizontalPosition = 6, Times.Exactly(2)); // Once at setup
             }
 
             [Theory, WithoutReplBufferLine]
@@ -312,7 +312,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Insert(newString);
 
                 consoleMock.Verify(c => c.Write(newString + "r"), Times.Once());
-                consoleMock.VerifySet(c => c.Position = 5 + newString.Length, Times.Once());
+                consoleMock.VerifySet(c => c.HorizontalPosition = 5 + newString.Length, Times.Once());
             }
         }
 
@@ -346,23 +346,23 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldMoveCursorToTheLeft(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 var cursorPos = testString.Length;
-                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
-                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+                consoleMock.Setup(c => c.HorizontalPosition).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.HorizontalPosition = It.IsAny<int>()).Callback((int p) => cursorPos = p);
 
                 replBuffer.Line = testString;
 
                 replBuffer.MoveLeft();
                 replBuffer.MoveLeft();
 
-                consoleMock.Object.Position.ShouldEqual(testString.Length - 2);
+                consoleMock.Object.HorizontalPosition.ShouldEqual(testString.Length - 2);
             }
 
             [Theory, WithoutReplBufferLine("foo")]
             public void ShouldNotMoveCursorTooFarLeft(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 var cursorPos = testString.Length;
-                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
-                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+                consoleMock.Setup(c => c.HorizontalPosition).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.HorizontalPosition = It.IsAny<int>()).Callback((int p) => cursorPos = p);
 
                 replBuffer.Line = testString;
 
@@ -371,7 +371,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.MoveLeft();
                 replBuffer.MoveLeft();
 
-                consoleMock.Object.Position.ShouldEqual(0);
+                consoleMock.Object.HorizontalPosition.ShouldEqual(0);
             }
         }
 
@@ -405,8 +405,8 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldMoveCursorToTheRight(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 var cursorPos = testString.Length;
-                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
-                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+                consoleMock.Setup(c => c.HorizontalPosition).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.HorizontalPosition = It.IsAny<int>()).Callback((int p) => cursorPos = p);
 
                 replBuffer.Line = testString;
 
@@ -414,15 +414,15 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.MoveLeft();
                 replBuffer.MoveRight();
 
-                consoleMock.Object.Position.ShouldEqual(testString.Length - 1);
+                consoleMock.Object.HorizontalPosition.ShouldEqual(testString.Length - 1);
             }
 
             [Theory, WithoutReplBufferLine("foo")]
             public void ShouldNotMoveCursorTooFarRight(string testString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 var cursorPos = testString.Length;
-                consoleMock.Setup(c => c.Position).Returns(() => cursorPos);
-                consoleMock.SetupSet(c => c.Position = It.IsAny<int>()).Callback((int p) => cursorPos = p);
+                consoleMock.Setup(c => c.HorizontalPosition).Returns(() => cursorPos);
+                consoleMock.SetupSet(c => c.HorizontalPosition = It.IsAny<int>()).Callback((int p) => cursorPos = p);
 
                 replBuffer.Line = testString;
 
@@ -430,7 +430,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.MoveRight();
                 replBuffer.MoveRight();
 
-                consoleMock.Object.Position.ShouldEqual(testString.Length);
+                consoleMock.Object.HorizontalPosition.ShouldEqual(testString.Length);
             }
         }
     }

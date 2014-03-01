@@ -67,11 +67,19 @@ namespace ScriptCs.Hosting
             set { Console.ForegroundColor = value; }
         }
 
-        public int Position
+        public int HorizontalPosition
         {
             get { return Console.CursorLeft; }
             set { Console.CursorLeft = value; }
         }
+
+        public int VerticalPosition
+        {
+            get { return Console.CursorTop; }
+            set { Console.CursorTop = value; }
+        }
+
+        public int Width { get { return Console.BufferWidth; } }
 
         private void Initialize()
         {

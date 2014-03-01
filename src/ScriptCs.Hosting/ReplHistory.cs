@@ -30,7 +30,7 @@ namespace ScriptCs
 
         public string GetPreviousLine()
         {
-            if (_history.Count == 0) return String.Empty;
+            if (_history.Count == 0) return null;
 
             if (!_justAddedLine)
                 _currentLine = (_currentLine + 1) % _history.Count;
@@ -42,7 +42,7 @@ namespace ScriptCs
 
         public string GetNextLine()
         {
-            if (_history.Count == 0) return String.Empty;
+            if (_history.Count == 0) return null;
 
             _currentLine = _currentLine == 0 ? _history.Count - 1 : _currentLine - 1;
 

@@ -13,6 +13,8 @@ namespace ScriptCs
         private readonly StringBuilder _buffer = new StringBuilder();
         private readonly IConsole _console;
         private int _promptLength;
+        private int _currentLineNumber;
+        private int _verticalStartPosition;
 
         public ReplBuffer(IConsole console)
         {
@@ -23,7 +25,9 @@ namespace ScriptCs
         {
             _buffer.Clear();
             Position = 0;
-            _promptLength = _console.Position;
+            _promptLength = _console.HorizontalPosition;
+            _currentLineNumber = 0;
+            _verticalStartPosition = _console.VerticalPosition;
         }
 
         public void Back() // Moq does not like optional parameters
@@ -98,7 +102,12 @@ namespace ScriptCs
 
         private void SetConsolePosition()
         {
-            _console.Position = Position + _promptLength;
+            var newPos = Position + _promptLength;
+            _currentLineNumber = newPos / _console.Width;
+            
+            _console.HorizontalPosition = newPos % _console.Width;
+            _console.VerticalPosition = _verticalStartPosition + _currentLineNumber;
+
         }
     }
 }

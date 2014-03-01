@@ -47,11 +47,13 @@ namespace ScriptCs
                         _completionHandler.Reset();
                         break;
                     case Token.UpArrow:
-                        _buffer.Line = _replHistory.GetPreviousLine();
+                        var previousLine = _replHistory.GetPreviousLine();
+                        if (previousLine != null) _buffer.Line = previousLine;
                         _completionHandler.Reset();
                         break;
                     case Token.DownArrow:
-                        _buffer.Line = _replHistory.GetNextLine();
+                        var nextLine = _replHistory.GetNextLine();
+                        if (nextLine != null) _buffer.Line = nextLine;
                         _completionHandler.Reset();
                         break;
                     case Token.LeftArrow:

@@ -24,6 +24,10 @@ namespace ScriptCs.Contracts
 
         ConsoleColor ForegroundColor { get; set; }
 
-        int Position { get; set; }
+        int HorizontalPosition { get; set; }
+
+        int VerticalPosition { get; set; }
+
+        int Width { get; }
     }
 }
