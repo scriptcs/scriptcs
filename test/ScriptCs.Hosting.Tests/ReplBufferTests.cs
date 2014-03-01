@@ -9,8 +9,6 @@ namespace ScriptCs.Hosting.Tests
 {
     public class ReplBufferTests
     {
-        private const string BackspaceSequence = "\b \b";
-
         public class TheStartLineMethod
         {
             [Theory, WithoutReplBufferLine]
@@ -46,19 +44,16 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Line.ShouldEqual(newString);
             }
 
-            [Theory, WithoutReplBufferLine]
-            public void ShouldReplaceConsoleLine([Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer, string firstString, string newString)
+            [Theory, WithoutReplBufferLine("foobar", "dude")]
+            public void ShouldReplaceConsoleLine(string str1, string str2, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
-                var writeChars = 0;
+                replBuffer.Line = str1;
 
-                consoleMock.Setup(c => c.Write(It.IsAny<char>())).Callback((char c) => writeChars++);
+                replBuffer.Line = str2;
 
-                replBuffer.Line = firstString;
-
-                replBuffer.Line = newString;
-
-                consoleMock.Verify(c => c.Write(BackspaceSequence), Times.Exactly(firstString.Length));
-                consoleMock.Verify(c => c.Write(newString), Times.Once());
+                consoleMock.VerifySet(c => c.Position = 0, Times.Exactly(2));
+                consoleMock.Verify(c => c.Write("      "), Times.Once());
+                consoleMock.Verify(c => c.Write(str2), Times.Once());
             }
         }
 
@@ -112,7 +107,8 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.Back(4);
 
-                consoleMock.Verify(c => c.Write(BackspaceSequence), Times.Exactly(4));
+                consoleMock.VerifySet(c => c.Position = 2, Times.Exactly(2));
+                consoleMock.Verify(c => c.Write("    "), Times.Once());
             }
 
             [Theory, WithoutReplBufferLine("foo")]
@@ -123,7 +119,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Back(5);
 
                 replBuffer.Line.ShouldBeEmpty();
-                consoleMock.Verify(c => c.Write(BackspaceSequence), Times.Exactly(3));
+                consoleMock.Verify(c => c.Write("   "), Times.Once());
             }
 
             [Theory, WithoutReplBufferLine]
@@ -202,7 +198,8 @@ namespace ScriptCs.Hosting.Tests
 
                 replBuffer.ResetTo(4);
 
-                consoleMock.Verify(c => c.Write(BackspaceSequence), Times.Exactly(2));
+                consoleMock.VerifySet(c => c.Position = 4, Times.Exactly(2));
+                consoleMock.Verify(c => c.Write("  "), Times.Once());
             }
 
             [Theory, WithoutReplBufferLine("foo")]
@@ -213,7 +210,8 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.ResetTo(-4);
 
                 replBuffer.Line.ShouldBeEmpty();
-                consoleMock.Verify(c => c.Write(BackspaceSequence), Times.Exactly(3));
+                consoleMock.VerifySet(c => c.Position = 0, Times.Exactly(2));
+                consoleMock.Verify(c => c.Write("   "), Times.Once());
             }
 
             [Theory, WithoutReplBufferLine("foo")]

@@ -12,6 +12,7 @@ namespace ScriptCs
 
         private readonly StringBuilder _buffer = new StringBuilder();
         private readonly IConsole _console;
+        private int _promptLength;
 
         public ReplBuffer(IConsole console)
         {
@@ -22,6 +23,7 @@ namespace ScriptCs
         {
             _buffer.Clear();
             Position = 0;
+            _promptLength = _console.Position;
         }
 
         public void Back() // Moq does not like optional parameters
@@ -36,11 +38,10 @@ namespace ScriptCs
             if (steps > 0)
             {
                 _buffer.Remove(Position - steps, steps);
-                foreach (int i in Enumerable.Range(1, steps))
-                {
-                    _console.Write("\b \b");
-                }
                 Position -= steps;
+                _console.Position = Position + _promptLength;
+                _console.Write(_buffer.ToString().Substring(Position).PadRight(steps + _buffer.Length - Position));
+                _console.Position = Position + _promptLength;
             }
         }
 
@@ -50,6 +51,7 @@ namespace ScriptCs
             {
                 _buffer.Remove(Position, 1);
                 _console.Write(_buffer.ToString().Substring(Position) + " ");
+                _console.Position = Position + _promptLength;
             }
         }
 
