@@ -39,7 +39,6 @@
     <Reference Include="Ploeh.AutoFixture.Xunit">
       <HintPath>..\..\packages\AutoFixture.Xunit.3.6.5\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
     </Reference>
-    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Should, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Should.1.1.20\lib\Should.dll</HintPath>
