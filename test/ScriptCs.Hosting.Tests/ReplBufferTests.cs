@@ -269,6 +269,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Insert(testChar);
 
                 consoleMock.Verify(c => c.Write(testChar + "r"), Times.Once());
+                consoleMock.VerifySet(c => c.Position = 6, Times.Exactly(2)); // Once at setup
             }
 
             [Theory, WithoutReplBufferLine]
@@ -302,7 +303,7 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, WithoutReplBufferLine("foobar")]
-            public void ShouldInsertStringToTheCursorAtPosition(string testString, string newString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
+            public void ShouldInsertStringToTheConsoleAtPosition(string testString, string newString, [Frozen] Mock<IConsole> consoleMock, ReplBuffer replBuffer)
             {
                 replBuffer.Line = testString;
 
@@ -311,6 +312,7 @@ namespace ScriptCs.Hosting.Tests
                 replBuffer.Insert(newString);
 
                 consoleMock.Verify(c => c.Write(newString + "r"), Times.Once());
+                consoleMock.VerifySet(c => c.Position = 5 + newString.Length, Times.Once());
             }
         }
 

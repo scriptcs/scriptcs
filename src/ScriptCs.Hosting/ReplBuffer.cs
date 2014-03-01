@@ -39,9 +39,9 @@ namespace ScriptCs
             {
                 _buffer.Remove(Position - steps, steps);
                 Position -= steps;
-                _console.Position = Position + _promptLength;
+                SetConsolePosition();
                 _console.Write(_buffer.ToString().Substring(Position).PadRight(steps + _buffer.Length - Position));
-                _console.Position = Position + _promptLength;
+                SetConsolePosition();
             }
         }
 
@@ -51,7 +51,7 @@ namespace ScriptCs
             {
                 _buffer.Remove(Position, 1);
                 _console.Write(_buffer.ToString().Substring(Position) + " ");
-                _console.Position = Position + _promptLength;
+                SetConsolePosition();
             }
         }
 
@@ -60,7 +60,7 @@ namespace ScriptCs
             if (Position > 0)
             {
                 Position--;
-                _console.Position--;
+                SetConsolePosition();
             }
         }
 
@@ -69,7 +69,7 @@ namespace ScriptCs
             if (Position < _buffer.Length)
             {
                 Position++;
-                _console.Position++; 
+                SetConsolePosition(); 
             }
         }
 
@@ -85,13 +85,20 @@ namespace ScriptCs
             _console.Write(ch + _buffer.ToString().Substring(Position));
             _buffer.Insert(Position, ch);
             Position++;
+            SetConsolePosition();
         }
-
+        
         public void Insert(string str)
         {
             _console.Write(str + _buffer.ToString().Substring(Position));
             _buffer.Insert(Position, str);
             Position += str.Length;
+            SetConsolePosition();
+        }
+
+        private void SetConsolePosition()
+        {
+            _console.Position = Position + _promptLength;
         }
     }
 }
