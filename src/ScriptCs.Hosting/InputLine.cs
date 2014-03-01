@@ -11,7 +11,7 @@ namespace ScriptCs
     {
         private readonly ILineAnalyzer _lineAnalyzer;
 
-        private enum Token { Backspace, Tab, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
+        private enum Token { Backspace, Tab, BackTab, Escape, Delete, Enter, UpArrow, DownArrow, LeftArrow, RightArrow, Other}
         private readonly IReplHistory _replHistory;
         private readonly IReplBuffer _buffer;
         private readonly IConsole _console;
@@ -84,6 +84,12 @@ namespace ScriptCs
                             _completionHandler.UpdateBufferWithCompletion(nameFragment => _filePathFinder.FindPossibleAssemblyNames(nameFragment, executor.FileSystem));
                         }
                         break;
+                    case Token.BackTab:
+                        _completionHandler.UpdateBufferWithPrevious();
+                        break;
+                    case Token.Escape:
+                        _completionHandler.Abort();
+                        break;
                     case Token.Other:
                         var ch = keyInfo.KeyChar;
                         _buffer.Insert(ch);
@@ -101,8 +107,14 @@ namespace ScriptCs
         
         private Token Tokenize(ConsoleKeyInfo keyInfo)
         {
-            if (keyInfo.Key == ConsoleKey.Tab) return Token.Tab;
+            if (keyInfo.Key == ConsoleKey.Tab)
+            {
+                if (keyInfo.Modifiers == ConsoleModifiers.Shift) return Token.BackTab;
+
+                return Token.Tab;
+            }
             if (keyInfo.Key == ConsoleKey.Enter) return Token.Enter;
+            if (keyInfo.Key == ConsoleKey.Escape) return Token.Escape;
             if (keyInfo.Key == ConsoleKey.Backspace) return Token.Backspace;
             if (keyInfo.Key == ConsoleKey.Delete) return Token.Delete;
             if (keyInfo.Key == ConsoleKey.LeftArrow) return Token.LeftArrow;

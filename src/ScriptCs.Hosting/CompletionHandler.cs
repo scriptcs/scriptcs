@@ -11,6 +11,7 @@ namespace ScriptCs
         private int _currentCompletion;
         private readonly ILineAnalyzer _lineAnalyzer;
         private readonly IReplBuffer _buffer;
+        private string _pathFragment;
 
         public CompletionHandler(ILineAnalyzer lineAnalyzer, IReplBuffer buffer)
         {
@@ -25,8 +26,8 @@ namespace ScriptCs
         {
             if (!_isCompletingWord)
             {
-                var pathFragment = _lineAnalyzer.CurrentText;
-                _possibleCompletions = getPaths(pathFragment);
+                _pathFragment = _lineAnalyzer.CurrentText;
+                _possibleCompletions = getPaths(_pathFragment);
                 _currentCompletion = 0;
                 _isCompletingWord = true;
             }
@@ -37,14 +38,45 @@ namespace ScriptCs
 
             if (_possibleCompletions.Any())
             {
-                _buffer.ResetTo(_lineAnalyzer.TextPosition);
-                _buffer.Insert(_possibleCompletions[_currentCompletion]);
+                UpdateBuffer();
+            }
+        }
+
+        public void UpdateBufferWithPrevious()
+        {
+            if (_isCompletingWord && _possibleCompletions.Any())
+            {
+                _currentCompletion = _currentCompletion == 0
+                    ? _possibleCompletions.Length - 1
+                    : _currentCompletion - 1;
+
+                UpdateBuffer();
+            }
+        }
+
+        public void Abort()
+        {
+            if (_isCompletingWord)
+            {
+                UpdateBuffer(_pathFragment);
+                Reset();
             }
         }
 
         public void Reset()
         {
             _isCompletingWord = false;
+        }
+
+        private void UpdateBuffer()
+        {
+            UpdateBuffer(_possibleCompletions[_currentCompletion]);
+        }
+
+        private void UpdateBuffer(string completion)
+        {
+            _buffer.ResetTo(_lineAnalyzer.TextPosition);
+            _buffer.Insert(completion);
         }
     }
 }

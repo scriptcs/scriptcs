@@ -197,6 +197,28 @@ namespace ScriptCs.Hosting.Tests
 
                 completionMock.Verify(c => c.UpdateBufferWithCompletion(It.IsAny<Func<string, string[]>>()), Times.Once());
             }
+
+            [Theory, WithMockBuilders]
+            public void ShouldGetPreviousCompletionOnShiftTab(ConsoleMockBuilder consoleMockBuilder, [Frozen] Mock<ICompletionHandler> completionMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(new ConsoleKeyInfo(' ', ConsoleKey.Tab, true, false, false));
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                completionMock.Verify(c => c.UpdateBufferWithPrevious(), Times.Once());
+            }
+
+            [Theory, WithMockBuilders]
+            public void ShouldAbortCompletionOnEscape(ConsoleMockBuilder consoleMockBuilder, [Frozen] Mock<ICompletionHandler> completionMock, InputLine inputLine)
+            {
+                consoleMockBuilder.Add(ConsoleKey.Escape);
+                consoleMockBuilder.Add(ConsoleKey.Enter);
+
+                inputLine.ReadLine(_scriptExec);
+
+                completionMock.Verify(c => c.Abort(), Times.Once());
+            }
         }
     }
 }
