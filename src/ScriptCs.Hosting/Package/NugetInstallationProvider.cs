@@ -42,9 +42,10 @@ namespace ScriptCs.Hosting.Package
             var configFileSystem = new PhysicalFileSystem(path);
 
             ISettings settings;
-            if (_fileSystem.FileExists(Path.Combine(_fileSystem.CurrentDirectory, Constants.NugetFile)))
+            var localNuGetConfigFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.NugetFile);
+            if (_fileSystem.FileExists(localNuGetConfigFile))
             {
-                settings = new Settings(configFileSystem, Constants.NugetFile);
+                settings = Settings.LoadDefaultSettings(configFileSystem, localNuGetConfigFile, null);
             }
             else
             {
