@@ -51,7 +51,7 @@ namespace ScriptCs.Hosting.Package
 
                 if (!packageReferenceFile.EntryExists(package.Id, package.Version))
                 {
-                    packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+                    packageReferenceFile.AddEntry(package.Id, package.Version, package.DevelopmentDependency, newestFramework);
 
                     if (newestFramework == null)
                     {
