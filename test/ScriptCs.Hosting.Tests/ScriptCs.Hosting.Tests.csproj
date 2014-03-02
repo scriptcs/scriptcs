@@ -69,7 +69,7 @@
     <Compile Include="HistoryMockBuilder.cs" />
     <Compile Include="ReplBufferMockBuilder.cs" />
     <Compile Include="WithMockBuildersAttribute.cs" />
-    <Compile Include="WithoutReplBufferLineAttribute.cs" />
+    <Compile Include="WithoutReplBufferLineButWithConsoleWidthAttribute.cs" />
     <Compile Include="InputLineTests.cs" />
     <Compile Include="LineAnalyzerTests.cs" />
     <Compile Include="ModuleLoaderTests.cs" />

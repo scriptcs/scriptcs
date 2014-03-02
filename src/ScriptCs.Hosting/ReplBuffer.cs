@@ -106,8 +106,9 @@ namespace ScriptCs
             _currentLineNumber = newPos / _console.Width;
             
             _console.HorizontalPosition = newPos % _console.Width;
-            _console.VerticalPosition = _verticalStartPosition + _currentLineNumber;
-
+            var newVerticalPosition = _verticalStartPosition + _currentLineNumber;
+            if (_console.VerticalPosition != newVerticalPosition) // Minimizes console updates and keeps tests simpler
+                _console.VerticalPosition = newVerticalPosition;
         }
     }
 }

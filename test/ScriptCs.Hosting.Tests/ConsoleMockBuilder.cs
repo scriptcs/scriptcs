@@ -41,6 +41,7 @@ namespace ScriptCs.Hosting.Tests
             var mock = new Mock<IConsole>();
 
             mock.Setup(c => c.ReadKey()).Returns(() => _chars.ElementAt(_position++));
+            mock.Setup(c => c.Width).Returns(80);
 
             return mock;
         }
