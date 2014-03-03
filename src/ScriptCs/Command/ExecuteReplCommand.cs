@@ -18,6 +18,7 @@ namespace ScriptCs.Command
         private readonly IConsole _console;
         private readonly ILog _logger;
         private readonly IScriptHostFactory _scriptHostFactory;
+        private readonly IScriptedScriptPackLoader _scriptedScriptPackLoader;
 
         public ExecuteReplCommand(
             string scriptName,
@@ -30,7 +31,8 @@ namespace ScriptCs.Command
             ILog logger,
             IConsole console,
             IAssemblyResolver assemblyResolver,
-            IScriptHostFactory scriptHostFactory)
+            IScriptHostFactory scriptHostFactory,
+            IScriptedScriptPackLoader scriptedScriptPackLoader)            
         {
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -43,6 +45,7 @@ namespace ScriptCs.Command
             _console = console;
             _assemblyResolver = assemblyResolver;
             _scriptHostFactory = scriptHostFactory;
+            _scriptedScriptPackLoader = scriptedScriptPackLoader;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -57,6 +60,12 @@ namespace ScriptCs.Command
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             repl.Initialize(assemblies, scriptPacks, ScriptArgs);
+            var loaderResult = _scriptedScriptPackLoader.Load(repl);
+            foreach (var pack in loaderResult.ScriptPacks)
+            {
+                repl.ScriptPackSession.AddScriptPack(pack);
+                repl.ScriptPackManager.AddContext(pack.GetContext());
+            }
 
             try
             {
@@ -102,7 +111,7 @@ namespace ScriptCs.Command
 
             if (!string.IsNullOrWhiteSpace(line))
             {
-                repl.Execute(line);
+                repl.ExecuteScript(line);
             }
 
             return true;

@@ -65,7 +65,7 @@ namespace ScriptCs.Command
 
                 var packs = _scriptPackResolver.GetPacks();
                 _scriptExecutor.Initialize(assemblyPaths, packs, ScriptArgs);
-                var loaderResult =_scriptedScriptPackLoader.Load();
+                var loaderResult = _scriptedScriptPackLoader.Load(_scriptExecutor);
                 foreach (var pack in loaderResult.ScriptPacks)
                 {
                     _scriptExecutor.ScriptPackSession.AddScriptPack(pack);

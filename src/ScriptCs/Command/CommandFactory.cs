@@ -46,7 +46,8 @@ namespace ScriptCs.Command
                     _scriptServices.Logger,
                     _scriptServices.Console,
                     _scriptServices.AssemblyResolver,
-                    _scriptServices.ScriptHostFactory);
+                    _scriptServices.ScriptHostFactory,
+                    _scriptServices.ScriptedScriptPackLoader);
 
                 return replCommand;
             }
