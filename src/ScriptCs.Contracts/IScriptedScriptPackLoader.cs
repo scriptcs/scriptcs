@@ -5,6 +5,6 @@ namespace ScriptCs.Contracts
 {
     public interface IScriptedScriptPackLoader
     {
-        ScriptedScriptPackLoadResult Load();
+        ScriptedScriptPackLoadResult Load(IScriptExecutor executor);
     }
 }

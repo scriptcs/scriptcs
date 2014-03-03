@@ -6,6 +6,7 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 using ScriptCs.Contracts;
+using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -14,16 +15,14 @@ namespace ScriptCs.Engine.Roslyn
     public class RoslynScriptEngine : IScriptEngine
     {
         protected readonly ScriptEngine ScriptEngine;
-        private readonly IScriptHostFactory _scriptHostFactory;
         private IScriptHost _host;
 
         public const string SessionKey = "Session";
 
-        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public RoslynScriptEngine(ILog logger)
         {
             ScriptEngine = new ScriptEngine();
             ScriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
-            _scriptHostFactory = scriptHostFactory;
             Logger = logger;
         }
 
@@ -57,6 +56,9 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
             {
+                if (_host == null)
+                    throw new ScriptSetupException("Please call Initialize first");
+
                 Logger.Debug("Creating session");
 
                 var hostType = _host.GetType();

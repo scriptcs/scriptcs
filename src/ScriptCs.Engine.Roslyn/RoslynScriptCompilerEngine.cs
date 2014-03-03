@@ -16,8 +16,8 @@ namespace ScriptCs.Engine.Roslyn
         protected const string CompiledScriptClass = "Submission#0";
         protected const string CompiledScriptMethod = "<Factory>";
         
-        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        protected RoslynScriptCompilerEngine(ILog logger)
+            : base(logger)
         {
         }
 

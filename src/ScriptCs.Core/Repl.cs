@@ -40,6 +40,11 @@ namespace ScriptCs
 
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
+            return base.ExecuteScript("#load " + script, scriptArgs);
+        }
+
+        public override ScriptResult ExecuteScript(string script, params string[] scriptArgs)
+        {
             Guard.AgainstNullArgument("script", script);
 
             try

@@ -7,8 +7,8 @@ namespace ScriptCs.Engine.Roslyn
 {
     public class RoslynScriptInMemoryEngine : RoslynScriptCompilerEngine
     {
-        public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        public RoslynScriptInMemoryEngine(ILog logger)
+            : base(logger)
         {
         }
 
