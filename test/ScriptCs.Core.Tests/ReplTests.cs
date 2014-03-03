@@ -392,5 +392,25 @@ namespace ScriptCs.Tests
                 mocks.ScriptEngine.Verify();
             }
         }
+
+        public class TheExecuteMethod
+        {
+            private Mocks _mocks;
+
+            public TheExecuteMethod()
+            {
+                _mocks = new Mocks();
+            }
+
+            [Fact]
+            public void ShouldCallExecuteScriptWithHashLoad()
+            {
+                _mocks.FilePreProcessor.Setup(x => x.ProcessScript("#load file.csx")).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
+                var repl = GetRepl(_mocks);
+                repl.Execute("file.csx", new[] { "hello" });
+
+                _mocks.ScriptEngine.Verify(x => x.Execute(It.Is<string>(p => p == "var a = 0;"), It.Is<string[]>(p => p[0] == "hello" ), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+            }
+        }
     }
 }

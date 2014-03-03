@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -61,17 +62,22 @@ namespace ScriptCs.Command
 
             repl.Initialize(assemblies, scriptPacks, ScriptArgs);
             var loaderResult = _scriptedScriptPackLoader.Load(repl);
-            foreach (var pack in loaderResult.ScriptPacks)
+            var foundScriptPacks = loaderResult.ScriptPacks.ToArray();
+            var foundResults = loaderResult.Results.ToArray();
+            
+            for (var i=0; i < foundScriptPacks.Length; i++)
             {
-                repl.ScriptPackSession.AddScriptPack(pack);
-                repl.ScriptPackManager.AddContext(pack.GetContext());
+                repl.ScriptPackSession.AddScriptPack(foundScriptPacks[i]);
+                repl.ScriptPackManager.AddContext(foundScriptPacks[i].GetContext());
+                if (foundResults.Length == foundScriptPacks.Length)
+                    _logger.InfoFormat("Loaded scripted script pack from {0}", foundResults[i].Item1);
             }
 
             try
             {
                 if (!string.IsNullOrWhiteSpace(_scriptName))
                 {
-                    _logger.Info(string.Format("Loading preseeded script: {0}", _scriptName));
+                    _logger.InfoFormat("Loading preseeded script: {0}", _scriptName);
                     repl.Execute(string.Format("#load {0}", _scriptName));
                 }
 
