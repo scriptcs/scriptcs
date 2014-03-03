@@ -23,6 +23,7 @@ namespace ScriptCs.Tests
             public void ShouldPromptForInput(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptedScriptPackLoader> scriptedScriptPackLoader,
                 CommandFactory factory)
             {
                 // Arrange
@@ -34,6 +35,8 @@ namespace ScriptCs.Tests
 
                 console.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
                 console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
+                scriptedScriptPackLoader.Setup(x => x.Load(It.IsAny<IScriptExecutor>()))
+                    .Returns(new ScriptedScriptPackLoadResult(new IScriptPack[0], new Tuple<string, ScriptResult>[0]));
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
@@ -45,7 +48,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenPassedAScript_ShouldPressedReplWithScript(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console, [Frozen] Mock<IScriptedScriptPackLoader> scriptedScriptPackLoader,
                  CommandFactory factory)
             {
                 // Arrange
@@ -59,6 +62,8 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
                 scriptEngine.Setup(
                     x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
+                scriptedScriptPackLoader.Setup(x => x.Load(It.IsAny<IScriptExecutor>()))
+                    .Returns(new ScriptedScriptPackLoadResult(new IScriptPack[0], new Tuple<string, ScriptResult>[0]));
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
@@ -69,7 +74,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenNotPassedAScript_ShouldNotCallTheEngineAutomatically(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console, [Frozen] Mock<IScriptedScriptPackLoader> scriptedScriptPackLoader,
                  CommandFactory factory)
             {
                 // Arrange
@@ -81,6 +86,8 @@ namespace ScriptCs.Tests
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                scriptedScriptPackLoader.Setup(x => x.Load(It.IsAny<IScriptExecutor>()))
+    .Returns(new ScriptedScriptPackLoadResult(new IScriptPack[0], new Tuple<string, ScriptResult>[0]));
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();

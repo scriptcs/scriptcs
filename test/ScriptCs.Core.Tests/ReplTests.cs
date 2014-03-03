@@ -135,19 +135,19 @@ namespace ScriptCs.Tests
             }
         }
 
-        public class TheExecuteMethod
+        public class TheExecuteScriptMethod
         {
             private Mocks _mocks;
             private Repl _repl;
 
-            public TheExecuteMethod()
+            public TheExecuteScriptMethod()
             {
                 _mocks = new Mocks();
                 _mocks.FilePreProcessor.Setup(x => x.ProcessScript("foo"))
                     .Returns(new FilePreProcessorResult { Code = "foo" });
                 _repl = GetRepl(_mocks);
                 _repl.Console.ForegroundColor = ConsoleColor.White;
-                _repl.Execute("foo");
+                _repl.ExecuteScript("foo");
             }
 
             [Fact]
@@ -175,7 +175,7 @@ namespace ScriptCs.Tests
                     x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
                       .Throws<ArgumentException>();
 
-                _repl.Execute("foo");
+                _repl.ExecuteScript("foo");
 
                 _mocks.Console.VerifySet(x => x.ForegroundColor = ConsoleColor.Red);
                 _mocks.Console.Verify(x => x.WriteLine(It.IsAny<string>()));
@@ -194,7 +194,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
 
                 _repl = GetRepl(mocks);
-                _repl.Execute("#load \"file.csx\"");
+                _repl.ExecuteScript("#load \"file.csx\"");
 
                 mocks.FilePreProcessor.Verify(i => i.ProcessScript("#load \"file.csx\""), Times.Once());
             }
@@ -208,7 +208,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
 
                 _repl = GetRepl(mocks);
-                _repl.Execute("#load \"file.csx\"");
+                _repl.ExecuteScript("#load \"file.csx\"");
 
                 mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Once());
             }
@@ -220,7 +220,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(false);
 
                 _repl = GetRepl(mocks);
-                _repl.Execute("#load \"file.csx\"");
+                _repl.ExecuteScript("#load \"file.csx\"");
 
                 mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
@@ -237,7 +237,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
+                _repl.ExecuteScript("#r \"my.dll\"");
 
                 //default references = 6, + 1 we just added
                 _repl.References.PathReferences.Count().ShouldEqual(7);
@@ -254,7 +254,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
+                _repl.ExecuteScript("#r \"my.dll\"");
 
                 mocks.FileSystem.Verify(x => x.FileExists("C:/my.dll"), Times.Once());
             }
@@ -270,7 +270,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"PresentationCore\"");
+                _repl.ExecuteScript("#r \"PresentationCore\"");
 
                 _repl.References.PathReferences.Contains("PresentationCore").ShouldBeTrue();
             }
@@ -287,7 +287,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
+                _repl.ExecuteScript("#r \"my.dll\"");
 
                 _repl.References.PathReferences.Contains("my.dll").ShouldBeTrue();
             }
@@ -309,7 +309,7 @@ namespace ScriptCs.Tests
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
+                _repl.ExecuteScript("#r \"my.dll\"");
                 _repl.References.PathReferences.Contains("my.dll").ShouldBeFalse();
             }
 
@@ -320,7 +320,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("#r \"my.dll\"");
+                _repl.ExecuteScript("#r \"my.dll\"");
 
                 mocks.ScriptEngine.Verify(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
             }
@@ -343,7 +343,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("var x = 1;");
+                _repl.ExecuteScript("var x = 1;");
 
                 _repl.Buffer.ShouldNotBeNull();
             }
@@ -366,7 +366,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Buffer = "class test {";
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("}");
+                _repl.ExecuteScript("}");
 
                 _repl.Buffer.ShouldBeNull();
             }
@@ -387,7 +387,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Buffer = "class test {";
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                _repl.Execute("}");
+                _repl.ExecuteScript("}");
 
                 mocks.ScriptEngine.Verify();
             }

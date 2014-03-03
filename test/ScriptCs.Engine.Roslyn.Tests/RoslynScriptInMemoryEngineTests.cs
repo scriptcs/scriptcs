@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
             {
                 var mockScriptPackManager = new Mock<IScriptPackManager>();
                 var host = new ScriptHost(mockScriptPackManager.Object, new ScriptEnvironment(null));
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new RoslynScriptInMemoryEngine(new Mock<ILog>().Object);
                 scriptEngine.Initialize(host);
 
                 // Arrange
@@ -53,7 +53,7 @@ namespace ScriptCs.Tests
             {
                 var mockScriptPackManager = new Mock<IScriptPackManager>();
                 var host = new ScriptHost(mockScriptPackManager.Object, new ScriptEnvironment(null));
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new RoslynScriptInMemoryEngine(new Mock<ILog>().Object);
                 scriptEngine.Initialize(host);
 
                 // Arrange
