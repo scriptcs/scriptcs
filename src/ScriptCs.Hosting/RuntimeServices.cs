@@ -14,19 +14,17 @@ namespace ScriptCs.Hosting
     {
         private readonly IList<Type> _lineProcessors;
         private readonly IConsole _console;
-        private readonly IInputLine _inputLine;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, IInputLine inputLine, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
             _console = console;
-            _inputLine = inputLine;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
             _initDirectoryCatalog = initDirectoryCatalog;
@@ -58,8 +56,13 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
             RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
+            RegisterOverrideOrDefault<InputLine>(builder, b => b.RegisterType<InputLine>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<ReplBuffer>(builder, b => b.RegisterType<ReplBuffer>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<LineAnalyzer>(builder, b => b.RegisterType<LineAnalyzer>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<ReplHistory>(builder, b => b.RegisterType<ReplHistory>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<FilePathFinder>(builder, b => b.RegisterType<FilePathFinder>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<CompletionHandler>(builder, b => b.RegisterType<CompletionHandler>().AsImplementedInterfaces().SingleInstance());
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
-            RegisterOverrideOrDefault<IInputLine>(builder, b => b.RegisterInstance(_inputLine));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
             

@@ -12,16 +12,6 @@ namespace ScriptCs.Hosting.Tests
     {
         public class TheReadLineMethod
         {
-            private readonly IScriptExecutor _scriptExec;
-
-            public TheReadLineMethod()
-            {
-                var fileSystemMock = new Mock<IFileSystem>();
-                var scriptExecutorMock = new Mock<IScriptExecutor>();
-                scriptExecutorMock.Setup(se => se.FileSystem).Returns(fileSystemMock.Object);
-                _scriptExec = scriptExecutorMock.Object;
-            }
-
             [Theory, WithMockBuilders]
             public void ShouldReturnLineAtEnter(string str1, string str2, ConsoleMockBuilder consoleMockBuilder, InputLine inputLine)
             {
@@ -29,7 +19,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Enter);
                 consoleMockBuilder.Add(str2);
 
-                var line = inputLine.ReadLine(_scriptExec);
+                var line = inputLine.ReadLine();
 
                 line.ShouldEqual(str1);
             }
@@ -40,7 +30,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(str);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 historyMock.Verify(h => h.AddLine(str), Times.Once());
             }
@@ -56,9 +46,9 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.UpArrow);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
-                inputLine.ReadLine(_scriptExec);
-                var line = inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
+                inputLine.ReadLine();
+                var line = inputLine.ReadLine();
 
                 line.ShouldEqual(str1);
             }
@@ -78,10 +68,10 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.DownArrow);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
-                inputLine.ReadLine(_scriptExec);
-                inputLine.ReadLine(_scriptExec);
-                var line = inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
+                inputLine.ReadLine();
+                inputLine.ReadLine();
+                var line = inputLine.ReadLine();
 
                 line.ShouldEqual(str2);
             }
@@ -93,7 +83,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.LeftArrow);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.MoveLeft(), Times.Once());
             }
@@ -105,7 +95,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.RightArrow);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.MoveRight(), Times.Once());
             }
@@ -118,7 +108,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add('x');
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                var line = inputLine.ReadLine(_scriptExec);
+                var line = inputLine.ReadLine();
 
                 line.ShouldEqual("foobaxr");
             }
@@ -130,7 +120,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Backspace);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.Back(), Times.Once());
             }
@@ -144,7 +134,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Delete);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.Delete(), Times.Once());
             }
@@ -156,7 +146,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Delete);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.Delete(), Times.Never());
             }
@@ -167,7 +157,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Delete);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 bufferMock.Verify(b => b.Delete(), Times.Never());
             }
@@ -180,7 +170,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Tab);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 completionMock.Verify(c => c.UpdateBufferWithCompletion(It.IsAny<Func<string, string[]>>()), Times.Once());
             }
@@ -193,7 +183,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Tab);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 completionMock.Verify(c => c.UpdateBufferWithCompletion(It.IsAny<Func<string, string[]>>()), Times.Once());
             }
@@ -204,7 +194,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(new ConsoleKeyInfo(' ', ConsoleKey.Tab, true, false, false));
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 completionMock.Verify(c => c.UpdateBufferWithPrevious(), Times.Once());
             }
@@ -215,7 +205,7 @@ namespace ScriptCs.Hosting.Tests
                 consoleMockBuilder.Add(ConsoleKey.Escape);
                 consoleMockBuilder.Add(ConsoleKey.Enter);
 
-                inputLine.ReadLine(_scriptExec);
+                inputLine.ReadLine();
 
                 completionMock.Verify(c => c.Abort(), Times.Once());
             }

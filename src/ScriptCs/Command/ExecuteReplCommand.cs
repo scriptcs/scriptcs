@@ -93,7 +93,7 @@ namespace ScriptCs.Command
             
             try
             {
-                line = (_inputLine != null) ? _inputLine.ReadLine(repl) : _console.ReadLine();
+                line = (_inputLine != null) ? _inputLine.ReadLine() : _console.ReadLine();
             }
             catch
             {

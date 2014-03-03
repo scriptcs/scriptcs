@@ -10,21 +10,28 @@ namespace ScriptCs
     {
         private readonly char[] SLASHES = {'\\', '/'};
 
-        public string[] FindPossibleFilePaths(string pathFragment, IFileSystem fileSystem)
+        private readonly IFileSystem _fileSystem;
+
+        public FilePathFinder(IFileSystem fileSystem)
         {
-            return FindPossiblePaths(pathFragment, "", new[] { fileSystem.CurrentDirectory }, fileSystem);
+            _fileSystem = fileSystem;
         }
 
-        public string[] FindPossibleAssemblyNames(string nameFragment, IFileSystem fileSystem)
+        public string[] FindPossibleFilePaths(string pathFragment)
+        {
+            return FindPossiblePaths(pathFragment, "", new[] { _fileSystem.CurrentDirectory }, _fileSystem);
+        }
+
+        public string[] FindPossibleAssemblyNames(string nameFragment)
         {
             var roots = new List<string>
             {
-                fileSystem.CurrentDirectory,                
+                _fileSystem.CurrentDirectory,                
             };
 
-            AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, fileSystem);
+            AddGACRoots(@"C:\Windows\Microsoft.Net\assembly", roots, _fileSystem);
 
-            return FindPossiblePaths(nameFragment, ".dll", roots.Distinct(), fileSystem);
+            return FindPossiblePaths(nameFragment, ".dll", roots.Distinct(), _fileSystem);
         }
 
         private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)

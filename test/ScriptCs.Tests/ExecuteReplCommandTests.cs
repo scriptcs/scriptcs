@@ -33,7 +33,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
 
-                inputLine.Setup(x => x.ReadLine(It.IsAny<IScriptExecutor>())).Callback(() => readLines++).Throws(new Exception());
+                inputLine.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
                 console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
 
                 // Act
@@ -54,9 +54,9 @@ namespace ScriptCs.Tests
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx" };
 
-                inputLine.Setup(x => x.ReadLine(It.IsAny<IScriptExecutor>())).Returns(() =>
+                inputLine.Setup(x => x.ReadLine()).Returns(() =>
                 {
-                    inputLine.Setup(x => x.ReadLine(It.IsAny<IScriptExecutor>())).Throws(new Exception());
+                    inputLine.Setup(x => x.ReadLine()).Throws(new Exception());
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
@@ -80,9 +80,9 @@ namespace ScriptCs.Tests
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true };
 
-                inputLine.Setup(x => x.ReadLine(It.IsAny<IScriptExecutor>())).Returns(() =>
+                inputLine.Setup(x => x.ReadLine()).Returns(() =>
                 {
-                    inputLine.Setup(x => x.ReadLine(It.IsAny<IScriptExecutor>())).Throws(new Exception());
+                    inputLine.Setup(x => x.ReadLine()).Throws(new Exception());
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");

@@ -28,7 +28,7 @@ namespace ScriptCs
             _filePathFinder = filePathFinder;
         }
 
-        public string ReadLine(IScriptExecutor executor)
+        public string ReadLine()
         {
             bool isEol = false;
 
@@ -77,11 +77,11 @@ namespace ScriptCs
                     case Token.Tab:
                         if (_lineAnalyzer.CurrentState == LineState.FilePath)
                         {
-                            _completionHandler.UpdateBufferWithCompletion(pathFragment => _filePathFinder.FindPossibleFilePaths(pathFragment, executor.FileSystem));
+                            _completionHandler.UpdateBufferWithCompletion(pathFragment => _filePathFinder.FindPossibleFilePaths(pathFragment));
                         }
                         else if (_lineAnalyzer.CurrentState == LineState.AssemblyName)
                         {
-                            _completionHandler.UpdateBufferWithCompletion(nameFragment => _filePathFinder.FindPossibleAssemblyNames(nameFragment, executor.FileSystem));
+                            _completionHandler.UpdateBufferWithCompletion(nameFragment => _filePathFinder.FindPossibleAssemblyNames(nameFragment));
                         }
                         break;
                     case Token.BackTab:

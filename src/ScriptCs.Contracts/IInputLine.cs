@@ -2,6 +2,6 @@
 {
     public interface IInputLine
     {
-        string ReadLine(IScriptExecutor executor);
+        string ReadLine();
     }
 }

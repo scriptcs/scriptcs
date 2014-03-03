@@ -19,15 +19,13 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
-        private IInputLine _inputLine;
 
-        public ScriptServicesBuilder(IConsole console, IInputLine inputLine, ILog logger, IRuntimeServices runtimeServices = null)
+        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
         {
             _initializationServices = new InitializationServices(logger);
             _runtimeServices = runtimeServices;
             _console = console;
             _logger = logger;
-            _inputLine = inputLine;
         }
 
         public ScriptServices Build()
@@ -44,7 +42,7 @@ namespace ScriptCs.Hosting
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console, _inputLine,
+                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices, _scriptName);

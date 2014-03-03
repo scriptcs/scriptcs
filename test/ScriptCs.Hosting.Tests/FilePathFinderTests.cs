@@ -17,7 +17,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new string[] {});
 
-                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment);
 
                 possiblePaths.ShouldEqual(new [] { fragment });
             }
@@ -31,7 +31,7 @@ namespace ScriptCs.Hosting.Tests
 
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new [] { firstPossibility, secondPossibility });
 
-                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment);
 
                 possiblePaths.ShouldEqual(new[] { fragment + "e1.dll", fragment + "e2.dll" });
             }
@@ -45,7 +45,7 @@ namespace ScriptCs.Hosting.Tests
 
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new[] { firstPossibility, secondPossibility });
 
-                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleAssemblyNames(fragment);
 
                 possiblePaths.ShouldEqual(new[] { fragment + "e2.dll" });
             }
@@ -58,7 +58,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new string[] { });
 
-                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment);
 
                 possiblePaths.ShouldEqual(new[] { fragment });
             }
@@ -72,7 +72,7 @@ namespace ScriptCs.Hosting.Tests
 
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new[] { firstPossibility, secondPossibility });
 
-                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment);
 
                 possiblePaths.ShouldEqual(new[] { fragment + "e1", fragment + "e2" });
             }
@@ -86,7 +86,7 @@ namespace ScriptCs.Hosting.Tests
 
                 fileSystemMock.Setup(fs => fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new[] { firstPossibility, secondPossibility, firstPossibility });
 
-                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment, fileSystemMock.Object);
+                var possiblePaths = filePathFinder.FindPossibleFilePaths(fragment);
 
                 possiblePaths.ShouldEqual(new[] { fragment + "e1", fragment + "e2" });
             }
@@ -99,7 +99,7 @@ namespace ScriptCs.Hosting.Tests
 
                 fileSystemMock.Setup(fs => fs.CurrentDirectory).Returns(currentDir);
 
-                filePathFinder.FindPossibleFilePaths(path + fragment, fileSystemMock.Object);
+                filePathFinder.FindPossibleFilePaths(path + fragment);
 
                 fileSystemMock.Verify(fs => fs.EnumerateFilesAndDirectories(currentDir + @"\" + path, fragment + "*", SearchOption.TopDirectoryOnly));
             }
