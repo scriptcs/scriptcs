@@ -4,7 +4,6 @@ using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
-using ScriptCs.Package;
 
 namespace ScriptCs
 {

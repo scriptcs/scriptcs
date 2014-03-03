@@ -1,5 +1,6 @@
 ﻿using ScriptCs.Argument;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting;
 using Xunit;
 using Should;
 

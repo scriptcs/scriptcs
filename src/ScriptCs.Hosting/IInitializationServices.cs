@@ -1,7 +1,7 @@
-﻿namespace ScriptCs
-{
-    using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
 
+namespace ScriptCs.Hosting
+{
     public interface IInitializationServices
     {
         IAssemblyResolver GetAssemblyResolver();
