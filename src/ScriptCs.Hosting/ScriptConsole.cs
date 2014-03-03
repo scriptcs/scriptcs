@@ -1,7 +1,8 @@
 ﻿using System;
+
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class ScriptConsole : IConsole
     {

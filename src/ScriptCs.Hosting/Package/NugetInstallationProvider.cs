@@ -6,7 +6,6 @@ using Common.Logging;
 using NuGet;
 
 using ScriptCs.Contracts;
-using ScriptCs.Package;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 

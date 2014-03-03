@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 using Should;
 using Xunit;
-using PackageReference = ScriptCs.Package.PackageReference;
+using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Tests
 {

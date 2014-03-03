@@ -5,7 +5,7 @@ using Autofac;
 
 using Common.Logging;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public abstract class ScriptServicesRegistration
     {

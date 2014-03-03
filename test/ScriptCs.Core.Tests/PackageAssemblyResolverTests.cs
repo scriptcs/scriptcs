@@ -10,7 +10,7 @@ using ScriptCs.Exceptions;
 using Should;
 using Xunit;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.Package.PackageReference;
+using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Tests
 {

@@ -1,9 +1,11 @@
 ﻿using System.Text;
+
 using log4net.Appender;
 using log4net.Core;
+
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class ScriptConsoleAppender : AppenderSkeleton
     {

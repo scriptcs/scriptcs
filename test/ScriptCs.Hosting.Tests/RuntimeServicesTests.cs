@@ -5,7 +5,7 @@ using Autofac;
 using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.Package;
+using ScriptCs.Hosting;
 
 using Should;
 using Xunit;

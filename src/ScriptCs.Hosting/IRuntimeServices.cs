@@ -1,6 +1,4 @@
-﻿using Autofac;
-
-namespace ScriptCs
+﻿namespace ScriptCs.Hosting
 {
     public interface IRuntimeServices
     {

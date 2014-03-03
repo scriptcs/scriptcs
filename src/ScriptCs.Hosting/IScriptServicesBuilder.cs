@@ -1,6 +1,6 @@
 ﻿using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public interface IScriptServicesBuilder : IServiceOverrides<IScriptServicesBuilder>
     {
