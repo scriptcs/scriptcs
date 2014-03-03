@@ -1,17 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
-using ScriptCs.Hosting;
-using log4net.Core;
-
 using LogLevel = ScriptCs.Contracts.LogLevel;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {

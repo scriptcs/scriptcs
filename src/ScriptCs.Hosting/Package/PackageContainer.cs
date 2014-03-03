@@ -8,7 +8,7 @@ using NuGet;
 using ScriptCs.Contracts;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.Package.PackageReference;
+using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Hosting.Package
 {

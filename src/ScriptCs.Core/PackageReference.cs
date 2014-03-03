@@ -1,9 +1,8 @@
 using System;
 using System.Runtime.Versioning;
-
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Package
+namespace ScriptCs
 {
     public class PackageReference : IPackageReference
     {
