@@ -8,6 +8,10 @@ namespace ScriptCs.Contracts
     {
         IEnumerable<string> EnumerateFiles(string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
 
+        IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+
+        IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+
         void Copy(string source, string dest, bool overwrite);
 
         bool DirectoryExists(string path);

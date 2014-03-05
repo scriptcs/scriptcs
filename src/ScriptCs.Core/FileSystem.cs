@@ -13,6 +13,16 @@ namespace ScriptCs
             return Directory.EnumerateFiles(dir, searchPattern, searchOption);
         }
 
+        public virtual IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            return Directory.EnumerateDirectories(dir, searchPattern, searchOption);
+        }
+
+        public virtual IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            return Directory.EnumerateFileSystemEntries(dir, searchPattern, searchOption);
+        }
+
         public virtual void Copy(string source, string dest, bool overwrite)
         {
             File.Copy(source, dest, overwrite);
