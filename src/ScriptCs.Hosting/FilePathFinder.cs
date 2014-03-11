@@ -80,9 +80,13 @@ namespace ScriptCs
                         pattern + "*",
                         SearchOption.TopDirectoryOnly).Where(p => p.EndsWith(suffix)).Select<string, string>(p => AugmentPathFragment(partialPath, p)));
                 }
-                catch (Exception)
+                catch (IOException)
                 {
-                    //
+                    //  Malformed path (e.g., naming a disk or directory that does not exist), which is considered a user input error, and should silently produce no hits
+                }
+                catch (ArgumentException)
+                {
+                    //  Malformed path (e.g., using illegal characters), which is considered a user input error, and should silently produce no hits
                 }
             }
 
