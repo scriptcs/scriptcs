@@ -1,7 +1,7 @@
 ﻿namespace ScriptCs.Contracts
 {
-	public interface ICodeRewriter
-	{
-		string Rewrite(string code);
-	}
+    public interface ICodeRewriter
+    {
+        string Rewrite(string code);
+    }
 }
