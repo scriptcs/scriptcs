@@ -36,7 +36,10 @@ namespace ScriptCs
 
         private void AddGACRoots(string node, List<string> roots, IFileSystem fileSystem)
         {
-            if (fileSystem.EnumerateFiles(node, "*.dll", SearchOption.TopDirectoryOnly).Any()) roots.Add(node);
+            if (fileSystem.EnumerateFiles(node, "*.dll", SearchOption.TopDirectoryOnly).Any())
+            {
+                roots.Add(node);
+            }
 
             var subDirs = fileSystem.EnumerateDirectories(node, "*", SearchOption.TopDirectoryOnly);
 

@@ -22,7 +22,10 @@ namespace ScriptCs
 
         public void AddLine(string line)
         {
-            if (_history.Count == _limit) _history.Dequeue();
+            if (_history.Count == _limit)
+            {
+                _history.Dequeue();
+            }
             _history.Enqueue(line);
             _currentLine = 0;
             _justAddedLine = true;
@@ -30,10 +33,15 @@ namespace ScriptCs
 
         public string GetPreviousLine()
         {
-            if (_history.Count == 0) return null;
+            if (_history.Count == 0)
+            {
+                return null;
+            }
 
             if (!_justAddedLine)
+            {
                 _currentLine = (_currentLine + 1) % _history.Count;
+            }
 
             _justAddedLine = false;
 
@@ -42,7 +50,10 @@ namespace ScriptCs
 
         public string GetNextLine()
         {
-            if (_history.Count == 0) return null;
+            if (_history.Count == 0)
+            {
+                return null;
+            }
 
             _currentLine = _currentLine == 0 ? _history.Count - 1 : _currentLine - 1;
 

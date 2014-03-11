@@ -48,12 +48,18 @@ namespace ScriptCs
                         break;
                     case Token.UpArrow:
                         var previousLine = _replHistory.GetPreviousLine();
-                        if (previousLine != null) _buffer.Line = previousLine;
+                        if (previousLine != null)
+                        {
+                            _buffer.Line = previousLine;
+                        }
                         _completionHandler.Reset();
                         break;
                     case Token.DownArrow:
                         var nextLine = _replHistory.GetNextLine();
-                        if (nextLine != null) _buffer.Line = nextLine;
+                        if (nextLine != null)
+                        {
+                            _buffer.Line = nextLine;
+                        }
                         _completionHandler.Reset();
                         break;
                     case Token.LeftArrow:
@@ -66,12 +72,16 @@ namespace ScriptCs
                         break;
                     case Token.Backspace:
                         if (_buffer.Position > 0)
+                        {
                             _buffer.Back();
+                        }
                         _completionHandler.Reset();
                         break;
                     case Token.Delete:
                         if (_buffer.Position < _buffer.Line.Length)
+                        {
                             _buffer.Delete();
+                        }
                         _completionHandler.Reset();
                         break;
                     case Token.Tab:
@@ -100,7 +110,10 @@ namespace ScriptCs
                 _lineAnalyzer.Analyze(_buffer.Line);
             }
 
-            if (_buffer.Line.Length > 0) _replHistory.AddLine(_buffer.Line);
+            if (_buffer.Line.Length > 0)
+            {
+                _replHistory.AddLine(_buffer.Line);
+            }
 
             return _buffer.Line;
         }
@@ -109,7 +122,10 @@ namespace ScriptCs
         {
             if (keyInfo.Key == ConsoleKey.Tab)
             {
-                if (keyInfo.Modifiers == ConsoleModifiers.Shift) return Token.BackTab;
+                if (keyInfo.Modifiers == ConsoleModifiers.Shift)
+                {
+                    return Token.BackTab;
+                }
 
                 return Token.Tab;
             }
