@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using System.Text.RegularExpressions;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -52,6 +53,28 @@ namespace ScriptCs
                 if (script.StartsWith("#reset"))
                 {
                     Reset();
+                    return new ScriptResult();
+                }
+
+                if (script.StartsWith(":cd", StringComparison.OrdinalIgnoreCase))
+                {
+                    var m = Regex.Match(script, @":cd\s+(.*)");
+
+                    var relativePath = m.Groups[1].Value;
+
+                    FileSystem.CurrentDirectory = Path.Combine(FileSystem.CurrentDirectory, relativePath);
+
+                    return new ScriptResult();
+                }
+
+                if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
+                {
+                    var dir = FileSystem.CurrentDirectory;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+
+                    Console.WriteLine(dir);
+
                     return new ScriptResult();
                 }
 
