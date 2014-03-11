@@ -2,16 +2,16 @@ namespace ScriptCs.Tests
 {
 	using System;
 	using System.Collections.Generic;
-	using System.IO;
 	using System.Linq;
 
 	using Common.Logging;
 
 	using Moq;
 
+	using Roslyn.Compilers.CSharp;
+
 	using ScriptCs.Contracts;
 	using ScriptCs.Contracts.Exceptions;
-	using ScriptCs.Engine.Roslyn;
 
 	using Should;
 
@@ -374,7 +374,7 @@ Console.WriteLine(@""blah"");", result.Code);
 						         @"#load ""C:\f5.csx"";",
 						         @"Console.WriteLine(""First line of f2"");",
 					         };
-				
+
 				// f3 has usings and no loads
 				var f3 = new List<string>
 					         {
@@ -551,10 +551,10 @@ Console.WriteLine(@""blah"");", result.Code);
 
 			public ProcessScriptMethod()
 			{
-				_fileSystem = new Mock<IFileSystem>();
-				_fileSystem.Setup(x => x.SplitLines(It.IsAny<string>())).Returns<string>(x => x.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
-				_fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
-				_fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
+				this._fileSystem = new Mock<IFileSystem>();
+				this._fileSystem.Setup(x => x.SplitLines(It.IsAny<string>())).Returns<string>(x => x.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
+				this._fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
+				this._fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
 			}
 
 			[Fact]
