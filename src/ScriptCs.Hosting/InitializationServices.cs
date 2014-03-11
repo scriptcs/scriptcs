@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Package;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class InitializationServices : ScriptServicesRegistration, IInitializationServices
     {

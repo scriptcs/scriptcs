@@ -6,9 +6,9 @@ using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using ScriptCs.Contracts;
-using ICommonLog = Common.Logging.ILog;
+using ILog = Common.Logging.ILog;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class LoggerConfigurator : ILoggerConfigurator
     {
@@ -18,7 +18,7 @@ namespace ScriptCs
 
         private readonly LogLevel _logLevel;
 
-        private ICommonLog _logger;
+        private ILog _logger;
 
         public LoggerConfigurator(LogLevel logLevel)
         {
@@ -42,7 +42,7 @@ namespace ScriptCs
             _logger = new CodeConfigurableLog4NetLogger(logger);
         }
 
-        public ICommonLog GetLogger()
+        public ILog GetLogger()
         {
             return _logger;
         }

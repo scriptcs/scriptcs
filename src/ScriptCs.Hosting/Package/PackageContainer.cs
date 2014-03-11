@@ -8,7 +8,7 @@ using NuGet;
 using ScriptCs.Contracts;
 
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.Package.PackageReference;
+using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Hosting.Package
 {
@@ -51,7 +51,7 @@ namespace ScriptCs.Hosting.Package
 
                 if (!packageReferenceFile.EntryExists(package.Id, package.Version))
                 {
-                    packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+                    packageReferenceFile.AddEntry(package.Id, package.Version, package.DevelopmentDependency, newestFramework);
 
                     if (newestFramework == null)
                     {

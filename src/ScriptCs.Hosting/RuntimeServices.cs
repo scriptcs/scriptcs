@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.Linq;
-using System.Reflection;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
 	public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
 	{

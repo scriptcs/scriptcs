@@ -2,11 +2,9 @@
 using Moq;
 using ScriptCs.Contracts;
 using Should;
-using ScriptCs.Package;
-
 using Xunit;
 
-namespace ScriptCs.Tests
+namespace ScriptCs.Hosting.Tests
 {
     public class ScriptServicesBuilderTests
     {

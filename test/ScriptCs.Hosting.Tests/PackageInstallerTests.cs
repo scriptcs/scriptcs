@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Common.Logging;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using Should;
 using Xunit;
-using PackageReference = ScriptCs.Package.PackageReference;
 
-namespace ScriptCs.Tests
+namespace ScriptCs.Hosting.Tests
 {
     public class PackageInstallerTests
     {
