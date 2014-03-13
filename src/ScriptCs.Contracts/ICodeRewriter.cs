@@ -1,6 +1,8 @@
 ﻿namespace ScriptCs.Contracts
 {
-    public interface ICodeRewriter
+	using System.ComponentModel.Composition;
+
+	public interface ICodeRewriter
     {
         string Rewrite(string code);
     }

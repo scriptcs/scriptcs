@@ -6,7 +6,9 @@ using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
 {
-    public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
+	using System.Diagnostics;
+
+	public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly IInitializationServices _initializationServices;
         private IRuntimeServices _runtimeServices;
@@ -42,7 +44,7 @@ namespace ScriptCs.Hosting
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, _console,
+                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, CodeRewriters, _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices, _scriptName);
@@ -53,13 +55,14 @@ namespace ScriptCs.Hosting
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
+	        var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
 
             var fs = _initializationServices.GetFileSystem();
             var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
             loader.Load(config, folders, extension, moduleNames);
-            return this;
+			
+			return this;
         }
 
         public IScriptServicesBuilder Cache(bool cache = true)

@@ -31,6 +31,8 @@
         TConfig AssemblyResolver<T>() where T : IAssemblyResolver;
 
         TConfig LineProcessor<T>() where T : ILineProcessor;
+        
+		TConfig CodeRewriter<T>() where T : ICodeRewriter;
 
         TConfig Console<T>() where T : IConsole;
 

@@ -6,7 +6,9 @@ using ScriptCs.Hosting;
 
 namespace ScriptCs
 {
-    internal static class Program
+	using System.Diagnostics;
+
+	internal static class Program
     {
         private static int Main(string[] args)
         {
@@ -27,12 +29,12 @@ namespace ScriptCs
  
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .Cache(commandArgs.Cache)
-                .Debug(commandArgs.Debug)
+				.Debug(commandArgs.Debug || Debugger.IsAttached)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
 
-            var modules = GetModuleList(commandArgs.Modules);
+			var modules = GetModuleList(commandArgs.Modules ?? "Rewriters");
             var extension = Path.GetExtension(commandArgs.ScriptName);
 
 

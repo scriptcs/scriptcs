@@ -2,7 +2,6 @@ namespace ScriptCs.Tests
 {
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
-
     using ScriptCs.Contracts;
 
     public class StringRewriter : SyntaxRewriter, ICodeRewriter

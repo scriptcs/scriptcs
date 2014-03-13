@@ -13,6 +13,7 @@ namespace ScriptCs.Hosting
     public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
     {
         private readonly IList<Type> _lineProcessors;
+        private readonly IList<Type> _codeRewriters;
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
@@ -20,10 +21,11 @@ namespace ScriptCs.Hosting
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IList<Type> codeRewriters, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
+	        _codeRewriters = codeRewriters;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -41,7 +43,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
-
+	        builder.RegisterTypes(_codeRewriters.ToArray()).As<ICodeRewriter>();
             RegisterLineProcessors(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());

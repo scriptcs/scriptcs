@@ -8,6 +8,7 @@ namespace ScriptCs.Hosting
         where TConfig : class, IServiceOverrides<TConfig>
     {
         protected readonly IList<Type> LineProcessors = new List<Type>();
+		protected readonly IList<Type> CodeRewriters = new List<Type>();
 
         public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
 
@@ -116,6 +117,12 @@ namespace ScriptCs.Hosting
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
             LineProcessors.Add(typeof(T));
+            return _this;
+        }
+
+        public TConfig CodeRewriter<T>() where T : ICodeRewriter
+        {
+            CodeRewriters.Add(typeof(T));
             return _this;
         }
     }
