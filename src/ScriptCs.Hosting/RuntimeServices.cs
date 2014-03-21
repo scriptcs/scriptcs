@@ -56,6 +56,12 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
             RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
+            RegisterOverrideOrDefault<InputLine>(builder, b => b.RegisterType<InputLine>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<ReplBuffer>(builder, b => b.RegisterType<ReplBuffer>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<LineAnalyzer>(builder, b => b.RegisterType<LineAnalyzer>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<ReplHistory>(builder, b => b.RegisterType<ReplHistory>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<FilePathFinder>(builder, b => b.RegisterType<FilePathFinder>().AsImplementedInterfaces().SingleInstance());
+            RegisterOverrideOrDefault<CompletionHandler>(builder, b => b.RegisterType<CompletionHandler>().AsImplementedInterfaces().SingleInstance());
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();

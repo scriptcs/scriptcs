@@ -17,6 +17,7 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IConsole console = null,
+            IInputLine inputLine = null,
             IInstallationProvider installationProvider = null)
         {
             FileSystem = fileSystem;
@@ -29,6 +30,7 @@ namespace ScriptCs
             ObjectSerializer = objectSerializer;
             Logger = logger;
             Console = console;
+            InputLine = inputLine;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
         }
@@ -45,5 +47,6 @@ namespace ScriptCs
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
 		public IInstallationProvider InstallationProvider { get; private set; }
+        public IInputLine InputLine { get; private set; }
     }
 }

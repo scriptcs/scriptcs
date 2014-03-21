@@ -1,10 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace ScriptCs.Contracts
 {
     public interface IScriptExecutor
     {
+        IFileSystem FileSystem { get; }
+
+        AssemblyReferences References { get; }
+
+        Collection<string> Namespaces { get; }
+
+        ScriptPackSession ScriptPackSession { get; }
+
         void ImportNamespaces(params string[] namespaces);
         void RemoveNamespaces(params string[] namespaces);
 

@@ -23,6 +23,7 @@ namespace ScriptCs.Tests
             public void ShouldPromptForInput(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IInputLine> inputLine,
                 CommandFactory factory)
             {
                 // Arrange
@@ -32,7 +33,7 @@ namespace ScriptCs.Tests
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
 
-                console.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
+                inputLine.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
                 console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
 
                 // Act
@@ -45,15 +46,17 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenPassedAScript_ShouldPressedReplWithScript(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
-                 CommandFactory factory)
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IInputLine> inputLine, 
+                CommandFactory factory)
             {
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx" };
 
-                console.Setup(x => x.ReadLine()).Returns(() =>
+                inputLine.Setup(x => x.ReadLine()).Returns(() =>
                 {
-                    console.Setup(x => x.ReadLine()).Throws(new Exception());
+                    inputLine.Setup(x => x.ReadLine()).Throws(new Exception());
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
@@ -69,15 +72,17 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenNotPassedAScript_ShouldNotCallTheEngineAutomatically(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
-                 CommandFactory factory)
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IInputLine> inputLine, 
+                CommandFactory factory)
             {
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true };
 
-                console.Setup(x => x.ReadLine()).Returns(() =>
+                inputLine.Setup(x => x.ReadLine()).Returns(() =>
                 {
-                    console.Setup(x => x.ReadLine()).Throws(new Exception());
+                    inputLine.Setup(x => x.ReadLine()).Throws(new Exception());
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");

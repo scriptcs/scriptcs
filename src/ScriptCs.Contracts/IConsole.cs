@@ -6,11 +6,15 @@ namespace ScriptCs.Contracts
     {
         void Write(string value);
 
+        void Write(char value);
+
         void WriteLine();
 
         void WriteLine(string value);
 
         string ReadLine();
+
+        ConsoleKeyInfo ReadKey();
 
         void Clear();
 
@@ -19,5 +23,11 @@ namespace ScriptCs.Contracts
         void ResetColor();
 
         ConsoleColor ForegroundColor { get; set; }
+
+        int HorizontalPosition { get; set; }
+
+        int VerticalPosition { get; set; }
+
+        int Width { get; }
     }
 }
