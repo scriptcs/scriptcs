@@ -6,10 +6,12 @@ namespace ScriptCs.Tests
 
     public class StringRewriter : SyntaxRewriter, ICodeRewriter
     {
-        public string Rewrite(string code)
+        public FilePreProcessorResult Rewrite(FilePreProcessorResult preProcessorResult)
         {
-            var syntaxTree = SyntaxTree.ParseText(code, options: new ParseOptions(kind: SourceCodeKind.Script));
-            return Visit(syntaxTree.GetRoot()).ToFullString();
+            var syntaxTree = SyntaxTree.ParseText(preProcessorResult.Code, options: new ParseOptions(kind: SourceCodeKind.Script));
+            preProcessorResult.Code =  Visit(syntaxTree.GetRoot()).ToFullString();
+
+            return preProcessorResult;
         }
 
         public override SyntaxNode DefaultVisit(SyntaxNode node)

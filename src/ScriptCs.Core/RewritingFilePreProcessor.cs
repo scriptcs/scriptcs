@@ -1,5 +1,6 @@
 namespace ScriptCs
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -17,12 +18,13 @@ namespace ScriptCs
             _rewriters = rewriters;
         }
 
-        protected override string GenerateCode(FileParserContext context)
+        protected override FilePreProcessorResult Process(Action<FileParserContext> parseAction)
         {
-            var code = base.GenerateCode(context);
-            var rewrittenCode = _rewriters.Aggregate(code, (c, rewriter) => rewriter.Rewrite(c));
+            var result = base.Process(parseAction);
 
-            return rewrittenCode;
+            var rewrittenResult = _rewriters.Aggregate(result, (r, rewriter) => rewriter.Rewrite(r));
+
+            return rewrittenResult;
         }
     }
 }
