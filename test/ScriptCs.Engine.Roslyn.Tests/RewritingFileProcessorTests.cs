@@ -22,50 +22,50 @@ namespace ScriptCs.Tests
         public class ProcessFileMethod
         {
             private List<string> _file1 = new List<string>
-				                              {
-					                              @"#load ""script2.csx""",
-					                              @"#load ""script4.csx"";",
-					                              "using System;",
-					                              @"Console.WriteLine(""Hello Script 1"");",
-					                              @"Console.WriteLine(""Loading Script 2"");",
-					                              @"Console.WriteLine(""Loaded Script 2"");",
-					                              @"Console.WriteLine(""Loading Script 4"");",
-					                              @"Console.WriteLine(""Loaded Script 4"");",
-					                              @"Console.WriteLine(""Goodbye Script 1"");"
-				                              };
+                                              {
+                                                  @"#load ""script2.csx""",
+                                                  @"#load ""script4.csx"";",
+                                                  "using System;",
+                                                  @"Console.WriteLine(""Hello Script 1"");",
+                                                  @"Console.WriteLine(""Loading Script 2"");",
+                                                  @"Console.WriteLine(""Loaded Script 2"");",
+                                                  @"Console.WriteLine(""Loading Script 4"");",
+                                                  @"Console.WriteLine(""Loaded Script 4"");",
+                                                  @"Console.WriteLine(""Goodbye Script 1"");"
+                                              };
 
             private List<string> _file2 = new List<string>
-				                              {
-					                              "using System;",
-					                              @"Console.WriteLine(""Hello Script 2"");",
-					                              @"Console.WriteLine(""Goodbye Script 2"");"
-				                              };
+                                              {
+                                                  "using System;",
+                                                  @"Console.WriteLine(""Hello Script 2"");",
+                                                  @"Console.WriteLine(""Goodbye Script 2"");"
+                                              };
 
             private readonly List<string> _file3 = new List<string>
-				                                       {
-					                                       "using System;",
-					                                       "using System.Collections.Generic;",
-					                                       @"Console.WriteLine(""Hello Script 3"");",
-					                                       @"Console.WriteLine(""Goodbye Script 3"");"
-				                                       };
+                                                       {
+                                                           "using System;",
+                                                           "using System.Collections.Generic;",
+                                                           @"Console.WriteLine(""Hello Script 3"");",
+                                                           @"Console.WriteLine(""Goodbye Script 3"");"
+                                                       };
 
             private readonly List<string> _file4 = new List<string>
-				                                       {
-					                                       "using System;",
-					                                       "using System.Core;",
-					                                       @"Console.WriteLine(""Hello Script 4"");",
-					                                       @"Console.WriteLine(""Goodbye Script 4"");"
-				                                       };
+                                                       {
+                                                           "using System;",
+                                                           "using System.Core;",
+                                                           @"Console.WriteLine(""Hello Script 4"");",
+                                                           @"Console.WriteLine(""Goodbye Script 4"");"
+                                                       };
 
             private List<string> _file5 = new List<string>
-				                              {
-					                              "using System;",
-					                              @"Console.WriteLine(""Hello Script 2"");",
-					                              @"Console.WriteLine(""Loading Script 3"");",
-					                              @"#load ""script3.csx""",
-					                              @"Console.WriteLine(""Loaded Script 3"");",
-					                              @"Console.WriteLine(""Goodbye Script 2"");"
-				                              };
+                                              {
+                                                  "using System;",
+                                                  @"Console.WriteLine(""Hello Script 2"");",
+                                                  @"Console.WriteLine(""Loading Script 3"");",
+                                                  @"#load ""script3.csx""",
+                                                  @"Console.WriteLine(""Loaded Script 3"");",
+                                                  @"Console.WriteLine(""Goodbye Script 2"");"
+                                              };
 
             private readonly Mock<IFileSystem> _fileSystem;
 
@@ -109,7 +109,9 @@ Console.WriteLine(@""blah"");", result.Code);
 
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-                this._fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i.StartsWith("script"))), Times.Exactly(3));
+                this._fileSystem.Verify(
+                    x => x.ReadFileLines(It.Is<string>(i => i.StartsWith("script"))),
+                    Times.Exactly(3));
                 Assert.Equal(2, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
             }
 
@@ -165,22 +167,19 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldReturnResultWithAllReferences()
             {
                 var file1 = new List<string>
-					            {
-						            @"#r ""My.dll""",
-						            @"#load ""scriptX.csx""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                                {
+                                    @"#r ""My.dll""",
+                                    @"#load ""scriptX.csx""",
+                                    "using System;",
+                                    @"Console.WriteLine(""Hi!"");"
+                                };
 
-                var file2 = new List<string>
-					            {
-						            @"#r ""My2.dll""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                var file2 = new List<string> { @"#r ""My2.dll""", "using System;", @"Console.WriteLine(""Hi!"");" };
 
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx"))).Returns(file1.ToArray());
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx")))
+                    .Returns(file1.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx")))
+                    .Returns(file2.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
@@ -194,22 +193,19 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldNotIncludeReferencesInCode()
             {
                 var file1 = new List<string>
-					            {
-						            @"#r ""My.dll""",
-						            @"#load ""scriptX.csx""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                                {
+                                    @"#r ""My.dll""",
+                                    @"#load ""scriptX.csx""",
+                                    "using System;",
+                                    @"Console.WriteLine(""Hi!"");"
+                                };
 
-                var file2 = new List<string>
-					            {
-						            @"#r ""My2.dll""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                var file2 = new List<string> { @"#r ""My2.dll""", "using System;", @"Console.WriteLine(""Hi!"");" };
 
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx"))).Returns(file1.ToArray());
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx"))).Returns(file2.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx")))
+                    .Returns(file1.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "scriptX.csx")))
+                    .Returns(file2.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
@@ -221,18 +217,16 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldNotLoadSameFileTwice()
             {
                 var file = new List<string>
-					           {
-						           @"#load ""script4.csx""",
-						           "using System;",
-						           @"Console.WriteLine(""Hello Script 2"");",
-					           };
+                               {
+                                   @"#load ""script4.csx""",
+                                   "using System;",
+                                   @"Console.WriteLine(""Hello Script 2"");",
+                               };
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(i => i.NewLine).Returns(Environment.NewLine);
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script2.csx")))
-                    .Returns(file.ToArray());
-                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script4.csx")))
-                    .Returns(this._file4.ToArray());
+                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script2.csx"))).Returns(file.ToArray());
+                fs.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script4.csx"))).Returns(this._file4.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 processor.ProcessFile("script1.csx");
@@ -247,14 +241,15 @@ Console.WriteLine(@""blah"");", result.Code);
             public void LoadBeforeUsingShouldBeAllowed()
             {
                 var file = new List<string>
-					           {
-						           @"#load ""script4.csx""",
-						           string.Empty,
-						           "using System;",
-						           @"Console.WriteLine(""abc"");"
-					           };
+                               {
+                                   @"#load ""script4.csx""",
+                                   string.Empty,
+                                   "using System;",
+                                   @"Console.WriteLine(""abc"");"
+                               };
 
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx")))
+                    .Returns(file.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 var result = processor.ProcessFile("file.csx");
@@ -283,13 +278,14 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldNotBeAllowedToLoadAfterUsing()
             {
                 var file = new List<string>
-					           {
-						           "using System;",
-						           @"Console.WriteLine(""abc"");",
-						           @"#load ""script4.csx"""
-					           };
+                               {
+                                   "using System;",
+                                   @"Console.WriteLine(""abc"");",
+                                   @"#load ""script4.csx"""
+                               };
 
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx")))
+                    .Returns(file.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessFile("file.csx"));
@@ -301,17 +297,18 @@ Console.WriteLine(@""blah"");", result.Code);
             public void UsingInCodeDoesNotCountAsUsingImport()
             {
                 var file = new List<string>
-					           {
-						           @"#load ""script4.csx""",
-						           string.Empty,
-						           "using System;",
-						           "using System.IO;",
-						           "Console.WriteLine();",
-						           @"using (var stream = new MemoryStream) {",
-						           @"//do stuff",
-						           @"}"
-					           };
-                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx"))).Returns(file.ToArray());
+                               {
+                                   @"#load ""script4.csx""",
+                                   string.Empty,
+                                   "using System;",
+                                   "using System.IO;",
+                                   "Console.WriteLine();",
+                                   @"using (var stream = new MemoryStream) {",
+                                   @"//do stuff",
+                                   @"}"
+                               };
+                this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "file.csx")))
+                    .Returns(file.ToArray());
 
                 var processor = this.GetFilePreProcessor();
                 var result = processor.ProcessFile("file.csx");
@@ -328,19 +325,14 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldHaveReferencesFromAllFiles()
             {
                 var file1 = new List<string>
-					            {
-						            @"#r ""My.dll""",
-						            @"#load ""scriptX.csx""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                                {
+                                    @"#r ""My.dll""",
+                                    @"#load ""scriptX.csx""",
+                                    "using System;",
+                                    @"Console.WriteLine(""Hi!"");"
+                                };
 
-                var file2 = new List<string>
-					            {
-						            @"#r ""My2.dll""",
-						            "using System;",
-						            @"Console.WriteLine(""Hi!"");"
-					            };
+                var file2 = new List<string> { @"#r ""My2.dll""", "using System;", @"Console.WriteLine(""Hi!"");" };
 
                 this._fileSystem.Setup(x => x.ReadFileLines(It.Is<string>(f => f == "script1.csx")))
                     .Returns(file1.ToArray());
@@ -359,54 +351,42 @@ Console.WriteLine(@""blah"");", result.Code);
                 var rewrittenInvocation = @"Console.WriteLine(@""blah"");";
                 // f1 has usings and then loads
                 var f1 = new List<string>
-					         {
-						         @"#load ""C:\f2.csx"";",
-						         @"#load ""C:\f3.csx"";",
-						         "using System;",
-						         "using System.Diagnostics;",
-						         @"Console.WriteLine(""First line of f1"");",
-					         };
+                             {
+                                 @"#load ""C:\f2.csx"";",
+                                 @"#load ""C:\f3.csx"";",
+                                 "using System;",
+                                 "using System.Diagnostics;",
+                                 @"Console.WriteLine(""First line of f1"");",
+                             };
 
                 // f2 has no usings and multiple loads
                 var f2 = new List<string>
-					         {
-						         @"#load ""C:\f4.csx"";",
-						         @"#load ""C:\f5.csx"";",
-						         @"Console.WriteLine(""First line of f2"");",
-					         };
+                             {
+                                 @"#load ""C:\f4.csx"";",
+                                 @"#load ""C:\f5.csx"";",
+                                 @"Console.WriteLine(""First line of f2"");",
+                             };
 
                 // f3 has usings and no loads
                 var f3 = new List<string>
-					         {
-						         @"using System;",
-						         @"using System.Diagnostics;",
-						         @"Console.WriteLine(""First line of f3"");",
-					         };
+                             {
+                                 @"using System;",
+                                 @"using System.Diagnostics;",
+                                 @"Console.WriteLine(""First line of f3"");",
+                             };
 
                 // f4 has no usings and no loads
-                var f4 = new List<string>
-					         {
-						         @"Console.WriteLine(""First line of f4"");",
-					         };
+                var f4 = new List<string> { @"Console.WriteLine(""First line of f4"");", };
 
                 // f5 is no special case, just used to be loaded
-                var f5 = new List<string>
-					         {
-						         @"using System;",
-						         @"Console.WriteLine(""First line of f5"");",
-					         };
+                var f5 = new List<string> { @"using System;", @"Console.WriteLine(""First line of f5"");", };
 
                 this._fileSystem.SetupGet(fs => fs.NewLine).Returns(Environment.NewLine);
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx"))
-                    .Returns(f1.ToArray());
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f2.csx"))
-                    .Returns(f2.ToArray()).Verifiable();
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f3.csx"))
-                    .Returns(f3.ToArray());
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f4.csx"))
-                    .Returns(f4.ToArray());
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f5.csx"))
-                    .Returns(f5.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx")).Returns(f1.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f2.csx")).Returns(f2.ToArray()).Verifiable();
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f3.csx")).Returns(f3.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f4.csx")).Returns(f4.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f5.csx")).Returns(f5.ToArray());
                 this._fileSystem.Setup(fs => fs.IsPathRooted(It.IsAny<string>())).Returns(true);
 
                 var preProcessor = this.GetFilePreProcessor();
@@ -443,42 +423,36 @@ Console.WriteLine(@""blah"");", result.Code);
             {
                 // f1 has usings and then loads
                 var f1 = new List<string>
-					         {
-						         @"#load ""SubFolder\f2.csx"";",
-						         @"#load ""SubFolder\f3.csx"";",
-						         @"using System;",
-						         @"Console.WriteLine(""First line of f1"");"
-					         };
+                             {
+                                 @"#load ""SubFolder\f2.csx"";",
+                                 @"#load ""SubFolder\f3.csx"";",
+                                 @"using System;",
+                                 @"Console.WriteLine(""First line of f1"");"
+                             };
 
                 // f2 has no usings and multiple loads
                 var f2 = new List<string>
-					         {
-						         @"#load ""f3.csx"";",
-						         @"using System;",
-						         @"Console.WriteLine(""First line of f2"");"
-					         };
+                             {
+                                 @"#load ""f3.csx"";",
+                                 @"using System;",
+                                 @"Console.WriteLine(""First line of f2"");"
+                             };
 
                 // f3 has usings and no loads
-                var f3 = new List<string>
-					         {
-						         @"using System;",
-						         @"Console.WriteLine(""First line of f3"");"
-					         };
+                var f3 = new List<string> { @"using System;", @"Console.WriteLine(""First line of f3"");" };
 
                 var currentDirectory = "c:\\";
                 this._fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
                 this._fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
-                    .Callback<string>((newCurrentDirectory) =>
+                    .Callback<string>(
+                        (newCurrentDirectory) =>
                         {
                             currentDirectory = newCurrentDirectory;
                         });
 
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx"))
-                    .Returns(f1.ToArray());
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"))
-                    .Returns(f2.ToArray());
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx"))
-                    .Returns(f3.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\f1.csx")).Returns(f1.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx")).Returns(f2.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f3.csx")).Returns(f3.ToArray());
 
                 this._fileSystem.Setup(fs => fs.GetFullPath(@"C:\f1.csx")).Returns(@"C:\f1.csx");
                 this._fileSystem.Setup(fs => fs.GetFullPath(@"SubFolder\f2.csx")).Returns(@"C:\SubFolder\f2.csx");
@@ -502,25 +476,21 @@ Console.WriteLine(@""blah"");", result.Code);
             public void ShouldResetTheCurrentDirectoryWhenLoadingScript()
             {
                 // f1 has usings and then loads
-                var f1 = new List<string>
-					         {
-						         @"using System;",
-						         @"Console.WriteLine(""First line of f1"");"
-					         };
+                var f1 = new List<string> { @"using System;", @"Console.WriteLine(""First line of f1"");" };
 
                 var startingDirectory = "c:\\";
                 var currentDirectory = startingDirectory;
                 var lastCurrentDirectory = string.Empty;
                 this._fileSystem.SetupGet(y => y.CurrentDirectory).Returns(() => currentDirectory);
                 this._fileSystem.SetupSet(fs => fs.CurrentDirectory = It.IsAny<string>())
-                    .Callback<string>((newCurrentDirectory) =>
+                    .Callback<string>(
+                        (newCurrentDirectory) =>
                         {
                             lastCurrentDirectory = newCurrentDirectory;
                             currentDirectory = newCurrentDirectory;
                         });
 
-                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f1.csx"))
-                    .Returns(f1.ToArray());
+                this._fileSystem.Setup(fs => fs.ReadFileLines(@"C:\SubFolder\f1.csx")).Returns(f1.ToArray());
                 this._fileSystem.Setup(fs => fs.GetFullPath(@"C:\SubFolder\f1.csx")).Returns(@"C:\SubFolder\f1.csx");
                 this._fileSystem.Setup(fs => fs.GetWorkingDirectory(@"C:\SubFolder\f1.csx")).Returns(@"C:\SubFolder\");
 
@@ -535,13 +505,16 @@ Console.WriteLine(@""blah"");", result.Code);
             {
                 var rewriters = new[] { new StringRewriter() };
                 var lineProcessors = new ILineProcessor[]
-					                     {
-						                     new UsingLineProcessor(),
-						                     new ReferenceLineProcessor(this._fileSystem.Object),
-						                     new LoadLineProcessor(this._fileSystem.Object)
-					                     };
+                                         {
+                                             new UsingLineProcessor(), new ReferenceLineProcessor(this._fileSystem.Object),
+                                             new LoadLineProcessor(this._fileSystem.Object)
+                                         };
 
-                return new RewritingFilePreProcessor(this._fileSystem.Object, Mock.Of<ILog>(), lineProcessors, rewriters);
+                return new RewritingFilePreProcessor(
+                    this._fileSystem.Object,
+                    Mock.Of<ILog>(),
+                    lineProcessors,
+                    rewriters);
             }
         }
 
@@ -552,7 +525,8 @@ Console.WriteLine(@""blah"");", result.Code);
             public ProcessScriptMethod()
             {
                 this._fileSystem = new Mock<IFileSystem>();
-                this._fileSystem.Setup(x => x.SplitLines(It.IsAny<string>())).Returns<string>(x => x.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
+                this._fileSystem.Setup(x => x.SplitLines(It.IsAny<string>()))
+                    .Returns<string>(x => x.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
                 this._fileSystem.SetupGet(x => x.NewLine).Returns(Environment.NewLine);
                 this._fileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Returns<string>((path) => path);
             }
@@ -611,13 +585,16 @@ Console.WriteLine(@""blah"");", result.Code);
             {
                 var rewriters = new[] { new StringRewriter() };
                 var lineProcessors = new ILineProcessor[]
-					                     {
-						                     new UsingLineProcessor(),
-						                     new ReferenceLineProcessor(this._fileSystem.Object),
-						                     new LoadLineProcessor(this._fileSystem.Object)
-					                     };
+                                         {
+                                             new UsingLineProcessor(), new ReferenceLineProcessor(this._fileSystem.Object),
+                                             new LoadLineProcessor(this._fileSystem.Object)
+                                         };
 
-                return new RewritingFilePreProcessor(this._fileSystem.Object, Mock.Of<ILog>(), lineProcessors, rewriters);
+                return new RewritingFilePreProcessor(
+                    this._fileSystem.Object,
+                    Mock.Of<ILog>(),
+                    lineProcessors,
+                    rewriters);
             }
         }
     }

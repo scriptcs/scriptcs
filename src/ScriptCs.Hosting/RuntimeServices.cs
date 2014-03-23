@@ -25,7 +25,7 @@ namespace ScriptCs.Hosting
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
-	        _codeRewriters = codeRewriters;
+            _codeRewriters = codeRewriters;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -43,8 +43,8 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
-	        
-			builder.RegisterTypes(_codeRewriters.ToArray()).As<ICodeRewriter>();
+
+            builder.RegisterTypes(_codeRewriters.ToArray()).As<ICodeRewriter>();
             RegisterLineProcessors(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());

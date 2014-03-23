@@ -4,7 +4,7 @@ namespace ScriptCs.Hosting
 {
     public interface IScriptServicesBuilder : IServiceOverrides<IScriptServicesBuilder>
     {
-        ScriptServices Build(IModuleConfiguration configuration);
+        ScriptServices Build(IModuleConfiguration config);
 
         IScriptServicesBuilder Cache(bool cache = true);
 

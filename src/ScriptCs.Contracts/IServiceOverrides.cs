@@ -1,14 +1,8 @@
 ﻿namespace ScriptCs.Contracts
 {
-	using System;
-	using System.Collections.Generic;
-
-	public interface IServiceOverrides
-	{
-		IEnumerable<Type> CodeRewriters { get; }
- 
-		IEnumerable<Type> LineProcessors { get; } 
-	}
+    public interface IServiceOverrides
+    {
+    }
 
     public interface IServiceOverrides<out TConfig> : IServiceOverrides where TConfig : IServiceOverrides<TConfig>
     {
@@ -39,8 +33,8 @@
         TConfig AssemblyResolver<T>() where T : IAssemblyResolver;
 
         TConfig LineProcessor<T>() where T : ILineProcessor;
-        
-		TConfig CodeRewriter<T>() where T : ICodeRewriter;
+
+        TConfig CodeRewriter<T>() where T : ICodeRewriter;
 
         TConfig Console<T>() where T : IConsole;
 

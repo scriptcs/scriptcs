@@ -6,10 +6,10 @@ using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
 {
-	using System.Diagnostics;
-	using System.Linq;
+    using System.Diagnostics;
+    using System.Linq;
 
-	public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
+    public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly IInitializationServices _initializationServices;
         private IRuntimeServices _runtimeServices;
@@ -56,14 +56,14 @@ namespace ScriptCs.Hosting
 
         public IModuleConfiguration LoadModules(string extension, params string[] moduleNames)
         {
-	        var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
+            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
 
             var fs = _initializationServices.GetFileSystem();
             var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
             loader.Load(config, folders, extension, moduleNames);
-			
-			return config;
+
+            return config;
         }
 
         public IScriptServicesBuilder Cache(bool cache = true)
