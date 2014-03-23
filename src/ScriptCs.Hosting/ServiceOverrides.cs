@@ -7,19 +7,34 @@ namespace ScriptCs.Hosting
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
         where TConfig : class, IServiceOverrides<TConfig>
     {
-        protected readonly IList<Type> LineProcessors = new List<Type>();
-		protected readonly IList<Type> CodeRewriters = new List<Type>();
+	    private readonly IList<Type> lineProcessors = new List<Type>();
+		private readonly IList<Type> codeRewriters = new List<Type>();
+		private readonly TConfig _this;
 
         public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
-
-        private readonly TConfig _this;
 
         protected ServiceOverrides()
         {
             _this = this as TConfig;
         }
 
-        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
+	    public IEnumerable<Type> LineProcessors
+	    {
+		    get
+		    {
+			    return lineProcessors;
+		    }
+	    }
+
+	    public IEnumerable<Type> CodeRewriters
+	    {
+		    get
+		    {
+			    return codeRewriters;
+		    }
+	    }
+
+	    public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
         {
             Overrides[typeof (IScriptHostFactory)] = typeof (T);
             return _this;
@@ -116,13 +131,13 @@ namespace ScriptCs.Hosting
 
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
-            LineProcessors.Add(typeof(T));
+            this.lineProcessors.Add(typeof(T));
             return _this;
         }
 
         public TConfig CodeRewriter<T>() where T : ICodeRewriter
         {
-            CodeRewriters.Add(typeof(T));
+            this.codeRewriters.Add(typeof(T));
             return _this;
         }
     }

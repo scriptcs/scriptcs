@@ -4,7 +4,7 @@ namespace ScriptCs.Hosting
 {
     public interface IScriptServicesBuilder : IServiceOverrides<IScriptServicesBuilder>
     {
-        ScriptServices Build();
+        ScriptServices Build(IModuleConfiguration configuration);
 
         IScriptServicesBuilder Cache(bool cache = true);
 
@@ -16,6 +16,6 @@ namespace ScriptCs.Hosting
 
         IScriptServicesBuilder LogLevel(LogLevel level);
 
-        IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
+        IModuleConfiguration LoadModules(string extension, params string[] moduleNames);
     }
 }

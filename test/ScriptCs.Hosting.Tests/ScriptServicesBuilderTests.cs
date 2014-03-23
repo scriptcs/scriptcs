@@ -11,8 +11,7 @@ namespace ScriptCs.Hosting.Tests
         public class TheBuildMethod
         {
             private Mock<ILog> _mockLogger = new Mock<ILog>();
-
-            private ScriptServices _scriptServices = new ScriptServices(null, null, null, null, null, null, null, null, null, null);
+			private ScriptServices _scriptServices = new ScriptServices(null, null, null, null, null, null, null, null, null, null);
             private Mock<IRuntimeServices> _mockFactory = new Mock<IRuntimeServices>();
             private Mock<IConsole> _mockConsole = new Mock<IConsole>();
             private ScriptServicesBuilder _builder = null;
@@ -26,7 +25,8 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldResolveScriptServices()
             {
-                _builder.Build().ShouldEqual(_scriptServices);
+	            var mockConfiguration = new Mock<IModuleConfiguration>();
+                _builder.Build(mockConfiguration.Object).ShouldEqual(_scriptServices);
             }
         }
     }

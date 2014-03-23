@@ -7,6 +7,7 @@ using LogLevel = ScriptCs.Contracts.LogLevel;
 namespace ScriptCs.Hosting
 {
 	using System.Diagnostics;
+	using System.Linq;
 
 	public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
@@ -30,7 +31,7 @@ namespace ScriptCs.Hosting
             _logger = logger;
         }
 
-        public ScriptServices Build()
+        public ScriptServices Build(IModuleConfiguration configuration)
         {
             var defaultExecutorType = typeof(ScriptExecutor);
             var defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
@@ -44,7 +45,7 @@ namespace ScriptCs.Hosting
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, CodeRewriters, _console,
+                _runtimeServices = new RuntimeServices(_logger, Overrides, configuration.LineProcessors.ToArray(), configuration.CodeRewriters.ToArray(), _console,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        _initializationServices, _scriptName);
@@ -53,7 +54,7 @@ namespace ScriptCs.Hosting
             return _runtimeServices.GetScriptServices();
         }
 
-        public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
+        public IModuleConfiguration LoadModules(string extension, params string[] moduleNames)
         {
 	        var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
             var loader = _initializationServices.GetModuleLoader();
@@ -62,7 +63,7 @@ namespace ScriptCs.Hosting
             var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
             loader.Load(config, folders, extension, moduleNames);
 			
-			return this;
+			return config;
         }
 
         public IScriptServicesBuilder Cache(bool cache = true)
