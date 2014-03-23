@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using PowerArgs;
 using ScriptCs.Contracts;
-using ServiceStack.Text;
 
 namespace ScriptCs.Argument
 {
@@ -80,7 +80,7 @@ namespace ScriptCs.Argument
 
             try
             {
-                dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(content);
+                dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
             }
             catch 
             {

@@ -1,6 +1,5 @@
 ﻿using PowerArgs;
 using ScriptCs.Contracts;
-using ServiceStack.Text;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -116,7 +115,7 @@ namespace ScriptCs.Argument
 
             return defaultAttribute != null
                        ? ((PowerArgs.DefaultValueAttribute)defaultAttribute).Value
-                       : property.PropertyType.GetDefaultValue();
+                       : property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null;
         }
 
         public class SplitResult
