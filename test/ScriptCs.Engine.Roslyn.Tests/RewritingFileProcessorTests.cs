@@ -95,10 +95,7 @@ namespace ScriptCs.Tests
                 var processor = this.GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
 
-                Assert.Equal(@"using System;
-
-#line 2 ""script1.csx""
-Console.WriteLine(@""blah"");", result.Code);
+                Assert.False(result.Code.Contains("Hi"));
             }
 
             [Fact]
@@ -506,7 +503,8 @@ Console.WriteLine(@""blah"");", result.Code);
                 var rewriters = new[] { new StringRewriter() };
                 var lineProcessors = new ILineProcessor[]
                                          {
-                                             new UsingLineProcessor(), new ReferenceLineProcessor(this._fileSystem.Object),
+                                             new UsingLineProcessor(),
+                                             new ReferenceLineProcessor(this._fileSystem.Object),
                                              new LoadLineProcessor(this._fileSystem.Object)
                                          };
 
