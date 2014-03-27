@@ -19,12 +19,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging.Log4Net">
-      <HintPath>..\..\packages\Common.Logging.Log4Net.2.0.1\lib\net20\Common.Logging.Log4Net.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -52,6 +46,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="ScriptConsoleLogger.cs" />
     <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModuleLoader.cs" />
     <Compile Include="InitializationServices.cs" />
@@ -68,7 +63,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeServices.cs" />
     <Compile Include="ScriptConsole.cs" />
-    <Compile Include="ScriptConsoleAppender.cs" />
     <Compile Include="ScriptServicesRegistration.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
