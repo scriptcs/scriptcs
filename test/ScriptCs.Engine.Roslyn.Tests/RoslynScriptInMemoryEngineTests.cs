@@ -40,7 +40,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 var exception = Assert.Throws<InvalidOperationException>(() => result.ExecuteExceptionInfo.Throw());
-                exception.StackTrace.ShouldContain("at Submission#0");
+                exception.StackTrace.ShouldContain("Submission#0");
                 exception.Message.ShouldContain("InvalidOperationExceptionMessage");
             }
 
