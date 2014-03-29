@@ -236,7 +236,7 @@ namespace ScriptCs.Hosting.Tests
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
                 var container = runtimeServices.Container;
-                _mockLogger.Verify(l=>l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "foo.dll", "Could not load file or assembly 'foo.dll' or one of its dependencies. The system cannot find the file specified."));
+                _mockLogger.Verify(l => l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "foo.dll", It.IsAny<string>()));
             }
 
             [Fact]
