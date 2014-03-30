@@ -50,6 +50,9 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="CdCommand.cs" />
+    <Compile Include="ClearCommand.cs" />
+    <Compile Include="CwdCommand.cs" />
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptCompilationException.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
+    <Compile Include="InstallCommand.cs" />
     <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
     <Compile Include="Constants.cs" />
@@ -71,6 +75,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineProcessor.cs" />
     <Compile Include="Repl.cs" />
+    <Compile Include="ResetCommand.cs" />
     <Compile Include="ScriptEnvironment.cs" />
     <Compile Include="ScriptExecutorExtensions.cs" />
     <Compile Include="ScriptHost.cs" />
