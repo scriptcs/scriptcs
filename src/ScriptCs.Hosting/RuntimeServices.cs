@@ -42,6 +42,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType<ScriptServices>().SingleInstance();
 
             RegisterLineProcessors(builder);
+            RegisterReplCommands(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
@@ -127,6 +128,12 @@ namespace ScriptCs.Hosting
             var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(processorList).ToArray();
 
             builder.RegisterTypes(processorArray).As<ILineProcessor>();
+        }
+
+        private void RegisterReplCommands(ContainerBuilder builder)
+        {
+            var replCommands = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass);
+            builder.RegisterTypes(replCommands.ToArray()).As<IReplCommand>();
         }
 
         public ScriptServices GetScriptServices()
