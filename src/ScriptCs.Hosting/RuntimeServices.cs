@@ -13,6 +13,7 @@ namespace ScriptCs.Hosting
     public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
     {
         private readonly IList<Type> _lineProcessors;
+        private readonly IList<Type> _codeRewriters;
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
@@ -20,10 +21,11 @@ namespace ScriptCs.Hosting
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IList<Type> codeRewriters, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
             base(logger, overrides)
         {
             _lineProcessors = lineProcessors;
+            _codeRewriters = codeRewriters;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -35,13 +37,14 @@ namespace ScriptCs.Hosting
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            this.Logger.Debug("Registering runtime services");
+            Logger.Debug("Registering runtime services");
 
             builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
+            builder.RegisterTypes(_codeRewriters.ToArray()).As<ICodeRewriter>();
             RegisterLineProcessors(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
@@ -50,7 +53,7 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyResolver>(builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
             RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>().SingleInstance());
-            RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
+            RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<RewritingFilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
             RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>().SingleInstance());
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
@@ -59,7 +62,7 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
-            
+
             if (_initDirectoryCatalog)
             {
                 var fileSystem = _initializationServices.GetFileSystem();
@@ -77,7 +80,7 @@ namespace ScriptCs.Hosting
                         catalog.Parts.ToList(); //force the Parts to be read
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         assemblyLoadFailures = true;
                         Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly, ex.Message);
@@ -87,7 +90,7 @@ namespace ScriptCs.Hosting
                 {
                     if (_scriptName == null || _scriptName.Length == 0)
                         Logger.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
-                    else    
+                    else
                         Logger.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
                 }
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
@@ -99,7 +102,7 @@ namespace ScriptCs.Hosting
         private void RegisterLineProcessors(ContainerBuilder builder)
         {
             var loadProcessorType = _lineProcessors
-                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x)) 
+                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
                 ?? typeof(LoadLineProcessor);
 
             var usingProcessorType = _lineProcessors

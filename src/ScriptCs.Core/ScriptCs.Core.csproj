@@ -15,11 +15,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
@@ -45,6 +41,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceLineProcessor.cs" />
     <Compile Include="Repl.cs" />
+    <Compile Include="RewritingFilePreProcessor.cs" />
     <Compile Include="ScriptEnvironment.cs" />
     <Compile Include="ScriptExecutorExtensions.cs" />
     <Compile Include="ScriptHost.cs" />

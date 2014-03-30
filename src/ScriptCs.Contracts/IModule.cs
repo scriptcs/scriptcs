@@ -2,6 +2,6 @@
 {
     public interface IModule
     {
-        void Initialize(IModuleConfiguration config);
+        void Initialize(IServiceOverrides<IModuleConfiguration> config);
     }
 }

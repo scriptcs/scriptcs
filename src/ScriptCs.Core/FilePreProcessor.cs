@@ -101,7 +101,7 @@ namespace ScriptCs
             context.LoadedScripts.Add(fullPath);
 
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
-            
+
             InsertLineDirective(fullPath, scriptLines);
             InDirectory(fullPath, () => ParseScript(scriptLines, context));
         }

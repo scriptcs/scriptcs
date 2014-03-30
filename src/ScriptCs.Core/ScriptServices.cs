@@ -7,11 +7,11 @@ namespace ScriptCs
     {
         public ScriptServices(
             IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver, 
+            IPackageAssemblyResolver packageAssemblyResolver,
             IScriptExecutor executor,
             IScriptEngine engine,
             IFilePreProcessor filePreProcessor,
-            IScriptPackResolver scriptPackResolver, 
+            IScriptPackResolver scriptPackResolver,
             IPackageInstaller packageInstaller,
             IObjectSerializer objectSerializer,
             ILog logger,
@@ -44,6 +44,6 @@ namespace ScriptCs
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
-		public IInstallationProvider InstallationProvider { get; private set; }
+        public IInstallationProvider InstallationProvider { get; private set; }
     }
 }

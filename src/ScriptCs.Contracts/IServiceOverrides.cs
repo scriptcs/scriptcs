@@ -1,6 +1,8 @@
 ﻿namespace ScriptCs.Contracts
 {
-    public interface IServiceOverrides { }
+    public interface IServiceOverrides
+    {
+    }
 
     public interface IServiceOverrides<out TConfig> : IServiceOverrides where TConfig : IServiceOverrides<TConfig>
     {
@@ -31,6 +33,8 @@
         TConfig AssemblyResolver<T>() where T : IAssemblyResolver;
 
         TConfig LineProcessor<T>() where T : ILineProcessor;
+
+        TConfig CodeRewriter<T>() where T : ICodeRewriter;
 
         TConfig Console<T>() where T : IConsole;
 

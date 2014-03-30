@@ -6,6 +6,8 @@ using ScriptCs.Hosting;
 
 namespace ScriptCs
 {
+    using System.Diagnostics;
+
     internal static class Program
     {
         private static int Main(string[] args)
@@ -24,15 +26,15 @@ namespace ScriptCs
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
- 
+
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger)
                 .Cache(commandArgs.Cache)
-                .Debug(commandArgs.Debug)
+                .Debug(commandArgs.Debug || Debugger.IsAttached)
                 .LogLevel(commandArgs.LogLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
 
-            var modules = GetModuleList(commandArgs.Modules);
+            var modules = GetModuleList(commandArgs.Modules ?? "Rewriters");
             var extension = Path.GetExtension(commandArgs.ScriptName);
 
 
@@ -43,7 +45,7 @@ namespace ScriptCs
                 // to make sure it's given to the LoadModules below.
                 extension = ".csx";
 
-                if (!string.IsNullOrWhiteSpace(commandArgs.ScriptName)) 
+                if (!string.IsNullOrWhiteSpace(commandArgs.ScriptName))
                 {
                     // If the was in fact a script specified, we'll extend it
                     // with the default extension, assuming the user giving
@@ -55,9 +57,9 @@ namespace ScriptCs
                     commandArgs.ScriptName += extension;
                 }
             }
-            
-            scriptServicesBuilder.LoadModules(extension, modules);
-            var scriptServiceRoot = scriptServicesBuilder.Build();
+
+            var configuration = scriptServicesBuilder.LoadModules(extension, modules);
+            var scriptServiceRoot = scriptServicesBuilder.Build(configuration);
 
             var commandFactory = new CommandFactory(scriptServiceRoot);
             var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
