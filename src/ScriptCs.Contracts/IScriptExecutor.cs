@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ScriptCs.Contracts
 {
     public interface IScriptExecutor
     {
+        AssemblyReferences References { get;  }
+        IFileSystem FileSystem { get; }
         void ImportNamespaces(params string[] namespaces);
         void RemoveNamespaces(params string[] namespaces);
 
