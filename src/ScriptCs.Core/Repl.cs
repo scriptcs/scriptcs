@@ -27,7 +27,7 @@ namespace ScriptCs
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
-            Commands = replCommands.ToList();
+            Commands = replCommands != null ? replCommands.ToList() : new List<IReplCommand>();
         }
 
         public string Buffer { get; set; }

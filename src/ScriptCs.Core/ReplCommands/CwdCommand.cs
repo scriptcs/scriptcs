@@ -1,6 +1,7 @@
 ﻿using System;
+using ScriptCs.Contracts;
 
-namespace ScriptCs.Contracts
+namespace ScriptCs.ReplCommands
 {
     public class CwdCommand : IReplCommand
     {

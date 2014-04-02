@@ -1,10 +1,9 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.ReplCommands
 {
     public class InstallCommand : IReplCommand
     {

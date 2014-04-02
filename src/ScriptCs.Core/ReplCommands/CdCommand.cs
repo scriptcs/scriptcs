@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
+using ScriptCs.Contracts;
 
-namespace ScriptCs.Contracts
+namespace ScriptCs.ReplCommands
 {
     public class CdCommand : IReplCommand
     {
@@ -14,11 +15,14 @@ namespace ScriptCs.Contracts
         {
             if (args == null || args.Length == 0) return null;
 
-            var m = Regex.Match(args[0].ToString(), @":cd\s+(.*)");
+            var relativePath = args[0].ToString();
 
-            var relativePath = m.Groups[1].Value;
+            if (!relativePath.EndsWith(@"\"))
+            {
+                relativePath += @"\";
+            }
 
-            repl.FileSystem.CurrentDirectory = Path.Combine(repl.FileSystem.CurrentDirectory, relativePath);
+            repl.FileSystem.CurrentDirectory = Path.GetFullPath(Path.Combine(repl.FileSystem.CurrentDirectory, relativePath));
 
             return null;
         }
