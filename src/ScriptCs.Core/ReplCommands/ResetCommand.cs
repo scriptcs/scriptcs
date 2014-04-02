@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ScriptCs.Contracts;
 
-namespace ScriptCs.Contracts
+namespace ScriptCs.ReplCommands
 {
     public class ResetCommand : IReplCommand
     {

@@ -1,6 +1,6 @@
 ﻿using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.ReplCommands
 {
     public class ClearCommand : IReplCommand
     {
