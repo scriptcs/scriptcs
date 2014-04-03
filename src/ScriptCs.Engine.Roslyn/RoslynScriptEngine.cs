@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Common.Logging;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -76,7 +77,7 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = references, Session = session };
+                sessionState = new SessionState<Session> { References = AssemblyReferences.New(references.PathReferences, references.Assemblies), Session = session };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -97,7 +98,11 @@ namespace ScriptCs.Engine.Roslyn
                     sessionState.Session.AddReference(assembly);
                 }
 
-                sessionState.References = newReferences;
+                if (sessionState.References == null)
+                    sessionState.References = AssemblyReferences.New(newReferences.PathReferences,
+                        newReferences.Assemblies);
+                else
+                    sessionState.References.Union(newReferences);
             }
 
             Logger.Debug("Starting execution");
