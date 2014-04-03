@@ -6,10 +6,13 @@ namespace ScriptCs.Contracts
 {
     public class AssemblyReferences
     {
-        public AssemblyReferences()
+        public AssemblyReferences() : this (new HashSet<string>(), new HashSet<Assembly>())
+        {}
+
+        public AssemblyReferences(HashSet<string> pathReference, HashSet<Assembly> assemblies)
         {
-            PathReferences = new HashSet<string>();
-            Assemblies = new HashSet<Assembly>();
+            PathReferences = pathReference;
+            Assemblies = assemblies;
         }
 
         public HashSet<string> PathReferences { get; set; }
@@ -25,6 +28,17 @@ namespace ScriptCs.Contracts
                     Assemblies = new HashSet<Assembly>(Assemblies.Except(obj.Assemblies))
                 };
             return deltaObject;
+        }
+
+        public void Union(AssemblyReferences obj)
+        {
+            PathReferences.UnionWith(obj.PathReferences);
+            Assemblies.UnionWith(obj.Assemblies);
+        }
+
+        public static AssemblyReferences New(IEnumerable<string> pathReference, IEnumerable<Assembly> assemblies)
+        {
+            return new AssemblyReferences(new HashSet<string>(pathReference), new HashSet<Assembly>(assemblies));
         }
     }
 }
