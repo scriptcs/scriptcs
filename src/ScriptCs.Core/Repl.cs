@@ -61,9 +61,9 @@ namespace ScriptCs
                         {
                             try
                             {
-                                var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References,
-                                    DefaultNamespaces, ScriptPackSession);
+                                var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
                                 //if Roslyn can evaluate the argument, use its value, otherwise assume the string
+
                                 argsToPass.Add(argumentResult.ReturnValue ?? argument);
                             }
                             catch (Exception)
