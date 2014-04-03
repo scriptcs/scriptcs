@@ -10,7 +10,7 @@ namespace ScriptCs.Tests.ReplCommands
         public class CommandNameProperty
         {
             [Fact]
-            public void ReturnsCwd()
+            public void ReturnsCd()
             {
                 var cmd = new CdCommand();
                 Assert.Equal("cd", cmd.CommandName);
