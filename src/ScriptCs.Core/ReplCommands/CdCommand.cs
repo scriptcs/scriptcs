@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text.RegularExpressions;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
