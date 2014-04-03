@@ -25,6 +25,7 @@ namespace ScriptCs.Tests
                 ScriptPack = new Mock<IScriptPack>();
                 FilePreProcessor = new Mock<IFilePreProcessor>();
                 ObjectSerializer = new Mock<IObjectSerializer>();
+                ReplCommands = new[] { new Mock<IReplCommand>()};
             }
 
             public Mock<IObjectSerializer> ObjectSerializer { get; private set; }
@@ -40,11 +41,12 @@ namespace ScriptCs.Tests
             public Mock<IScriptPack> ScriptPack { get; private set; }
 
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
+            public Mock<IReplCommand>[] ReplCommands { get; set; }
         }
 
         public static Repl GetRepl(Mocks mocks)
         {
-            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.ObjectSerializer.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object, null);
+            return new Repl(new string[0], mocks.FileSystem.Object, mocks.ScriptEngine.Object, mocks.ObjectSerializer.Object, mocks.Logger.Object, mocks.Console.Object, mocks.FilePreProcessor.Object, mocks.ReplCommands.Select(x => x.Object));
         }
 
         public class TheConstructor
@@ -390,6 +392,80 @@ namespace ScriptCs.Tests
 
                 mocks.ScriptEngine.Verify();
             }
+
+            [Fact]
+            public void ShouldPickReplCommandIfLineStartsWithColon()
+            {
+                var helloCommand = new Mock<IReplCommand>();
+                helloCommand.SetupGet(x => x.CommandName).Returns("hello");
+
+                var mocks = new Mocks {ReplCommands = new[] {helloCommand}};
+                _repl = GetRepl(mocks);
+
+                _repl.Execute(":hello", null);
+                
+                helloCommand.Verify(x => x.Execute(_repl, It.Is<object[]>(i => i.Length == 0)), Times.Once);
+            }
+
+            [Fact]
+            public void ShouldPassArgsToCommand()
+            {
+                var helloCommand = new Mock<IReplCommand>();
+                helloCommand.SetupGet(x => x.CommandName).Returns("hello");
+
+                var mocks = new Mocks { ReplCommands = new[] { helloCommand } };
+                _repl = GetRepl(mocks);
+
+                _repl.Execute(":hello abc efg", null);
+
+                helloCommand.Verify(x => x.Execute(_repl, It.Is<object[]>(i => i[0].ToString() == "abc" && i[1].ToString() == "efg")), Times.Once);
+            }
+
+            [Fact]
+            public void ShouldUseObjectIfArgCanBeEvaluatedToValue()
+            {
+                var dummyObject = new DummyClass {Hello = "World"};
+                var helloCommand = new Mock<IReplCommand>();
+                helloCommand.SetupGet(x => x.CommandName).Returns("hello");
+
+                var mocks = new Mocks { ReplCommands = new[] { helloCommand } };
+                mocks.ScriptEngine.Setup(
+                    x =>
+                        x.Execute("myObj", It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
+                            It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                    .Returns(new ScriptResult {ReturnValue = dummyObject});
+                _repl = GetRepl(mocks);
+
+                _repl.Execute(":hello 100 myObj", null);
+
+                helloCommand.Verify(x => x.Execute(_repl, It.Is<object[]>(i => i[0].ToString() == "100" && i[1].Equals(dummyObject))), Times.Once);
+            }
+
+            [Fact]
+            public void ShouldPrintTheReturnToConsoleIfCommandHasReturnValue()
+            {
+                object returnValue = new DummyClass { Hello = "World" };
+
+                var helloCommand = new Mock<IReplCommand>();
+                helloCommand.SetupGet(x => x.CommandName).Returns("hello");
+                helloCommand.Setup(x => x.Execute(It.IsAny<IScriptExecutor>(), It.IsAny<object[]>()))
+                    .Returns(returnValue);
+
+                var mocks = new Mocks { ReplCommands = new[] { helloCommand } };
+                mocks.ObjectSerializer.Setup(x => x.Serialize(returnValue)).Returns("hello world");
+
+                _repl = GetRepl(mocks);
+
+                _repl.Execute(":hello abc efg", null);
+
+                mocks.ObjectSerializer.Verify(x => x.Serialize(returnValue), Times.Once);
+                mocks.Console.Verify(x => x.WriteLine("hello world"), Times.Once);
+            }
+        }
+
+        private class DummyClass
+        {
+            public string Hello { get; set; }
         }
     }
 }
