@@ -28,7 +28,15 @@ namespace ScriptCs.ReplCommands
             if (args == null || args.Length == 0) return null;
 
             string version = null;
-            if (args.Length == 2) version = args[1].ToString();
+            var allowPre = false;
+            if (args.Length >= 2)
+            {
+                version = args[1].ToString();
+                if (args.Length == 3)
+                {
+                    allowPre = true;
+                }
+            }
 
             _logger.InfoFormat("Installing {0}", args[0]);
 
@@ -36,7 +44,7 @@ namespace ScriptCs.ReplCommands
             _packageInstaller.InstallPackages(new[]
             {
                 packageRef
-            });
+            }, allowPre);
             _packageAssemblyResolver.SavePackages();
 
             var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory).Except(repl.References.PathReferences).ToArray();
