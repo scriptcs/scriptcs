@@ -10,12 +10,12 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-			#if !MONO
-			if (Type.GetType ("Mono.Runtime") == null) {
-				ProfileOptimization.SetProfileRoot (typeof(Program).Assembly.Location);
-				ProfileOptimization.StartProfile (typeof(Program).Assembly.GetName ().Name + ".profile");
-			}
-			#endif
+            #if !MONO
+            if (Type.GetType ("Mono.Runtime") == null) {
+                ProfileOptimization.SetProfileRoot (typeof(Program).Assembly.Location);
+                ProfileOptimization.StartProfile (typeof(Program).Assembly.GetName ().Name + ".profile");
+            }
+            #endif
 
             var console = new ScriptConsole();
 
@@ -24,8 +24,6 @@ namespace ScriptCs
 
             var commandArgs = arguments.CommandArguments;
             var scriptArgs = arguments.ScriptArguments;
-			var scriptPath = Path.GetDirectoryName (commandArgs.ScriptName);
-			console.WriteLine(scriptPath);
 
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
