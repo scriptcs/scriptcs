@@ -63,7 +63,7 @@ namespace ScriptCs
             scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
             var commandFactory = new CommandFactory(scriptServiceRoot);
-			var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
+            var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
 
             var result = command.Execute();
 
