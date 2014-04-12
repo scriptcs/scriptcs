@@ -9,8 +9,8 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-            ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
-            ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+            //ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
+            //ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
 
             var console = new ScriptConsole();
 
