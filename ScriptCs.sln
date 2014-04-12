@@ -16,7 +16,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
 	ProjectSection(SolutionItems) = preProject
 		build\Build.proj = build\Build.proj
-		build\ScriptCs.Tasks.targets = build\ScriptCs.Tasks.targets
 		build\ScriptCs.Common.props = build\ScriptCs.Common.props
 		ScriptCs.ruleset = ScriptCs.ruleset
 		build\ScriptCs.Version.props = build\ScriptCs.Version.props
