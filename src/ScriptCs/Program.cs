@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime;
 using ScriptCs.Argument;
 using ScriptCs.Command;
@@ -9,8 +10,12 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-            ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
-            ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+			#if !MONO
+			if (Type.GetType ("Mono.Runtime") == null) {
+				ProfileOptimization.SetProfileRoot (typeof(Program).Assembly.Location);
+				ProfileOptimization.StartProfile (typeof(Program).Assembly.GetName ().Name + ".profile");
+			}
+			#endif
 
             var console = new ScriptConsole();
 
@@ -19,6 +24,8 @@ namespace ScriptCs
 
             var commandArgs = arguments.CommandArguments;
             var scriptArgs = arguments.ScriptArguments;
+			var scriptPath = Path.GetDirectoryName (commandArgs.ScriptName);
+			console.WriteLine(scriptPath);
 
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
@@ -57,9 +64,8 @@ namespace ScriptCs
             
             scriptServicesBuilder.LoadModules(extension, modules);
             var scriptServiceRoot = scriptServicesBuilder.Build();
-
             var commandFactory = new CommandFactory(scriptServiceRoot);
-            var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
+			var command = commandFactory.CreateCommand(commandArgs, scriptArgs);
 
             var result = command.Execute();
 
