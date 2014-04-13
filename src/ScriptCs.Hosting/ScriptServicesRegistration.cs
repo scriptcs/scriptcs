@@ -9,7 +9,7 @@ namespace ScriptCs.Hosting
     {
         private readonly IDictionary<Type, object> _overrides = null;
 
-        protected ILog Logger { get; private set; }
+        public ILog Logger { get; private set; }
 
         public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
         {

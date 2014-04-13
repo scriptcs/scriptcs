@@ -17,5 +17,9 @@ namespace ScriptCs.Hosting
         IScriptServicesBuilder LogLevel(LogLevel level);
 
         IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
+
+        IInitializationServices InitializationServices { get; }
+
+        IConsole ConsoleInstance { get; }
     }
 }
