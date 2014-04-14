@@ -140,7 +140,7 @@ namespace ScriptCs.Command
                 return new CompositeCommand(installCommand, saveCommand);
             }
 
-            return new ShowUsageCommand(scriptServices.Logger, isValid: false);
+            return new ShowUsageCommand(logger, isValid: false);
         }
     }
 }

@@ -18,33 +18,21 @@ namespace ScriptCs.Tests
                 const string CurrentDirectory = "C:\\";
                 const string PackagesFile = "C:\\packages.config";
                 const string PackagesFolder = "C:\\packages";
-
-                var fs = new Mock<IFileSystem>();
+                
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
-
-                fixture.Register(() => fs.Object);
-
+                var fs = fixture.Freeze<Mock<IFileSystem>>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
                 fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
                 fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
-                return fixture.Create<ScriptServicesBuilder>();
-            }
 
-            private static ScriptServices CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
-            {
-                const string CurrentDirectory = "C:\\";
-                const string PackagesFile = "C:\\packages.config";
-                const string PackagesFolder = "C:\\packages";
+                var builder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
+                var services = fixture.Create<ScriptServices>();
+                builder.Setup(b => b.Build()).Returns(services);
 
-                var fs = new Mock<IFileSystem>();
-                var fixture = new Fixture().Customize(new AutoMoqCustomization());
-
-                fixture.Register(() => fs.Object);
-
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
-                fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
-                return fixture.Create<ScriptServices>();
+                var initServices = fixture.Freeze<Mock<IInitializationServices>>();
+                initServices.Setup(i => i.GetFileSystem()).Returns(fs.Object);
+                builder.SetupGet(b => b.InitializationServices).Returns(initServices.Object);
+                return fixture.Create<IScriptServicesBuilder>();
             }
 
             [Fact]
@@ -102,8 +90,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var root = CreateRoot(packagesFileExists: true, packagesFolderExists: false);
-                var factory = new CommandFactory(CreateBuilder());
+                var factory = new CommandFactory(CreateBuilder(true, false));
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
