@@ -37,6 +37,8 @@ For REPL, omit the file name and pass a `-repl` flag:
 
 5. Profit. Open Sublime > Tools > SublimeREPL > ScriptCS to start the REPL
 
+![Alt text](https://pbs.twimg.com/media/Bk7q3M_CcAA2id-.png:large "REPL on Mono")
+
 ## What is currently supported
 
  - execute scripts
