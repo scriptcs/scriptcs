@@ -60,14 +60,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NuGet.Core.2.7.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptCs.Contracts">
-      <HintPath>..\packages\ScriptCs.Contracts.0.9.0-alpha-140101\lib\net45\ScriptCs.Contracts.dll</HintPath>
+    <Reference Include="ScriptCs.Contracts, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ScriptCs.Contracts.0.9.0\lib\net45\ScriptCs.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptCs.Core">
-      <HintPath>..\packages\ScriptCs.Core.0.9.0-alpha-140101\lib\net45\ScriptCs.Core.dll</HintPath>
+    <Reference Include="ScriptCs.Core, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ScriptCs.Core.0.9.0\lib\net45\ScriptCs.Core.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptCs.Hosting">
-      <HintPath>..\packages\ScriptCs.Hosting.0.9.0-alpha-140101\lib\net45\ScriptCs.Hosting.dll</HintPath>
+    <Reference Include="ScriptCs.Hosting, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ScriptCs.Hosting.0.9.0\lib\net45\ScriptCs.Hosting.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -85,6 +88,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

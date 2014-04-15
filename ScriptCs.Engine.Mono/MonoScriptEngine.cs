@@ -93,13 +93,11 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.LoadAssembly(reference);
                 }
 
-                    sessionState.References = new AssemblyReferences
-                    {
-                        Assemblies = new HashSet<Assembly>(references.Assemblies),
-                        PathReferences = new HashSet<string>(references.PathReferences)
-                    };
-
-                //sessionState.References = newReferences;
+                sessionState.References = new AssemblyReferences
+                {
+                    Assemblies = new HashSet<Assembly>(references.Assemblies),
+                    PathReferences = new HashSet<string>(references.PathReferences)
+                };
 
                 var parser = new SyntaxParser();
                 var parseResult = parser.Parse(code);
