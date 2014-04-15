@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Common.Logging;
 using Mono.CSharp;
@@ -75,7 +76,7 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState = new SessionState<Evaluator>
                 {
-                    References = references,
+                    References = new AssemblyReferences {Assemblies = new HashSet<Assembly>(references.Assemblies), PathReferences = new HashSet<string>(references.PathReferences)},
                     Session = evaluator
                 };
                 scriptPackSession.State[SessionKey] = sessionState;
@@ -92,7 +93,13 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.LoadAssembly(reference);
                 }
 
-                sessionState.References = newReferences;
+                    sessionState.References = new AssemblyReferences
+                    {
+                        Assemblies = new HashSet<Assembly>(references.Assemblies),
+                        PathReferences = new HashSet<string>(references.PathReferences)
+                    };
+
+                //sessionState.References = newReferences;
 
                 var parser = new SyntaxParser();
                 var parseResult = parser.Parse(code);
