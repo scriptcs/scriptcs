@@ -22,6 +22,7 @@ namespace ScriptCs.Hosting.Tests
 
             public TheCreateContainerMethod()
             {
+                _overrides[typeof(ILineProcessor)] = new List<Type>();
                 var mockScriptExecutorType = new Mock<IScriptExecutor>();
                 _scriptExecutorType = mockScriptExecutorType.Object.GetType();
 
@@ -29,7 +30,7 @@ namespace ScriptCs.Hosting.Tests
                 _scriptEngineType = mockScriptEngineType.Object.GetType();
 
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(),  _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices, "script.csx");
+                _runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides,  _mockConsole.Object, _scriptEngineType, _scriptExecutorType, false, initializationServices, "script.csx");
             }
 
             [Fact]
@@ -234,7 +235,7 @@ namespace ScriptCs.Hosting.Tests
                 mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] {"foo.dll"});
                 _overrides[typeof (IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
                 var container = runtimeServices.Container;
                 _mockLogger.Verify(l => l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "foo.dll", It.IsAny<string>()));
             }
@@ -246,7 +247,7 @@ namespace ScriptCs.Hosting.Tests
                 mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] { "foo.dll" });
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
                 var container = runtimeServices.Container;
                 _mockLogger.Verify(l => l.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details"));
             }
@@ -258,7 +259,7 @@ namespace ScriptCs.Hosting.Tests
                 mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>())).Returns(new[] { "foo.dll" });
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "");
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "");
                 var container = runtimeServices.Container;
                 _mockLogger.Verify(l => l.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"));
             }
@@ -276,7 +277,7 @@ namespace ScriptCs.Hosting.Tests
                 _overrides[typeof(IAssemblyResolver)] = resolvermock.Object;
 
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
-                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, new List<Type>(), _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "c:/scriptcs/script.csx");
+                var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "c:/scriptcs/script.csx");
                 var container = runtimeServices.Container;
 
                 resolvermock.Verify(x => x.GetAssemblyPaths("c:/scripts"), Times.Exactly(1));
