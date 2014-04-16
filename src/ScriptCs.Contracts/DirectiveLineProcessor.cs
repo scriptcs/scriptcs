@@ -2,7 +2,12 @@
 using ScriptCs.Contracts.Exceptions;
 namespace ScriptCs.Contracts
 {
-    public abstract class DirectiveLineProcessor : ILineProcessor
+    public interface IDirectiveLineProcessor : ILineProcessor
+    {
+        bool Matches(string line);
+    }
+
+    public abstract class DirectiveLineProcessor : IDirectiveLineProcessor
     {
         protected virtual BehaviorAfterCode BehaviorAfterCode
         {
@@ -18,7 +23,7 @@ namespace ScriptCs.Contracts
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
-            if (!IsDirective(line))
+            if (!Matches(line))
             {
                 return false;
             }
@@ -50,8 +55,10 @@ namespace ScriptCs.Contracts
 
         protected abstract bool ProcessLine(IFileParser parser, FileParserContext context, string line);
 
-        private bool IsDirective(string line)
+        public bool Matches(string line)
         {
+            Guard.AgainstNullArgument("line", line);
+
             return line.Trim(' ').StartsWith(DirectiveString);
         }
     }

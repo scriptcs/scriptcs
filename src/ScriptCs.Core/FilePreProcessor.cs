@@ -135,10 +135,13 @@ namespace ScriptCs
             _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
 
-        private static bool IsNonDirectiveLine(string line)
+        private bool IsNonDirectiveLine(string line)
         {
             var trimmedLine = line.TrimStart(' ');
-            return !trimmedLine.StartsWith("#r ") && !trimmedLine.StartsWith("#load ") && line.Trim() != string.Empty;
+            var directiveLineProcessors =
+                _lineProcessors.Where(lp => lp is IDirectiveLineProcessor).Select(lp => lp as DirectiveLineProcessor);
+
+            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(trimmedLine));
         }
 
         private static bool IsUsingLine(string line)
