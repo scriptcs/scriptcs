@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting.Exceptions;
 
 namespace ScriptCs.Hosting
 {
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
         where TConfig : class, IServiceOverrides<TConfig>
     {
-        protected readonly IList<Type> LineProcessors = new List<Type>();
-        
         public IDictionary<Type, object> Overrides { get; private set; }
 
         private readonly TConfig _this;
@@ -17,6 +16,7 @@ namespace ScriptCs.Hosting
         {
             _this = this as TConfig;
             Overrides = new Dictionary<Type, object>();
+            Overrides[typeof(ILineProcessor)] = new List<Type>();
         }
 
         public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
@@ -28,6 +28,11 @@ namespace ScriptCs.Hosting
         protected ServiceOverrides(IDictionary<Type, object> overrides)
         {
             Overrides = overrides;
+
+            if (!Overrides.ContainsKey(typeof(ILineProcessor)))
+            {
+                Overrides[typeof(ILineProcessor)] = new List<Type>();
+            }
         }
 
         public TConfig ScriptExecutor<T>() where T : IScriptExecutor
@@ -116,7 +121,15 @@ namespace ScriptCs.Hosting
 
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
-            LineProcessors.Add(typeof(T));
+            var processors = Overrides[typeof(ILineProcessor)] as List<Type>;
+
+            if (processors == null)
+            {
+                throw new NullLineProcessorsCollectionException("Line Processors Collection is missing from Overrides dictionary");
+            }
+
+            processors.Add(typeof(T));
+
             return _this;
         }
     }

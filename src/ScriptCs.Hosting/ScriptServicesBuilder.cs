@@ -45,7 +45,7 @@ namespace ScriptCs.Hosting
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, Overrides, LineProcessors, ConsoleInstance,
+                _runtimeServices = new RuntimeServices(_logger, Overrides, ConsoleInstance,
                                                                        _scriptEngineType, _scriptExecutorType,
                                                                        initDirectoryCatalog,
                                                                        InitializationServices, _scriptName);
