@@ -8,10 +8,7 @@ namespace ScriptCs.Hosting
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
         where TConfig : class, IServiceOverrides<TConfig>
     {
-        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>
-            {
-                {typeof (ILineProcessor), new List<Type>()}
-            };
+        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
 
         private readonly TConfig _this;
 
@@ -23,11 +20,6 @@ namespace ScriptCs.Hosting
         protected ServiceOverrides(IDictionary<Type, object> overrides)
             : this()
         {
-            if (!overrides.ContainsKey(typeof (ILineProcessor)))
-            {
-                overrides[typeof (ILineProcessor)] = Overrides[typeof (ILineProcessor)];
-            }
-
             Overrides = overrides;
         }
 
@@ -123,7 +115,12 @@ namespace ScriptCs.Hosting
 
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
-            var processors = Overrides[typeof(ILineProcessor)] as List<Type>;
+            if (!Overrides.ContainsKey(typeof (ILineProcessor)))
+            {
+                Overrides[typeof (ILineProcessor)] = new List<Type>();
+            }
+
+            var processors = Overrides[typeof (ILineProcessor)] as List<Type>;
 
             if (processors == null)
             {
