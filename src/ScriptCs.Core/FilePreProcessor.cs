@@ -138,7 +138,7 @@ namespace ScriptCs
         private bool IsNonDirectiveLine(string line)
         {
             var directiveLineProcessors =
-                _lineProcessors.Where(lp => lp is IDirectiveLineProcessor).Select(lp => lp as DirectiveLineProcessor);
+                _lineProcessors.Where(lp => lp is IDirectiveLineProcessor).Select(lp => lp as IDirectiveLineProcessor);
 
             return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(line));
         }
