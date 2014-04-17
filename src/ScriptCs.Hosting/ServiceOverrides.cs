@@ -19,20 +19,21 @@ namespace ScriptCs.Hosting
             Overrides[typeof(ILineProcessor)] = new List<Type>();
         }
 
-        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
+        protected ServiceOverrides(IDictionary<Type, object> overrides)
+            : this()
         {
-            Overrides[typeof (IScriptHostFactory)] = typeof (T);
-            return _this;
+            if (!overrides.ContainsKey(typeof(ILineProcessor)))
+            {
+                overrides[typeof(ILineProcessor)] = Overrides[typeof(ILineProcessor)];
+            }
+
+            Overrides = overrides;
         }
 
-        protected ServiceOverrides(IDictionary<Type, object> overrides)
+        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
         {
-            Overrides = overrides;
-
-            if (!Overrides.ContainsKey(typeof(ILineProcessor)))
-            {
-                Overrides[typeof(ILineProcessor)] = new List<Type>();
-            }
+            Overrides[typeof(IScriptHostFactory)] = typeof(T);
+            return _this;
         }
 
         public TConfig ScriptExecutor<T>() where T : IScriptExecutor
