@@ -153,11 +153,10 @@ namespace ScriptCs
 
         private bool IsNonDirectiveLine(string line)
         {
-            var trimmedLine = line.TrimStart(' ');
             var directiveLineProcessors =
                 _lineProcessors.Where(lp => lp is IDirectiveLineProcessor).Select(lp => lp as DirectiveLineProcessor);
 
-            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(trimmedLine));
+            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(line));
         }
 
         private static bool IsUsingLine(string line)

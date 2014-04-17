@@ -34,6 +34,23 @@ namespace ScriptCs.Tests
             }
         }
 
+        public class TheMatchesMethod
+        {
+            [Fact]
+            public void ShouldReturnTrueWhenLineMatchesDirectiveString()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#Test x").ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldReturnFalseWhenLineDoesNotMatchDirectiveString()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#NotATest x").ShouldBeFalse();
+            }
+        }
+
         public class TestableDirectiveLineProcessor : DirectiveLineProcessor
         {
             private BehaviorAfterCode? _behaviourAfterCode;
