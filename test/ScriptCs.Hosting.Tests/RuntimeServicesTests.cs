@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Common.Logging;
 using Moq;
@@ -130,6 +131,29 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldRegisterTheDefaultAssemblyResolverIfNoOverride()
             {
                 _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldNotBeNull();
+            }
+
+            [Fact]
+            public void ShouldRegisterTheDefaultLineProcessors()
+            {
+                var processors = _runtimeServices.Container.Resolve<IEnumerable<ILineProcessor>>();
+                processors.ShouldNotBeNull();
+                processors.Where(p => p is IUsingLineProcessor).ShouldNotBeEmpty();
+                processors.Where(p => p is IReferenceLineProcessor).ShouldNotBeEmpty();
+                processors.Where(p => p is ILoadLineProcessor).ShouldNotBeEmpty();
+            }
+
+            [Fact]
+            public void ShouldRegisterACustomLineProcessor()
+            {
+                var mock = new Mock<ILineProcessor>();
+                var processorList = _overrides[typeof (ILineProcessor)] as List<Type>;
+                processorList.ShouldNotBeNull();
+                processorList.Add(mock.Object.GetType());
+                
+                var processors = _runtimeServices.Container.Resolve<IEnumerable<ILineProcessor>>();
+                processors.ShouldNotBeNull();
+                processors.Where(p => p.GetType() == mock.Object.GetType()).ShouldNotBeEmpty();
             }
 
             [Fact]

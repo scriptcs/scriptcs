@@ -132,7 +132,7 @@ namespace ScriptCs.Hosting
 
             var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(processorList).ToArray();
 
-            builder.RegisterTypes(processorArray.ToArray()).As<ILineProcessor>();
+            builder.RegisterTypes(processorArray).As<ILineProcessor>();
         }
 
         public ScriptServices GetScriptServices()

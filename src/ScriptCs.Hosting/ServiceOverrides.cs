@@ -8,31 +8,33 @@ namespace ScriptCs.Hosting
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
         where TConfig : class, IServiceOverrides<TConfig>
     {
-        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>
+            {
+                {typeof (ILineProcessor), new List<Type>()}
+            };
 
         private readonly TConfig _this;
 
         protected ServiceOverrides()
         {
             _this = this as TConfig;
+        }
 
-            Overrides[typeof(ILineProcessor)] = new List<Type>();
+        protected ServiceOverrides(IDictionary<Type, object> overrides)
+            : this()
+        {
+            if (!overrides.ContainsKey(typeof (ILineProcessor)))
+            {
+                overrides[typeof (ILineProcessor)] = Overrides[typeof (ILineProcessor)];
+            }
+
+            Overrides = overrides;
         }
 
         public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
         {
             Overrides[typeof (IScriptHostFactory)] = typeof (T);
             return _this;
-        }
-
-        protected ServiceOverrides(IDictionary<Type, object> overrides)
-        {
-            Overrides = overrides;
-
-            if (!Overrides.ContainsKey(typeof(ILineProcessor)))
-            {
-                Overrides[typeof(ILineProcessor)] = new List<Type>();
-            }
         }
 
         public TConfig ScriptExecutor<T>() where T : IScriptExecutor
