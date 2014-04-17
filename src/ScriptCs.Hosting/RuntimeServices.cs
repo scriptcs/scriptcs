@@ -111,12 +111,9 @@ namespace ScriptCs.Hosting
 
         private void RegisterLineProcessors(ContainerBuilder builder)
         {
-            var processorList = _overrides[typeof(ILineProcessor)] as List<Type>;
-
-            if (processorList == null)
-            {
-                throw new NullLineProcessorsCollectionException("Line Processors Collection is missing from Overrides dictionary");
-            }
+            object processors;
+            _overrides.TryGetValue(typeof(ILineProcessor), out processors);
+            var processorList = processors as List<Type> ?? new List<Type>();
 
             var loadProcessorType = processorList
                 .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
