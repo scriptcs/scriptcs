@@ -35,7 +35,5 @@
         TConfig LineProcessor<T>() where T : ILineProcessor;
 
         TConfig Console<T>() where T : IConsole;
-
-        TConfig ScriptHostFactory<T>() where T : IScriptHostFactory;
     }
 }

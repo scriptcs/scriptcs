@@ -41,12 +41,6 @@ namespace ScriptCs.Hosting
             return _this;
         }
 
-        public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
-        {
-            Overrides[typeof (IScriptHostFactory)] = typeof (T);
-            return _this;
-        }
-
         public TConfig ScriptPackManager<T>() where T : IScriptPackManager
         {
             Overrides[typeof(IScriptPackManager)] = typeof(T);
