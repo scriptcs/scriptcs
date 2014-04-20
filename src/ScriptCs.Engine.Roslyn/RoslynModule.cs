@@ -14,7 +14,7 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Initialize(IModuleConfiguration config)
         {
-            if (Type.GetType("Mono.Runtime") == null)
+            if (!config.Overrides.ContainsKey(typeof(IScriptEngine)) && Type.GetType("Mono.Runtime") == null)
             {
                 var engineType = config.Cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
                 engineType = config.Debug ? typeof(RoslynScriptInMemoryEngine) : engineType;
