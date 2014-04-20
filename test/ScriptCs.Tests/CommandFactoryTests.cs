@@ -20,17 +20,17 @@ namespace ScriptCs.Tests
                 const string PackagesFolder = "C:\\packages";
                 
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
-                var fs = fixture.Freeze<Mock<IFileSystem>>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
-                fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
+                var fileSystem = fixture.Freeze<Mock<IFileSystem>>();
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fileSystem.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
+                fileSystem.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 
                 var builder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
                 var services = fixture.Create<ScriptServices>();
                 builder.Setup(b => b.Build()).Returns(services);
 
                 var initServices = fixture.Freeze<Mock<IInitializationServices>>();
-                initServices.Setup(i => i.GetFileSystem()).Returns(fs.Object);
+                initServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 builder.SetupGet(b => b.InitializationServices).Returns(initServices.Object);
                 return fixture.Create<IScriptServicesBuilder>();
             }
