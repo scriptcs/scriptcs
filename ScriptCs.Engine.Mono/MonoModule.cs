@@ -11,7 +11,7 @@ namespace ScriptCs.Engine.Mono
         public void Initialize(IModuleConfiguration config)
         {
             Console.WriteLine("Mono Engine initialized!");
-            if (Type.GetType("Mono.Runtime") != null)
+            if (!config.Overrides.ContainsKey(typeof(IScriptEngine)) && Type.GetType("Mono.Runtime") != null)
                 config.ScriptEngine<MonoScriptEngine>();
         }
     }
