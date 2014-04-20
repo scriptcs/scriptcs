@@ -3,9 +3,11 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Mono
 {
-    [Module("mono", Extensions = "csx")]
+    [Module(ModuleName)]
     public class MonoModule : IModule
     {
+        public const string ModuleName = "mono";
+
         public void Initialize(IModuleConfiguration config)
         {
             Console.WriteLine("Mono Engine initialized!");
