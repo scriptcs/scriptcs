@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Common.Logging;
+using NuGet;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 
@@ -29,13 +33,9 @@ namespace ScriptCs.Hosting
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = typeof(ScriptExecutor);
-            var defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
-            defaultEngineType = _debug ? typeof(RoslynScriptInMemoryEngine) : defaultEngineType;
-            defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
-
+            Type defaultExecutorType = typeof (ScriptExecutor);
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
-            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
@@ -52,12 +52,14 @@ namespace ScriptCs.Hosting
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
+            moduleNames = moduleNames.Union(new[] {RoslynModule.ModuleName}).ToArray();
+            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
-            var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
-            loader.Load(config, folders, extension, moduleNames);
+
+            var folders = _debug ? new[] { fs.ModulesFolder, AppDomain.CurrentDomain.BaseDirectory, fs.CurrentDirectory } : new[] { fs.ModulesFolder, AppDomain.CurrentDomain.BaseDirectory };
+            loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }
 

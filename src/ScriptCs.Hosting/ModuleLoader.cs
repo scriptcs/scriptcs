@@ -63,7 +63,7 @@ namespace ScriptCs.Hosting
             _getModules = getModules;
         }
 
-        public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string extension, params string[] moduleNames)
+        public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string hostBin, string extension, params string[] moduleNames)
         {
             if (modulePackagesPaths == null) return;
 
@@ -75,11 +75,16 @@ namespace ScriptCs.Hosting
                 paths.AddRange(modulePaths);
             }
 
+
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
             {
                 _addToCatalog(path, catalog);
             }
+
+            if (hostBin != null)
+                catalog.Catalogs.Add(new DirectoryCatalog(hostBin));
+
 
             var container = new CompositionContainer(catalog);
             var lazyModules = _getModules(container);

@@ -19,6 +19,7 @@
       <HintPath>..\..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -36,6 +37,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="RoslynModule.cs" />
     <Compile Include="RoslynScriptCompilerEngine.cs" />
     <Compile Include="RoslynScriptInMemoryEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

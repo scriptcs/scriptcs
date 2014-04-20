@@ -8,14 +8,15 @@ namespace ScriptCs.Hosting
         where TConfig : class, IServiceOverrides<TConfig>
     {
         protected readonly IList<Type> LineProcessors = new List<Type>();
-
-        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+        
+        public IDictionary<Type, object> Overrides { get; private set; }
 
         private readonly TConfig _this;
 
         protected ServiceOverrides()
         {
             _this = this as TConfig;
+            Overrides = new Dictionary<Type, object>();
         }
 
         public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
