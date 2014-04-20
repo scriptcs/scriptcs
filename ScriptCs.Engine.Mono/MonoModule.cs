@@ -9,7 +9,8 @@ namespace ScriptCs.Engine.Mono
         public void Initialize(IModuleConfiguration config)
         {
             Console.WriteLine("Mono Engine initialized!");
-            config.ScriptEngine<MonoScriptEngine>();
+            if (Type.GetType("Mono.Runtime") != null)
+                config.ScriptEngine<MonoScriptEngine>();
         }
     }
 }
