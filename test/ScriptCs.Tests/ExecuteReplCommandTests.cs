@@ -7,7 +7,7 @@ using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
+using ScriptCs.Hosting;
 using Should;
 
 using Xunit.Extensions;
@@ -23,6 +23,8 @@ namespace ScriptCs.Tests
             public void ShouldPromptForInput(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
+                ScriptServices services,
                 CommandFactory factory)
             {
                 // Arrange
@@ -31,6 +33,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Repl = true };
 
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
 
                 console.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
                 console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
@@ -45,8 +48,12 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenPassedAScript_ShouldPressedReplWithScript(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
-                 CommandFactory factory)
+                [Frozen] Mock<IScriptEngine> scriptEngine, 
+                [Frozen] Mock<IFileSystem> fileSystem, 
+                [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
+                ScriptServices services,
+                CommandFactory factory)
             {
                 // Arrange
                 var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx" };
@@ -57,6 +64,8 @@ namespace ScriptCs.Tests
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
+                //initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 scriptEngine.Setup(
                     x => x.Execute("#load test.csx", It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()));
 
@@ -69,7 +78,11 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void WhenNotPassedAScript_ShouldNotCallTheEngineAutomatically(
-                [Frozen] Mock<IScriptEngine> scriptEngine, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptEngine> scriptEngine, 
+                [Frozen] Mock<IFileSystem> fileSystem, 
+                [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
+                ScriptServices services,
                  CommandFactory factory)
             {
                 // Arrange
@@ -81,6 +94,7 @@ namespace ScriptCs.Tests
                     return string.Empty;
                 });
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns("C:\\");
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
 
                 // Act
                 factory.CreateCommand(args, new string[0]).Execute();
