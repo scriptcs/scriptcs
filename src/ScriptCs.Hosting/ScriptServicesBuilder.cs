@@ -51,7 +51,7 @@ namespace ScriptCs.Hosting
 
         private string GetEngineModule(string[] modules)
         {
-            if (Type.GetType("Mono.Runtime") == null && modules.Contains("mono"))
+            if (Type.GetType("Mono.Runtime") == null || modules.Contains("mono"))
             {
                 return "mono";
             }
