@@ -59,7 +59,6 @@ namespace ScriptCs.Hosting
             {
                 return "roslyn";
             }
-
         }
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
