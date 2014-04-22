@@ -5,7 +5,6 @@ using System.Linq;
 using Common.Logging;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 
 using LogLevel = ScriptCs.Contracts.LogLevel;
 
@@ -50,9 +49,22 @@ namespace ScriptCs.Hosting
             return _runtimeServices.GetScriptServices();
         }
 
+        private string GetEngineModule(string[] modules)
+        {
+            if (Type.GetType("Mono.Runtime") == null && modules.Contains("mono"))
+            {
+                return "mono";
+            }
+            else
+            {
+                return "roslyn";
+            }
+
+        }
+
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            moduleNames = moduleNames.Union(new[] {RoslynModule.ModuleName}).ToArray();
+            moduleNames = moduleNames.Union(new[] {GetEngineModule(moduleNames)}).ToArray();
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 

@@ -14,11 +14,11 @@ namespace ScriptCs.Engine.Roslyn
 
         public void Initialize(IModuleConfiguration config)
         {
-            if (!config.Overrides.ContainsKey(typeof(IScriptEngine)) && Type.GetType("Mono.Runtime") == null)
+            if (!config.Overrides.ContainsKey(typeof(IScriptEngine)))
             {
-                var engineType = config.Cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
-                engineType = config.Debug ? typeof(RoslynScriptInMemoryEngine) : engineType;
-                engineType = config.Repl ? typeof(RoslynScriptEngine) : engineType;
+                var engineType = config.Cache ? typeof (RoslynScriptPersistentEngine) : typeof (RoslynScriptEngine);
+                engineType = config.Debug ? typeof (RoslynScriptInMemoryEngine) : engineType;
+                engineType = config.Repl ? typeof (RoslynScriptEngine) : engineType;
                 config.Overrides[typeof (IScriptEngine)] = engineType;
             }
         }
