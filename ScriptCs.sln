@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Contracts", "src\ScriptCs.Contracts\ScriptCs.Contracts.csproj", "{6049E205-8B5F-4080-B023-70600E51FD64}"
@@ -16,9 +18,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
 	ProjectSection(SolutionItems) = preProject
 		build\Build.proj = build\Build.proj
-		build\ScriptCs.Tasks.targets = build\ScriptCs.Tasks.targets
 		build\ScriptCs.Common.props = build\ScriptCs.Common.props
 		ScriptCs.ruleset = ScriptCs.ruleset
+		build\ScriptCs.Tasks.targets = build\ScriptCs.Tasks.targets
 		build\ScriptCs.Version.props = build\ScriptCs.Version.props
 	EndProjectSection
 EndProject
@@ -29,6 +31,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting", "src\ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting.Tests", "test\ScriptCs.Hosting.Tests\ScriptCs.Hosting.Tests.csproj", "{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Mono", "src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj", "{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.SyntaxTreeParser", "src\ScriptCs.SyntaxTreeParser\ScriptCs.SyntaxTreeParser.csproj", "{2FDF1B2D-0F87-4FB7-B105-49FA652E3C10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +78,14 @@ Global
 		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FDF1B2D-0F87-4FB7-B105-49FA652E3C10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FDF1B2D-0F87-4FB7-B105-49FA652E3C10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FDF1B2D-0F87-4FB7-B105-49FA652E3C10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FDF1B2D-0F87-4FB7-B105-49FA652E3C10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
