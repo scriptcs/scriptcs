@@ -12,18 +12,16 @@ namespace ScriptCs.Engine.Mono
 {
     public class MonoScriptEngine : IScriptEngine
     {
-        private IScriptHostFactory _scriptHostFactory;
-        private readonly IFileSystem _fs;
+        private readonly IScriptHostFactory _scriptHostFactory;
         public string BaseDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
 
         public const string SessionKey = "MonoSession";
 
-        public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger, IFileSystem fs)
+        public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
             _scriptHostFactory = scriptHostFactory;
-            _fs = fs;
             Logger = logger;
         }
 
@@ -107,7 +105,6 @@ namespace ScriptCs.Engine.Mono
                     return new ScriptResult();
                     //code = parseResult.Declarations;
                 }
-                //var newUsings = sessionState.References == null || !sessionState.References.Any() ? distinctReferences : distinctReferences.Except(sessionState.References);
             }
 
             Logger.Debug("Starting execution");

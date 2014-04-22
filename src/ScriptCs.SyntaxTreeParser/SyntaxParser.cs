@@ -32,12 +32,6 @@ namespace ScriptCs.SyntaxTreeParser
                 {
                     result.Declarations += element;
                 }
-                //else
-                //{
-                //    result.Declarations += "public static partial ScriptCsMethod {";
-                //    result.Declarations += element;
-                //    result.Declarations += "}";
-                //}
 
                 for (var i = typeMember.StartLocation.Line - 1; i < typeMember.StartLocation.Line; i++)
                 {
@@ -59,10 +53,6 @@ namespace ScriptCs.SyntaxTreeParser
             {
                 var evalLines = codeLines.Skip(syntaxTree.Errors.First().Region.BeginLine - 1).ToList();
                 result.Evaluations += string.Join(Environment.NewLine, evalLines);
-
-                //result.Evaluations = "public void ScriptCsInvoke() {" + Environment.NewLine;
-                //result.Evaluations = string.Join(Environment.NewLine, codeLinesDictionary.Select(i => i.Value.Item1));
-                //result.Evaluations += Environment.NewLine + "}";
             }
 
             var evaluationTree = parser.ParseStatements(result.Evaluations);
