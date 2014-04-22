@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using Common.Logging;
 using Mono.CSharp;
-using Newtonsoft.Json.Linq;
 using ScriptCs.Contracts;
 using ScriptCs.SyntaxTreeParser;
 

@@ -18,5 +18,10 @@ namespace ScriptCs.Engine.Mono
         {
             return _scriptHost.Require<T>();
         }
+
+        T IScriptHost.Require<T>()
+        {
+            return _scriptHost.Require<T>();
+        }
     }
 }
