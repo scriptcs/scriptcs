@@ -1,8 +1,15 @@
-﻿using Common.Logging;
+﻿using System;
+using System.Reflection;
+using Common.Logging;
 using Moq;
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.AutoMoq;
+using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
+using ScriptCs.Tests;
 using Should;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Hosting.Tests
 {
@@ -10,23 +17,43 @@ namespace ScriptCs.Hosting.Tests
     {
         public class TheBuildMethod
         {
-            private Mock<ILog> _mockLogger = new Mock<ILog>();
-
-            private ScriptServices _scriptServices = new ScriptServices(null, null, null, null, null, null, null, null, null, null);
-            private Mock<IRuntimeServices> _mockFactory = new Mock<IRuntimeServices>();
-            private Mock<IConsole> _mockConsole = new Mock<IConsole>();
-            private ScriptServicesBuilder _builder = null;
-
-            public TheBuildMethod()
+            [Theory, ScriptCsAutoData]
+            public void ShouldResolveScriptServices(ScriptServices scriptServices, [Frozen] Mock<IRuntimeServices> runtimeServicesMock, ScriptServicesBuilder builder)
             {
-                _mockFactory.Setup(f => f.GetScriptServices()).Returns(_scriptServices);
-                _builder = new ScriptServicesBuilder(_mockConsole.Object, _mockLogger.Object, _mockFactory.Object);
+                runtimeServicesMock.Setup(r => r.GetScriptServices()).Returns(scriptServices);
+                builder.Overrides[typeof (IScriptEngine)] = null;
+                builder.Build().ShouldEqual(scriptServices);
+            }
+        }
+
+        public class TheLoadModulesMethod
+        {
+            [Theory]
+            [ScriptCsAutoData]
+            public void ShouldLoadTheMonoModuleWhenTheMonoRuntimeIsPresent(IScriptServicesBuilder builder)
+            {
+                /*
+                var monoRuntimeTypeMock = new Mock<Type>();
+                monoRuntimeTypeMock.SetupGet(t => t.Name).Returns("Runtime");
+                monoRuntimeTypeMock.SetupGet(t => t.FullName).Returns("Mono.Runtime");
+                monoRuntimeTypeMock.SetupGet(t => t.Namespace).Returns("Mono");
+                builder.LoadModules(null);
+                 * */
             }
 
-            [Fact]
-            public void ShouldResolveScriptServices()
+            public void ShouldLoadTheMonoModuleWhenTheMonoModuleIsPassedInTheListOfModules()
             {
-                _builder.Build().ShouldEqual(_scriptServices);
+                
+            }
+
+            public void ShouldLoadTheRoslynModuleWhenTheMonoModuleIsNotSelected()
+            {
+                
+            }
+
+            public void ShouldFindAllModulesInTheFileSystem()
+            {
+                
             }
         }
     }
