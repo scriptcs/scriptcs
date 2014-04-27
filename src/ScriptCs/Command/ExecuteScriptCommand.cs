@@ -80,7 +80,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex);
                 return CommandResult.Error;
             }
         }
