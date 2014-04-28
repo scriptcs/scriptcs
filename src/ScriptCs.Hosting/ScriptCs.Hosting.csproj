@@ -79,6 +79,7 @@
       <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="ITypeResolver.cs" />
+    <Compile Include="FileLoggerConsole.cs" />
     <Compile Include="ScriptConsoleLogger.cs" />
     <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModuleLoader.cs" />

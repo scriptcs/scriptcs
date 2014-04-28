@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime;
 using ScriptCs.Argument;
 using ScriptCs.Command;
+using ScriptCs.Contracts;
 using ScriptCs.Hosting;
 
 namespace ScriptCs
@@ -19,13 +20,18 @@ namespace ScriptCs
             }
 
 #endif
-            var console = new ScriptConsole();
+            IConsole console = new ScriptConsole();
 
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
             var arguments = parser.Parse(args);
 
             var commandArgs = arguments.CommandArguments;
             var scriptArgs = arguments.ScriptArguments;
+
+            if (!string.IsNullOrWhiteSpace(commandArgs.LogFile))
+            {
+                console = new FileLoggerConsole(commandArgs.LogFile, console);
+            }
 
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);
             configurator.Configure(console);
