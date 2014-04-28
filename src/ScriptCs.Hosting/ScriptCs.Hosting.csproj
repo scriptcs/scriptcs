@@ -46,6 +46,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="ITypeResolver.cs" />
     <Compile Include="ScriptConsoleLogger.cs" />
     <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModuleLoader.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
     <Compile Include="ObjectSerializer.cs" />
+    <Compile Include="TypeResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -13,6 +13,7 @@ namespace ScriptCs.Hosting
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private IRuntimeServices _runtimeServices;
+        private readonly ITypeResolver _typeResolver;
         private bool _repl;
         private bool _cache;
         private bool _debug;
@@ -22,10 +23,14 @@ namespace ScriptCs.Hosting
         private Type _scriptEngineType;
         private ILog _logger;
 
-        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
+        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null, ITypeResolver typeResolver = null, IInitializationServices initializationServices = null)
         {
-            InitializationServices = new InitializationServices(logger);
+            InitializationServices = initializationServices ?? new InitializationServices(logger);
             _runtimeServices = runtimeServices;
+            _typeResolver = typeResolver;
+
+            _typeResolver =  typeResolver ?? new TypeResolver();
+
             ConsoleInstance = console;
             _logger = logger;
         }
@@ -51,7 +56,7 @@ namespace ScriptCs.Hosting
 
         private string GetEngineModule(string[] modules)
         {
-            if (Type.GetType("Mono.Runtime") != null || modules.Contains("mono"))
+            if (_typeResolver.ResolveType("Mono.Runtime") != null || modules.Contains("mono"))
             {
                 return "mono";
             }
