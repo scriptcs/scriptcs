@@ -46,6 +46,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="ITypeResolver.cs" />
     <Compile Include="ScriptConsoleLogger.cs" />
     <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModuleLoader.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
     <Compile Include="ObjectSerializer.cs" />
+    <Compile Include="TypeResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -82,10 +84,6 @@
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
-      <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
-      <Name>ScriptCs.Engine.Roslyn</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets" Condition="Exists('..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets')" />
@@ -95,6 +93,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets'))" />
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

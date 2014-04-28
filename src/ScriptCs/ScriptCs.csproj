@@ -131,6 +131,10 @@
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj">
+      <Project>{e4adcfee-ff3b-4ef5-8298-2b31f407f58b}</Project>
+      <Name>ScriptCs.Engine.Mono</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
       <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
       <Name>ScriptCs.Engine.Roslyn</Name>
@@ -149,4 +153,5 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets'))" />
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

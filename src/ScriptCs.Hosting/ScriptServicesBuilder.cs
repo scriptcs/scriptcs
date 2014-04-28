@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Common.Logging;
+using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
 
 using LogLevel = ScriptCs.Contracts.LogLevel;
 
@@ -10,6 +13,7 @@ namespace ScriptCs.Hosting
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private IRuntimeServices _runtimeServices;
+        private readonly ITypeResolver _typeResolver;
         private bool _repl;
         private bool _cache;
         private bool _debug;
@@ -19,23 +23,23 @@ namespace ScriptCs.Hosting
         private Type _scriptEngineType;
         private ILog _logger;
 
-        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null)
+        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null, ITypeResolver typeResolver = null, IInitializationServices initializationServices = null)
         {
-            InitializationServices = new InitializationServices(logger);
+            InitializationServices = initializationServices ?? new InitializationServices(logger);
             _runtimeServices = runtimeServices;
+            _typeResolver = typeResolver;
+
+            _typeResolver =  typeResolver ?? new TypeResolver();
+
             ConsoleInstance = console;
             _logger = logger;
         }
 
         public ScriptServices Build()
         {
-            var defaultExecutorType = typeof(ScriptExecutor);
-            var defaultEngineType = _cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
-            defaultEngineType = _debug ? typeof(RoslynScriptInMemoryEngine) : defaultEngineType;
-            defaultEngineType = _repl ? typeof(RoslynScriptEngine) : defaultEngineType;
-
+            Type defaultExecutorType = typeof (ScriptExecutor);
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
-            _scriptEngineType = Overrides.ContainsKey(typeof(IScriptEngine)) ? (Type)Overrides[typeof(IScriptEngine)] : defaultEngineType;
+            _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
@@ -50,14 +54,25 @@ namespace ScriptCs.Hosting
             return _runtimeServices.GetScriptServices();
         }
 
+        private string GetEngineModule(string[] modules)
+        {
+            if (_typeResolver.ResolveType("Mono.Runtime") != null || modules.Contains("mono"))
+            {
+                return "mono";
+            }
+            return "roslyn";
+        }
+
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, Overrides);
+            moduleNames = moduleNames.Union(new[] {GetEngineModule(moduleNames)}).ToArray();
+            var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
-            var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder };
-            loader.Load(config, folders, extension, moduleNames);
+
+            var folders = _debug ? new[] { fs.ModulesFolder, fs.CurrentDirectory } : new[] { fs.ModulesFolder, AppDomain.CurrentDomain.BaseDirectory };
+            loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }
 
