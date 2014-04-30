@@ -53,25 +53,10 @@ namespace ScriptCs.Command
                 }
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
-                var result = _scriptExecutor.Execute(_script, ScriptArgs);
+                var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
+                var commandResult = Inspect(scriptResult);
                 _scriptExecutor.Terminate();
-
-                if (result == null) return CommandResult.Error;
-
-                if (result.CompileExceptionInfo != null)
-                {
-                    _logger.Error(result.CompileExceptionInfo.SourceException.Message);
-                    _logger.Debug(result.CompileExceptionInfo.SourceException);
-                    return CommandResult.Error;
-                }
-
-                if (result.ExecuteExceptionInfo != null)
-                {
-                    _logger.Error(result.ExecuteExceptionInfo.SourceException);
-                    return CommandResult.Error;
-                }
-
-                return CommandResult.Success;
+                return commandResult;
             }
             catch (FileNotFoundException fnfex)
             {
@@ -83,6 +68,29 @@ namespace ScriptCs.Command
                 _logger.Error(ex);
                 return CommandResult.Error;
             }
+        }
+
+        private CommandResult Inspect(ScriptResult result)
+        {
+            if (result == null)
+            {
+                return CommandResult.Error;
+            }
+
+            if (result.CompileExceptionInfo != null)
+            {
+                _logger.Error(result.CompileExceptionInfo.SourceException.Message);
+                _logger.Debug(result.CompileExceptionInfo.SourceException);
+                return CommandResult.Error;
+            }
+
+            if (result.ExecuteExceptionInfo != null)
+            {
+                _logger.Error(result.ExecuteExceptionInfo.SourceException);
+                return CommandResult.Error;
+            }
+
+            return CommandResult.Success;
         }
     }
 }
