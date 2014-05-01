@@ -55,7 +55,7 @@ namespace ScriptCs.SyntaxTreeParser
                 result.Evaluations += string.Join(Environment.NewLine, evalLines);
             }
 
-            var evaluationTree = parser.ParseStatements(result.Evaluations);
+			//var evaluationTree = parser.ParseStatements(result.Evaluations);
             return result;
         }
     }
