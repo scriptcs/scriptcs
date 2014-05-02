@@ -16,6 +16,7 @@ TestResults
 *.user
 *.sln.docstates
 *.sln.ide
+*.userprefs
 
 # Build results
 [Dd]ebug/
