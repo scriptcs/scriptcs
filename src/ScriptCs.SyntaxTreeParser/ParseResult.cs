@@ -2,8 +2,8 @@
 {
     public class ParseResult
     {
-
-        public string Declarations { get; set; }
+        public string TypeDeclarations { get; set; }
+        public string MethodDeclarations { get; set; }
         public string Evaluations { get; set; }
     }
 }
