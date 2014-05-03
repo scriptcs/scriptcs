@@ -101,7 +101,7 @@ namespace ScriptCs.Engine.Mono
 
                 if (parseResult.Declarations != null)
                 {
-                    var compiledMethod = sessionState.Session.Compile(parseResult.Declarations);
+                    sessionState.Session.Compile(parseResult.Declarations);
                     return new ScriptResult();
                     //code = parseResult.Declarations;
                 }
@@ -115,7 +115,7 @@ namespace ScriptCs.Engine.Mono
                 {
                     object scriptResult;
                     bool resultSet;
-                    var result = sessionState.Session.Evaluate(code, out scriptResult, out resultSet);
+                    sessionState.Session.Evaluate(code, out scriptResult, out resultSet);
 
                     Logger.Debug("Finished execution");
                     return new ScriptResult { ReturnValue = scriptResult };

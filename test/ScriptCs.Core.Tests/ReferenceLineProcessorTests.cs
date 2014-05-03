@@ -107,7 +107,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.FileExists(fullPath)).Returns(false);
 
                 // Act
-                var result = processor.ProcessLine(parser, context, line, true);
+                result = processor.ProcessLine(parser, context, line, true);
 
                 // Assert
                 context.References.Count(x => x == name).ShouldEqual(1);
