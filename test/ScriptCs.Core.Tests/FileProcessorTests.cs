@@ -411,6 +411,8 @@ namespace ScriptCs.Tests
 
                 fileLines[line++].ShouldEqual(@"#line 5 ""C:\f1.csx""");
                 fileLines[line].ShouldEqual(f1[4]);
+
+                result.Namespaces.Count.ShouldEqual(2);
             }
 
             [Fact]

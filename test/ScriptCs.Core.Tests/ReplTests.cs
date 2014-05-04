@@ -166,6 +166,18 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldPassExtraNameSpacesToEngineIfFilePreProcessorProducesThem()
+            {
+                _mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.Is<string>(i => i == "#load foo.csx")))
+                    .Returns(new FilePreProcessorResult {Namespaces = new List<string> {"Foo", "Bar"}});
+
+                _repl.Execute("#load foo.csx");
+
+                _mocks.ScriptEngine.Verify(x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.Is<IEnumerable<string>>(i => Equals(i, _repl.Namespaces)), It.IsAny<ScriptPackSession>()));
+                _repl.Namespaces.Count().ShouldEqual(ScriptExecutor.DefaultNamespaces.Count()+2);
+            }
+
+            [Fact]
             public void CatchesExceptionsAndWritesThemInRed()
             {
                 _mocks.ScriptEngine.Setup(
