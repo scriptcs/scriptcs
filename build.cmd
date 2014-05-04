@@ -7,7 +7,7 @@ if exist artifacts goto Build
 mkdir artifacts
 
 :Build
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Detailed;DetailedSummary /nr:false 
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Diagnostic;DetailedSummary /nr:false 
 
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
