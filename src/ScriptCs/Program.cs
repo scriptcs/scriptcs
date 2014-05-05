@@ -28,9 +28,9 @@ namespace ScriptCs
             var commandArgs = arguments.CommandArguments;
             var scriptArgs = arguments.ScriptArguments;
 
-            if (!string.IsNullOrWhiteSpace(commandArgs.LogFile))
+            if (!string.IsNullOrWhiteSpace(commandArgs.Output))
             {
-                console = new FileLoggerConsole(commandArgs.LogFile, console);
+                console = new FileConsole(commandArgs.Output, console);
             }
 
             var configurator = new LoggerConfigurator(commandArgs.LogLevel);

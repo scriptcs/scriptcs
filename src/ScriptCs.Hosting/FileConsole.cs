@@ -4,12 +4,12 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting
 {
-    public class FileLoggerConsole : IConsole
+    public class FileConsole : IConsole
     {
         private readonly string _path;
         private readonly IConsole _innerConsole;
 
-        public FileLoggerConsole(string path, IConsole innerConsole)
+        public FileConsole(string path, IConsole innerConsole)
         {
             Guard.AgainstNullArgument("innerConsole", innerConsole);
 
