@@ -163,7 +163,7 @@ namespace ScriptCs.Tests
                 var configParser = new Mock<IConfigFileParser>();
                 var argumentHandler = new ArgumentHandler(parser.Object, configParser.Object, system.Object);
 
-                var result = argumentHandler.Parse(new string[0]);
+                argumentHandler.Parse(new string[0]);
 
                 system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
             }

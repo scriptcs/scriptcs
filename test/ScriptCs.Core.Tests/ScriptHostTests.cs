@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShoulGetScriptPackFromScriptPackManagerWhenInvoked()
             {
-                var result = _scriptHost.Require<IScriptPackContext>();
+                _scriptHost.Require<IScriptPackContext>();
                 _mockScriptPackManager.Verify(s => s.Get<IScriptPackContext>());
             }
         }

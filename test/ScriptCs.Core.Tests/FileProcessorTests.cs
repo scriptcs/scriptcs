@@ -52,16 +52,6 @@ namespace ScriptCs.Tests
                     @"Console.WriteLine(""Goodbye Script 4"");"
                 };
 
-            private List<string> _file5 = new List<string>
-                {
-                    "using System;",
-                    @"Console.WriteLine(""Hello Script 2"");",
-                    @"Console.WriteLine(""Loading Script 3"");",
-                    @"#load ""script3.csx""",
-                    @"Console.WriteLine(""Loaded Script 3"");",
-                    @"Console.WriteLine(""Goodbye Script 2"");"
-                };
-
             private readonly Mock<IFileSystem> _fileSystem;
 
             public ProcessFileMethod()
@@ -469,7 +459,7 @@ namespace ScriptCs.Tests
 
                 var preProcessor = GetFilePreProcessor();
 
-                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+                preProcessor.ProcessFile(@"C:\f1.csx");
 
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\f1.csx"), Times.Once());
                 _fileSystem.Verify(fs => fs.ReadFileLines(@"C:\SubFolder\f2.csx"), Times.Once());
@@ -504,7 +494,7 @@ namespace ScriptCs.Tests
 
                 var preProcessor = GetFilePreProcessor();
 
-                var result = preProcessor.ProcessFile(@"C:\f1.csx");
+                preProcessor.ProcessFile(@"C:\f1.csx");
 
                 lastCurrentDirectory.ShouldBeSameAs(startingDirectory);
             }
