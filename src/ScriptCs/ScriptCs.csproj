@@ -62,9 +62,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PowerArgs, Version=1.6.0.0, Culture=neutral, PublicKeyToken=54832990a0812961, processorArchitecture=MSIL">
+    <Reference Include="PowerArgs, Version=2.0.4.0, Culture=neutral, PublicKeyToken=26a276264bbd55b8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\PowerArgs.1.6.0.0\lib\net40\PowerArgs.dll</HintPath>
+      <HintPath>..\..\packages\PowerArgs.2.0.5\lib\net40\PowerArgs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

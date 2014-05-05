@@ -13,7 +13,6 @@ namespace ScriptCs
             Config = "scriptcs.opts";
         }
 
-        [ArgShortcut("repl")]
         [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
         public bool Repl { get; set; }
 
@@ -26,12 +25,10 @@ namespace ScriptCs
         [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
-        [ArgShortcut("debug")]
         [DefaultValue(false)]
         [ArgDescription("Emits PDB symbols allowing for attaching a Visual Studio debugger")]
         public bool Debug { get; set; }
 
-        [ArgShortcut("cache")]
         [DefaultValue(false)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
         public bool Cache { get; set; }
@@ -42,7 +39,6 @@ namespace ScriptCs
         [ArgDescription("Flag which defines the log level used.")]
         public LogLevel LogLevel { get; set; }
 
-        [ArgShortcut("install")]
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }
 
@@ -50,11 +46,9 @@ namespace ScriptCs
         [ArgDescription("Installs and restores global packages which are specified in packages.config")]
         public bool Global { get; set; }
 
-        [ArgShortcut("save")]
         [ArgDescription("Creates a packages.config file based on the packages directory")]
         public bool Save { get; set; }
 
-        [ArgShortcut("clean")]
         [ArgDescription("Cleans installed packages from working directory")]
         public bool Clean { get; set; }
 
@@ -62,20 +56,16 @@ namespace ScriptCs
         [ArgDescription("Allows installation of packages' prelease versions")]
         public bool AllowPreRelease { get; set; }
 
-        [ArgShortcut("version")]
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
 
-        [ArgShortcut("modules")]
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
 
-        [ArgShortcut("config")]
         [DefaultValue("scriptcs.opts")]
         [ArgDescription("Defines config file name")]
         public string Config { get; set; }
-        
-        [ArgShortcut("packageversion")]
+
         [ArgDescription("Defines the version of the package to install. Used in conjunction with -install")]
         public string PackageVersion { get; set; }
 
