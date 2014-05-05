@@ -148,6 +148,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.Arguments.ShouldEqual(args);
                 result.CommandArguments.ScriptName.ShouldEqual("replication.csx");
+                result.CommandArguments.Repl.ShouldBeTrue();
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
