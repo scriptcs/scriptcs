@@ -51,7 +51,7 @@ namespace ScriptCs.Tests
                     @"Console.WriteLine(""Hello Script 4"");",
                     @"Console.WriteLine(""Goodbye Script 4"");"
                 };
-				
+
             private readonly Mock<IFileSystem> _fileSystem;
 
             public ProcessFileMethod()
