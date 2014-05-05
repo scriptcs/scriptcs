@@ -69,7 +69,6 @@ namespace ScriptCs
         [ArgDescription("Defines the version of the package to install. Used in conjunction with -install")]
         public string PackageVersion { get; set; }
 
-        [ArgShortcut("output")]
         [ArgDescription("Write all console output to the specified file")]
         public string Output { get; set; }
     }
