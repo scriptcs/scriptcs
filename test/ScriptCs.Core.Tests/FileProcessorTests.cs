@@ -79,7 +79,7 @@ namespace ScriptCs.Tests
                 var splitOutput = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.Is<string>(i => i.StartsWith("script"))), Times.Exactly(3));
-                Assert.Equal(2, splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")));
+                result.Namespaces.Count.ShouldEqual(2);
             }
 
             [Fact]
@@ -232,7 +232,8 @@ namespace ScriptCs.Tests
                 var lastUsing = splitOutput.ToList().FindLastIndex(x => x.TrimStart(' ').StartsWith("using "));
                 var firsNotUsing = splitOutput.ToList().FindIndex(x => !x.TrimStart(' ').StartsWith("using "));
 
-                splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")).ShouldEqual(2);
+                splitOutput.Count(x => x.TrimStart(' ').StartsWith("using ")).ShouldEqual(0);
+                result.Namespaces.ShouldContain("System");
                 Assert.True(lastUsing < firsNotUsing);
             }
 
@@ -383,12 +384,8 @@ namespace ScriptCs.Tests
 
                 var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-                // using statements go first, after that f4 -> f5 -> f2 -> f3 -> f1
+                // using should not be here, so only f4 -> f5 -> f2 -> f3 -> f1
                 var line = 0;
-                fileLines[line++].ShouldEqual("using System;");
-                fileLines[line++].ShouldEqual("using System.Diagnostics;");
-
-                line++; // Skip blank separator line between usings and body...
 
                 fileLines[line++].ShouldEqual(@"#line 1 ""C:\f4.csx""");
                 fileLines[line++].ShouldEqual(f4[0]);
@@ -404,6 +401,8 @@ namespace ScriptCs.Tests
 
                 fileLines[line++].ShouldEqual(@"#line 5 ""C:\f1.csx""");
                 fileLines[line].ShouldEqual(f1[4]);
+
+                result.Namespaces.Count.ShouldEqual(2);
             }
 
             [Fact]

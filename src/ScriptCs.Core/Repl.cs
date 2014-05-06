@@ -92,7 +92,7 @@ namespace ScriptCs
 
                 Buffer += preProcessResult.Code;
 
-                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
                 if (result == null) return new ScriptResult();
 
                 if (result.CompileExceptionInfo != null)
