@@ -6,6 +6,6 @@
 
         string Extensions { get; }
 
-		bool Autoload {get;}
+        bool Autoload {get;}
     }
 }

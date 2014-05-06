@@ -89,8 +89,8 @@ namespace ScriptCs.Hosting
             var container = new CompositionContainer(catalog);
             var lazyModules = _getModules(container);
             var modules = lazyModules
-                .Where(m => moduleNames.Contains(m.Metadata.Name) ||
-					(extension != null && m.Metadata.Extensions != null && (m.Metadata.Extensions.Split(',').Contains(extension))) || m.Metadata.Autoload == true) 
+                .Where(m => moduleNames.Contains(m.Metadata.Name) || 
+                    (extension != null && m.Metadata.Extensions != null && (m.Metadata.Extensions.Split(',').Contains(extension))) || m.Metadata.Autoload == true) 
                 .Select(m => m.Value);
 
             _logger.Debug("Initializing modules");

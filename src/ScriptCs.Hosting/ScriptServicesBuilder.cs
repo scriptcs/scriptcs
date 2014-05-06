@@ -70,8 +70,8 @@ namespace ScriptCs.Hosting
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
-
-			var folders = new[] { fs.ModulesFolder, fs.CurrentDirectory } ;
+            
+            var folders = new[] { fs.ModulesFolder, fs.CurrentDirectory } ;
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }
