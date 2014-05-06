@@ -36,7 +36,7 @@ namespace ScriptCs.Hosting.Tests
                     new Lazy<IModule, IModuleMetadata>(
                         () => _mockModule2.Object, new ModuleMetadata { Extensions = "ext3,ext4", Name = "module2" }));
                 _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule3.Object, new ModuleMetadata { Name = "module3" }));
-				_modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule3.Object, new ModuleMetadata { Name = "module4", Autoload=true}));
+				_modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule4.Object, new ModuleMetadata { Name = "module4", Autoload=true}));
 				_getModules = c => _modules;
             }
 
