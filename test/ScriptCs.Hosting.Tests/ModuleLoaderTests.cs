@@ -23,7 +23,7 @@ namespace ScriptCs.Hosting.Tests
             private Mock<IModule> _mockModule1 = new Mock<IModule>();
             private Mock<IModule> _mockModule2 = new Mock<IModule>();
             private Mock<IModule> _mockModule3 = new Mock<IModule>();
-			private Mock<IModule> _mockModule4 = new Mock<IModule>();
+            private Mock<IModule> _mockModule4 = new Mock<IModule>();
 
             public TheLoadMethod()
             {
