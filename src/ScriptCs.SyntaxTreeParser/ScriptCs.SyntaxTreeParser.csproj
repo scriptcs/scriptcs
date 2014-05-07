@@ -64,9 +64,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Visitors\ClassTypeVisitor.cs" />
     <Compile Include="SyntaxParser.cs" />
     <Compile Include="ParseResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Visitors\MethodVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

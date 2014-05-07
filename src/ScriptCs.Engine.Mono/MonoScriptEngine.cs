@@ -31,6 +31,7 @@ namespace ScriptCs.Engine.Mono
             ScriptPackSession scriptPackSession)
         {
             references.PathReferences.UnionWith(scriptPackSession.References);
+            var parser = new SyntaxParser();
 
             SessionState<Evaluator> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -51,25 +52,11 @@ namespace ScriptCs.Engine.Mono
 
                 evaluator.Compile(builder.ToString());
 
-                var parser = new SyntaxParser();
-                var parseResult = parser.Parse(code);
-
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 MonoHost.SetHost((ScriptHost)host);
 
                 evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
                 evaluator.InteractiveBaseClass = typeof(MonoHost);
-
-                if (parseResult.Declarations != null)
-                {
-                    evaluator.Compile(parseResult.Declarations);
-                    code = null;
-                }
-
-                if (parseResult.Evaluations != null)
-                {
-                    code = parseResult.Evaluations;
-                }
 
                 sessionState = new SessionState<Evaluator>
                 {
@@ -95,27 +82,29 @@ namespace ScriptCs.Engine.Mono
                     Assemblies = new HashSet<Assembly>(references.Assemblies),
                     PathReferences = new HashSet<string>(references.PathReferences)
                 };
-
-                var parser = new SyntaxParser();
-                var parseResult = parser.Parse(code);
-
-                if (parseResult.Declarations != null)
-                {
-                    sessionState.Session.Compile(parseResult.Declarations);
-                    return new ScriptResult();
-                    //code = parseResult.Declarations;
-                }
             }
 
             Logger.Debug("Starting execution");
 
             try
             {
-                if (code != null)
+                var parseResult = parser.Parse(code);
+                if (!string.IsNullOrWhiteSpace(parseResult.TypeDeclarations))
+                {
+                    sessionState.Session.Compile(parseResult.TypeDeclarations);
+                }
+
+                if (!string.IsNullOrWhiteSpace(parseResult.MethodDeclarations))
+                {
+                    sessionState.Session.Run(parseResult.MethodDeclarations);
+                }
+
+                if (!string.IsNullOrWhiteSpace(parseResult.Evaluations))
                 {
                     object scriptResult;
                     bool resultSet;
-                    sessionState.Session.Evaluate(code, out scriptResult, out resultSet);
+                    
+                    sessionState.Session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
                     Logger.Debug("Finished execution");
                     return new ScriptResult { ReturnValue = scriptResult };
