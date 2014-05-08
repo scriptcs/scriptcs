@@ -24,7 +24,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldResolveScriptServices(ScriptServices scriptServices, [Frozen] Mock<IRuntimeServices> runtimeServicesMock, ScriptServicesBuilder builder)
             {
                 runtimeServicesMock.Setup(r => r.GetScriptServices()).Returns(scriptServices);
-                builder.Overrides[typeof (IScriptEngine)] = null;
+                builder.Overrides[typeof(IScriptEngine)] = null;
                 builder.Build().ShouldEqual(scriptServices);
             }
         }
@@ -34,25 +34,25 @@ namespace ScriptCs.Hosting.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldLoadTheMonoModuleWhenTheMonoRuntimeIsPresent([Frozen] Mock<ITypeResolver> typeResolver, [Frozen] Mock<IModuleLoader> moduleLoader, ScriptServicesBuilder builder)
             {
-                typeResolver.Setup(r => r.ResolveType("Mono.Runtime")).Returns(typeof (string));
+                typeResolver.Setup(r => r.ResolveType("Mono.Runtime")).Returns(typeof(string));
                 moduleLoader.Setup(
                     m =>
                         m.Load(It.IsAny<IModuleConfiguration>(), It.IsAny<string[]>(), It.IsAny<string>(),
-                            It.IsAny<string>(), It.IsAny<string[]>())).
-                    Callback<IModuleConfiguration, string[], string, string, string[]>(
-                        (config, paths, hostBin, extension, module) =>module.Single().ShouldEqual("mono"));
+                            It.IsAny<string>(), It.IsAny<string[]>()))
+                    .Callback<IModuleConfiguration, string[], string, string, string[]>(
+                        (config, paths, hostBin, extension, module) => module.Single().ShouldEqual("mono"));
                 builder.LoadModules(null);
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldLoadTheMonoModuleWhenTheMonoModuleIsPassedInTheListOfModules([Frozen] Mock<ITypeResolver> typeResolver, [Frozen] Mock<IModuleLoader> moduleLoader, ScriptServicesBuilder builder)
             {
-                typeResolver.Setup(r=> r.ResolveType("Mono.Runtime")).Returns((Type) null);
+                typeResolver.Setup(r => r.ResolveType("Mono.Runtime")).Returns((Type)null);
                 moduleLoader.Setup(
                     m =>
                         m.Load(It.IsAny<IModuleConfiguration>(), It.IsAny<string[]>(), It.IsAny<string>(),
-                            It.IsAny<string>(), It.IsAny<string[]>())).
-                    Callback<IModuleConfiguration, string[], string, string, string[]>(
+                            It.IsAny<string>(), It.IsAny<string[]>()))
+                    .Callback<IModuleConfiguration, string[], string, string, string[]>(
                         (config, paths, hostBin, extension, module) => module.Single().ShouldEqual("mono"));
                 builder.LoadModules(null, "mono");
             }
@@ -64,17 +64,16 @@ namespace ScriptCs.Hosting.Tests
                 moduleLoader.Setup(
                     m =>
                         m.Load(It.IsAny<IModuleConfiguration>(), It.IsAny<string[]>(), It.IsAny<string>(),
-                            It.IsAny<string>(), It.IsAny<string[]>())).
-                    Callback<IModuleConfiguration, string[], string, string, string[]>(
+                            It.IsAny<string>(), It.IsAny<string[]>()))
+                    .Callback<IModuleConfiguration, string[], string, string, string[]>(
                         (config, paths, hostBin, extension, module) => module.Single().ShouldEqual("roslyn"));
                 builder.LoadModules(null);
-               
+
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldFindAllModulesInTheFileSystem([Frozen] Mock<ITypeResolver> typeResolver, [Frozen] Mock<IModuleLoader> moduleLoader, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IInitializationServices> initializationServices, ScriptServicesBuilder builder)
             {
-            
                 typeResolver.Setup(r => r.ResolveType("Mono.Runtime")).Returns((Type)null);
                 fileSystem.SetupGet(fs => fs.ModulesFolder).Returns(@"c:\modules");
                 fileSystem.SetupGet(fs => fs.ModulesFolder).Returns(@"c:\current");
@@ -83,15 +82,15 @@ namespace ScriptCs.Hosting.Tests
                 moduleLoader.Setup(
                    m =>
                        m.Load(It.IsAny<IModuleConfiguration>(), It.IsAny<string[]>(), It.IsAny<string>(),
-                           It.IsAny<string>(), It.IsAny<string[]>())).
-                   Callback<IModuleConfiguration, string[], string, string, string[]>(
+                           It.IsAny<string>(), It.IsAny<string[]>()))
+                   .Callback<IModuleConfiguration, string[], string, string, string[]>(
                        (config, paths, hostBin, extension, module) =>
                        {
                            paths.ShouldContain(@"c:\modules");
                            paths.ShouldContain(@"c:\current");
                            paths.ShouldContain(@"c:\hostbin");
                        });
-      
+
             }
         }
     }

@@ -36,7 +36,7 @@ namespace ScriptCs.Hosting.Tests
                     new Lazy<IModule, IModuleMetadata>(
                         () => _mockModule2.Object, new ModuleMetadata { Extensions = "ext3,ext4", Name = "module2" }));
                 _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule3.Object, new ModuleMetadata { Name = "module3" }));
-                _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule4.Object, new ModuleMetadata { Name = "module4", Autoload=true}));
+                _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule4.Object, new ModuleMetadata { Name = "module4", Autoload = true }));
                 _getModules = c => _modules;
             }
 
@@ -77,17 +77,19 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Fact]
-            public void ShouldInitializeModulesThatAreSetToAutoload() {
-	            var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
-	            loader.Load(null, new string[0], null, null);
-	            _mockModule4.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
+            public void ShouldInitializeModulesThatAreSetToAutoload()
+            {
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                loader.Load(null, new string[0], null, null);
+                _mockModule4.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
             }
 
             [Fact]
-            public void ShouldNotInitializeModulesThatAreNotSetToAutoload() {
-	            var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
-	            loader.Load(null, new string[0], null, null);
-	            _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
+            public void ShouldNotInitializeModulesThatAreNotSetToAutoload()
+            {
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                loader.Load(null, new string[0], null, null);
+                _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
             }
 
             public class ModuleMetadata : IModuleMetadata
@@ -96,7 +98,7 @@ namespace ScriptCs.Hosting.Tests
 
                 public string Extensions { get; set; }
 
-                public bool Autoload {get; set;}
+                public bool Autoload { get; set; }
             }
         }
     }

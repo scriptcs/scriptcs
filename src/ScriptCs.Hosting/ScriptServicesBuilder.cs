@@ -29,7 +29,7 @@ namespace ScriptCs.Hosting
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
 
-            _typeResolver =  typeResolver ?? new TypeResolver();
+            _typeResolver = typeResolver ?? new TypeResolver();
 
             ConsoleInstance = console;
             _logger = logger;
@@ -37,7 +37,7 @@ namespace ScriptCs.Hosting
 
         public ScriptServices Build()
         {
-            Type defaultExecutorType = typeof (ScriptExecutor);
+            Type defaultExecutorType = typeof(ScriptExecutor);
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
@@ -65,13 +65,13 @@ namespace ScriptCs.Hosting
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            moduleNames = moduleNames.Union(new[] {GetEngineModule(moduleNames)}).ToArray();
+            moduleNames = moduleNames.Union(new[] { GetEngineModule(moduleNames) }).ToArray();
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
-            
-            var folders = new[] { fs.ModulesFolder, fs.CurrentDirectory } ;
+
+            var folders = new[] { fs.ModulesFolder, fs.CurrentDirectory };
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }
