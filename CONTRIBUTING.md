@@ -21,16 +21,16 @@ We'd like the design for all features to get socialized either via github issues
 
 ## Summary:
 
-* unassigned bug - available for you
-* assigned bug / taken bug - unavailable
-* you take it issue - available for you
-* taken issue - unavailable as someone already took it.
+* Unassigned bug - Available for you
+* Assigned bug / Taken bug - unavailable
+* You take it issue - Available for you
+* Yaken issue - Unavailable as someone already took it.
 
 We really appreciate your help in taking scriptcs forward!
 
-Before submitting a feature or substantial code contribution please discuss it with the team in our
+Before submitting a feature or substantial code contribution please discuss it with the team.
 
-Also please see the discussion [here] on which things are open for contribution (https://github.com/scriptcs/scriptcs/issues/79)
+Also please see the discussion [here](https://github.com/scriptcs/scriptcs/issues/79) on which things are open for contribution.
 
 ## Workflow
 
