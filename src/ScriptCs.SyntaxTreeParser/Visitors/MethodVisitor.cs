@@ -1,5 +1,3 @@
-using Mono.CSharp;
-
 namespace ScriptCs.SyntaxTreeParser.Visitors
 {
     using System;
@@ -22,14 +20,16 @@ namespace ScriptCs.SyntaxTreeParser.Visitors
             return _methods;
         }
 
-        public override void VisitMethodDeclaration (MethodDeclaration methodDeclaration)
+        public override void VisitMethodDeclaration(MethodDeclaration methodDeclaration)
         {
+            Guard.AgainstNullArgument("methodDeclaration", methodDeclaration);
+
             IEnumerable<ParameterDeclaration> parameters = methodDeclaration
                 .GetChildrenByRole(Roles.Parameter)
                 .Select(x => (ParameterDeclaration)x.Clone());
 
-	        var isVoid = false;
-	        var isAsync = methodDeclaration.Modifiers.HasFlag(Modifiers.Async);
+            var isVoid = false;
+            var isAsync = methodDeclaration.Modifiers.HasFlag(Modifiers.Async);
             AstType returnType = methodDeclaration.GetChildByRole(Roles.Type).Clone();
             var type = returnType as PrimitiveType;
             if (type != null)
@@ -38,11 +38,11 @@ namespace ScriptCs.SyntaxTreeParser.Visitors
                     type.Keyword, "void", StringComparison.OrdinalIgnoreCase) == 0;
             }
 
-            var methodType = new SimpleType(Identifier.Create( isVoid ? "Action" : "Func"));
+            var methodType = new SimpleType(Identifier.Create(isVoid ? "Action" : "Func"));
 
             IEnumerable<AstType> types = parameters.Select(
                 x => x.GetChildByRole(Roles.Type).Clone());
-            
+
             methodType
                 .TypeArguments
                 .AddRange(types);
@@ -62,7 +62,7 @@ namespace ScriptCs.SyntaxTreeParser.Visitors
             }
             methodBody = (BlockStatement)methodBody.Clone();
 
-	        var anonymousMethod = new AnonymousMethodExpression(methodBody, parameters) {IsAsync = isAsync};
+            var anonymousMethod = new AnonymousMethodExpression(methodBody, parameters) { IsAsync = isAsync };
             var methodExpression = new VariableInitializer(methodName, anonymousMethod);
 
             var namedMethodExpr = new FieldDeclaration { ReturnType = methodType };
@@ -73,12 +73,12 @@ namespace ScriptCs.SyntaxTreeParser.Visitors
 
         private static string GetIdentifierName(AstNode node)
         {
-            foreach (var obj in 
+            foreach (var obj in
                 from child in node.GetChildrenByRole(Roles.Identifier)
                 from propertyInfo in child
                     .GetType()
                     .GetProperties(
-                        System.Reflection.BindingFlags.Instance | 
+                        System.Reflection.BindingFlags.Instance |
                         System.Reflection.BindingFlags.Public)
                     .Where(x => x.Name == "Name")
                 select propertyInfo.GetValue(child, null))

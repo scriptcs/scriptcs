@@ -10,6 +10,8 @@ namespace ScriptCs.Command
 
         public CommandFactory(IScriptServicesBuilder scriptServicesBuilder)
         {
+            Guard.AgainstNullArgument("scriptServicesBuilder", scriptServicesBuilder);
+
             _scriptServicesBuilder = scriptServicesBuilder;
             _initializationServices = _scriptServicesBuilder.InitializationServices;
         }

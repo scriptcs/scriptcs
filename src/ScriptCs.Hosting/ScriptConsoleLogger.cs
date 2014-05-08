@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System;
+using Common.Logging;
 using Common.Logging.Factory;
 using ScriptCs.Contracts;
 using LogLevel = ScriptCs.Contracts.LogLevel;
@@ -51,8 +52,10 @@ namespace ScriptCs.Hosting
             get { return _log.IsTraceEnabled || _consoleLogLevel == LogLevel.Trace; }
         }
 
-        protected override void WriteInternal(Common.Logging.LogLevel level, object message, System.Exception exception)
+        protected override void WriteInternal(Common.Logging.LogLevel level, object message, Exception exception)
         {
+            Guard.AgainstNullArgument("message", message);
+
             var consoleLog = false;
             switch (level)
             {
