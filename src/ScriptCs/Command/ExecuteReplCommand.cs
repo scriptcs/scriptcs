@@ -42,7 +42,10 @@ namespace ScriptCs.Command
             _assemblyResolver = assemblyResolver;
         }
 
-        public string[] ScriptArgs { get; private set; }
+        public string[] ScriptArgs
+        {
+            get { return _scriptArgs; }
+        }
 
         public CommandResult Execute()
         {
@@ -87,7 +90,7 @@ namespace ScriptCs.Command
             }
 
             string line = null;
-            
+
             try
             {
                 line = _console.ReadLine();
