@@ -9,6 +9,8 @@ namespace ScriptCs
     {
         public static void WriteAsciiArt(this IConsole console, string version)
         {
+            Guard.AgainstNullArgument("console", console);
+
             var lines = new[]
             {
                 @"+cyan               _       _",

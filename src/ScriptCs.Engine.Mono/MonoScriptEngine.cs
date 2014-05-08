@@ -30,6 +30,9 @@ namespace ScriptCs.Engine.Mono
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces,
             ScriptPackSession scriptPackSession)
         {
+            Guard.AgainstNullArgument("references", references);
+            Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
+
             references.PathReferences.UnionWith(scriptPackSession.References);
             var parser = new SyntaxParser();
 
@@ -60,7 +63,7 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState = new SessionState<Evaluator>
                 {
-                    References = new AssemblyReferences {Assemblies = new HashSet<Assembly>(references.Assemblies), PathReferences = new HashSet<string>(references.PathReferences)},
+                    References = new AssemblyReferences { Assemblies = new HashSet<Assembly>(references.Assemblies), PathReferences = new HashSet<string>(references.PathReferences) },
                     Session = evaluator
                 };
                 scriptPackSession.State[SessionKey] = sessionState;
@@ -103,7 +106,7 @@ namespace ScriptCs.Engine.Mono
                 {
                     object scriptResult;
                     bool resultSet;
-                    
+
                     sessionState.Session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
                     Logger.Debug("Finished execution");

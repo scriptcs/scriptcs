@@ -10,6 +10,8 @@ namespace ScriptCs.Engine.Mono
 
         public void Initialize(IModuleConfiguration config)
         {
+            Guard.AgainstNullArgument("config", config);
+
             Console.WriteLine("Mono Engine initialized!");
             if (!config.Overrides.ContainsKey(typeof(IScriptEngine)))
                 config.ScriptEngine<MonoScriptEngine>();
