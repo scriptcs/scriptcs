@@ -24,7 +24,7 @@ We'd like the design for all features to get socialized either via github issues
 * Unassigned bug - Available for you
 * Assigned bug / Taken bug - unavailable
 * You take it issue - Available for you
-* Yaken issue - Unavailable as someone already took it.
+* Taken issue - Unavailable as someone already took it.
 
 We really appreciate your help in taking scriptcs forward!
 
