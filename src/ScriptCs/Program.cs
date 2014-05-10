@@ -93,6 +93,7 @@ namespace ScriptCs
             return modules;
         }
 
+#if !__MonoCS__
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void SetProfile()
         {
@@ -102,5 +103,6 @@ namespace ScriptCs
                 ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
             }
         }
+#endif
     }
 }
