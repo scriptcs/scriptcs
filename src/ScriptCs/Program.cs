@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime;
 using ScriptCs.Argument;
 using ScriptCs.Command;
@@ -13,15 +14,7 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-#if !__MonoCS__
-            try
-            {
-                SetProfile();
-            }
-            catch (TypeLoadException)
-            {
-            }
-#endif
+            SetProfile();
 
             IConsole console = new ScriptConsole();
 
@@ -93,16 +86,17 @@ namespace ScriptCs
             return modules;
         }
 
-#if !__MonoCS__
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void SetProfile()
         {
-            if (Type.GetType("Mono.Runtime") == null)
+            var profileOptimizationType = Type.GetType("System.Runtime.ProfileOptimization");
+            if (profileOptimizationType != null)
             {
-                ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
-                ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+                var setProfileRoot = profileOptimizationType.GetMethod("SetProfileRoot", BindingFlags.Public | BindingFlags.Static);
+                setProfileRoot.Invoke(null, new object[] {typeof (Program).Assembly.Location});
+
+                var startProfile = profileOptimizationType.GetMethod("StartProfile", BindingFlags.Public | BindingFlags.Static);
+                startProfile.Invoke(null, new object[] {typeof (Program).Assembly.GetName().Name + ".profile"});
             }
         }
-#endif
     }
 }
