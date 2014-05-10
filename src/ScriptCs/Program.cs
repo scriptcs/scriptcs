@@ -13,7 +13,7 @@ namespace ScriptCs
     {
         private static int Main(string[] args)
         {
-#if !MONO
+#if !__MonoCS__
             try
             {
                 SetProfile();
