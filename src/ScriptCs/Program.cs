@@ -5,6 +5,7 @@ using ScriptCs.Argument;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
+using System.Runtime.CompilerServices;
 
 namespace ScriptCs
 {
@@ -13,13 +14,15 @@ namespace ScriptCs
         private static int Main(string[] args)
         {
 #if !MONO
-            if (Type.GetType("Mono.Runtime") == null)
+            try
             {
-                ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
-                ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+                SetProfile();
             }
-
+            catch (TypeLoadException)
+            {
+            }
 #endif
+
             IConsole console = new ScriptConsole();
 
             var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
@@ -88,6 +91,16 @@ namespace ScriptCs
             }
 
             return modules;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void SetProfile()
+        {
+            if (Type.GetType("Mono.Runtime") == null)
+            {
+                ProfileOptimization.SetProfileRoot(typeof(Program).Assembly.Location);
+                ProfileOptimization.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+            }
         }
     }
 }
