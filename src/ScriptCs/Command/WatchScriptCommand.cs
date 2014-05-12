@@ -5,7 +5,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class WatchScriptCommand : IScriptCommand
+    internal class WatchScriptCommand : ICommand
     {
         private readonly AppDomainSetup _setup = new AppDomainSetup { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
         private readonly ScriptCsArgs _commandArgs;
@@ -28,12 +28,7 @@ namespace ScriptCs.Command
             _console = console;
             _fileSystem = fileSystem;
             _logger = logger;
-
-            _executeScriptCommand = new CrossAppDomainExecuteScriptCommand
-            {
-                CommandArgs = _commandArgs,
-                ScriptArgs = _scriptArgs,
-            };
+            _executeScriptCommand = new CrossAppDomainExecuteScriptCommand(commandArgs, scriptArgs);
         }
 
         public CommandResult Execute()

@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class InstallCommand : IInstallCommand
+    public class InstallCommand : ICommand
     {
         private readonly string _name;
         private readonly string _version;

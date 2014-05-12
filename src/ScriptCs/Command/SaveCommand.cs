@@ -4,7 +4,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class SaveCommand : ISaveCommand
+    public class SaveCommand : ICommand
     {
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 

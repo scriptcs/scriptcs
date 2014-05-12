@@ -3,7 +3,7 @@ using PowerArgs;
 
 namespace ScriptCs.Command
 {
-    internal class ShowUsageCommand : IHelpCommand, IInvalidCommand
+    public class ShowUsageCommand : ICommand
     {
         private readonly ILog _logger;
 

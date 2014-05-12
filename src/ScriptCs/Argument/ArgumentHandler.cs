@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace ScriptCs.Argument
 {
-    public class ArgumentHandler : IArgumentHandler
+    public class ArgumentHandler
     {
         private readonly IArgumentParser _argumentParser;
         private readonly IConfigFileParser _configFileParser;
