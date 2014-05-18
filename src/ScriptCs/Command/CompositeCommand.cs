@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ScriptCs.Command
 {
-    public class CompositeCommand : ICompositeCommand
+    public class CompositeCommand : ICommand
     {
         public CompositeCommand(params ICommand[] commands)
         {

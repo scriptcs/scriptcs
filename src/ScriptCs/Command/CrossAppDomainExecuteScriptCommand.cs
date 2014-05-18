@@ -3,30 +3,32 @@
 namespace ScriptCs.Command
 {
     [Serializable]
-    public class CrossAppDomainExecuteScriptCommand : ICrossAppDomainScriptCommand
+    public class CrossAppDomainExecuteScriptCommand
     {
-        public ScriptCsArgs CommandArgs { get; set; }
-        public string[] ScriptArgs { get; set; }
-        public CommandResult Result { get; private set; }
+        private readonly ScriptCsArgs _commandArgs;
+        private readonly string[] _scriptArgs;
+
+        public CrossAppDomainExecuteScriptCommand(ScriptCsArgs commandArgs, string[] scriptArgs)
+        {
+            Guard.AgainstNullArgument("commandArgs", commandArgs);
+
+            _commandArgs = commandArgs;
+            _scriptArgs = scriptArgs;
+        }
 
         public void Execute()
         {
-            if (this.CommandArgs == null)
-            {
-                throw new InvalidOperationException("The command args are missing.");
-            }
-
-            var services = ScriptServicesBuilderFactory.Create(this.CommandArgs, this.ScriptArgs).Build();
+            var services = ScriptServicesBuilderFactory.Create(_commandArgs, _scriptArgs).Build();
             var command = new ExecuteScriptCommand(
-                this.CommandArgs.ScriptName,
-                this.ScriptArgs,
+                _commandArgs.ScriptName,
+                _scriptArgs,
                 services.FileSystem,
                 services.Executor,
                 services.ScriptPackResolver,
                 services.Logger,
                 services.AssemblyResolver);
 
-            this.Result = command.Execute();
+            command.Execute();
         }
     }
 }

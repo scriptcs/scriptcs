@@ -3,7 +3,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class VersionCommand : IVersionCommand
+    internal class VersionCommand : ICommand
     {
         private readonly IConsole _console;
 

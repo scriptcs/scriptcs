@@ -51,12 +51,12 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                var compositeCommand = result as ICompositeCommand;
+                var compositeCommand = result as CompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
                 compositeCommand.Commands.Count.ShouldEqual(2);
-                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<ISaveCommand>();
+                compositeCommand.Commands[0].ShouldImplement<InstallCommand>();
+                compositeCommand.Commands[1].ShouldImplement<SaveCommand>();
             }
 
             [Fact]
@@ -75,7 +75,7 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                result.ShouldImplement<IScriptCommand>();
+                result.ShouldImplement<ExecuteScriptCommand>();
             }
 
             [Fact]
@@ -94,12 +94,12 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                var compositeCommand = result as ICompositeCommand;
+                var compositeCommand = result as CompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
                 compositeCommand.Commands.Count.ShouldEqual(2);
-                compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
+                compositeCommand.Commands[0].ShouldImplement<InstallCommand>();
+                compositeCommand.Commands[1].ShouldImplement<ExecuteScriptCommand>();
             }
 
             [Fact]
@@ -118,7 +118,7 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                result.ShouldImplement<IScriptCommand>();
+                result.ShouldImplement<ExecuteScriptCommand>();
             }
 
             [Fact]
@@ -132,12 +132,12 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                var compositeCommand = result as ICompositeCommand;
+                var compositeCommand = result as CompositeCommand;
                 compositeCommand.ShouldNotBeNull();
 
                 compositeCommand.Commands.Count.ShouldEqual(2);
-                compositeCommand.Commands[0].ShouldImplement<ISaveCommand>();
-                compositeCommand.Commands[1].ShouldImplement<ICleanCommand>();
+                compositeCommand.Commands[0].ShouldImplement<SaveCommand>();
+                compositeCommand.Commands[1].ShouldImplement<CleanCommand>();
             }
 
             [Fact]
@@ -152,7 +152,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 result.ShouldNotBeNull();
-                result.ShouldImplement<ISaveCommand>();
+                result.ShouldImplement<SaveCommand>();
             }
 
             [Fact]
@@ -171,7 +171,7 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                result.ShouldImplement<IInvalidCommand>();
+                result.ShouldImplement<ShowUsageCommand>();
             }
 
             [Fact]
@@ -185,7 +185,7 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                result.ShouldImplement<IHelpCommand>();
+                result.ShouldImplement<ShowUsageCommand>();
             }
 
             [Fact]
@@ -202,7 +202,7 @@ namespace ScriptCs.Tests
                 // Act
                 var scriptArgs = new string[0];
                 var factory = new CommandFactory(CreateBuilder());
-                var result = factory.CreateCommand(args, scriptArgs) as IScriptCommand;
+                var result = factory.CreateCommand(args, scriptArgs) as ExecuteScriptCommand;
 
                 // Assert
                 result.ScriptArgs.ShouldEqual(scriptArgs);

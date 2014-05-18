@@ -6,7 +6,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class CleanCommand : ICleanCommand
+    public class CleanCommand : ICommand
     {
         private readonly string _scriptName;
 

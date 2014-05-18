@@ -11,7 +11,7 @@ namespace ScriptCs.Tests
     {
         public class ParseMethod
         {
-            private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true)
+            private static ArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true)
             {
                 const string currentDirectory = "C:\\test\\folder";
 
