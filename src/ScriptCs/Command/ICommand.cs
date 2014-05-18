@@ -36,6 +36,10 @@ namespace ScriptCs.Command
     {
     }
 
+    public interface IDeferredCreationCommand<TCommand> : ICommand where TCommand : ICommand
+    {
+    }
+
     public interface ICommand
     {
         CommandResult Execute();
