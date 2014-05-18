@@ -129,14 +129,14 @@ namespace ScriptCs
                 RemoveReferences(fileEx.FileName);
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + fileEx + "\r\n");
+                Console.WriteLine(Environment.NewLine + fileEx + Environment.NewLine);
 
                 return ScriptResult.FromCompilationException(fileEx);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + ex + "\r\n");
+                Console.WriteLine(Environment.NewLine + ex + Environment.NewLine);
 
                 return ScriptResult.FromExecutionException(ex);
             }

@@ -49,7 +49,7 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _console.WriteLine("scriptcs (ctrl-c to exit)\r\n");
+            _console.WriteLine("scriptcs (ctrl-c to exit)" + Environment.NewLine);
             var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _serializer, _logger, _console, _filePreProcessor);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
