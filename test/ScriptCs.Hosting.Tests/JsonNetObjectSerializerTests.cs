@@ -4,15 +4,15 @@ using Xunit;
 
 namespace ScriptCs.Hosting.Tests
 {
-    public class ObjectSerializerTests
+    public class JsonNetObjectSerializerTests
     {
         public class TheSerializeMethod
         {
-            private readonly ObjectSerializer _serializer;
+            private readonly JsonNetObjectSerializer _serializer;
 
             public TheSerializeMethod()
             {
-                _serializer = new ObjectSerializer();
+                _serializer = new JsonNetObjectSerializer();
             }
 
             [Fact]
@@ -39,6 +39,21 @@ namespace ScriptCs.Hosting.Tests
                 foo.Parent = foo;
 
                 Assert.DoesNotThrow(() => _serializer.Serialize(foo));
+            }
+
+            [Fact]
+            public void ShouldNotContainIdProperty()
+            {
+                Assert.DoesNotContain("$id", _serializer.Serialize(new Foo()));
+            }
+
+            [Fact]
+            public void ShouldNotContainRefProperty()
+            {
+                var foo = new Foo();
+                foo.Parent = foo;
+
+                Assert.DoesNotContain("$ref", _serializer.Serialize(foo));
             }
 
             private class Foo

@@ -56,7 +56,7 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
-            RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
+            RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<JsonNetObjectSerializer>().As<IObjectSerializer>().SingleInstance());
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
