@@ -5,7 +5,7 @@ namespace ScriptCs.Contracts
 {
     public class ScriptResult
     {
-        public ScriptResult() { }
+        public static readonly ScriptResult Empty = new ScriptResult();
 
         public object ReturnValue { get; private set; }
 

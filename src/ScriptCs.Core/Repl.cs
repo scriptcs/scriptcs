@@ -47,13 +47,13 @@ namespace ScriptCs
                 if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.Clear();
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith("#reset"))
                 {
                     Reset();
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith(":cd", StringComparison.OrdinalIgnoreCase))
@@ -64,7 +64,7 @@ namespace ScriptCs
 
                     FileSystem.CurrentDirectory = Path.Combine(FileSystem.CurrentDirectory, relativePath);
 
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
@@ -75,7 +75,7 @@ namespace ScriptCs
 
                     Console.WriteLine(dir);
 
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
@@ -93,7 +93,7 @@ namespace ScriptCs
                 Buffer += preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
-                if (result == null) return new ScriptResult();
+                if (result == null) return ScriptResult.Empty;
 
                 if (result.CompileExceptionInfo != null)
                 {

@@ -396,7 +396,7 @@ namespace ScriptCs.Tests
             protected override ScriptResult Execute(string code, Session session)
             {
                 Session = session;
-                return new ScriptResult();
+                return ScriptResult.Empty;
             }
 
             internal ScriptEngine Engine {
