@@ -10,8 +10,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
     public class RoslynScriptEngine : IScriptEngine
     {
         protected readonly ScriptEngine ScriptEngine;
@@ -138,29 +136,23 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
             try
             {
                 var submission = session.CompileSubmission<object>(code);
+
                 try
                 {
-                    result.ReturnValue = submission.Execute();
+                    return ScriptResult.FromReturnValue(submission.Execute());
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                    return ScriptResult.FromExecutionException(ex);
                 }
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
-                if (!result.IsPendingClosingChar)
-                {
-                    result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                return ScriptResult.FromCompilationException(ex);
             }
-
-            return result;
         }
     }
 }

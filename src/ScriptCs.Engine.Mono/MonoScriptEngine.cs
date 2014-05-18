@@ -128,7 +128,8 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
                     Logger.Debug("Finished execution");
-                    return new ScriptResult { ReturnValue = scriptResult };
+
+                    return ScriptResult.FromReturnValue(scriptResult);
                 }
             }
             catch (Exception e)

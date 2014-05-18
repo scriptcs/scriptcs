@@ -5,38 +5,46 @@ namespace ScriptCs.Contracts
 {
     public class ScriptResult
     {
-        public object ReturnValue { get; set; }
+        public ScriptResult() { }
 
-        public ExceptionDispatchInfo ExecuteExceptionInfo { get; set; }
+        public object ReturnValue { get; private set; }
 
-        public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
+        public ExceptionDispatchInfo ExecuteExceptionInfo { get; private set; }
 
-        public bool IsPendingClosingChar { get; set; }
+        public ExceptionDispatchInfo CompileExceptionInfo { get; private set; }
 
-        public char? ExpectingClosingChar { get; set; }
+        public bool IsCompleteSubmission { get; private set; }
 
-        public void UpdateClosingExpectation(Exception ex)
+        public static ScriptResult IncompleteSubmission
         {
-            Guard.AgainstNullArgument("ex", ex);
+            get { return new ScriptResult { IsCompleteSubmission = false }; }
+        }
 
-            var message = ex.Message;
-            char? closingChar = null;
+        public static ScriptResult FromReturnValue(object returnValue)
+        {
+            return new ScriptResult
+            {
+                ReturnValue = returnValue,
+                IsCompleteSubmission = true
+            };
+        }
 
-            if (message.Contains("CS1026: ) expected"))
+        public static ScriptResult FromExecutionException(Exception exception)
+        {
+            return new ScriptResult
             {
-                closingChar = ')';
-            }
-            else if (message.Contains("CS1513: } expected"))
-            {
-                closingChar = '}';
-            }
-            else if (message.Contains("CS1003: Syntax error, ']' expected"))
-            {
-                closingChar = ']';
-            }
+                ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(exception),
+                IsCompleteSubmission = true
+            };
+        }
 
-            ExpectingClosingChar = closingChar;
-            IsPendingClosingChar = closingChar.HasValue;
+        public static ScriptResult FromCompilationException(Exception exception)
+        {
+            return new ScriptResult
+            {
+                CompileExceptionInfo = ExceptionDispatchInfo.Capture(exception),
+                IsCompleteSubmission = true
+            };
         }
     }
 }

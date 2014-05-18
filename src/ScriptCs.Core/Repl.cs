@@ -107,7 +107,7 @@ namespace ScriptCs
                     Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
                 }
 
-                if (result.IsPendingClosingChar)
+                if (!result.IsCompleteSubmission)
                 {
                     return result;
                 }
@@ -127,15 +127,18 @@ namespace ScriptCs
             catch (FileNotFoundException fileEx)
             {
                 RemoveReferences(fileEx.FileName);
+
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + fileEx + "\r\n");
-                return new ScriptResult { CompileExceptionInfo = ExceptionDispatchInfo.Capture(fileEx) };
+
+                return ScriptResult.FromCompilationException(fileEx);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex) };
+
+                return ScriptResult.FromExecutionException(ex);
             }
             finally
             {

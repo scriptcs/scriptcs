@@ -306,8 +306,7 @@ namespace ScriptCs.Tests
                     Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                result.IsPendingClosingChar.ShouldBeTrue();
-                result.ExpectingClosingChar.ShouldEqual('}');
+                result.IsCompleteSubmission.ShouldBeFalse();
             }
 
             [Theory, ScriptCsAutoData]
@@ -331,8 +330,7 @@ namespace ScriptCs.Tests
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                result.IsPendingClosingChar.ShouldBeTrue();
-                result.ExpectingClosingChar.ShouldEqual(']');
+                result.IsCompleteSubmission.ShouldBeFalse();
             }
 
             [Theory, ScriptCsAutoData]
@@ -356,8 +354,7 @@ namespace ScriptCs.Tests
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                result.IsPendingClosingChar.ShouldBeTrue();
-                result.ExpectingClosingChar.ShouldEqual(')');
+                result.IsCompleteSubmission.ShouldBeFalse();
             }
         }
 
