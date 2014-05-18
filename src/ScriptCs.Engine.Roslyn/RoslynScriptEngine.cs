@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -136,6 +138,11 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
+            if (!IsCompleteSubmission(code))
+            {
+                return ScriptResult.IncompleteSubmission;
+            }
+
             try
             {
                 var submission = session.CompileSubmission<object>(code);
@@ -153,6 +160,15 @@ namespace ScriptCs.Engine.Roslyn
             {
                 return ScriptResult.FromCompilationException(ex);
             }
+        }
+
+        private static bool IsCompleteSubmission(string code)
+        {
+            var options = new ParseOptions(kind: SourceCodeKind.Interactive);
+
+            var syntaxTree = SyntaxTree.ParseText(code, options: options);
+
+            return Syntax.IsCompleteSubmission(syntaxTree);
         }
     }
 }
