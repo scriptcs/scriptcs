@@ -8,14 +8,14 @@ namespace ScriptCs.Engine.Mono.Parser.Visitors
 
     internal class MethodVisitor : DepthFirstAstVisitor
     {
-        private readonly List<Tuple<MethodDeclaration, FieldDeclaration>> _methods;
+        private readonly List<MethodVisitorResult> _methods;
 
         internal MethodVisitor()
         {
-            _methods = new List<Tuple<MethodDeclaration, FieldDeclaration>>();
+            _methods = new List<MethodVisitorResult>();
         }
 
-        internal List<Tuple<MethodDeclaration, FieldDeclaration>> GetMethodDeclarations()
+        internal List<MethodVisitorResult> GetMethodDeclarations()
         {
             return _methods;
         }
@@ -62,13 +62,23 @@ namespace ScriptCs.Engine.Mono.Parser.Visitors
             }
             methodBody = (BlockStatement)methodBody.Clone();
 
+            var prototype = new VariableDeclarationStatement { Type = methodType };
+            prototype.Variables.Add(new VariableInitializer(methodName));
+
             var anonymousMethod = new AnonymousMethodExpression(methodBody, parameters) { IsAsync = isAsync };
-            var methodExpression = new VariableInitializer(methodName, anonymousMethod);
+            var expression = new ExpressionStatement
+            {
+                Expression = new AssignmentExpression(
+                    new IdentifierExpression(methodName), 
+                    anonymousMethod)
+            };
 
-            var namedMethodExpr = new FieldDeclaration { ReturnType = methodType };
-            namedMethodExpr.Variables.Add(methodExpression);
-
-            _methods.Add(new Tuple<MethodDeclaration, FieldDeclaration>(methodDeclaration, namedMethodExpr));
+            _methods.Add(new MethodVisitorResult
+            {
+                MethodDefinition = methodDeclaration,
+                MethodPrototype = prototype,
+                MethodExpression = expression
+            });
         }
 
         private static string GetIdentifierName(AstNode node)

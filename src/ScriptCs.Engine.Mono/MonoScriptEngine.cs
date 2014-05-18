@@ -103,9 +103,17 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.Compile(parseResult.TypeDeclarations);
                 }
 
-                if (!string.IsNullOrWhiteSpace(parseResult.MethodDeclarations))
+                if (parseResult.MethodExpressions != null && parseResult.MethodExpressions.Any())
                 {
-                    sessionState.Session.Run(parseResult.MethodDeclarations);
+                    foreach (var prototype in parseResult.MethodPrototypes)
+                    {
+                        sessionState.Session.Run(prototype);
+                    }
+
+                    foreach (var method in parseResult.MethodExpressions)
+                    {
+                        sessionState.Session.Run(method);    
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(parseResult.Evaluations))

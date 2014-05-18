@@ -90,6 +90,7 @@
     <Compile Include="Parser\Visitors\MethodVisitor.cs" />
     <Compile Include="Parser\ParseResult.cs" />
     <Compile Include="Parser\SyntaxParser.cs" />
+    <Compile Include="Parser\Visitors\MethodVisitorResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

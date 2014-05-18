@@ -1,6 +1,7 @@
 ﻿namespace ScriptCs.Engine.Mono.Parser
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
@@ -16,12 +17,15 @@
         {
             var className = CreateUniqueName();
             code = WrapAsPseudoClass(className, code);
-            return new ParseResult
-                             {
-                                 TypeDeclarations = ExtractClassDeclarations(className, ref code),
-                                 MethodDeclarations = ExtractMethodDeclaration(ref code),
-                                 Evaluations = UnWrapPseudoClass(code)
-                             };
+            var result = new ParseResult
+            {
+                TypeDeclarations = ExtractClassDeclarations(className, ref code),
+            };
+            var methods = ExtractMethodDeclaration(ref code);
+            result.MethodPrototypes = methods.Item1;
+            result.MethodExpressions = methods.Item2;
+            result.Evaluations = UnWrapPseudoClass(code);
+            return result;
         }
          
         private static string ExtractClassDeclarations(string className, ref string code)
@@ -57,7 +61,7 @@
             return result;
         }
 
-        private static string ExtractMethodDeclaration(ref string code)
+        private static Tuple<List<string>,List<string>> ExtractMethodDeclaration(ref string code)
         {
             var visitor = new MethodVisitor();
             var parser = new CSharpParser();
@@ -65,7 +69,7 @@
             syntaxTree.AcceptVisitor(visitor);
             syntaxTree.Freeze();
 
-            var result = string.Empty;
+            var result = new Tuple<List<string>, List<string>>(new List<string>(), new List<string>());
             var document = new StringBuilderDocument(code);
             using (var script = new DocumentScript(
                 document, 
@@ -74,12 +78,11 @@
             {
                 foreach (var method in visitor.GetMethodDeclarations())
                 {
-                    var oldMethod = method.Item1;
-                    var newMethod = method.Item2;
-                    result += newMethod.GetText();
+                    result.Item1.Add(method.MethodPrototype.GetText());
+                    result.Item2.Add(method.MethodExpression.GetText());
 
-                    var offset = script.GetCurrentOffset(oldMethod.GetRegion().Begin);
-                    script.Replace(oldMethod, new MethodDeclaration());
+                    var offset = script.GetCurrentOffset(method.MethodDefinition.GetRegion().Begin);
+                    script.Replace(method.MethodDefinition, new MethodDeclaration());
                     script.Replace(offset, new MethodDeclaration().GetText().Trim().Length, "");
                 }
             }
