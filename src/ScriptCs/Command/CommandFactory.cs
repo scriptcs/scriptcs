@@ -63,23 +63,6 @@ namespace ScriptCs.Command
 
             if (args.ScriptName != null)
             {
-                scriptServices = _scriptServicesBuilder.Build();
-                var executeCommand = args.Watch
-                    ? (ICommand)new WatchScriptCommand(
-                        args,
-                        scriptArgs,
-                        scriptServices.Console,
-                        scriptServices.FileSystem,
-                        scriptServices.Logger)
-                    : (ICommand)new ExecuteScriptCommand(
-                        args.ScriptName,
-                        scriptArgs,
-                        scriptServices.FileSystem,
-                        scriptServices.Executor,
-                        scriptServices.ScriptPackResolver,
-                        scriptServices.Logger,
-                        scriptServices.AssemblyResolver);
-
                 var currentDirectory = fileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
                 var packagesFolder = Path.Combine(currentDirectory, Constants.PackagesFolder);
@@ -89,16 +72,22 @@ namespace ScriptCs.Command
                     var installCommand = new InstallCommand(
                         null,
                         null,
-                        false,
+                        true,
                         fileSystem,
-                        scriptServices.PackageAssemblyResolver,
-                        scriptServices.PackageInstaller,
-                        scriptServices.Logger);
+                        packageAssemblyResolver,
+                        _initializationServices.GetPackageInstaller(),
+                        logger);
+
+                    var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
+                    {
+                        scriptServices = ScriptServicesBuilderFactory.Create(args, scriptArgs).Build();
+                        return CreateScriptCommand(args, scriptArgs, scriptServices);
+                    });
 
                     return new CompositeCommand(installCommand, executeCommand);
                 }
 
-                return executeCommand;
+                return CreateScriptCommand(args, scriptArgs, _scriptServicesBuilder.Build());
             }
 
             if (args.Clean)
@@ -150,6 +139,26 @@ namespace ScriptCs.Command
             }
 
             return new ShowUsageCommand(logger, isValid: false);
+        }
+
+        private static IScriptCommand CreateScriptCommand(
+            ScriptCsArgs args, string[] scriptArgs, ScriptServices scriptServices)
+        {
+            return args.Watch
+                ? (IScriptCommand)new WatchScriptCommand(
+                    args,
+                    scriptArgs,
+                    scriptServices.Console,
+                    scriptServices.FileSystem,
+                    scriptServices.Logger)
+                : (IScriptCommand)new ExecuteScriptCommand(
+                    args.ScriptName,
+                    scriptArgs,
+                    scriptServices.FileSystem,
+                    scriptServices.Executor,
+                    scriptServices.ScriptPackResolver,
+                    scriptServices.Logger,
+                    scriptServices.AssemblyResolver);
         }
     }
 }

@@ -99,7 +99,7 @@ namespace ScriptCs.Tests
 
                 compositeCommand.Commands.Count.ShouldEqual(2);
                 compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IDeferredCreationCommand<IScriptCommand>>();
             }
 
             [Fact]
