@@ -84,28 +84,23 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            if (string.IsNullOrWhiteSpace(repl.Buffer))
-            {
-                _console.Write("> ");
-            }
-
-            string line = null;
+            _console.Write(string.IsNullOrWhiteSpace(repl.Buffer) ? "> " : "* ");
 
             try
             {
-                line = _console.ReadLine();
+                var line = _console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    repl.Execute(line);
+                }
+
+                return true;
             }
             catch
             {
                 return false;
             }
-
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                repl.Execute(line);
-            }
-
-            return true;
         }
     }
 }
