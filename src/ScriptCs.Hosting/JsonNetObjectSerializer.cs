@@ -5,7 +5,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting
 {
-    public class ObjectSerializer : IObjectSerializer
+    public class JsonNetObjectSerializer : IObjectSerializer
     {
         private static readonly Regex RefOrIdRegex = new Regex(string.Format(@"(.+\""(\$id|\$ref)\"".+{0})", Environment.NewLine),
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
