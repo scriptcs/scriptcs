@@ -97,7 +97,7 @@
     <Compile Include="ScriptServicesRegistration.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />
-    <Compile Include="JsonNetObjectSerializer.cs" />
+    <Compile Include="ObjectSerializer.cs" />
     <Compile Include="TypeResolver.cs" />
   </ItemGroup>
   <ItemGroup>
