@@ -15,7 +15,7 @@ namespace ScriptCs.Hosting.Tests
             {
                 var overrides = new Dictionary<Type, object>();
 
-                var moduleConfiguration = new ModuleConfiguration(false, "script1.csx", false, LogLevel.Debug, overrides);
+                var moduleConfiguration = new ModuleConfiguration(false, "script1.csx", false, LogLevel.Debug, false, overrides);
                 moduleConfiguration.LineProcessor<UsingLineProcessor>();
 
                 var processors = overrides[typeof(ILineProcessor)] as List<Type>;
@@ -25,7 +25,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldReturnTheModuleConfiguration()
             {
-                var moduleConfiguration = new ModuleConfiguration(false, "script1.csx", false, LogLevel.Debug, new Dictionary<Type, object>());
+                var moduleConfiguration = new ModuleConfiguration(false, "script1.csx", false, LogLevel.Debug, false, new Dictionary<Type, object>());
                 var config = moduleConfiguration.LineProcessor<UsingLineProcessor>();
                 config.ShouldImplement<IModuleConfiguration>();
                 config.ShouldEqual(moduleConfiguration);
