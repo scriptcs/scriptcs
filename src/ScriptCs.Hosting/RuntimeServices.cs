@@ -20,7 +20,6 @@ namespace ScriptCs.Hosting
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
-        private readonly IDictionary<Type, object> _overrides = null;
 
         public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
             base(logger, overrides)
@@ -31,7 +30,6 @@ namespace ScriptCs.Hosting
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
             _scriptName = scriptName;
-            _overrides = overrides;
         }
 
         protected override IContainer CreateContainer()
