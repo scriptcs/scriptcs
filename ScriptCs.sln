@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Mono", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Mono.Tests", "test\ScriptCs.Engine.Mono.Tests\ScriptCs.Engine.Mono.Tests.csproj", "{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests.Acceptance", "test\ScriptCs.Tests.Acceptance\ScriptCs.Tests.Acceptance.csproj", "{10684649-2922-41F5-AB9B-20B127CBF92C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10684649-2922-41F5-AB9B-20B127CBF92C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10684649-2922-41F5-AB9B-20B127CBF92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10684649-2922-41F5-AB9B-20B127CBF92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10684649-2922-41F5-AB9B-20B127CBF92C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,5 +102,6 @@ Global
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+		{10684649-2922-41F5-AB9B-20B127CBF92C} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 	EndGlobalSection
 EndGlobal
