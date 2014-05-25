@@ -1,4 +1,4 @@
-﻿namespace ScriptCs.SyntaxTreeParser
+﻿namespace ScriptCs.Engine.Mono.Parser
 {
     using System;
     using System.Linq;
@@ -8,7 +8,7 @@
     using ICSharpCode.NRefactory.Editor;
     using ICSharpCode.NRefactory.CSharp.Refactoring;
 
-    using ScriptCs.SyntaxTreeParser.Visitors;
+    using ScriptCs.Engine.Mono.Parser.Visitors;
 
     public class SyntaxParser
     {

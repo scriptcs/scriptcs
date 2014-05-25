@@ -8,7 +8,7 @@ using System.Text;
 using Common.Logging;
 using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.SyntaxTreeParser;
+using ScriptCs.Engine.Mono.Parser;
 
 namespace ScriptCs.Engine.Mono
 {
