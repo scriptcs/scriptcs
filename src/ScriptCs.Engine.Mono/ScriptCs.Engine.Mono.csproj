@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="Mono.CSharp">
       <HintPath>..\..\packages\Mono.CSharp.3.4.0\lib\net40\Mono.CSharp.dll</HintPath>
+      <Aliases>MonoCSharp</Aliases>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
