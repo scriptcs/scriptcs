@@ -132,7 +132,7 @@ namespace ScriptCs.Hosting
 
         private void RegisterReplCommands(ContainerBuilder builder)
         {
-            var replCommands = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetExportedTypes()).Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass && !x.IsAbstract);
+            var replCommands = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic).SelectMany(x => x.GetExportedTypes()).Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass && !x.IsAbstract);
             builder.RegisterTypes(replCommands.ToArray()).As<IReplCommand>();
         }
 
