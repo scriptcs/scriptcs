@@ -98,14 +98,26 @@ namespace ScriptCs.Engine.Mono
             try
             {
                 var parseResult = parser.Parse(code);
-                if (!string.IsNullOrWhiteSpace(parseResult.TypeDeclarations))
+
+                if (parseResult.TypeDeclarations != null && parseResult.TypeDeclarations.Any())
                 {
-                    sessionState.Session.Compile(parseResult.TypeDeclarations);
+                    foreach (var @class in parseResult.TypeDeclarations)
+                    {
+                        sessionState.Session.Compile(@class);
+                    }
                 }
 
-                if (!string.IsNullOrWhiteSpace(parseResult.MethodDeclarations))
+                if (parseResult.MethodExpressions != null && parseResult.MethodExpressions.Any())
                 {
-                    sessionState.Session.Run(parseResult.MethodDeclarations);
+                    foreach (var prototype in parseResult.MethodPrototypes)
+                    {
+                        sessionState.Session.Run(prototype);
+                    }
+
+                    foreach (var method in parseResult.MethodExpressions)
+                    {
+                        sessionState.Session.Run(method);    
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(parseResult.Evaluations))
