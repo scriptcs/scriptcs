@@ -16,7 +16,7 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ReturnsInstall()
             {
-                var cmd = new InstallCommand(null, null, null);
+                var cmd = new InstallCommand(null, null, null, null);
                 Assert.Equal("install", cmd.CommandName);
             }
         }
@@ -26,11 +26,13 @@ namespace ScriptCs.Tests.ReplCommands
             private readonly Mock<ILog> _logger;
             private readonly Mock<IPackageAssemblyResolver> _packageAssemblyResolver;
             private readonly Mock<IPackageInstaller> _packageInstaller;
+            private readonly Mock<IInstallationProvider> _installationProvider;
             private Mock<IScriptExecutor> _executor;
 
             public ExecuteMethod()
             {
                 _packageInstaller = new Mock<IPackageInstaller>();
+                _installationProvider = new Mock<IInstallationProvider>();
                 _packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
                 _logger = new Mock<ILog>();
 
@@ -44,7 +46,7 @@ namespace ScriptCs.Tests.ReplCommands
 
             private InstallCommand GetCommand()
             {
-                return new InstallCommand(_packageInstaller.Object, _packageAssemblyResolver.Object, _logger.Object);
+                return new InstallCommand(_packageInstaller.Object, _packageAssemblyResolver.Object, _logger.Object, _installationProvider.Object);
             }
 
             [Fact]
