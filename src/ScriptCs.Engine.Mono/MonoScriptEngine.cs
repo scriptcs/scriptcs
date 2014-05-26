@@ -89,7 +89,7 @@ namespace ScriptCs.Engine.Mono
                     PathReferences = new HashSet<string>(references.PathReferences)
                 };
 
-                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+                var newNamespaces = sessionState.Namespaces == null ? namespaces : namespaces.Except(sessionState.Namespaces);
                 ImportNamespaces(newNamespaces, sessionState);
             }
 

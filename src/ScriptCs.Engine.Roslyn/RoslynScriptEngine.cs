@@ -96,6 +96,12 @@ namespace ScriptCs.Engine.Roslyn
                 {
                     sessionState.References = new AssemblyReferences();
                 }
+
+                if (sessionState.Namespaces == null)
+                {
+                    sessionState.Namespaces = new HashSet<string>();
+                }
+
                 var newReferences = executionReferences.Except(sessionState.References);
                 
                 foreach (var reference in newReferences.PathReferences)
