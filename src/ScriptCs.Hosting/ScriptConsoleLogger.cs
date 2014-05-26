@@ -1,4 +1,6 @@
-﻿using Common.Logging;
+﻿using System;
+using System.Collections.Generic;
+using Common.Logging;
 using Common.Logging.Factory;
 using ScriptCs.Contracts;
 using LogLevel = ScriptCs.Contracts.LogLevel;
@@ -10,6 +12,16 @@ namespace ScriptCs.Hosting
         private readonly LogLevel _consoleLogLevel;
         private readonly IConsole _console;
         private readonly ILog _log;
+        private readonly Dictionary<Common.Logging.LogLevel, ConsoleColor> colors =
+            new Dictionary<Common.Logging.LogLevel, ConsoleColor>
+            {
+                { Common.Logging.LogLevel.Fatal, ConsoleColor.Red },
+                { Common.Logging.LogLevel.Error, ConsoleColor.DarkRed },
+                { Common.Logging.LogLevel.Warn, ConsoleColor.DarkYellow },
+                { Common.Logging.LogLevel.Info, ConsoleColor.Gray },
+                { Common.Logging.LogLevel.Debug, ConsoleColor.DarkGray },
+                { Common.Logging.LogLevel.Trace, ConsoleColor.DarkMagenta },
+            };
 
         public ScriptConsoleLogger(LogLevel consoleLogLevel, IConsole console, ILog log)
         {
@@ -51,8 +63,10 @@ namespace ScriptCs.Hosting
             get { return _log.IsTraceEnabled || _consoleLogLevel == LogLevel.Trace; }
         }
 
-        protected override void WriteInternal(Common.Logging.LogLevel level, object message, System.Exception exception)
+        protected override void WriteInternal(Common.Logging.LogLevel level, object message, Exception exception)
         {
+            Guard.AgainstNullArgument("message", message);
+
             var consoleLog = false;
             switch (level)
             {
@@ -108,7 +122,26 @@ namespace ScriptCs.Hosting
 
             if (consoleLog)
             {
-                _console.WriteLine(string.Concat(level.ToString().ToUpperInvariant(), ": ", message.ToString()));
+                var prefix = level == Common.Logging.LogLevel.Info
+                    ? null
+                    : string.Concat(level.ToString().ToUpperInvariant(), ": ");
+
+                ConsoleColor color;
+                if (!colors.TryGetValue(level, out color))
+                {
+                    color = ConsoleColor.White;
+                }
+
+                var originalColor = _console.ForegroundColor;
+                _console.ForegroundColor = color;
+                try
+                {
+                    _console.WriteLine(string.Concat(prefix, message.ToString()));
+                }
+                finally
+                {
+                    _console.ForegroundColor = originalColor;
+                }
             }
         }
     }

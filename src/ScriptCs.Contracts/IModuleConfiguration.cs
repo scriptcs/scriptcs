@@ -1,4 +1,8 @@
-﻿namespace ScriptCs.Contracts
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ScriptCs.Contracts
 {
     public interface IModuleConfiguration : IServiceOverrides<IModuleConfiguration>
     {
@@ -9,5 +13,9 @@
         bool Repl { get; }
 
         LogLevel LogLevel { get; }
+
+        bool Debug { get; }
+
+        IDictionary<Type, object> Overrides { get; }
     }
 }

@@ -51,5 +51,7 @@ namespace ScriptCs.Contracts
         void WriteAllBytes(string filePath, byte[] bytes);
 
         string ModulesFolder { get; }
+
+        string HostBin { get; }
     }
 }

@@ -45,7 +45,10 @@ namespace ScriptCs.Command
             _replCommands = replCommands;
         }
 
-        public string[] ScriptArgs { get; private set; }
+        public string[] ScriptArgs
+        {
+            get { return _scriptArgs; }
+        }
 
         public CommandResult Execute()
         {
@@ -62,7 +65,7 @@ namespace ScriptCs.Command
             {
                 if (!string.IsNullOrWhiteSpace(_scriptName))
                 {
-                    _logger.Info(string.Format("Loading preseeded script: {0}", _scriptName));
+                    _logger.Info(string.Format("Loading script: {0}", _scriptName));
                     repl.Execute(string.Format("#load {0}", _scriptName));
                 }
 
@@ -90,7 +93,7 @@ namespace ScriptCs.Command
             }
 
             string line = null;
-            
+
             try
             {
                 line = _console.ReadLine();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
@@ -78,6 +79,18 @@ namespace ScriptCs.Hosting
                         catalog.Parts.ToList(); //force the Parts to be read
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
+                    catch (ReflectionTypeLoadException typeLoadEx)
+                    {
+                        assemblyLoadFailures = true;
+                        if (typeLoadEx.LoaderExceptions != null && typeLoadEx.LoaderExceptions.Any())
+                        {
+                            foreach (var ex in typeLoadEx.LoaderExceptions.GroupBy(x => x.Message))
+                            {
+                                Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly,
+                                    ex.First().Message);
+                            }
+                        }
+                    }
                     catch(Exception ex)
                     {
                         assemblyLoadFailures = true;
@@ -86,10 +99,9 @@ namespace ScriptCs.Hosting
                 }
                 if (assemblyLoadFailures)
                 {
-                    if (_scriptName == null || _scriptName.Length == 0)
-                        Logger.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
-                    else    
-                        Logger.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
+                    Logger.Warn(string.IsNullOrEmpty(_scriptName)
+                        ? "Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"
+                        : "Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
                 }
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }

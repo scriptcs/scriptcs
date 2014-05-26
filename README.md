@@ -27,7 +27,7 @@ Once Chocolatey has been installed, you can install the latest stable version of
 
     cinst scriptcs
 
-Chocolatey will install scriptcs to `%APPDATA%\scriptcs\` and update your PATH accordingly.
+Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your PATH accordingly.
 
 **Note:** You may need to restart your command prompt after the installation completes.
 

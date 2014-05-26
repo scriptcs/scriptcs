@@ -46,8 +46,14 @@ namespace ScriptCs.Engine.Roslyn
 
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
-            
-            references.PathReferences.UnionWith(scriptPackSession.References);
+
+            var executionReferences = new AssemblyReferences()
+            {
+                Assemblies = new HashSet<Assembly>(references.Assemblies),
+                PathReferences = new HashSet<string>(references.PathReferences)
+            };
+            executionReferences.PathReferences.UnionWith(scriptPackSession.References);
+
             SessionState<Session> sessionState;
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -59,13 +65,13 @@ namespace ScriptCs.Engine.Roslyn
                 ScriptEngine.AddReference(hostType.Assembly);
                 var session = ScriptEngine.CreateSession(host, hostType);
 
-                foreach (var reference in references.PathReferences)
+                foreach (var reference in executionReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     session.AddReference(reference);
                 }
 
-                foreach (var assembly in references.Assemblies)
+                foreach (var assembly in executionReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     session.AddReference(assembly);
@@ -77,7 +83,7 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = AssemblyReferences.New(references.PathReferences, references.Assemblies), Session = session };
+                sessionState = new SessionState<Session> { References = executionReferences, Session = session };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -85,24 +91,25 @@ namespace ScriptCs.Engine.Roslyn
                 Logger.Debug("Reusing existing session");
                 sessionState = (SessionState<Session>)scriptPackSession.State[SessionKey];
 
-                var newReferences = sessionState.References == null ? references : references.Except(sessionState.References);
+                if (sessionState.References == null)
+                {
+                    sessionState.References = new AssemblyReferences();
+                }
+                var newReferences = executionReferences.Except(sessionState.References);
+                
                 foreach (var reference in newReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.AddReference(reference);
+                    sessionState.References.PathReferences.Add(reference);
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     sessionState.Session.AddReference(assembly);
+                    sessionState.References.Assemblies.Add(assembly);
                 }
-
-                if (sessionState.References == null)
-                    sessionState.References = AssemblyReferences.New(newReferences.PathReferences,
-                        newReferences.Assemblies);
-                else
-                    sessionState.References.Union(newReferences);
             }
 
             Logger.Debug("Starting execution");

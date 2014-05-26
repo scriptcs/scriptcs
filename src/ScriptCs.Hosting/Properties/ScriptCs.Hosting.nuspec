@@ -3,7 +3,7 @@
   <metadata>
     <id>ScriptCs.Hosting</id>
     <version>$version$</version>
-    <authors>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</authors>
+    <authors>Glenn Block, Filip Wojcieszyn, Justin Rusbatch, Kristian Hellang, Damian Schenkelman, Adam Ralph</authors>
     <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
     <licenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>http://scriptcs.net</projectUrl>

@@ -137,6 +137,22 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldHandleScriptNameStartingWithRepl()
+            {
+                const string file = "{\"repl\": true}";
+                string[] args = { "replication.csx", "--", "-port", "8080" };
+
+                var argumentHandler = Setup(file);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("replication.csx");
+                result.CommandArguments.Repl.ShouldBeTrue();
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
             public void ShouldUseScriptOptsIfParsingFailed()
             {
                 var parser = new Mock<IArgumentParser>();
@@ -147,7 +163,7 @@ namespace ScriptCs.Tests
                 var configParser = new Mock<IConfigFileParser>();
                 var argumentHandler = new ArgumentHandler(parser.Object, configParser.Object, system.Object);
 
-                var result = argumentHandler.Parse(new string[0]);
+                argumentHandler.Parse(new string[0]);
 
                 system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
             }

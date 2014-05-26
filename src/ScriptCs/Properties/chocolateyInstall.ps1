@@ -1,7 +1,7 @@
 ﻿try { 
     $tools = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
     $nuget = "$env:ChocolateyInstall\ChocolateyInstall\nuget"
-    $binPath = "$env:APPDATA\scriptcs"
+    $binPath = "$env:LOCALAPPDATA\scriptcs"
     $nugetPath = "$tools\nugets"
 
     New-Item $binPath -ItemType Directory -Force | Out-Null

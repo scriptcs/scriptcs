@@ -5,5 +5,7 @@
         string Name { get; }
 
         string Extensions { get; }
+
+        bool Autoload { get; }
     }
 }

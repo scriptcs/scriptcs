@@ -103,9 +103,9 @@ namespace ScriptCs.Argument
             var attribute = property.GetCustomAttribute<ArgShortcut>();
 
             if (attribute != null)
-                attributeFound = args.Any(a => a.Contains((attribute as ArgShortcut).Shortcut));
+                attributeFound = args.Any(a => a.Contains("-" + (attribute as ArgShortcut).Shortcut));
 
-            var result = args.Any(a => a.Contains(property.Name)) || attributeFound;
+            var result = args.Any(a => a.Contains("-" + property.Name)) || attributeFound;
             return result;
         }
 

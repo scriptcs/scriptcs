@@ -5,17 +5,16 @@ using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using NuGet;
-
 using ScriptCs.Contracts;
-
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Hosting.Package
 {
     public class PackageContainer : IPackageContainer
     {
         private const string DotNetFramework = ".NETFramework";
+
+        private const string DotNetPortable = ".NETPortable";
 
         private readonly IFileSystem _fileSystem;
 
@@ -135,9 +134,21 @@ namespace ScriptCs.Hosting.Package
         private static FrameworkName GetNewestSupportedFramework(IPackage packageMetadata)
         {
             return packageMetadata.GetSupportedFrameworks()
-                .Where(x => x.Identifier == DotNetFramework)
+                .Where(IsValidFramework)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
+        }
+
+        private static bool IsValidFramework(FrameworkName frameworkName)
+        {
+            return frameworkName.Identifier == DotNetFramework
+                || (frameworkName.Identifier == DotNetPortable 
+                    && frameworkName.Profile.Split('+').Any(IsValidProfile));
+        }
+
+        private static bool IsValidProfile(string profile)
+        {
+            return profile == "net40" || profile == "net45";
         }
     }
 }
