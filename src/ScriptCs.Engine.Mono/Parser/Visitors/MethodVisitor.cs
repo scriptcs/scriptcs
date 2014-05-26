@@ -15,7 +15,7 @@ namespace ScriptCs.Engine.Mono.Parser.Visitors
             _methods = new List<MethodVisitorResult>();
         }
 
-        internal List<MethodVisitorResult> GetMethodDeclarations()
+        internal IList<MethodVisitorResult> GetMethodDeclarations()
         {
             return _methods;
         }

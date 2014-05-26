@@ -4,9 +4,9 @@
 
     public class ParseResult
     {
-        public string TypeDeclarations { get; set; }
-        public List<string> MethodPrototypes { get; set; }
-        public List<string> MethodExpressions { get; set; }
+        public IEnumerable<string> TypeDeclarations { get; set; }
+        public IEnumerable<string> MethodPrototypes { get; set; }
+        public IEnumerable<string> MethodExpressions { get; set; }
         public string Evaluations { get; set; }
     }
 }

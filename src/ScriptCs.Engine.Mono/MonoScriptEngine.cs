@@ -98,9 +98,13 @@ namespace ScriptCs.Engine.Mono
             try
             {
                 var parseResult = parser.Parse(code);
-                if (!string.IsNullOrWhiteSpace(parseResult.TypeDeclarations))
+
+                if (parseResult.TypeDeclarations != null && parseResult.TypeDeclarations.Any())
                 {
-                    sessionState.Session.Compile(parseResult.TypeDeclarations);
+                    foreach (var @class in parseResult.TypeDeclarations)
+                    {
+                        sessionState.Session.Compile(@class);
+                    }
                 }
 
                 if (parseResult.MethodExpressions != null && parseResult.MethodExpressions.Any())

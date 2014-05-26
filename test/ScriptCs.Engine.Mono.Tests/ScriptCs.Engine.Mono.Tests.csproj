@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="MonoModuleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Parser\SyntaxParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,4 +85,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Parser\" />
+  </ItemGroup>
 </Project>
