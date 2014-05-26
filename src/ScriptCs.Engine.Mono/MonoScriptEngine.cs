@@ -1,12 +1,14 @@
-﻿using System;
+﻿extern alias MonoCSharp;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Common.Logging;
-using Mono.CSharp;
+using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.SyntaxTreeParser;
+using ScriptCs.Engine.Mono.Parser;
 
 namespace ScriptCs.Engine.Mono
 {

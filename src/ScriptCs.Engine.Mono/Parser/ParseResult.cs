@@ -1,4 +1,4 @@
-﻿namespace ScriptCs.SyntaxTreeParser
+﻿namespace ScriptCs.Engine.Mono.Parser
 {
     public class ParseResult
     {
