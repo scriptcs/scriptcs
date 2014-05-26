@@ -342,7 +342,7 @@ namespace ScriptCs.Tests
                     x =>
                     x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
-                     .Returns<ScriptResult>(x => ScriptResult.IncompleteSubmission);
+                     .Returns<ScriptResult>(x => ScriptResult.Incomplete);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "var x = 1;" });
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
@@ -361,7 +361,7 @@ namespace ScriptCs.Tests
                     x =>
                     x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
-                     .Returns(ScriptResult.FromReturnValue(null));
+                     .Returns(ScriptResult.Empty);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "}" });
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
@@ -381,7 +381,7 @@ namespace ScriptCs.Tests
                     x =>
                     x.Execute(It.Is<string>(i => i == "class test {}"), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                               It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
-                     .Returns(ScriptResult.FromReturnValue(null));
+                     .Returns(ScriptResult.Empty);
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 _repl = GetRepl(mocks);
                 _repl.Buffer = "class test {";

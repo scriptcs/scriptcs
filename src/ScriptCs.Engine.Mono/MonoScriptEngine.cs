@@ -129,7 +129,7 @@ namespace ScriptCs.Engine.Mono
 
                     Logger.Debug("Finished execution");
 
-                    return ScriptResult.FromReturnValue(scriptResult);
+                    return new ScriptResult(returnValue: scriptResult);
                 }
             }
             catch (Exception e)

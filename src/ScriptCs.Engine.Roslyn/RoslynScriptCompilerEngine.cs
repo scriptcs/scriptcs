@@ -61,13 +61,13 @@ namespace ScriptCs.Engine.Roslyn
                     
                     Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
 
-                    return ScriptResult.FromCompilationException(new ScriptCompilationException(errors));
+                    return new ScriptResult(compilationException: new ScriptCompilationException(errors));
                 }
             }
             catch (Exception compileException)
             {
                 //we catch Exception rather than CompilationErrorException because there might be issues with assembly loading too
-                return ScriptResult.FromCompilationException(new ScriptCompilationException(compileException.Message, compileException));
+                return new ScriptResult(compilationException: new ScriptCompilationException(compileException.Message, compileException));
             }
         }
 
@@ -84,7 +84,7 @@ namespace ScriptCs.Engine.Roslyn
             {
                 Logger.Debug("Invoking method.");
 
-                return ScriptResult.FromReturnValue(method.Invoke(null, new object[] { session }));
+                return new ScriptResult(returnValue: method.Invoke(null, new object[] { session }));
             }
             catch (Exception executeException)
             {
@@ -92,7 +92,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 var ex = executeException.InnerException ?? executeException;
 
-                return ScriptResult.FromExecutionException(ex);
+                return new ScriptResult(executionException: ex);
             }
         }
     }

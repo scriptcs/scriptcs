@@ -131,14 +131,14 @@ namespace ScriptCs
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Environment.NewLine + fileEx + Environment.NewLine);
 
-                return ScriptResult.FromCompilationException(fileEx);
+                return new ScriptResult(compilationException: fileEx);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Environment.NewLine + ex + Environment.NewLine);
 
-                return ScriptResult.FromExecutionException(ex);
+                return new ScriptResult(executionException: ex);
             }
             finally
             {

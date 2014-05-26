@@ -140,7 +140,7 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!IsCompleteSubmission(code))
             {
-                return ScriptResult.IncompleteSubmission;
+                return ScriptResult.Incomplete;
             }
 
             try
@@ -149,16 +149,16 @@ namespace ScriptCs.Engine.Roslyn
 
                 try
                 {
-                    return ScriptResult.FromReturnValue(submission.Execute());
+                    return new ScriptResult(returnValue: submission.Execute());
                 }
                 catch (Exception ex)
                 {
-                    return ScriptResult.FromExecutionException(ex);
+                    return new ScriptResult(executionException: ex);
                 }
             }
             catch (Exception ex)
             {
-                return ScriptResult.FromCompilationException(ex);
+                return new ScriptResult(compilationException: ex);
             }
         }
 
