@@ -10,12 +10,14 @@ namespace ScriptCs.ReplCommands
         private readonly IPackageInstaller _packageInstaller;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly ILog _logger;
+        private readonly IInstallationProvider _installationProvider;
 
-        public InstallCommand(IPackageInstaller packageInstaller, IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
+        public InstallCommand(IPackageInstaller packageInstaller, IPackageAssemblyResolver packageAssemblyResolver, ILog logger, IInstallationProvider installationProvider)
         {
             _packageInstaller = packageInstaller;
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
+            _installationProvider = installationProvider;
         }
 
         public string CommandName
@@ -39,6 +41,8 @@ namespace ScriptCs.ReplCommands
             }
 
             _logger.InfoFormat("Installing {0}", args[0]);
+
+            _installationProvider.Initialize();
 
             var packageRef = new PackageReference(args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.0"), version);
             _packageInstaller.InstallPackages(new[]
