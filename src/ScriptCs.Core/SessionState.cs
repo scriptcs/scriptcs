@@ -8,5 +8,7 @@ namespace ScriptCs
         public T Session { get; set; }
 
         public AssemblyReferences References { get; set; }
+
+        public HashSet<string> Namespaces { get; set; } 
     }
 }

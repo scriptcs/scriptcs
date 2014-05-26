@@ -64,6 +64,7 @@ namespace ScriptCs.Engine.Roslyn
                 var hostType = host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
                 var session = ScriptEngine.CreateSession(host, hostType);
+                var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 foreach (var reference in executionReferences.PathReferences)
                 {
@@ -77,13 +78,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.AddReference(assembly);
                 }
 
-                foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
+                foreach (var @namespace in allNamespaces)
                 {
                     Logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = executionReferences, Session = session };
+                sessionState = new SessionState<Session> { References = executionReferences, Session = session, Namespaces = new HashSet<string>(allNamespaces) };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -95,6 +96,12 @@ namespace ScriptCs.Engine.Roslyn
                 {
                     sessionState.References = new AssemblyReferences();
                 }
+
+                if (sessionState.Namespaces == null)
+                {
+                    sessionState.Namespaces = new HashSet<string>();
+                }
+
                 var newReferences = executionReferences.Except(sessionState.References);
                 
                 foreach (var reference in newReferences.PathReferences)
@@ -109,6 +116,15 @@ namespace ScriptCs.Engine.Roslyn
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     sessionState.Session.AddReference(assembly);
                     sessionState.References.Assemblies.Add(assembly);
+                }
+
+                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+
+                foreach (var @namespace in newNamespaces)
+                {
+                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    sessionState.Session.ImportNamespace(@namespace);
+                    sessionState.Namespaces.Add(@namespace);
                 }
             }
 
