@@ -48,14 +48,7 @@ namespace ScriptCs.Engine.Mono
                 }, new ConsoleReportPrinter());
 
                 var evaluator = new Evaluator(context);
-                var builder = new StringBuilder();
-
-                foreach (var ns in namespaces.Union(scriptPackSession.Namespaces).Distinct())
-                {
-                    builder.AppendLine(string.Format("using {0};", ns));
-                }
-
-                evaluator.Compile(builder.ToString());
+                var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 MonoHost.SetHost((ScriptHost)host);
@@ -65,9 +58,17 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState = new SessionState<Evaluator>
                 {
-                    References = new AssemblyReferences { Assemblies = new HashSet<Assembly>(references.Assemblies), PathReferences = new HashSet<string>(references.PathReferences) },
+                    References = new AssemblyReferences
+                    {
+                        Assemblies = new HashSet<Assembly>(references.Assemblies), 
+                        PathReferences = new HashSet<string>(references.PathReferences)
+                    },
+                    Namespaces = new HashSet<string>(),
                     Session = evaluator
                 };
+
+                ImportNamespaces(allNamespaces, sessionState);
+
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -87,6 +88,9 @@ namespace ScriptCs.Engine.Mono
                     Assemblies = new HashSet<Assembly>(references.Assemblies),
                     PathReferences = new HashSet<string>(references.PathReferences)
                 };
+
+                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+                ImportNamespaces(newNamespaces, sessionState);
             }
 
             Logger.Debug("Starting execution");
@@ -121,6 +125,18 @@ namespace ScriptCs.Engine.Mono
             }
 
             return new ScriptResult();
+        }
+
+        private void ImportNamespaces(IEnumerable<string> namespaces, SessionState<Evaluator> sessionState)
+        {
+            var builder = new StringBuilder();
+            foreach (var ns in namespaces)
+            {
+                Logger.DebugFormat(ns);
+                builder.AppendLine(string.Format("using {0};", ns));
+                sessionState.Namespaces.Add(ns);
+            }
+            sessionState.Session.Compile(builder.ToString());
         }
     }
 }
