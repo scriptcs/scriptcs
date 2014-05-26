@@ -51,7 +51,7 @@ namespace ScriptCs
             {
                 if (script.StartsWith(":"))
                 {
-                    var arguments = script.Split(' ');
+                    var arguments = Arguments.SplitCommandLine(script);
                     var command = Commands.FirstOrDefault(x => x.CommandName == arguments[0].Substring(1));
 
                     if (command != null)
