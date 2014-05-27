@@ -128,7 +128,8 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
                     Logger.Debug("Finished execution");
-                    return new ScriptResult { ReturnValue = scriptResult };
+
+                    return new ScriptResult(returnValue: scriptResult);
                 }
             }
             catch (Exception e)
@@ -136,7 +137,7 @@ namespace ScriptCs.Engine.Mono
                 Logger.Error(e.Message);
             }
 
-            return new ScriptResult();
+            return ScriptResult.Empty;
         }
 
         private void ImportNamespaces(IEnumerable<string> namespaces, SessionState<Evaluator> sessionState)

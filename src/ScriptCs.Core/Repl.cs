@@ -47,13 +47,13 @@ namespace ScriptCs
                 if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.Clear();
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith("#reset"))
                 {
                     Reset();
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith(":cd", StringComparison.OrdinalIgnoreCase))
@@ -64,7 +64,7 @@ namespace ScriptCs
 
                     FileSystem.CurrentDirectory = Path.Combine(FileSystem.CurrentDirectory, relativePath);
 
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
@@ -75,7 +75,7 @@ namespace ScriptCs
 
                     Console.WriteLine(dir);
 
-                    return new ScriptResult();
+                    return ScriptResult.Empty;
                 }
 
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
@@ -93,7 +93,7 @@ namespace ScriptCs
                 Buffer += preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
-                if (result == null) return new ScriptResult();
+                if (result == null) return ScriptResult.Empty;
 
                 if (result.CompileExceptionInfo != null)
                 {
@@ -107,7 +107,7 @@ namespace ScriptCs
                     Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
                 }
 
-                if (result.IsPendingClosingChar)
+                if (!result.IsCompleteSubmission)
                 {
                     return result;
                 }
@@ -127,15 +127,18 @@ namespace ScriptCs
             catch (FileNotFoundException fileEx)
             {
                 RemoveReferences(fileEx.FileName);
+
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + fileEx + "\r\n");
-                return new ScriptResult { CompileExceptionInfo = ExceptionDispatchInfo.Capture(fileEx) };
+                Console.WriteLine(Environment.NewLine + fileEx + Environment.NewLine);
+
+                return new ScriptResult(compilationException: fileEx);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex) };
+                Console.WriteLine(Environment.NewLine + ex + Environment.NewLine);
+
+                return new ScriptResult(executionException: ex);
             }
             finally
             {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -10,8 +12,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
     public class RoslynScriptEngine : IScriptEngine
     {
         protected readonly ScriptEngine ScriptEngine;
@@ -138,29 +138,37 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
+            if (!IsCompleteSubmission(code))
+            {
+                return ScriptResult.Incomplete;
+            }
+
             try
             {
                 var submission = session.CompileSubmission<object>(code);
+
                 try
                 {
-                    result.ReturnValue = submission.Execute();
+                    return new ScriptResult(returnValue: submission.Execute());
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                    return new ScriptResult(executionException: ex);
                 }
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
-                if (!result.IsPendingClosingChar)
-                {
-                    result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                return new ScriptResult(compilationException: ex);
             }
+        }
 
-            return result;
+        private static bool IsCompleteSubmission(string code)
+        {
+            var options = new ParseOptions(kind: SourceCodeKind.Interactive);
+
+            var syntaxTree = SyntaxTree.ParseText(code, options: options);
+
+            return Syntax.IsCompleteSubmission(syntaxTree);
         }
     }
 }
