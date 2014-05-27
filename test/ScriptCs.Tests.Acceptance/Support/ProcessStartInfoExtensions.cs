@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Text;
 
@@ -27,7 +28,13 @@
 
                 if (process.ExitCode != 0)
                 {
-                    throw new InvalidOperationException(output.ToString());
+                    var message = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "The process exited with code {0}. The output was: {1}",
+                        process.ExitCode.ToString(CultureInfo.InvariantCulture),
+                        output.ToString());
+
+                    throw new InvalidOperationException(message);
                 }
             }
 

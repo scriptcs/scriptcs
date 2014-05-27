@@ -2,9 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Linq;
 
     public static class ScriptCsExe
     {
@@ -17,14 +15,27 @@
                 commandArgs.AddRange(scriptArgs);
             }
 
+#if DEBUG
+            var config = "Debug";
+#else
+            var config = "Release";
+#endif
+
+#if __MonoCS__
+            var exe = Path.Combine("..", "..", "..", "..", "..", "src", "ScriptCs", "bin", config, "scriptcs.exe");
+#else
+            var exe = Path.Combine("..", "..", "..", "..", "src", "ScriptCs", "bin", config, "scriptcs.exe");
+#endif
+
             var info = new ProcessStartInfo
             {
-#if DEBUG
-                FileName = @"..\..\..\..\src\ScriptCs\bin\Debug\scriptcs.exe",
+#if __MonoCS__
+                FileName = "mono",
+                Arguments = string.Concat(exe, " ", string.Join(" ", commandArgs)),
 #else
-                FileName = @"..\..\..\..\src\ScriptCs\bin\Release\scriptcs.exe",
-#endif
+                FileName = exe,
                 Arguments = string.Join(" ", commandArgs),
+#endif
                 WorkingDirectory = workingDirectory,
                 UseShellExecute = false,
                 CreateNoWindow = true,
