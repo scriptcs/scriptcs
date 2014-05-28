@@ -90,7 +90,9 @@ namespace ScriptCs
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
-                Buffer += preProcessResult.Code;
+                Buffer = (Buffer == null)
+                    ? preProcessResult.Code
+                    : Buffer + Environment.NewLine + preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
                 if (result == null) return ScriptResult.Empty;
