@@ -18,6 +18,7 @@
                 process.ErrorDataReceived += (sender, e) => output.AppendLine(e.Data);
                 process.Start();
                 process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
                 process.WaitForExit();
 
                 using (var writer = new StreamWriter(logfile, true))
