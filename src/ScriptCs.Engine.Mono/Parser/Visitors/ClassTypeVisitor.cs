@@ -13,7 +13,7 @@
             _classes = new List<TypeDeclaration>();
         }
 
-        internal List<TypeDeclaration> GetClassDeclarations()
+        internal IList<TypeDeclaration> GetClassDeclarations()
         {
             return _classes;
         }

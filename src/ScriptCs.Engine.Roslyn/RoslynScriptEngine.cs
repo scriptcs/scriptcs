@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -10,8 +12,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
     public class RoslynScriptEngine : IScriptEngine
     {
         protected readonly ScriptEngine ScriptEngine;
@@ -64,6 +64,7 @@ namespace ScriptCs.Engine.Roslyn
                 var hostType = host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
                 var session = ScriptEngine.CreateSession(host, hostType);
+                var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 foreach (var reference in executionReferences.PathReferences)
                 {
@@ -77,13 +78,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.AddReference(assembly);
                 }
 
-                foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
+                foreach (var @namespace in allNamespaces)
                 {
                     Logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = executionReferences, Session = session };
+                sessionState = new SessionState<Session> { References = executionReferences, Session = session, Namespaces = new HashSet<string>(allNamespaces) };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -95,6 +96,12 @@ namespace ScriptCs.Engine.Roslyn
                 {
                     sessionState.References = new AssemblyReferences();
                 }
+
+                if (sessionState.Namespaces == null)
+                {
+                    sessionState.Namespaces = new HashSet<string>();
+                }
+
                 var newReferences = executionReferences.Except(sessionState.References);
                 
                 foreach (var reference in newReferences.PathReferences)
@@ -110,6 +117,15 @@ namespace ScriptCs.Engine.Roslyn
                     sessionState.Session.AddReference(assembly);
                     sessionState.References.Assemblies.Add(assembly);
                 }
+
+                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+
+                foreach (var @namespace in newNamespaces)
+                {
+                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    sessionState.Session.ImportNamespace(@namespace);
+                    sessionState.Namespaces.Add(@namespace);
+                }
             }
 
             Logger.Debug("Starting execution");
@@ -122,29 +138,37 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
+            if (!IsCompleteSubmission(code))
+            {
+                return ScriptResult.Incomplete;
+            }
+
             try
             {
                 var submission = session.CompileSubmission<object>(code);
+
                 try
                 {
-                    result.ReturnValue = submission.Execute();
+                    return new ScriptResult(returnValue: submission.Execute());
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                    return new ScriptResult(executionException: ex);
                 }
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
-                if (!result.IsPendingClosingChar)
-                {
-                    result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                return new ScriptResult(compilationException: ex);
             }
+        }
 
-            return result;
+        private static bool IsCompleteSubmission(string code)
+        {
+            var options = new ParseOptions(kind: SourceCodeKind.Interactive);
+
+            var syntaxTree = SyntaxTree.ParseText(code, options: options);
+
+            return Syntax.IsCompleteSubmission(syntaxTree);
         }
     }
 }

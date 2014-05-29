@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using Common.Logging;
 
@@ -85,7 +84,7 @@ namespace ScriptCs
             context.LoadedScripts.Add(fullPath);
 
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
-            
+
             InsertLineDirective(fullPath, scriptLines);
             InDirectory(fullPath, () => ParseScript(scriptLines, context));
         }
@@ -135,10 +134,12 @@ namespace ScriptCs
             _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
 
-        private static bool IsNonDirectiveLine(string line)
+        private bool IsNonDirectiveLine(string line)
         {
-            var trimmedLine = line.TrimStart(' ');
-            return !trimmedLine.StartsWith("#r ") && !trimmedLine.StartsWith("#load ") && line.Trim() != string.Empty;
+            var directiveLineProcessors =
+                _lineProcessors.OfType<IDirectiveLineProcessor>();
+
+            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(line));
         }
 
         private static bool IsUsingLine(string line)

@@ -112,7 +112,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult {CompileExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test"))});
+                        .Returns(new ScriptResult(compilationException: new Exception("test")));
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
@@ -150,7 +150,7 @@ namespace ScriptCs.Tests
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
-                        .Returns(new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(new Exception("test")) });
+                        .Returns(new ScriptResult(executionException: new Exception("test")));
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);

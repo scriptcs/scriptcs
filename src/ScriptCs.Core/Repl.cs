@@ -80,10 +80,7 @@ namespace ScriptCs
 
                         Buffer = null;
 
-                        return new ScriptResult
-                        {
-                            ReturnValue = commandResult
-                        };
+                        return new ScriptResult(commandResult);
                     }
                 }
 
@@ -99,10 +96,12 @@ namespace ScriptCs
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
-                Buffer += preProcessResult.Code;
+                Buffer = (Buffer == null)
+                    ? preProcessResult.Code
+                    : Buffer + Environment.NewLine + preProcessResult.Code;
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
-                if (result == null) return new ScriptResult();
+                if (result == null) return ScriptResult.Empty;
 
                 if (result.CompileExceptionInfo != null)
                 {
@@ -116,7 +115,7 @@ namespace ScriptCs
                     Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
                 }
 
-                if (result.IsPendingClosingChar)
+                if (!result.IsCompleteSubmission)
                 {
                     return result;
                 }
@@ -136,15 +135,18 @@ namespace ScriptCs
             catch (FileNotFoundException fileEx)
             {
                 RemoveReferences(fileEx.FileName);
+
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + fileEx + "\r\n");
-                return new ScriptResult { CompileExceptionInfo = ExceptionDispatchInfo.Capture(fileEx) };
+                Console.WriteLine(Environment.NewLine + fileEx + Environment.NewLine);
+
+                return new ScriptResult(compilationException: fileEx);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\r\n" + ex + "\r\n");
-                return new ScriptResult { ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex) };
+                Console.WriteLine(Environment.NewLine + ex + Environment.NewLine);
+
+                return new ScriptResult(executionException: ex);
             }
             finally
             {
