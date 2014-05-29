@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Common.Logging;
@@ -61,17 +62,29 @@ namespace ScriptCs
                             var argsToPass = new List<object>();
                             foreach (var argument in tokens.Skip(1))
                             {
-                                try
-                                {
-                                    var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
-                                    //if Roslyn can evaluate the argument, use its value, otherwise assume the string
+                                var argumentResult = ScriptEngine.Execute(
+                                    argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
 
-                                    argsToPass.Add(argumentResult.ReturnValue ?? argument);
-                                }
-                                catch (Exception)
+                                if (argumentResult.CompileExceptionInfo != null)
                                 {
-                                    argsToPass.Add(argument);
+                                    throw new Exception(
+                                        GetInvalidCommandArgumentMessage(argument),
+                                        argumentResult.CompileExceptionInfo.SourceException);
                                 }
+
+                                if (argumentResult.ExecuteExceptionInfo != null)
+                                {
+                                    throw new Exception(
+                                        GetInvalidCommandArgumentMessage(argument),
+                                        argumentResult.ExecuteExceptionInfo.SourceException);
+                                }
+
+                                if (!argumentResult.IsCompleteSubmission)
+                                {
+                                    throw new Exception(GetInvalidCommandArgumentMessage(argument));
+                                }
+
+                                argsToPass.Add(argumentResult.ReturnValue);
                             }
 
                             var commandResult = command.Execute(this, argsToPass.ToArray());
@@ -156,6 +169,11 @@ namespace ScriptCs
             {
                 Console.ResetColor();
             }
+        }
+
+        private static string GetInvalidCommandArgumentMessage(string argument)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "Argument is not a valid expression: {0}", argument);
         }
     }
 }
