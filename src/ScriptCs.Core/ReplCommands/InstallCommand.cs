@@ -48,13 +48,9 @@ namespace ScriptCs.ReplCommands
             if (args.Length >= 2)
             {
                 version = args[1].ToString();
-
-                // TODO (adamralph): something else! ;-)
-                if (args.Length == 3)
-                {
-                    allowPre = true;
-                }
             }
+
+            allowPre = args.Length >= 3 && args[2].ToString().ToUpperInvariant() == "PRE";
 
             _logger.InfoFormat("Installing {0}", args[0]);
 
@@ -62,13 +58,13 @@ namespace ScriptCs.ReplCommands
 
             var packageRef = new PackageReference(
                 args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.0"), version);
-            
+
             _packageInstaller.InstallPackages(new[] { packageRef }, allowPre);
             _packageAssemblyResolver.SavePackages();
 
             var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory)
                 .Except(repl.References.PathReferences).ToArray();
-            
+
             repl.AddReferences(dlls);
 
             foreach (var dll in dlls)
