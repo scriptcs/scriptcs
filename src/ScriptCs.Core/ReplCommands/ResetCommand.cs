@@ -6,14 +6,13 @@ namespace ScriptCs.ReplCommands
     {
         public string CommandName
         {
-            get
-            {
-                return "reset";
-            }
+            get { return "reset"; }
         }
 
         public object Execute(IScriptExecutor repl, object[] args)
         {
+            Guard.AgainstNullArgument("repl", repl);
+
             repl.Reset();
             return null;
         }

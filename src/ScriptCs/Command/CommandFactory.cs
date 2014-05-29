@@ -1,5 +1,5 @@
-﻿using ScriptCs.Hosting;
-using System.IO;
+﻿using System.IO;
+using ScriptCs.Hosting;
 
 namespace ScriptCs.Command
 {

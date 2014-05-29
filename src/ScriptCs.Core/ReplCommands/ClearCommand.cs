@@ -8,15 +8,14 @@ namespace ScriptCs.ReplCommands
 
         public ClearCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+
             _console = console;
         }
 
         public string CommandName
         {
-            get
-            {
-                return "clear";
-            }
+            get { return "clear"; }
         }
 
         public object Execute(IScriptExecutor repl, object[] args)

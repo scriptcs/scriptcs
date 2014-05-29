@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text.RegularExpressions;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -22,7 +20,9 @@ namespace ScriptCs
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor, IEnumerable<IReplCommand> replCommands) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor,
+            IEnumerable<IReplCommand> replCommands)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;
@@ -34,7 +34,7 @@ namespace ScriptCs
 
         public IConsole Console { get; private set; }
 
-        public List<IReplCommand> Commands { get; private set; } 
+        public IEnumerable<IReplCommand> Commands { get; private set; }
 
         public override void Terminate()
         {
@@ -49,15 +49,16 @@ namespace ScriptCs
 
             try
             {
-                if (script.StartsWith(":"))
+                // TODO (adamralph): throw specific exceptions when command name is empty or unrecognised
+                if (script.StartsWith(":") && script.Length > 1)
                 {
-                    var arguments = script.Split(' ');
-                    var command = Commands.FirstOrDefault(x => x.CommandName == arguments[0].Substring(1));
+                    var tokens = script.Split(' ');
+                    var command = Commands.FirstOrDefault(x => x.CommandName == tokens[0].Substring(1));
 
                     if (command != null)
                     {
                         var argsToPass = new List<object>();
-                        foreach (var argument in arguments.Skip(1))
+                        foreach (var argument in tokens.Skip(1))
                         {
                             try
                             {
@@ -71,6 +72,7 @@ namespace ScriptCs
                                 argsToPass.Add(argument);
                             }
                         }
+
                         var commandResult = command.Execute(this, argsToPass.ToArray());
                         if (commandResult != null)
                         {

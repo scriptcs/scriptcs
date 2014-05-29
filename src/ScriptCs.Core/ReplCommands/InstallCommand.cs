@@ -12,8 +12,17 @@ namespace ScriptCs.ReplCommands
         private readonly ILog _logger;
         private readonly IInstallationProvider _installationProvider;
 
-        public InstallCommand(IPackageInstaller packageInstaller, IPackageAssemblyResolver packageAssemblyResolver, ILog logger, IInstallationProvider installationProvider)
+        public InstallCommand(
+            IPackageInstaller packageInstaller,
+            IPackageAssemblyResolver packageAssemblyResolver,
+            ILog logger,
+            IInstallationProvider installationProvider)
         {
+            Guard.AgainstNullArgument("packageInstaller", packageInstaller);
+            Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
+            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("installationProvider", installationProvider);
+
             _packageInstaller = packageInstaller;
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
@@ -27,13 +36,20 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IScriptExecutor repl, object[] args)
         {
-            if (args == null || args.Length == 0) return null;
+            Guard.AgainstNullArgument("repl", repl);
+
+            if (args == null || args.Length == 0)
+            {
+                return null;
+            }
 
             string version = null;
             var allowPre = false;
             if (args.Length >= 2)
             {
                 version = args[1].ToString();
+
+                // TODO (adamralph): something else! ;-)
                 if (args.Length == 3)
                 {
                     allowPre = true;
@@ -44,14 +60,15 @@ namespace ScriptCs.ReplCommands
 
             _installationProvider.Initialize();
 
-            var packageRef = new PackageReference(args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.0"), version);
-            _packageInstaller.InstallPackages(new[]
-            {
-                packageRef
-            }, allowPre);
+            var packageRef = new PackageReference(
+                args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.0"), version);
+            
+            _packageInstaller.InstallPackages(new[] { packageRef }, allowPre);
             _packageAssemblyResolver.SavePackages();
 
-            var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory).Except(repl.References.PathReferences).ToArray();
+            var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory)
+                .Except(repl.References.PathReferences).ToArray();
+            
             repl.AddReferences(dlls);
 
             foreach (var dll in dlls)

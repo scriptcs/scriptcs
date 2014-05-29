@@ -12,16 +12,21 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IScriptExecutor repl, object[] args)
         {
-            if (args == null || args.Length == 0) return null;
+            Guard.AgainstNullArgument("repl", repl);
 
-            var relativePath = args[0].ToString();
-
-            if (!relativePath.EndsWith(@"\"))
+            if (args == null || args.Length == 0)
             {
-                relativePath += @"\";
+                return null;
             }
 
-            repl.FileSystem.CurrentDirectory = Path.GetFullPath(Path.Combine(repl.FileSystem.CurrentDirectory, relativePath));
+            var path = args[0].ToString();
+
+            if (!path.EndsWith(@"\"))
+            {
+                path += @"\";
+            }
+
+            repl.FileSystem.CurrentDirectory = Path.GetFullPath(Path.Combine(repl.FileSystem.CurrentDirectory, path));
 
             return null;
         }

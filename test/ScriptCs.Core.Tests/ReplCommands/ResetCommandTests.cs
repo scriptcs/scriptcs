@@ -12,7 +12,10 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ReturnsReset()
             {
+                // act
                 var cmd = new ResetCommand();
+
+                // assert
                 Assert.Equal("reset", cmd.CommandName);
             }
         }
@@ -22,11 +25,15 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void CallsReplReset()
             {
+                // arrange
                 var executor = new Mock<IScriptExecutor>();
 
                 var cmd = new ResetCommand();
+
+                // act
                 var result = cmd.Execute(executor.Object, null);
 
+                // assert
                 executor.Verify(x => x.Reset(), Times.Once);
             }
         }

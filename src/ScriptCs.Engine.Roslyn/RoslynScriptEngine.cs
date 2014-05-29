@@ -28,10 +28,10 @@ namespace ScriptCs.Engine.Roslyn
         }
 
         protected ILog Logger { get; private set; }
-        
+
         public string BaseDirectory
         {
-            get { return ScriptEngine.BaseDirectory;  }
+            get { return ScriptEngine.BaseDirectory; }
             set { ScriptEngine.BaseDirectory = value; }
         }
 
@@ -47,11 +47,7 @@ namespace ScriptCs.Engine.Roslyn
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
 
-            var executionReferences = new AssemblyReferences()
-            {
-                Assemblies = new HashSet<Assembly>(references.Assemblies),
-                PathReferences = new HashSet<string>(references.PathReferences)
-            };
+            var executionReferences = new AssemblyReferences(references.PathReferences, references.Assemblies);
             executionReferences.PathReferences.UnionWith(scriptPackSession.References);
 
             SessionState<Session> sessionState;
@@ -103,7 +99,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
 
                 var newReferences = executionReferences.Except(sessionState.References);
-                
+
                 foreach (var reference in newReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);

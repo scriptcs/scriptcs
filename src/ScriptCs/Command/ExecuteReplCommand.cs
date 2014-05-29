@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -30,7 +29,8 @@ namespace ScriptCs.Command
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IAssemblyResolver assemblyResolver, IEnumerable<IReplCommand> replCommands)
+            IAssemblyResolver assemblyResolver,
+            IEnumerable<IReplCommand> replCommands)
         {
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;

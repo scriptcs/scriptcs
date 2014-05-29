@@ -9,6 +9,8 @@ namespace ScriptCs.ReplCommands
 
         public CwdCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+
             _console = console;
         }
 
@@ -19,7 +21,11 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IScriptExecutor repl, object[] args)
         {
+            Guard.AgainstNullArgument("repl", repl);
+
             var dir = repl.FileSystem.CurrentDirectory;
+
+            // TODO (adamralph): revert console color after writing
             _console.ForegroundColor = ConsoleColor.Yellow;
             _console.WriteLine(dir);
 

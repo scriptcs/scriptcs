@@ -12,8 +12,10 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ReturnsClear()
             {
-                var console = new Mock<IConsole>();
-                var cmd = new ClearCommand(console.Object);
+                // act
+                var cmd = new ClearCommand(new Mock<IConsole>().Object);
+
+                // assert
                 Assert.Equal("clear", cmd.CommandName);
             }
         }
@@ -23,12 +25,14 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void CallsConsoleClear()
             {
+                // arrange
                 var console = new Mock<IConsole>();
-                var executor = new Mock<IScriptExecutor>();
-
                 var cmd = new ClearCommand(console.Object);
-                var result = cmd.Execute(executor.Object, null);
 
+                // act
+                var result = cmd.Execute(new Mock<IScriptExecutor>().Object, null);
+
+                // assert
                 console.Verify(x => x.Clear(), Times.Once);
             }
         }
