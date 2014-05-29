@@ -433,7 +433,7 @@ namespace ScriptCs.Tests
                     x =>
                         x.Execute("myObj", It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
                             It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
-                    .Returns(new ScriptResult {ReturnValue = dummyObject});
+                            .Returns(new ScriptResult(returnValue: dummyObject));
                 _repl = GetRepl(mocks);
 
                 _repl.Execute(":hello 100 myObj", null);

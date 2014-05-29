@@ -80,10 +80,7 @@ namespace ScriptCs
 
                         Buffer = null;
 
-                        return new ScriptResult
-                        {
-                            ReturnValue = commandResult
-                        };
+                        return new ScriptResult(returnValue: commandResult);
                     }
                 }
 
