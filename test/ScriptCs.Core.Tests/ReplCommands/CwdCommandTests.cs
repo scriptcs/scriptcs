@@ -41,6 +41,26 @@ namespace ScriptCs.Tests.ReplCommands
                 // assert
                 console.Verify(x => x.WriteLine(@"c:\dir"));
             }
+
+            [Fact]
+            public void PreservesConsoleColors()
+            {
+                // arrange
+                var console = new Mock<IConsole>();
+                var executor = new Mock<IScriptExecutor>();
+
+                console.SetupProperty(x => x.ForegroundColor);
+                executor.Setup(x => x.FileSystem).Returns(new Mock<IFileSystem>().Object);
+
+                var cmd = new CwdCommand(console.Object);
+                var expectedForegroundColor = console.Object.ForegroundColor;
+
+                // act
+                var result = cmd.Execute(executor.Object, null);
+
+                // assert
+                Assert.Equal(expectedForegroundColor, console.Object.ForegroundColor);
+            }
         }
     }
 }
