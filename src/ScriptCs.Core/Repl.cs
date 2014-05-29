@@ -49,40 +49,42 @@ namespace ScriptCs
 
             try
             {
-                // TODO (adamralph): throw specific exceptions when command name is empty or unrecognised
-                if (script.StartsWith(":") && script.Length > 1)
+                if (script.StartsWith(":"))
                 {
                     var tokens = script.Split(' ');
-                    var command = Commands.FirstOrDefault(x => x.CommandName == tokens[0].Substring(1));
-
-                    if (command != null)
+                    if (tokens[0].Length > 1)
                     {
-                        var argsToPass = new List<object>();
-                        foreach (var argument in tokens.Skip(1))
+                        var command = Commands.FirstOrDefault(x => x.CommandName == tokens[0].Substring(1));
+
+                        if (command != null)
                         {
-                            try
+                            var argsToPass = new List<object>();
+                            foreach (var argument in tokens.Skip(1))
                             {
-                                var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
-                                //if Roslyn can evaluate the argument, use its value, otherwise assume the string
+                                try
+                                {
+                                    var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                                    //if Roslyn can evaluate the argument, use its value, otherwise assume the string
 
-                                argsToPass.Add(argumentResult.ReturnValue ?? argument);
+                                    argsToPass.Add(argumentResult.ReturnValue ?? argument);
+                                }
+                                catch (Exception)
+                                {
+                                    argsToPass.Add(argument);
+                                }
                             }
-                            catch (Exception)
+
+                            var commandResult = command.Execute(this, argsToPass.ToArray());
+                            if (commandResult != null)
                             {
-                                argsToPass.Add(argument);
+                                //if command has a result, print it
+                                Console.WriteLine(_serializer.Serialize(commandResult));
                             }
+
+                            Buffer = null;
+
+                            return new ScriptResult(returnValue: commandResult);
                         }
-
-                        var commandResult = command.Execute(this, argsToPass.ToArray());
-                        if (commandResult != null)
-                        {
-                            //if command has a result, print it
-                            Console.WriteLine(_serializer.Serialize(commandResult));
-                        }
-
-                        Buffer = null;
-
-                        return new ScriptResult(returnValue: commandResult);
                     }
                 }
 
