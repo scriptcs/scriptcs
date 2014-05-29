@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
 using Moq;
-
 using ScriptCs.Contracts;
-
+using ScriptCs.Contracts.Exceptions;
 using Should;
 using Xunit;
-using ScriptCs.Contracts.Exceptions;
 
 namespace ScriptCs.Tests
 {
@@ -510,7 +508,7 @@ namespace ScriptCs.Tests
                 return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
             }
         }
-        
+
         public class ProcessScriptMethod
         {
             private readonly Mock<IFileSystem> _fileSystem;
@@ -527,7 +525,7 @@ namespace ScriptCs.Tests
             {
                 var preProcessor = GetFilePreProcessor();
                 var script = @"Console.WriteLine(""Testing..."");";
-                
+
                 preProcessor.ProcessScript(script);
 
                 _fileSystem.Verify(x => x.SplitLines(script), Times.Once());
@@ -538,7 +536,7 @@ namespace ScriptCs.Tests
             {
                 var preProcessor = GetFilePreProcessor();
                 var script = @"Console.WriteLine(""Testing..."");";
-                
+
                 preProcessor.ProcessScript(script);
 
                 _fileSystem.Verify(x => x.ReadFileLines(It.IsAny<string>()), Times.Never());
@@ -554,7 +552,7 @@ namespace ScriptCs.Tests
 
                 var preProcessor = GetFilePreProcessor();
                 var script = @"#load script1.csx";
-                
+
                 var result = preProcessor.ProcessScript(script);
                 var fileLines = result.Code.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
