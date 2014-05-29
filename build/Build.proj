@@ -110,6 +110,7 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
