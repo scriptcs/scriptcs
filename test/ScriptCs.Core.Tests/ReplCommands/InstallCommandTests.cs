@@ -6,6 +6,7 @@ using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests.ReplCommands
 {
@@ -103,14 +104,16 @@ namespace ScriptCs.Tests.ReplCommands
                     Times.Once);
             }
 
-            [Fact]
-            public void InstallsPackageUsingArg2AsPreReleaseFlag()
+            [Theory]
+            [InlineData("pre")]
+            [InlineData("Pre")]
+            public void InstallsPackageUsingArg2AsPreReleaseFlag(string preReleaseFlag)
             {
                 // arrange
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9", "pre" });
+                var result = cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9", preReleaseFlag });
 
                 // assert
                 _packageInstaller.Verify(
