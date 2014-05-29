@@ -25,9 +25,16 @@ namespace ScriptCs.ReplCommands
 
             var dir = repl.FileSystem.CurrentDirectory;
 
-            // TODO (adamralph): revert console color after writing
+            var originalColor = _console.ForegroundColor;
             _console.ForegroundColor = ConsoleColor.Yellow;
-            _console.WriteLine(dir);
+            try
+            {
+                _console.WriteLine(dir);
+            }
+            finally
+            {
+                _console.ForegroundColor = originalColor;
+            }
 
             return null;
         }
