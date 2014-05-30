@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ScriptCs.Contracts;
-using ScriptCs.Hosting.Exceptions;
 
 namespace ScriptCs.Hosting
 {
@@ -116,19 +116,24 @@ namespace ScriptCs.Hosting
 
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
-            if (!Overrides.ContainsKey(typeof(ILineProcessor)))
+            var key = typeof(ILineProcessor);
+            object value;
+            if (!Overrides.TryGetValue(key, out value) || value == null)
             {
-                Overrides[typeof(ILineProcessor)] = new List<Type>();
+                value = Enumerable.Empty<Type>();
             }
 
-            var processors = Overrides[typeof(ILineProcessor)] as List<Type>;
-
-            if (processors == null)
+            IEnumerable<Type> processors;
+            try
             {
-                throw new NullLineProcessorsCollectionException("Line Processors Collection is missing from Overrides dictionary");
+                processors = (IEnumerable<Type>)value;
+            }
+            catch (InvalidCastException ex)
+            {
+                throw new InvalidOperationException("The line processors override has an invalid type.", ex);
             }
 
-            processors.Add(typeof(T));
+            Overrides[typeof(ILineProcessor)] = new[] { typeof(T) }.Concat(processors).ToList();
 
             return _this;
         }

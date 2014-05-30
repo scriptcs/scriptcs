@@ -7,7 +7,6 @@ using Autofac;
 using Autofac.Integration.Mef;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Hosting.Exceptions;
 using ScriptCs.Hosting.Package;
 
 namespace ScriptCs.Hosting
@@ -89,7 +88,7 @@ namespace ScriptCs.Hosting
                             }
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         assemblyLoadFailures = true;
                         Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly, ex.Message);
@@ -110,8 +109,8 @@ namespace ScriptCs.Hosting
         private void RegisterLineProcessors(ContainerBuilder builder)
         {
             object processors;
-            _overrides.TryGetValue(typeof(ILineProcessor), out processors);
-            var processorList = processors as List<Type> ?? new List<Type>();
+            this.Overrides.TryGetValue(typeof(ILineProcessor), out processors);
+            var processorList = (processors as IEnumerable<Type> ?? Enumerable.Empty<Type>()).ToArray();
 
             var loadProcessorType = processorList
                 .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))

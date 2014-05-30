@@ -2,11 +2,6 @@
 
 namespace ScriptCs.Contracts
 {
-    public interface IDirectiveLineProcessor : ILineProcessor
-    {
-        bool Matches(string line);
-    }
-
     public abstract class DirectiveLineProcessor : IDirectiveLineProcessor
     {
         protected virtual BehaviorAfterCode BehaviorAfterCode
@@ -38,7 +33,7 @@ namespace ScriptCs.Contracts
                 {
                     return true;
                 }
-             }
+            }
 
             return ProcessLine(parser, context, line);
         }
