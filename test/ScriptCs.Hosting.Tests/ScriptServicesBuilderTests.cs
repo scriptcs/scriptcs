@@ -29,6 +29,7 @@ namespace ScriptCs.Hosting.Tests
             }
         }
 
+            private ScriptServices _scriptServices = new ScriptServices(null, null, null, null, null, null, null, null, null, null, null);
         public class TheLoadModulesMethod
         {
             [Theory, ScriptCsAutoData]

@@ -56,7 +56,8 @@ namespace ScriptCs.Command
                     scriptServices.ObjectSerializer,
                     scriptServices.Logger,
                     scriptServices.Console,
-                    scriptServices.AssemblyResolver);
+                    scriptServices.AssemblyResolver,
+                    scriptServices.ReplCommands);
 
                 return replCommand;
             }

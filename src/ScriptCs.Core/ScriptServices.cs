@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.Collections.Generic;
+using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -16,6 +17,7 @@ namespace ScriptCs
             IObjectSerializer objectSerializer,
             ILog logger,
             IAssemblyResolver assemblyResolver,
+            IEnumerable<IReplCommand> replCommands, 
             IConsole console = null,
             IInstallationProvider installationProvider = null)
         {
@@ -31,6 +33,7 @@ namespace ScriptCs
             Console = console;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
+            ReplCommands = replCommands;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -45,5 +48,6 @@ namespace ScriptCs
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
 		public IInstallationProvider InstallationProvider { get; private set; }
+		public IEnumerable<IReplCommand> ReplCommands { get; private set; }
     }
 }

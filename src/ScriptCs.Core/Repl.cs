@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text.RegularExpressions;
 using Common.Logging;
@@ -20,16 +22,19 @@ namespace ScriptCs
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor, IEnumerable<IReplCommand> replCommands) : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
+            Commands = replCommands != null ? replCommands.ToList() : new List<IReplCommand>();
         }
 
         public string Buffer { get; set; }
 
         public IConsole Console { get; private set; }
+
+        public List<IReplCommand> Commands { get; private set; } 
 
         public override void Terminate()
         {
@@ -44,38 +49,39 @@ namespace ScriptCs
 
             try
             {
-                if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
+                if (script.StartsWith(":"))
                 {
-                    Console.Clear();
-                    return ScriptResult.Empty;
-                }
+                    var arguments = Arguments.SplitCommandLine(script);
+                    var command = Commands.FirstOrDefault(x => x.CommandName == arguments[0].Substring(1));
 
-                if (script.StartsWith("#reset"))
-                {
-                    Reset();
-                    return ScriptResult.Empty;
-                }
+                    if (command != null)
+                    {
+                        var argsToPass = new List<object>();
+                        foreach (var argument in arguments.Skip(1))
+                        {
+                            try
+                            {
+                                var argumentResult = ScriptEngine.Execute(argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                                //if Roslyn can evaluate the argument, use its value, otherwise assume the string
 
-                if (script.StartsWith(":cd", StringComparison.OrdinalIgnoreCase))
-                {
-                    var m = Regex.Match(script, @":cd\s+(.*)");
+                                argsToPass.Add(argumentResult.ReturnValue ?? argument);
+                            }
+                            catch (Exception)
+                            {
+                                argsToPass.Add(argument);
+                            }
+                        }
+                        var commandResult = command.Execute(this, argsToPass.ToArray());
+                        if (commandResult != null)
+                        {
+                            //if command has a result, print it
+                            Console.WriteLine(_serializer.Serialize(commandResult));
+                        }
 
-                    var relativePath = m.Groups[1].Value;
+                        Buffer = null;
 
-                    FileSystem.CurrentDirectory = Path.Combine(FileSystem.CurrentDirectory, relativePath);
-
-                    return ScriptResult.Empty;
-                }
-
-                if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
-                {
-                    var dir = FileSystem.CurrentDirectory;
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-
-                    Console.WriteLine(dir);
-
-                    return ScriptResult.Empty;
+                        return new ScriptResult(commandResult);
+                    }
                 }
 
                 var preProcessResult = FilePreProcessor.ProcessScript(script);

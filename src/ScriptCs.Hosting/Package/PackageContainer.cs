@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -76,7 +77,7 @@ namespace ScriptCs.Hosting.Package
 
             var repository = new LocalPackageRepository(path);
 
-            var package = packageRef.Version != null 
+            var package = packageRef.Version != null && !(packageRef.Version.Major == 0 && packageRef.Version.Minor == 0)
                 ? repository.FindPackage(packageRef.PackageId, new SemanticVersion(packageRef.Version, packageRef.SpecialVersion), true, true) 
                 : repository.FindPackage(packageRef.PackageId);
 
