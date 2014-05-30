@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using System;
+using System.IO;
+using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
 using Xunit;
@@ -30,12 +32,9 @@ namespace ScriptCs.Tests.ReplCommands
                 var fs = new Mock<IFileSystem>();
                 var executor = new Mock<IScriptExecutor>();
 
-                var homePath = (Environment.OSVersion.Platform == PlatformID.Unix 
-                    ||  Environment.OSVersion.Platform == PlatformID.MacOSX)
-                               ? Environment.GetEnvironmentVariable("HOME")
-                               : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+                var tempPath = Path.GetTempPath();
 
-                fs.Setup(x => x.CurrentDirectory).Returns(homePath);
+                fs.Setup(x => x.CurrentDirectory).Returns(tempPath);
                 executor.Setup(x => x.FileSystem).Returns(fs.Object);
 
                 var cmd = new CwdCommand(console.Object);
@@ -44,7 +43,7 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(executor.Object, null);
 
                 // assert
-                console.Verify(x => x.WriteLine(homePath));
+                console.Verify(x => x.WriteLine(tempPath));
             }
 
             [Fact]
