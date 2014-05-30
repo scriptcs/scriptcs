@@ -48,7 +48,7 @@ namespace ScriptCs.Contracts
             Guard.AgainstNullArgument("line", line);
 
             return line.Replace(DirectiveString, string.Empty)
-                .Trim(' ')
+                .Trim()
                 .Replace("\"", string.Empty)
                 .Replace(";", string.Empty);
         }
