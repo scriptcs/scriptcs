@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Runtime.ExceptionServices;
-using System.Text.RegularExpressions;
+using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -20,16 +21,21 @@ namespace ScriptCs
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IFilePreProcessor filePreProcessor) : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            IFilePreProcessor filePreProcessor,
+            IEnumerable<IReplCommand> replCommands)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
+            Commands = replCommands != null ? replCommands.ToList() : new List<IReplCommand>();
         }
 
         public string Buffer { get; set; }
 
         public IConsole Console { get; private set; }
+
+        public IEnumerable<IReplCommand> Commands { get; private set; }
 
         public override void Terminate()
         {
@@ -44,38 +50,55 @@ namespace ScriptCs
 
             try
             {
-                if (script.StartsWith("#clear", StringComparison.OrdinalIgnoreCase))
+                if (script.StartsWith(":"))
                 {
-                    Console.Clear();
-                    return ScriptResult.Empty;
-                }
+                    var tokens = script.Split(' ');
+                    if (tokens[0].Length > 1)
+                    {
+                        var command = Commands.FirstOrDefault(x => x.CommandName == tokens[0].Substring(1));
 
-                if (script.StartsWith("#reset"))
-                {
-                    Reset();
-                    return ScriptResult.Empty;
-                }
+                        if (command != null)
+                        {
+                            var argsToPass = new List<object>();
+                            foreach (var argument in tokens.Skip(1))
+                            {
+                                var argumentResult = ScriptEngine.Execute(
+                                    argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
 
-                if (script.StartsWith(":cd", StringComparison.OrdinalIgnoreCase))
-                {
-                    var m = Regex.Match(script, @":cd\s+(.*)");
+                                if (argumentResult.CompileExceptionInfo != null)
+                                {
+                                    throw new Exception(
+                                        GetInvalidCommandArgumentMessage(argument),
+                                        argumentResult.CompileExceptionInfo.SourceException);
+                                }
 
-                    var relativePath = m.Groups[1].Value;
+                                if (argumentResult.ExecuteExceptionInfo != null)
+                                {
+                                    throw new Exception(
+                                        GetInvalidCommandArgumentMessage(argument),
+                                        argumentResult.ExecuteExceptionInfo.SourceException);
+                                }
 
-                    FileSystem.CurrentDirectory = Path.Combine(FileSystem.CurrentDirectory, relativePath);
+                                if (!argumentResult.IsCompleteSubmission)
+                                {
+                                    throw new Exception(GetInvalidCommandArgumentMessage(argument));
+                                }
 
-                    return ScriptResult.Empty;
-                }
+                                argsToPass.Add(argumentResult.ReturnValue);
+                            }
 
-                if (script.StartsWith(":cwd", StringComparison.OrdinalIgnoreCase))
-                {
-                    var dir = FileSystem.CurrentDirectory;
+                            var commandResult = command.Execute(this, argsToPass.ToArray());
+                            if (commandResult != null)
+                            {
+                                //if command has a result, print it
+                                Console.WriteLine(_serializer.Serialize(commandResult));
+                            }
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                            Buffer = null;
 
-                    Console.WriteLine(dir);
-
-                    return ScriptResult.Empty;
+                            return new ScriptResult(returnValue: commandResult);
+                        }
+                    }
                 }
 
                 var preProcessResult = FilePreProcessor.ProcessScript(script);
@@ -146,6 +169,11 @@ namespace ScriptCs
             {
                 Console.ResetColor();
             }
+        }
+
+        private static string GetInvalidCommandArgumentMessage(string argument)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "Argument is not a valid expression: {0}", argument);
         }
     }
 }

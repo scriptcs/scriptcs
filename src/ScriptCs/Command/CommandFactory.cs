@@ -1,5 +1,5 @@
-﻿using ScriptCs.Hosting;
-using System.IO;
+﻿using System.IO;
+using ScriptCs.Hosting;
 
 namespace ScriptCs.Command
 {
@@ -56,7 +56,8 @@ namespace ScriptCs.Command
                     scriptServices.ObjectSerializer,
                     scriptServices.Logger,
                     scriptServices.Console,
-                    scriptServices.AssemblyResolver);
+                    scriptServices.AssemblyResolver,
+                    scriptServices.ReplCommands);
 
                 return replCommand;
             }

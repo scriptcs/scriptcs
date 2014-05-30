@@ -42,7 +42,7 @@ namespace ScriptCs.Hosting.Package
                 return;
             }
 
-            _logger.InfoFormat("{0} {1}...", (File.Exists(packagesFile) ? "Updating" : "Creating") , Constants.PackagesFile);
+            _logger.InfoFormat("{0} {1}...", (File.Exists(packagesFile) ? "Updating" : "Creating"), Constants.PackagesFile);
 
             foreach (var package in newestPackages)
             {
@@ -60,7 +60,7 @@ namespace ScriptCs.Hosting.Package
                     {
                         _logger.InfoFormat("Added {0} (v{1}, .NET {2}) to {3}", package.Id, package.Version, newestFramework.Version, Constants.PackagesFile);
                     }
-  
+
                     continue;
                 }
 
@@ -76,8 +76,8 @@ namespace ScriptCs.Hosting.Package
 
             var repository = new LocalPackageRepository(path);
 
-            var package = packageRef.Version != null 
-                ? repository.FindPackage(packageRef.PackageId, new SemanticVersion(packageRef.Version, packageRef.SpecialVersion), true, true) 
+            var package = packageRef.Version != null && !(packageRef.Version.Major == 0 && packageRef.Version.Minor == 0)
+                ? repository.FindPackage(packageRef.PackageId, new SemanticVersion(packageRef.Version, packageRef.SpecialVersion), true, true)
                 : repository.FindPackage(packageRef.PackageId);
 
             return package == null ? null : new PackageObject(package, packageRef.FrameworkName);
@@ -119,7 +119,7 @@ namespace ScriptCs.Hosting.Package
 
             foreach (var arbitraryPackage in arbitraryPackages)
             {
-                var newestFramework = GetNewestSupportedFramework(arbitraryPackage) 
+                var newestFramework = GetNewestSupportedFramework(arbitraryPackage)
                     ?? VersionUtility.EmptyFramework;
 
                 yield return new PackageReference(
@@ -141,7 +141,7 @@ namespace ScriptCs.Hosting.Package
         private static bool IsValidFramework(FrameworkName frameworkName)
         {
             return frameworkName.Identifier == DotNetFramework
-                || (frameworkName.Identifier == DotNetPortable 
+                || (frameworkName.Identifier == DotNetPortable
                     && frameworkName.Profile.Split('+').Any(IsValidProfile));
         }
 
