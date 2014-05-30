@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
@@ -29,7 +31,12 @@ namespace ScriptCs.Tests.ReplCommands
                 var fs = new Mock<IFileSystem>();
                 var executor = new Mock<IScriptExecutor>();
 
-                fs.Setup(x => x.CurrentDirectory).Returns(@"c:\dir");
+                var homePath = (Environment.OSVersion.Platform == PlatformID.Unix 
+                    ||  Environment.OSVersion.Platform == PlatformID.MacOSX)
+                          ? Environment.GetEnvironmentVariable("HOME")
+                          : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+        
+                fs.Setup(x => x.CurrentDirectory).Returns(Path.Combine(homePath, "dir"));
                 executor.Setup(x => x.FileSystem).Returns(fs.Object);
 
                 var cmd = new CdCommand();
@@ -38,7 +45,7 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(executor.Object, new[] { ".." });
 
                 // assert
-                fs.VerifySet(x => x.CurrentDirectory = @"c:\", Times.Once());
+                fs.VerifySet(x => x.CurrentDirectory = homePath, Times.Once());
             }
         }
     }
