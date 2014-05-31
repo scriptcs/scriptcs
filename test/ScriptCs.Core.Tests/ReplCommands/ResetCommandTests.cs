@@ -31,7 +31,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = new ResetCommand();
 
                 // act
-                var result = cmd.Execute(executor.Object, null);
+                cmd.Execute(executor.Object, null);
 
                 // assert
                 executor.Verify(x => x.Reset(), Times.Once);

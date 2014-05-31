@@ -35,7 +35,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = new CdCommand();
 
                 // act
-                var result = cmd.Execute(executor.Object, new[] { ".." });
+                cmd.Execute(executor.Object, new[] { ".." });
 
                 // assert
                 fs.VerifySet(x => x.CurrentDirectory = @"c:\", Times.Once());

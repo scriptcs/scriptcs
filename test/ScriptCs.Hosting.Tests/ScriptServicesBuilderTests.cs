@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Configuration;
-using System.Reflection;
-using System.Text;
-using Common.Logging;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Tests;
 using Should;
-using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Hosting.Tests
