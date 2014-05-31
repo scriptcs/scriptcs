@@ -31,6 +31,8 @@ namespace ScriptCs.Tests
 
                 _filesystem = new Mock<IFileSystem>();
                 _filesystem.SetupGet(i => i.CurrentDirectory).Returns("c:\\test");
+                _filesystem.SetupGet(i => i.PackagesFile).Returns("packages.config");
+                _filesystem.SetupGet(i => i.PackagesFolder).Returns("packages");
                 _filesystem.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
                 _filesystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
 
@@ -271,6 +273,9 @@ namespace ScriptCs.Tests
             public GetPackagesMethod()
             {
                 _fs = new Mock<IFileSystem>();
+                _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
+                _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
+                
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }
@@ -309,6 +314,9 @@ namespace ScriptCs.Tests
             public SavePackagesMethod()
             {
                 _fs = new Mock<IFileSystem>();
+                _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
+                _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
+                
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }

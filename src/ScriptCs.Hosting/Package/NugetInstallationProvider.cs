@@ -29,7 +29,7 @@ namespace ScriptCs.Hosting.Package
 
         public void Initialize()
         {
-            var path = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
+            var path = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
             var remoteRepository = new AggregateRepository(PackageRepositoryFactory.Default, _repositoryUrls, true);
             _manager = new PackageManager(remoteRepository, path);
@@ -40,7 +40,7 @@ namespace ScriptCs.Hosting.Package
             var configFileSystem = new PhysicalFileSystem(path);
 
             ISettings settings;
-            var localNuGetConfigFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.NugetFile);
+            var localNuGetConfigFile = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.NugetFile);
             if (_fileSystem.FileExists(localNuGetConfigFile))
             {
                 settings = Settings.LoadDefaultSettings(configFileSystem, localNuGetConfigFile, null);

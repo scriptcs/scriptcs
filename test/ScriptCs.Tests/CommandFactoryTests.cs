@@ -22,6 +22,9 @@ namespace ScriptCs.Tests
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
                 var fileSystem = fixture.Freeze<Mock<IFileSystem>>();
                 fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fileSystem.SetupGet(x => x.PackagesFile).Returns("packages.config");
+                fileSystem.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
                 fileSystem.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
                 fileSystem.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 

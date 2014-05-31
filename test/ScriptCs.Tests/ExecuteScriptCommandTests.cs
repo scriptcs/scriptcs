@@ -129,7 +129,7 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnErrorIfThereIsExecuteException(
+            public void ShouldReturnErrorIfThereIsExecutionException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
                 [Frozen] Mock<ILog> logger, 

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using ScriptCs.Contracts;
 using ScriptCs.Hosting;
 
 namespace ScriptCs.Command
@@ -7,6 +9,7 @@ namespace ScriptCs.Command
     {
         private readonly IScriptServicesBuilder _scriptServicesBuilder;
         private readonly IInitializationServices _initializationServices;
+        private readonly IFileSystem _fileSystem;
 
         public CommandFactory(IScriptServicesBuilder scriptServicesBuilder)
         {
@@ -14,13 +17,23 @@ namespace ScriptCs.Command
 
             _scriptServicesBuilder = scriptServicesBuilder;
             _initializationServices = _scriptServicesBuilder.InitializationServices;
+            _fileSystem = _initializationServices.GetFileSystem();
+
+            if (_fileSystem.PackagesFile == null)
+            {
+                throw new ArgumentException("The file system provided by the initialization services provided by the script services builder has a null packages file.");
+            }
+
+            if (_fileSystem.PackagesFolder == null)
+            {
+                throw new ArgumentException("The file system provided by the initialization services provided by the script services builder has a null package folder.");
+            }
         }
 
         public ICommand CreateCommand(ScriptCsArgs args, string[] scriptArgs)
         {
             Guard.AgainstNullArgument("args", args);
 
-            var fileSystem = _initializationServices.GetFileSystem();
             var logger = _initializationServices.Logger;
             var packageAssemblyResolver = _initializationServices.GetPackageAssemblyResolver();
             ScriptServices scriptServices = null;
@@ -32,13 +45,13 @@ namespace ScriptCs.Command
 
             if (args.Global)
             {
-                var currentDir = fileSystem.ModulesFolder;
-                if (!fileSystem.DirectoryExists(currentDir))
+                var currentDir = _fileSystem.ModulesFolder;
+                if (!_fileSystem.DirectoryExists(currentDir))
                 {
-                    fileSystem.CreateDirectory(currentDir);
+                    _fileSystem.CreateDirectory(currentDir);
                 }
 
-                fileSystem.CurrentDirectory = currentDir;
+                _fileSystem.CurrentDirectory = currentDir;
             }
 
             _initializationServices.GetInstallationProvider().Initialize();
@@ -64,17 +77,17 @@ namespace ScriptCs.Command
 
             if (args.ScriptName != null)
             {
-                var currentDirectory = fileSystem.CurrentDirectory;
-                var packageFile = Path.Combine(currentDirectory, Constants.PackagesFile);
-                var packagesFolder = Path.Combine(currentDirectory, Constants.PackagesFolder);
+                var currentDirectory = _fileSystem.CurrentDirectory;
+                var packageFile = Path.Combine(currentDirectory, _fileSystem.PackagesFile);
+                var packagesFolder = Path.Combine(currentDirectory, _fileSystem.PackagesFolder);
 
-                if (fileSystem.FileExists(packageFile) && !fileSystem.DirectoryExists(packagesFolder))
+                if (_fileSystem.FileExists(packageFile) && !_fileSystem.DirectoryExists(packagesFolder))
                 {
                     var installCommand = new InstallCommand(
                         null,
                         null,
                         true,
-                        fileSystem,
+                        _fileSystem,
                         packageAssemblyResolver,
                         _initializationServices.GetPackageInstaller(),
                         logger);
@@ -93,21 +106,21 @@ namespace ScriptCs.Command
 
             if (args.Clean)
             {
-                var saveCommand = new SaveCommand(packageAssemblyResolver, logger);
+                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, logger);
 
                 if (args.Global)
                 {
-                    var currentDirectory = fileSystem.ModulesFolder;
-                    fileSystem.CurrentDirectory = currentDirectory;
-                    if (!fileSystem.DirectoryExists(currentDirectory))
+                    var currentDirectory = _fileSystem.ModulesFolder;
+                    _fileSystem.CurrentDirectory = currentDirectory;
+                    if (!_fileSystem.DirectoryExists(currentDirectory))
                     {
-                        fileSystem.CreateDirectory(currentDirectory);
+                        _fileSystem.CreateDirectory(currentDirectory);
                     }
                 }
 
                 var cleanCommand = new CleanCommand(
                     args.ScriptName,
-                    fileSystem,
+                    _fileSystem,
                     logger);
 
                 return new CompositeCommand(saveCommand, cleanCommand);
@@ -115,7 +128,7 @@ namespace ScriptCs.Command
 
             if (args.Save)
             {
-                return new SaveCommand(packageAssemblyResolver, logger);
+                return new SaveCommand(packageAssemblyResolver, _fileSystem, logger);
             }
 
             if (args.Version)
@@ -129,12 +142,12 @@ namespace ScriptCs.Command
                     args.Install,
                     args.PackageVersion,
                     args.AllowPreRelease,
-                    fileSystem,
+                    _fileSystem,
                     packageAssemblyResolver,
                     _initializationServices.GetPackageInstaller(),
                     logger);
 
-                var saveCommand = new SaveCommand(packageAssemblyResolver, logger);
+                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, logger);
 
                 return new CompositeCommand(installCommand, saveCommand);
             }

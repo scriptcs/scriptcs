@@ -16,6 +16,10 @@ namespace ScriptCs
 
         public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
+            Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFile", fileSystem.PackagesFile);
+
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
             _logger = logger;
@@ -23,7 +27,7 @@ namespace ScriptCs
 
         public void SavePackages()
         {
-            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
+            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
 
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
@@ -36,7 +40,7 @@ namespace ScriptCs
 
         public IEnumerable<IPackageReference> GetPackages(string workingDirectory)
         {
-            var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);
+            var packageFile = Path.Combine(workingDirectory, _fileSystem.PackagesFile);
             var packages = _packageContainer.FindReferences(packageFile).ToList();
 
             _topLevelPackages = packages;
@@ -52,8 +56,8 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var packageFile = Path.Combine(workingDirectory, Constants.PackagesFile);
-            var packageDir = Path.Combine(workingDirectory, Constants.PackagesFolder);
+            var packageFile = Path.Combine(workingDirectory, _fileSystem.PackagesFile);
+            var packageDir = Path.Combine(workingDirectory, _fileSystem.PackagesFolder);
 
             var foundAssemblyPaths = new List<string>();
             var missingAssemblies = new List<IPackageReference>();

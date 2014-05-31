@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Autofac;
 using Common.Logging;
@@ -199,9 +200,9 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldRegisterTheOverriddenFileSystem()
             {
-                var mock = new Mock<IFileSystem>();
-                _overrides[typeof(IFileSystem)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IFileSystem>().ShouldBeType(mock.Object.GetType());
+                var mock = new MockFileSystem();
+                _overrides[typeof(IFileSystem)] = mock.GetType();
+                _runtimeServices.Container.Resolve<IFileSystem>().ShouldBeType(mock.GetType());
             }
 
             [Fact]
@@ -305,6 +306,155 @@ namespace ScriptCs.Hosting.Tests
                 var container = runtimeServices.Container;
 
                 resolvermock.Verify(x => x.GetAssemblyPaths("c:/scripts"), Times.Exactly(1));
+            }
+
+            private class MockFileSystem : IFileSystem
+            {
+                public IEnumerable<string> EnumerateFiles(string dir, string search, System.IO.SearchOption searchOption = SearchOption.AllDirectories)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, System.IO.SearchOption searchOption = SearchOption.AllDirectories)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, System.IO.SearchOption searchOption = SearchOption.AllDirectories)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Copy(string source, string dest, bool overwrite)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public bool DirectoryExists(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void CreateDirectory(string path, bool hidden = false)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void DeleteDirectory(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string ReadFile(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string[] ReadFileLines(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public DateTime GetLastWriteTime(string file)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public bool IsPathRooted(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string GetFullPath(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string CurrentDirectory
+                {
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
+                }
+
+                public string NewLine
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public string GetWorkingDirectory(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Move(string source, string dest)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public bool FileExists(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void FileDelete(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IEnumerable<string> SplitLines(string value)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void WriteToFile(string path, string text)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public System.IO.Stream CreateFileStream(string filePath, System.IO.FileMode mode)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void WriteAllBytes(string filePath, byte[] bytes)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string ModulesFolder
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public string HostBin
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public string BinFolder
+                {
+                    get { return "bin"; }
+                }
+
+                public string DllCacheFolder
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public string PackagesFile
+                {
+                    get { return "packages.config"; }
+                }
+
+                public string PackagesFolder
+                {
+                    get { return "packages"; }
+                }
+
+                public string NugetFile
+                {
+                    get { throw new NotImplementedException(); }
+                }
             }
         }
     }

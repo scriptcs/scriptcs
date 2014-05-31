@@ -23,11 +23,13 @@ namespace ScriptCs.Tests
             {
                 const string WorkingDirectory = @"C:\";
 
-                var packagesFolder = Path.Combine(WorkingDirectory, Constants.PackagesFolder);
+                var packagesFolder = Path.Combine(WorkingDirectory, "packages");
                 var assemblyFile = Path.Combine(packagesFolder, "MyAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
+                fileSystem.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystem.SetupGet(x => x.BinFolder).Returns("bin");
 
                 var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
                 packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
@@ -45,11 +47,13 @@ namespace ScriptCs.Tests
             {
                 const string WorkingDirectory = @"C:\";
 
-                var binFolder = Path.Combine(WorkingDirectory, Constants.BinFolder);
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var assemblyFile = Path.Combine(binFolder, "MyAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystem.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystem.SetupGet(x => x.BinFolder).Returns("bin");
                 fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new[] { assemblyFile });
 
                 var assemblyUtility = new Mock<IAssemblyUtility>();
@@ -68,12 +72,14 @@ namespace ScriptCs.Tests
             {
                 const string WorkingDirectory = @"C:\";
 
-                var binFolder = Path.Combine(WorkingDirectory, Constants.BinFolder);
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var managed = Path.Combine(binFolder, "MyAssembly.dll");
                 var nonManaged = Path.Combine(binFolder, "MyNonManagedAssembly.dll");
 
                 var fileSystem = new Mock<IFileSystem>();
                 fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystem.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystem.SetupGet(x => x.BinFolder).Returns("bin");
                 fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
                     .Returns(new[] { managed, nonManaged });
 

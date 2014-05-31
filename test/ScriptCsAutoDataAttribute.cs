@@ -11,7 +11,7 @@ namespace ScriptCs.Tests
             : base(
             new InlineDataAttribute(values),
             new AutoDataAttribute(
-                new Fixture().Customize(new AutoMoqCustomization()))
+                new Fixture().Customize(new ScriptCsMoqCustomization()))
             )
         {
         }

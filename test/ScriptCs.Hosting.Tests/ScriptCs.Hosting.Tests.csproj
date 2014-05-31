@@ -44,6 +44,9 @@
     <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptCsMoqCustomization.cs">
+      <Link>ScriptCsMoqCustomization.cs</Link>
+    </Compile>
     <Compile Include="ModuleConfigurationTests.cs" />
     <Compile Include="ModuleLoaderTests.cs" />
     <Compile Include="ObjectSerializerTests.cs" />
