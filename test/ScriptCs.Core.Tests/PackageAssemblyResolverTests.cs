@@ -144,8 +144,10 @@ namespace ScriptCs.Tests
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
 
-                found.First().ShouldEqual(Path.Combine(_workingDirectory, string.Format("packages{0}id.3.0{0}test.dll", Path.DirectorySeparatorChar)));
-                found.ElementAt(1).ShouldEqual(Path.Combine(_workingDirectory, string.Format("packages{0}id.3.0{0}test2.dll", Path.DirectorySeparatorChar)));
+                found.First().ShouldEqual(
+                    Path.Combine(_workingDirectory, "packages", "id.3.0", "test.dll"));
+                found.ElementAt(1).ShouldEqual(
+                    Path.Combine(_workingDirectory, "packages", "id.3.0", "test2.dll"));
             }
 
             [Fact]

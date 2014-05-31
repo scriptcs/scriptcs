@@ -132,9 +132,7 @@ namespace ScriptCs.Tests
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 executor.Execute("script.csx");
                 preProcessor.Verify(p => p.ProcessFile(
-                    Path.Combine(
-                        _tempPath, 
-                        string.Format("my_script{0}script.csx", Path.DirectorySeparatorChar))));            
+                    Path.Combine(_tempPath, "my_script", "script.csx")));
             }
 
             [Theory, ScriptCsAutoData]
@@ -149,9 +147,7 @@ namespace ScriptCs.Tests
                 executor.Execute("script.csx");
 
                 preProcessor.Verify(p => p.ProcessFile(
-                    Path.Combine(
-                        _tempPath, 
-                        string.Format("my_script{0}script.csx", Path.DirectorySeparatorChar))));            
+                    Path.Combine(_tempPath, "my_script", "script.csx")));
             }
 
             [Theory, ScriptCsAutoData]
