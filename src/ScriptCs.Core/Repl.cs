@@ -63,7 +63,7 @@ namespace ScriptCs
                             foreach (var argument in tokens.Skip(1))
                             {
                                 var argumentResult = ScriptEngine.Execute(
-                                    argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                                    argument, _scriptArgs, References, Namespaces, ScriptPackSession);
 
                                 if (argumentResult.CompileExceptionInfo != null)
                                 {
