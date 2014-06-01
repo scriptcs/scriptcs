@@ -88,15 +88,7 @@ namespace ScriptCs
                             }
 
                             var commandResult = command.Execute(this, argsToPass.ToArray());
-                            if (commandResult != null)
-                            {
-                                //if command has a result, print it
-                                Console.WriteLine(_serializer.Serialize(commandResult));
-                            }
-
-                            Buffer = null;
-
-                            return new ScriptResult(returnValue: commandResult);
+                            return ProcessCommandResult(commandResult);
                         }
                     }
                 }
@@ -174,6 +166,28 @@ namespace ScriptCs
         private static string GetInvalidCommandArgumentMessage(string argument)
         {
             return string.Format(CultureInfo.InvariantCulture, "Argument is not a valid expression: {0}", argument);
+        }
+
+        private ScriptResult ProcessCommandResult(object commandResult)
+        {
+            Buffer = null;
+
+            if (commandResult != null)
+            {
+                if (commandResult is ScriptResult)
+                {
+                    var scriptCommandResult = commandResult as ScriptResult;
+                    Console.WriteLine(_serializer.Serialize(scriptCommandResult.ReturnValue));
+                    return scriptCommandResult;
+                }
+
+                //if command has a result, print it
+                Console.WriteLine(_serializer.Serialize(commandResult));
+
+                return new ScriptResult(returnValue: commandResult);
+            }
+
+            return ScriptResult.Empty;
         }
     }
 }
