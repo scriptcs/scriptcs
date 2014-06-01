@@ -177,7 +177,10 @@ namespace ScriptCs
                 if (commandResult is ScriptResult)
                 {
                     var scriptCommandResult = commandResult as ScriptResult;
-                    Console.WriteLine(_serializer.Serialize(scriptCommandResult.ReturnValue));
+                    if (scriptCommandResult.ReturnValue != null)
+                    {
+                        Console.WriteLine(_serializer.Serialize(scriptCommandResult.ReturnValue));
+                    }
                     return scriptCommandResult;
                 }
 
