@@ -17,6 +17,9 @@ namespace ScriptCs.Tests
             public Mocks()
             {
                 FileSystem = new Mock<IFileSystem>();
+                FileSystem.SetupGet(x => x.BinFolder).Returns("bin");
+                FileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
+                
                 ScriptEngine = new Mock<IScriptEngine>();
                 Logger = new Mock<ILog>();
                 Console = new Mock<IConsole>();

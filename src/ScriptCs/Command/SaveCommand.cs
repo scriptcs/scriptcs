@@ -8,17 +8,22 @@ namespace ScriptCs.Command
     {
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
+        private readonly IFileSystem _fileSystem;
         private readonly ILog _logger;
 
-        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
+        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver, IFileSystem fileSystem, ILog logger)
         {
+            Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+
             _packageAssemblyResolver = packageAssemblyResolver;
+            _fileSystem = fileSystem;
             _logger = logger;
         }
 
         public CommandResult Execute()
         {
-            _logger.InfoFormat("Saving packages in {0}...", Constants.PackagesFile);
+            _logger.InfoFormat("Saving packages in {0}...", _fileSystem.PackagesFile);
 
             try
             {

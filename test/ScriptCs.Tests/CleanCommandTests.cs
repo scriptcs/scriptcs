@@ -14,8 +14,8 @@ namespace ScriptCs.Tests
     {
         public class ExecuteMethod
         {
-            [ScriptCsAutoData(Constants.PackagesFolder)]
-            [ScriptCsAutoData(Constants.DllCacheFolder)]
+            [ScriptCsAutoData("packages")]
+            [ScriptCsAutoData(".cache")]
             [Theory]
             public void ShouldDeletePackagesFolder(string folder, 
                 Mock<IFileSystem> fileSystem,
@@ -26,7 +26,7 @@ namespace ScriptCs.Tests
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
                 var servicesBuilder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
 
-                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder)))).Returns(true);
+                fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(folder)))).Returns(true);
                 fileSystem.Setup(i => i.GetWorkingDirectory(It.IsAny<string>())).Returns("c:\\");
 
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
@@ -37,8 +37,8 @@ namespace ScriptCs.Tests
                 factory.CreateCommand(args, new string[0]).Execute();
 
                 // Assert
-                fileSystem.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
-                fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(Constants.PackagesFolder))), Times.Once());
+                fileSystem.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(folder))), Times.Once());
+                fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(folder))), Times.Once());
             }
         }
     }

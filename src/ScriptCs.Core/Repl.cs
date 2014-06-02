@@ -99,7 +99,7 @@ namespace ScriptCs
 
                 foreach (var reference in preProcessResult.References)
                 {
-                    var referencePath = FileSystem.GetFullPath(Path.Combine(Constants.BinFolder, reference));
+                    var referencePath = FileSystem.GetFullPath(Path.Combine(FileSystem.BinFolder, reference));
                     AddReferences(FileSystem.FileExists(referencePath) ? referencePath : reference);
                 }
 

@@ -16,6 +16,10 @@ namespace ScriptCs.Command
 
         public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
+            Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
+
             _scriptName = scriptName;
             _fileSystem = fileSystem;
             _logger = logger;
@@ -28,10 +32,10 @@ namespace ScriptCs.Command
             var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
             _logger.TraceFormat("Working directory: {0}", workingDirectory);
 
-            var packageFolder = Path.Combine(workingDirectory, Constants.PackagesFolder);
+            var packageFolder = Path.Combine(workingDirectory, _fileSystem.PackagesFolder);
             _logger.TraceFormat("Packages folder: {0}", packageFolder);
 
-            var cacheFolder = Path.Combine(workingDirectory, Constants.DllCacheFolder);
+            var cacheFolder = Path.Combine(workingDirectory, _fileSystem.DllCacheFolder);
             _logger.TraceFormat("Cache folder: {0}", cacheFolder);
 
             try

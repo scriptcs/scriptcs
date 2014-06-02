@@ -43,6 +43,9 @@
     <Compile Include="..\ScriptCsAutoDataAttribute.cs">
       <Link>ScriptCsAutoDataAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptCsMoqCustomization.cs">
+      <Link>ScriptCsMoqCustomization.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynModuleTests.cs" />
     <Compile Include="RoslynScriptInMemoryEngineTests.cs" />

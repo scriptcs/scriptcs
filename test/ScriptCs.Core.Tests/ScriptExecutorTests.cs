@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedBaseDirectory = Path.Combine(currentDirectory, Constants.BinFolder);
+                string expectedBaseDirectory = Path.Combine(currentDirectory, "bin");
                 expectedBaseDirectory.ShouldEqual(scriptEngine.Object.BaseDirectory);
             }
 
@@ -60,7 +60,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedCacheDirectory = Path.Combine(currentDirectory, Constants.DllCacheFolder);
+                string expectedCacheDirectory = Path.Combine(currentDirectory, ".cache");
                 expectedCacheDirectory.ShouldEqual(scriptEngine.Object.CacheDirectory);
             }
 
@@ -87,8 +87,11 @@ namespace ScriptCs.Tests
         public class TheTerminateMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldTerminateScriptPacksWhenTerminateIsCalled([Frozen] Mock<IFilePreProcessor> preProcessor, [Frozen] Mock<IFileSystem> fileSystem,
-                                                                                                           [Frozen] Mock<IScriptPack> scriptPack1, ScriptExecutor executor)
+            public void ShouldTerminateScriptPacksWhenTerminateIsCalled(
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IScriptPack> scriptPack1,
+                ScriptExecutor executor)
             {
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
@@ -331,7 +334,7 @@ namespace ScriptCs.Tests
                 executor.References.Assemblies.ShouldContain(executing);
                 executor.References.Assemblies.ShouldContain(entry);
                 executor.References.Assemblies.Count.ShouldEqual(3);
-            }           
+            }
         }
 
         public class TheRemoveReferencesMethod

@@ -26,6 +26,10 @@ namespace ScriptCs
             IAssemblyUtility assemblyUtility,
             ILog logger)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
+            Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
+
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
@@ -53,7 +57,7 @@ namespace ScriptCs
 
         private IEnumerable<string> GetBinAssemblies(string path)
         {
-            var binFolder = Path.Combine(path, Constants.BinFolder);
+            var binFolder = Path.Combine(path, _fileSystem.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))
             {
                 return Enumerable.Empty<string>();
@@ -74,7 +78,7 @@ namespace ScriptCs
 
         private IEnumerable<string> GetPackageAssemblies(string path)
         {
-            var packagesFolder = Path.Combine(path, Constants.PackagesFolder);
+            var packagesFolder = Path.Combine(path, _fileSystem.PackagesFolder);
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
                 return Enumerable.Empty<string>();
