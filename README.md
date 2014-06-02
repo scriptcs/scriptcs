@@ -1,4 +1,4 @@
-# scriptcs [![*NIX Build Status](https://travis-ci.org/scriptcs/scriptcs.svg?branch=dev)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Statuc](<http://teamcity.codebetter.com/app/rest/builds/buildType:(id:bt949)/statusIcon>)](http://ci.scriptcs.net)
+# scriptcs [![*NIX Build Status](https://travis-ci.org/scriptcs/scriptcs.svg?branch=dev)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](<http://teamcity.codebetter.com/app/rest/builds/buildType:(id:bt949)/statusIcon>)](http://ci.scriptcs.net)
 
 
 ## What is it?
