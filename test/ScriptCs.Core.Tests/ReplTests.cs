@@ -610,6 +610,28 @@ namespace ScriptCs.Tests
                 mocks.ObjectSerializer.Verify(x => x.Serialize(returnValue), Times.Once);
                 mocks.Console.Verify(x => x.WriteLine("hello world"), Times.Once);
             }
+
+            [Fact]
+            public void ShouldReturnCommandsScriptResultfCommandHasReturnValueThatAlreadyIsScriptResult()
+            {
+                var returnValue = new ScriptResult("hello world");
+
+                var helloCommand = new Mock<IReplCommand>();
+                helloCommand.SetupGet(x => x.CommandName).Returns("hello");
+                helloCommand.Setup(x => x.Execute(It.IsAny<IScriptExecutor>(), It.IsAny<object[]>()))
+                    .Returns(returnValue);
+
+                var mocks = new Mocks { ReplCommands = new[] { helloCommand } };
+                mocks.ObjectSerializer.Setup(x => x.Serialize(returnValue.ReturnValue)).Returns("hello world");
+
+                _repl = GetRepl(mocks);
+
+                var result = _repl.Execute(":hello", null);
+
+                mocks.ObjectSerializer.Verify(x => x.Serialize(returnValue.ReturnValue), Times.Once);
+                mocks.Console.Verify(x => x.WriteLine("hello world"), Times.Once);
+                result.ShouldBeSameAs(returnValue);
+            }
         }
 
         private class DummyClass

@@ -63,7 +63,7 @@ namespace ScriptCs
                             foreach (var argument in tokens.Skip(1))
                             {
                                 var argumentResult = ScriptEngine.Execute(
-                                    argument, _scriptArgs, References, DefaultNamespaces, ScriptPackSession);
+                                    argument, _scriptArgs, References, Namespaces, ScriptPackSession);
 
                                 if (argumentResult.CompileExceptionInfo != null)
                                 {
@@ -88,15 +88,7 @@ namespace ScriptCs
                             }
 
                             var commandResult = command.Execute(this, argsToPass.ToArray());
-                            if (commandResult != null)
-                            {
-                                //if command has a result, print it
-                                Console.WriteLine(_serializer.Serialize(commandResult));
-                            }
-
-                            Buffer = null;
-
-                            return new ScriptResult(returnValue: commandResult);
+                            return ProcessCommandResult(commandResult);
                         }
                     }
                 }
@@ -174,6 +166,31 @@ namespace ScriptCs
         private static string GetInvalidCommandArgumentMessage(string argument)
         {
             return string.Format(CultureInfo.InvariantCulture, "Argument is not a valid expression: {0}", argument);
+        }
+
+        private ScriptResult ProcessCommandResult(object commandResult)
+        {
+            Buffer = null;
+
+            if (commandResult != null)
+            {
+                if (commandResult is ScriptResult)
+                {
+                    var scriptCommandResult = commandResult as ScriptResult;
+                    if (scriptCommandResult.ReturnValue != null)
+                    {
+                        Console.WriteLine(_serializer.Serialize(scriptCommandResult.ReturnValue));
+                    }
+                    return scriptCommandResult;
+                }
+
+                //if command has a result, print it
+                Console.WriteLine(_serializer.Serialize(commandResult));
+
+                return new ScriptResult(returnValue: commandResult);
+            }
+
+            return ScriptResult.Empty;
         }
     }
 }
