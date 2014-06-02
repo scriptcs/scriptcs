@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Common.Logging;
 using MonoCSharp::Mono.CSharp;
@@ -108,7 +107,7 @@ namespace ScriptCs.Engine.Mono
 
                     foreach (var method in parseResult.MethodExpressions)
                     {
-                        sessionState.Session.Run(method);    
+                        sessionState.Session.Run(method);
                     }
                 }
 
@@ -124,9 +123,9 @@ namespace ScriptCs.Engine.Mono
                     return new ScriptResult(returnValue: scriptResult);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e.Message);
+                return new ScriptResult(executionException: ex);
             }
 
             return ScriptResult.Empty;
