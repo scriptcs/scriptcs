@@ -1,8 +1,6 @@
 @echo Off
 setlocal
 
-set EnableNuGetPackageRestore=true 
-
 if exist artifacts goto Build
 mkdir artifacts
 

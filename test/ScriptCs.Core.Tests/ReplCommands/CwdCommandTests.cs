@@ -36,7 +36,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = new CwdCommand(console.Object);
 
                 // act
-                var result = cmd.Execute(executor.Object, null);
+                cmd.Execute(executor.Object, null);
 
                 // assert
                 console.Verify(x => x.WriteLine(@"c:\dir"));
@@ -56,7 +56,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var expectedForegroundColor = console.Object.ForegroundColor;
 
                 // act
-                var result = cmd.Execute(executor.Object, null);
+                cmd.Execute(executor.Object, null);
 
                 // assert
                 Assert.Equal(expectedForegroundColor, console.Object.ForegroundColor);

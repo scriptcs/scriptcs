@@ -30,8 +30,7 @@
       <AdditionalProperties>
         Configuration=$(Configuration);
         ArtifactsPath=$(ArtifactsPath);
-        RunCodeAnalysis=false;
-        RestorePackages=false
+        RunCodeAnalysis=false
       </AdditionalProperties>
     </Solution>
 

@@ -77,7 +77,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs" });
+                cmd.Execute(_executor.Object, new[] { "scriptcs" });
 
                 // assert
                 _packageInstaller.Verify(
@@ -93,7 +93,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9" });
+                cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9" });
 
                 // assert
                 var packageRef = new PackageReference("scriptcs", new FrameworkName(".NETFramework,Version=v4.0"), "0.9");
@@ -113,7 +113,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9", preReleaseFlag });
+                cmd.Execute(_executor.Object, new[] { "scriptcs", "0.9", preReleaseFlag });
 
                 // assert
                 _packageInstaller.Verify(
@@ -127,7 +127,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs" });
+                cmd.Execute(_executor.Object, new[] { "scriptcs" });
 
                 // assert
                 _packageAssemblyResolver.Verify(x => x.SavePackages(), Times.Once);
@@ -143,7 +143,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = GetCommand();
 
                 // act
-                var result = cmd.Execute(_executor.Object, new[] { "scriptcs" });
+                cmd.Execute(_executor.Object, new[] { "scriptcs" });
 
                 // assert
                 _executor.Verify(x => x.AddReferences(dummyAssemblies), Times.Once);
