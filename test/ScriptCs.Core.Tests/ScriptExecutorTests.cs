@@ -114,31 +114,40 @@ namespace ScriptCs.Tests
 
         public class TheExecuteMethod
         {
+            private string _tempPath;
+
+            public TheExecuteMethod()
+            {
+                _tempPath = Path.GetTempPath();
+            }
+
             [Theory, ScriptCsAutoData]
             public void ConstructsAbsolutePathBeforePreProcessingFile([Frozen] Mock<IFilePreProcessor> preProcessor, [Frozen] Mock<IFileSystem> fileSystem, ScriptExecutor executor)
             {
-                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
-                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(Path.Combine(_tempPath, "my_script"));
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(Path.Combine(_tempPath, "my_script"));
 
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 executor.Execute("script.csx");
-                preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
+                preProcessor.Verify(p => p.ProcessFile(
+                    Path.Combine(_tempPath, "my_script", "script.csx")));
             }
 
             [Theory, ScriptCsAutoData]
             public void DoNotChangePathIfAbsolute([Frozen] Mock<IFilePreProcessor> preProcessor, [Frozen] Mock<IFileSystem> fileSystem, ScriptExecutor executor)
             {
-                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(@"c:\my_script");
-                fileSystem.Setup(f => f.CurrentDirectory).Returns(@"c:\my_script");
+                fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns(Path.Combine(_tempPath, "my_script"));
+                fileSystem.Setup(f => f.CurrentDirectory).Returns(Path.Combine(_tempPath, "my_script"));
 
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 executor.Execute("script.csx");
 
-                preProcessor.Verify(p => p.ProcessFile(@"c:\my_script\script.csx"));
+                preProcessor.Verify(p => p.ProcessFile(
+                    Path.Combine(_tempPath, "my_script", "script.csx")));
             }
 
             [Theory, ScriptCsAutoData]

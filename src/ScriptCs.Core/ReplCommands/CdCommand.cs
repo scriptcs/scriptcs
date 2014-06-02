@@ -21,11 +21,6 @@ namespace ScriptCs.ReplCommands
 
             var path = args[0].ToString();
 
-            if (!path.EndsWith(@"\"))
-            {
-                path += @"\";
-            }
-
             repl.FileSystem.CurrentDirectory = Path.GetFullPath(Path.Combine(repl.FileSystem.CurrentDirectory, path));
 
             return null;

@@ -50,9 +50,13 @@ namespace ScriptCs.Tests
             [Fact]
             public void ReturnsCorrectWorkingDirectory()
             {
-                string workingDir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @".\working_dir\"));
-                string existingDirectoryPath = Path.GetFullPath(Path.Combine(workingDir, @".\existing_dir\"));
-                string existingFilePath = Path.GetFullPath(Path.Combine(workingDir, @".\existing_file.txt"));
+                var workingPath = string.Format(@".{0}working_dir", Path.DirectorySeparatorChar);
+                var existingPath = string.Format(@".{0}existing_dir{0}", Path.DirectorySeparatorChar);
+                var existingFile = string.Format(@".{0}existing_file.txt", Path.DirectorySeparatorChar);
+
+                string workingDir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, workingPath));
+                string existingDirectoryPath = Path.GetFullPath(Path.Combine(workingDir, existingPath));
+                string existingFilePath = Path.GetFullPath(Path.Combine(workingDir, existingFile));
 
                 try
                 {
@@ -62,7 +66,7 @@ namespace ScriptCs.Tests
 
                     _fileSystem.GetWorkingDirectory(existingDirectoryPath).ShouldEqual(existingDirectoryPath);
                     _fileSystem.GetWorkingDirectory(existingFilePath).ShouldEqual(
-                        Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @".\working_dir")));
+                        Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, workingDir)));
                 }
                 finally
                 {
@@ -86,9 +90,12 @@ namespace ScriptCs.Tests
             [Fact]
             public void ReturnsCorrectWorkingDirectoryIfPathDoesNotExist()
             {
-                const string NonExistantFilePath = @"C:\working_dir\i_dont_exist.txt";
+                var tempPath = Path.GetTempPath();
 
-                _fileSystem.GetWorkingDirectory(NonExistantFilePath).ShouldEqual(@"C:\working_dir");
+                var nonExistantFilePath = Path.Combine(tempPath, "i_dont_exist.txt");
+
+                _fileSystem.GetWorkingDirectory(nonExistantFilePath)
+                    .ShouldEqual(tempPath.TrimEnd(Path.DirectorySeparatorChar));
             }
         }
 

@@ -77,13 +77,16 @@ namespace ScriptCs.Tests
         {
             private Mocks _mocks;
             private Repl _repl;
+            private string _tempPath;
 
             public TheInitializeMethod()
             {
+                _tempPath = Path.GetTempPath();
+
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
-                _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(@"c:\");
-                var paths = new[] { @"c:\path" };
+                _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(_tempPath);
+                var paths = new[] { Path.Combine(_tempPath, "path" ) };
                 _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
             }
 
@@ -95,13 +98,13 @@ namespace ScriptCs.Tests
                     _repl.References.PathReferences.ShouldContain(reference);
                 }
 
-                _repl.References.PathReferences.ShouldContain(@"c:\path");
+                _repl.References.PathReferences.ShouldContain(Path.Combine(_tempPath, "path"));
             }
 
             [Fact]
             public void SetsTheScriptEngineBaseDirectory()
             {
-                _mocks.ScriptEngine.VerifySet(x => x.BaseDirectory = @"c:\bin");
+                _mocks.ScriptEngine.VerifySet(x => x.BaseDirectory = Path.Combine(_tempPath, "bin"));
             }
 
             [Fact]
