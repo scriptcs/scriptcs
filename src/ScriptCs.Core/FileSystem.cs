@@ -158,27 +158,27 @@ namespace ScriptCs
             get { return AppDomain.CurrentDomain.BaseDirectory; }
         }
 
-        public string BinFolder
+        public virtual string BinFolder
         {
             get { return "bin"; }
         }
 
-        public string DllCacheFolder
+        public virtual string DllCacheFolder
         {
             get { return ".cache"; }
         }
 
-        public string PackagesFile
+        public virtual string PackagesFile
         {
             get { return "packages.config"; }
         }
 
-        public string PackagesFolder
+        public virtual string PackagesFolder
         {
             get { return "packages"; }
         }
 
-        public string NugetFile
+        public virtual string NugetFile
         {
             get { return "nuget.config"; }
         }
