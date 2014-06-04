@@ -94,6 +94,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\ScriptCs.Engine.Mono.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
