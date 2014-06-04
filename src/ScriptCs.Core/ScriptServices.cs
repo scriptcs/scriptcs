@@ -47,7 +47,7 @@ namespace ScriptCs
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
-		public IInstallationProvider InstallationProvider { get; private set; }
-		public IEnumerable<IReplCommand> ReplCommands { get; private set; }
+        public IInstallationProvider InstallationProvider { get; private set; }
+        public IEnumerable<IReplCommand> ReplCommands { get; private set; }
     }
 }
