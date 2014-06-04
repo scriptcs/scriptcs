@@ -65,7 +65,7 @@ Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be in
     
 1. Execute the build script
 
-    `bash build.sh`
+    `./build.sh`
 
 ## Getting Started
 
