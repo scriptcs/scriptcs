@@ -105,10 +105,6 @@
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
-      <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
-      <Name>ScriptCs.Hosting</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
