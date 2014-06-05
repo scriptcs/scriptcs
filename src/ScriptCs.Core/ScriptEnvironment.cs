@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ScriptCs
 {
@@ -7,8 +8,10 @@ namespace ScriptCs
         public ScriptEnvironment(string[] scriptArgs)
         {
             ScriptArgs = scriptArgs;
+            WorkingDirectory = Environment.CurrentDirectory;
         }
 
         public IReadOnlyList<string> ScriptArgs { get; private set; }
+        public static string WorkingDirectory { get; private set; }
     }
 }
