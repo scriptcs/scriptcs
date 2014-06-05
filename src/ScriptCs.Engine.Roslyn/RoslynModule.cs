@@ -2,11 +2,9 @@
 
 namespace ScriptCs.Engine.Roslyn
 {
-    [Module(ModuleName)]
+    [Module("roslyn")]
     public class RoslynModule : IModule
     {
-        public const string ModuleName = "roslyn";
-
         public void Initialize(IModuleConfiguration config)
         {
             Guard.AgainstNullArgument("config", config);
