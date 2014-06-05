@@ -160,7 +160,12 @@ namespace ScriptCs.Engine.Roslyn
 
         private static bool IsCompleteSubmission(string code)
         {
-            var options = new ParseOptions(kind: SourceCodeKind.Interactive);
+            var options = new ParseOptions(
+                CompatibilityMode.None,
+                LanguageVersion.CSharp4,
+                true,
+                SourceCodeKind.Interactive,
+                default(ReadOnlyArray<string>));
 
             var syntaxTree = SyntaxTree.ParseText(code, options: options);
 
