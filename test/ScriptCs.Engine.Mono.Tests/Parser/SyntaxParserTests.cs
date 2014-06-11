@@ -142,14 +142,14 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
                 result.TypeDeclarations.FirstOrDefault()
                     .ShouldContain(": ScriptCs.Engine.Mono.MonoHost" + Environment.NewLine 
                         + "{" + Environment.NewLine 
-                        + "\tpublic static void Run ()" + Environment.NewLine 
+                        + "\tpublic void Run ()" + Environment.NewLine 
                         + "\t{" + Environment.NewLine 
                         + "\t\tvar x = 123;" + Environment.NewLine 
                         + "\t\tAction a = () => x++;" + Environment.NewLine 
                         + "\t}" + Environment.NewLine 
                         + "}");
 
-                result.Evaluations.ShouldStartWith("_");
+                result.Evaluations.ShouldStartWith("new _");
                 result.Evaluations.ShouldContain(".Run()");
                 result.Evaluations.ShouldNotContain("int x;");
             }
