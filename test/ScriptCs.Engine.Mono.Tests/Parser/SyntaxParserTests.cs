@@ -3,20 +3,27 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
     using System;
     using System.Linq;
 
+    using Common.Logging;
+    using Moq;
     using ScriptCs.Engine.Mono.Parser;
-
     using Should;
-
     using Xunit;
 
     public class SyntaxParserTests
     {
         public class TheParseMethod
         {
+            private readonly Mock<ILog> _logger;
+
+            public TheParseMethod()
+            {
+                _logger = new Mock<ILog>();
+            }
+
             [Fact]
             public void ShouldNotFailOnNoCode()
             {
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(string.Empty);
 
                 result.TypeDeclarations.Any().ShouldEqual(false);
@@ -30,7 +37,7 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
             {
                 const string Code = "var x = 42;";
 
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(Code);
 
                 result.TypeDeclarations.Any().ShouldEqual(false);
@@ -44,7 +51,7 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
             {
                 const string Code = "class A {} int x; class B {}";
 
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(Code);
 
                 var classes = result.TypeDeclarations.ToList();
@@ -62,7 +69,7 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
             {
                 const string Code = "public int Foo(int a, int b) { return a + b; }";
 
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(Code);
 
                 result.MethodPrototypes.Count().ShouldEqual(1);
@@ -84,7 +91,7 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
             {
                 const string Code = "void Foo() {} int x; void Bar() {}";
 
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(Code);
 
                 result.MethodPrototypes.Count().ShouldEqual(2);
@@ -100,12 +107,51 @@ namespace ScriptCs.Engine.Mono.Tests.Parser
             {
                 const string Code = "void Foo() {} int x; void Bar() {}";
 
-                var parser = new SyntaxParser();
+                var parser = new SyntaxParser(_logger.Object);
                 var result = parser.Parse(Code);
 
                 result.Evaluations.ShouldContain("int x;");
                 result.Evaluations.ShouldNotContain("Foo");
                 result.Evaluations.ShouldNotContain("Bar");
+            }
+
+            /// <summary>
+            /// This test check that the evaluations of a script file that is sent to the 
+            /// mono engine will be compiled as a pseudo class that inherits MonoHost 
+            /// (so it has access to Require<>) and captures the evaluation inside a 
+            /// static Run method. Then a method is generated to execute the evaluation.
+            /// 
+            /// Example:
+            ///   source: #line 1 /tmp/ \n int x;
+            /// 
+            /// Will be:
+            ///   TypeDeclaration: class _GUID : MonoHost { public static void Run() { int x; }
+            ///   Evaluation: _GUID.Run()
+            /// </summary>
+            [Fact]
+            public void ShouldCompileFileSourcesAsPseudoStaticMethodsAndHaveEvalExec()
+            {
+                const string Code = "#line 1 /tmp/ \n var x = 123;Action a = () => x++;";
+
+                var parser = new SyntaxParser(_logger.Object);
+                var result = parser.Parse(Code);
+
+                result.TypeDeclarations.Count().ShouldEqual(1);
+
+                result.TypeDeclarations.FirstOrDefault().ShouldStartWith("class _");
+                result.TypeDeclarations.FirstOrDefault()
+                    .ShouldContain(": ScriptCs.Engine.Mono.MonoHost" + Environment.NewLine 
+                        + "{" + Environment.NewLine 
+                        + "\tpublic void Run ()" + Environment.NewLine 
+                        + "\t{" + Environment.NewLine 
+                        + "\t\tvar x = 123;" + Environment.NewLine 
+                        + "\t\tAction a = () => x++;" + Environment.NewLine 
+                        + "\t}" + Environment.NewLine 
+                        + "}");
+
+                result.Evaluations.ShouldStartWith("_");
+                result.Evaluations.ShouldContain(".Run()");
+                result.Evaluations.ShouldNotContain("int x;");
             }
 
             /*

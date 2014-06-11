@@ -1,9 +1,12 @@
-﻿﻿namespace ScriptCs.Engine.Mono.Parser
+﻿namespace ScriptCs.Engine.Mono.Parser
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Common.Logging;
 
     using ICSharpCode.NRefactory.CSharp;
     using ICSharpCode.NRefactory.Editor;
@@ -13,27 +16,58 @@
 
     public class SyntaxParser
     {
+        public SyntaxParser(ILog logger)
+        {
+            _logger = logger;
+        }
+
+        private readonly ILog _logger;
+
         public ParseResult Parse(string code)
         {
+            const string ScriptPattern = @"#line 1.*?\n";
+            var isScriptFile = Regex.IsMatch(code, ScriptPattern);
+
+            if(isScriptFile)
+            {
+                _logger.Debug("Script file detected");
+                // Remove debug line
+                code = Regex.Replace(code, ScriptPattern, "");
+            }
+
             var className = CreateUniqueName();
             code = WrapAsPseudoClass(className, code);
 
-            var classes = ExtractClassDeclarations(className, code);
+            var classes = ExtractClassDeclarations(code)
+                .Where(x => !x.GetText().StartsWith(string.Format("class {0}", className)))
+                .ToList();
             code = RemoveClasses(code, classes);
 
             var methods = ExtractMethodDeclaration(code);
             code = RemoveMethods(code, methods);
 
-            return new ParseResult 
+            var eval = UnWrapPseudoClass(code);
+
+            if(isScriptFile)
+            {
+                var evalClass = WrapEvalAsStaticClassMethod(className, classes, methods, eval);
+                eval = ComposeEvalStaticClassMethod(className);
+                var evalClass1 = ExtractClassDeclarations(evalClass);
+                classes = classes.Union(evalClass1).ToList();
+            }
+
+            var result = new ParseResult 
             {
                 TypeDeclarations = classes.Select(x => x.GetText()),
                 MethodPrototypes = methods.Select(x => x.MethodPrototype.GetText()),
                 MethodExpressions = methods.Select(x => x.MethodExpression.GetText()),
-                Evaluations = UnWrapPseudoClass(code)
+                Evaluations = eval
             };
+
+            return result;
         }
          
-        private static IList<TypeDeclaration> ExtractClassDeclarations(string className, string code)
+        private static IList<TypeDeclaration> ExtractClassDeclarations(string code)
         {
             var visitor = new ClassTypeVisitor();
             var parser = new CSharpParser();
@@ -41,9 +75,7 @@
             syntaxTree.AcceptVisitor(visitor);
             syntaxTree.Freeze();
 
-            return visitor.GetClassDeclarations()
-                    .Where(x => !x.GetText().StartsWith(string.Format("class {0}", className)))
-                    .ToList();
+            return visitor.GetClassDeclarations();
         }
 
         private static string RemoveClasses(string code, IEnumerable<TypeDeclaration> classes)
@@ -102,7 +134,7 @@
         private static string WrapAsPseudoClass(string className, string code)
         {
             var sb = new StringBuilder();
-            sb.AppendFormat(@"class {0} ", className);
+            sb.AppendFormat(@"class {0} : ScriptCs.Engine.Mono.MonoHost ", className);
             sb.Append("{");
             sb.Append(Environment.NewLine);
             sb.Append(code);
@@ -111,6 +143,48 @@
 
             return sb.ToString();
         }
+
+        private string WrapEvalAsStaticClassMethod(string className, List<TypeDeclaration> classes, IList<MethodVisitorResult> methods, string eval)
+        {
+            var sb = new StringBuilder();
+
+            foreach (string @class in classes.Select(x => x.GetText()))
+            {
+                sb.Append(@class);    
+            }
+            
+            foreach (string method in methods.Select(x => x.MethodDefinition.GetText()))
+            {
+                sb.Append(method);
+            }
+
+            sb.AppendFormat(@"public void Run ()");
+            sb.Append("{");
+            sb.Append(Environment.NewLine);
+            sb.Append(eval);
+            sb.Append(Environment.NewLine);
+            sb.Append("}");
+
+            return WrapAsPseudoClass(className, sb.ToString());
+        }
+
+        private static string WrapEvalAsStaticClassMethod(string className, string code)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat(@"public static void Run()");
+            sb.Append("{");
+            sb.Append(Environment.NewLine);
+            sb.Append(code);
+            sb.Append(Environment.NewLine);
+            sb.Append("}");
+
+            return WrapAsPseudoClass(className, sb.ToString());
+        }
+
+        private static string ComposeEvalStaticClassMethod(string className)
+        {
+            return string.Format("new {0}().Run()", className);
+        } 
 
         private static string UnWrapPseudoClass(string code)
         {

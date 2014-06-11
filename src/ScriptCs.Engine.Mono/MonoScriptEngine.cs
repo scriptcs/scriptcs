@@ -35,7 +35,6 @@ namespace ScriptCs.Engine.Mono
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
             references.PathReferences.UnionWith(scriptPackSession.References);
-            var parser = new SyntaxParser();
 
             SessionState<Evaluator> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -88,6 +87,7 @@ namespace ScriptCs.Engine.Mono
 
             try
             {
+                var parser = new SyntaxParser(Logger);
                 var parseResult = parser.Parse(code);
 
                 if (parseResult.TypeDeclarations != null && parseResult.TypeDeclarations.Any())
