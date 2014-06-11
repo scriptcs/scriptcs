@@ -50,7 +50,7 @@
 
             if(isScriptFile)
             {
-                var evalClass = WrapEvalAsStaticClassMethod(className, eval);
+                var evalClass = WrapEvalAsStaticClassMethod(className, classes, methods, eval);
                 eval = ComposeEvalStaticClassMethod(className);
                 var evalClass1 = ExtractClassDeclarations(evalClass);
                 classes = classes.Union(evalClass1).ToList();
@@ -144,6 +144,30 @@
             return sb.ToString();
         }
 
+        private string WrapEvalAsStaticClassMethod(string className, List<TypeDeclaration> classes, IList<MethodVisitorResult> methods, string eval)
+        {
+            var sb = new StringBuilder();
+
+            foreach (string @class in classes.Select(x => x.GetText()))
+            {
+                sb.Append(@class);    
+            }
+            
+            foreach (string method in methods.Select(x => x.MethodDefinition.GetText()))
+            {
+                sb.Append(method);
+            }
+
+            sb.AppendFormat(@"public void Run ()");
+            sb.Append("{");
+            sb.Append(Environment.NewLine);
+            sb.Append(eval);
+            sb.Append(Environment.NewLine);
+            sb.Append("}");
+
+            return WrapAsPseudoClass(className, sb.ToString());
+        }
+
         private static string WrapEvalAsStaticClassMethod(string className, string code)
         {
             var sb = new StringBuilder();
@@ -159,8 +183,8 @@
 
         private static string ComposeEvalStaticClassMethod(string className)
         {
-            return string.Format("{0}.Run()", className);
-        }
+            return string.Format("new {0}().Run()", className);
+        } 
 
         private static string UnWrapPseudoClass(string code)
         {
