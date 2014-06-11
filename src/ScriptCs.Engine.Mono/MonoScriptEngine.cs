@@ -35,7 +35,6 @@ namespace ScriptCs.Engine.Mono
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
             references.PathReferences.UnionWith(scriptPackSession.References);
-            var parser = new SyntaxParser();
 
             SessionState<Evaluator> sessionState;
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -85,16 +84,23 @@ namespace ScriptCs.Engine.Mono
             }
 
             Logger.Debug("Starting execution");
+            var result = Execute(code, sessionState.Session);
+            Logger.Debug("Finished execution");
+            return result;
+        }
 
+        protected virtual ScriptResult Execute(string code, Evaluator session)
+        {
             try
             {
+                var parser = new SyntaxParser();
                 var parseResult = parser.Parse(code);
 
                 if (parseResult.TypeDeclarations != null && parseResult.TypeDeclarations.Any())
                 {
                     foreach (var @class in parseResult.TypeDeclarations)
                     {
-                        sessionState.Session.Compile(@class);
+                        session.Compile(@class);
                     }
                 }
 
@@ -102,12 +108,12 @@ namespace ScriptCs.Engine.Mono
                 {
                     foreach (var prototype in parseResult.MethodPrototypes)
                     {
-                        sessionState.Session.Run(prototype);
+                        session.Run(prototype);
                     }
 
                     foreach (var method in parseResult.MethodExpressions)
                     {
-                        sessionState.Session.Run(method);
+                        session.Run(method);
                     }
                 }
 
@@ -116,9 +122,7 @@ namespace ScriptCs.Engine.Mono
                     object scriptResult;
                     bool resultSet;
 
-                    sessionState.Session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
-
-                    Logger.Debug("Finished execution");
+                    session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
                     return new ScriptResult(returnValue: scriptResult);
                 }
