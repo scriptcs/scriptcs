@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
 EndProject
@@ -37,6 +37,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Mono.Tests", "test\ScriptCs.Engine.Mono.Tests\ScriptCs.Engine.Mono.Tests.csproj", "{D0723C2D-D3B4-40B7-8E5A-84FB3A6E5092}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests.Acceptance", "test\ScriptCs.Tests.Acceptance\ScriptCs.Tests.Acceptance.csproj", "{10684649-2922-41F5-AB9B-20B127CBF92C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B138045D-DC04-4A04-A2BA-F771173BCC32}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
