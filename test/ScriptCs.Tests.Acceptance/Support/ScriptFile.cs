@@ -62,7 +62,7 @@
             var packagesDirectory = Path.Combine(this.directory, "packages");
             FileSystem.EnsureDirectoryCreated(packagesDirectory);
 
-            var nugetConfig = Path.Combine(packagesDirectory, "nuget.config");
+            var nugetConfig = Path.Combine(this.directory, "nuget.config");
             File.Delete(nugetConfig);
             using (var writer = new StreamWriter(nugetConfig))
             {
@@ -70,8 +70,12 @@
 @"
 <?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
-  <activePackageSource>
+  <packageSources>
+    <clear />
     <add key=""Local"" value=""" + Path.GetFullPath(Path.Combine("Support", "Gallery")) + @""" />
+  </packageSources>
+  <activePackageSource>
+    <add key=""All"" value=""(Aggregate source)"" />
   </activePackageSource>
 </configuration>"
                     );
@@ -79,7 +83,7 @@
                 writer.Flush();
             }
 
-            return ScriptCsExe.Execute(new[] { "-install", package }, new string[0], this.log, this.directory);
+            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, new string[0], this.log, this.directory);
         }
     }
 }

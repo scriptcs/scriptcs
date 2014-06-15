@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Support\Gallery\ScriptCs.Adder.0.1.1.nupkg">
+    <None Include="Support\Gallery\ScriptCs.Adder.Local.0.1.1.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -17,7 +17,7 @@
                     @"Console.WriteLine(Require<Adder>().Add(1234, 5678));"));
 
             "When I install ScriptCs.Adder"
-                .f(() => script.Install("ScriptCs.Adder"));
+                .f(() => script.Install("ScriptCs.Adder.Local"));
 
             "And execute the script"
                 .f(() => output = script.Execute());
