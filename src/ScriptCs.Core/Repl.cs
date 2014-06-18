@@ -28,14 +28,14 @@ namespace ScriptCs
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
-            Commands = replCommands != null ? replCommands.ToList() : new List<IReplCommand>();
+            Commands = replCommands != null ? replCommands.ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
         }
 
         public string Buffer { get; set; }
 
         public IConsole Console { get; private set; }
 
-        public IEnumerable<IReplCommand> Commands { get; private set; }
+        public Dictionary<string, IReplCommand> Commands { get; private set; }
 
         public override void Terminate()
         {
@@ -55,9 +55,9 @@ namespace ScriptCs
                     var tokens = script.Split(' ');
                     if (tokens[0].Length > 1)
                     {
-                        var command = Commands.FirstOrDefault(x => x.CommandName == tokens[0].Substring(1));
+                        var command = Commands.FirstOrDefault(x => x.Key == tokens[0].Substring(1));
 
-                        if (command != null)
+                        if (command.Value != null)
                         {
                             var argsToPass = new List<object>();
                             foreach (var argument in tokens.Skip(1))
@@ -87,7 +87,7 @@ namespace ScriptCs
                                 argsToPass.Add(argumentResult.ReturnValue);
                             }
 
-                            var commandResult = command.Execute(this, argsToPass.ToArray());
+                            var commandResult = command.Value.Execute(this, argsToPass.ToArray());
                             return ProcessCommandResult(commandResult);
                         }
                     }
