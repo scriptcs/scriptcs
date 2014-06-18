@@ -55,6 +55,7 @@
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="PackageAssemblyResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplCommands\AliasCommandTests.cs" />
     <Compile Include="ReplCommands\CdCommandTests.cs" />
     <Compile Include="ReplCommands\ClearCommandTests.cs" />
     <Compile Include="ReplCommands\CwdCommandTests.cs" />
