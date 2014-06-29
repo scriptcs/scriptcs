@@ -421,7 +421,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public string ModulesFolder
+                public string GlobalFolder
                 {
                     get { throw new NotImplementedException(); }
                 }
@@ -452,6 +452,11 @@ namespace ScriptCs.Hosting.Tests
                 }
 
                 public string NugetFile
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public string GlobalOptsFile
                 {
                     get { throw new NotImplementedException(); }
                 }

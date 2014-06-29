@@ -11,16 +11,23 @@ namespace ScriptCs.Tests
     {
         public class ParseMethod
         {
-            private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true)
+            private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true, string globalFileContent = null)
             {
                 const string currentDirectory = "C:\\test\\folder";
+                const string moduleDirectory = "C:\\test\\moduleFolder";
 
                 string filePath = currentDirectory + '\\' + fileName;
+                string globalFilePath = moduleDirectory + "\\scriptcs.opts";
 
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(currentDirectory);
                 fs.Setup(x => x.FileExists(filePath)).Returns(fileExists);
                 fs.Setup(x => x.ReadFile(filePath)).Returns(fileContent);
+                fs.SetupGet(x => x.GlobalFolder).Returns(moduleDirectory);
+                fs.SetupGet(x => x.GlobalOptsFile).Returns(globalFilePath);
+                fs.Setup(x => x.FileExists(globalFilePath)).Returns(globalFileContent != null);
+                fs.Setup(x => x.ReadFile(globalFilePath)).Returns(globalFileContent);
+
                 var console = new ScriptConsole();
 
                 return new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), fs.Object);
@@ -40,6 +47,58 @@ namespace ScriptCs.Tests
                 result.CommandArguments.ScriptName.ShouldEqual("server.csx");
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
                 result.CommandArguments.Install.ShouldEqual("install test value");
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
+            public void ShouldHandleGlobalConfigAndCommandLineArguments()
+            {
+                const string file = "{\"Install\": \"install test value\" }";
+                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
+
+                var argumentHandler = Setup(null, globalFileContent: file);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.CommandArguments.Install.ShouldEqual("install test value");
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
+            public void ShouldHandleGlobalConfigAndLocalConfigArguments()
+            {
+                const string localFile = "{\"Install\": \"install test value\" }";
+                const string globalFile = "{\"Modules\": \"modules test value\" }";
+                string[] args = { };
+
+                var argumentHandler = Setup(localFile, globalFileContent: globalFile);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.Install.ShouldEqual("install test value");
+                result.CommandArguments.Modules.ShouldEqual("modules test value");
+                result.ScriptArguments.ShouldEqual(new string[] { });
+            }
+
+            [Fact]
+            public void ShouldHandleLocalConfigFileArgumentsOverGlobalConfigFile()
+            {
+                const string localFile = "{\"Install\": \"local install test value\" }";
+                const string globalFile = "{\"Install\": \"global install test value\" }";
+                string[] args = { "server.csx", "-cache", "--", "-port", "8080" };
+
+                var argumentHandler = Setup(localFile, globalFileContent: globalFile);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.Install.ShouldEqual("local install test value");
+                result.CommandArguments.Cache.ShouldEqual(true);
                 result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
             }
 
@@ -91,7 +150,21 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleOnlyConfigFile()
+            public void ShouldHandleOnlyGlobalConfigFile()
+            {
+                const string file = "{\"log\": \"error\", \"script\": \"server.csx\" }";
+
+                var argumentHandler = Setup(null, globalFileContent: file);
+                var result = argumentHandler.Parse(new string[0]);
+
+                result.ShouldNotBeNull();
+                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.ScriptArguments.ShouldEqual(new string[0]);
+            }
+
+            [Fact]
+            public void ShouldHandleOnlyLocalConfigFile()
             {
                 const string file = "{\"log\": \"error\", \"script\": \"server.csx\" }";
 
@@ -105,7 +178,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleCustomConfigFile()
+            public void ShouldHandleCustomLocalConfigFile()
             {
                 const string fileName = "text.txt";
                 const string file = "{\"Install\": \"install test value\" }";
@@ -123,7 +196,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleHelp() 
+            public void ShouldHandleHelp()
             {
                 string[] args = { "-help" };
 
@@ -156,7 +229,7 @@ namespace ScriptCs.Tests
             public void ShouldUseScriptOptsIfParsingFailed()
             {
                 var parser = new Mock<IArgumentParser>();
-                parser.Setup(x => x.Parse(It.IsAny<string[]>())).Returns<ScriptCsArgs>(null);
+                parser.Setup(x => x.Parse(It.IsAny<string[]>())).Returns(new ScriptCsArgs());
                 var system = new Mock<IFileSystem>();
                 system.Setup(x => x.CurrentDirectory).Returns(@"C:");
 

@@ -74,7 +74,7 @@ namespace ScriptCs.Tests
                 var modulesFolder = "c:\test";
                 var dll = "c:\test\test.dll";
                 assemblyResolverMock.Setup(a => a.GetAssemblyPaths(modulesFolder, true)).Returns(new[] { dll });
-                fileSystemMock.SetupGet(fs => fs.ModulesFolder).Returns(modulesFolder);
+                fileSystemMock.SetupGet(fs => fs.GlobalFolder).Returns(modulesFolder);
                 resolverMock.Setup(r => r.AddAssemblyPaths(It.IsAny<IEnumerable<string>>()));
                 resolverMock.Object.Initialize();
                 resolverMock.Verify(r => r.AddAssemblyPaths(It.Is<IEnumerable<string>>(paths => paths.Contains(dll))));

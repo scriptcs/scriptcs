@@ -50,7 +50,7 @@ namespace ScriptCs.Contracts
 
         void WriteAllBytes(string filePath, byte[] bytes);
 
-        string ModulesFolder { get; }
+        string GlobalFolder { get; }
 
         string HostBin { get; }
 
@@ -63,5 +63,7 @@ namespace ScriptCs.Contracts
         string PackagesFolder { get; }
 
         string NugetFile { get; }
+
+        string GlobalOptsFile { get; }
     }
 }
