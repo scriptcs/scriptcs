@@ -151,27 +151,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void WhenNoPackagesAreFoundShouldThrowArgumentEx()
-            {
-                _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
-                                 .Returns<List<IPackageObject>>(null);
-
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
-
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
-            }
-
-            [Fact]
-            public void WhenPackagesAreFoundButNoMatchingDllsExistShouldThrowArgumentEx()
-            {
-                _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>())).Returns<List<string>>(null);
-
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
-
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
-            }
-
-            [Fact]
             public void WhenPackageDirectoryDoesNotExistShouldReturnEmptyPackagesList()
             {
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, new Mock<IPackageContainer>().Object, _logger.Object);

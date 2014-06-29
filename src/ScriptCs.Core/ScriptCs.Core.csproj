@@ -55,7 +55,6 @@
     <Compile Include="DebugScriptExecutor.cs" />
     <Compile Include="Exceptions\ScriptCompilationException.cs" />
     <Compile Include="Exceptions\ScriptExecutionException.cs" />
-    <Compile Include="Exceptions\MissingAssemblyException.cs" />
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
