@@ -111,7 +111,6 @@ namespace ScriptCs.Hosting
                 .Where(m => moduleNames.Contains(m.Metadata.Name) || 
                     (extension != null && m.Metadata.Extensions != null && (m.Metadata.Extensions.Split(',').Contains(extension))) || m.Metadata.Autoload == true) 
                 .Select(m => m.Value);
-            _logger.Info("");
             _logger.Debug("Initializing modules");
             foreach (var module in modules)
             {
