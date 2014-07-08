@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
@@ -24,6 +25,7 @@ namespace ScriptCs.Hosting.Tests
             private Mock<IModule> _mockModule2 = new Mock<IModule>();
             private Mock<IModule> _mockModule3 = new Mock<IModule>();
             private Mock<IModule> _mockModule4 = new Mock<IModule>();
+            private Mock<IFileSystem> _mockFileSystem = new Mock<IFileSystem>();
 
             public TheLoadMethod()
             {
@@ -38,12 +40,13 @@ namespace ScriptCs.Hosting.Tests
                 _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule3.Object, new ModuleMetadata { Name = "module3" }));
                 _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule4.Object, new ModuleMetadata { Name = "module4", Autoload = true }));
                 _getModules = c => _modules;
+                _mockFileSystem.Setup(f=>f.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(Enumerable.Empty<string>());
             }
 
             [Fact]
             public void ShouldResolvePathsFromTheAssemblyResolver()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => { }, c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => { }, c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>(), _mockFileSystem.Object);
                 loader.Load(null, new[] { "c:\test" }, null, null);
                 _mockAssemblyResolver.Verify(r => r.GetAssemblyPaths("c:\test"));
             }
@@ -51,7 +54,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldInvokeTheCatalogActionForEachFile()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>());
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>(), _mockFileSystem.Object);
                 loader.Load(null, new[] { "c:\test" }, null, null);
                 _paths.Count.ShouldEqual(2);
             }
@@ -59,7 +62,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldInitializeModulesThatMatchOnExtension()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules, _mockFileSystem.Object);
                 loader.Load(null, new string[0], null, "ext1");
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
@@ -69,7 +72,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldInitializeModulesThatMatchBasedOnName()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules, _mockFileSystem.Object);
                 loader.Load(null, new string[0], null, null, "module3");
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
                 _mockModule2.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
@@ -79,7 +82,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldInitializeModulesThatAreSetToAutoload()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules, _mockFileSystem.Object);
                 loader.Load(null, new string[0], null, null);
                 _mockModule4.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Once());
             }
@@ -87,7 +90,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldNotInitializeModulesThatAreNotSetToAutoload()
             {
-                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules);
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (p, c) => _paths.Add(p), _getModules, _mockFileSystem.Object);
                 loader.Load(null, new string[0], null, null);
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
             }
