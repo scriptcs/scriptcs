@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Exceptions;
 
 namespace ScriptCs
 {
@@ -92,7 +91,7 @@ namespace ScriptCs
                 {
                     _logger.WarnFormat(
                         CultureInfo.InvariantCulture,
-                        "Cannot find binaries for {0} in: {1} {2}",
+                        "Cannot find compatible binaries for {0} in: {1} {2}",
                         packageRef.FrameworkName,
                         packageRef.PackageId,
                         packageRef.Version);

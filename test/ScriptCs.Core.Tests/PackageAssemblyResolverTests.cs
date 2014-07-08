@@ -183,7 +183,7 @@ namespace ScriptCs.Tests
                 // assert
                 _logger.Verify(i => i.WarnFormat(
                     It.IsAny<IFormatProvider>(),
-                    It.Is<string>(x => x == "Cannot find binaries for {0} in: {1} {2}"),
+                    It.Is<string>(x => x == "Cannot find compatible binaries for {0} in: {1} {2}"),
                     It.IsAny<object>(),
                     It.IsAny<object>(),
                     It.IsAny<object>()),
