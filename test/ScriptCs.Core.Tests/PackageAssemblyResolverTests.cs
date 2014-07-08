@@ -1,17 +1,15 @@
 ﻿﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Exceptions;
 using Should;
 using Xunit;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.PackageReference;
 
 namespace ScriptCs.Tests
 {
@@ -151,24 +149,45 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void WhenNoPackagesAreFoundShouldThrowArgumentEx()
+            public void WhenNoPackagesAreFoundShouldLogWarning()
             {
+                // arrange
                 _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                                  .Returns<List<IPackageObject>>(null);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
 
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
+                // act
+                resolver.GetAssemblyNames(_workingDirectory);
+
+                // assert
+                _logger.Verify(i => i.WarnFormat(
+                    It.IsAny<IFormatProvider>(),
+                    It.Is<string>(x => x == "Cannot find: {0} {1}"),
+                    It.IsAny<object>(),
+                    It.IsAny<object>()),
+                    Times.Exactly(_packageContainer.Object.FindReferences("foo").Count()));
             }
 
             [Fact]
-            public void WhenPackagesAreFoundButNoMatchingDllsExistShouldThrowArgumentEx()
+            public void WhenPackagesAreFoundButNoMatchingDllsExistShouldLogWarning()
             {
+                // arrange
                 _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>())).Returns<List<string>>(null);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
 
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
+                // act
+                resolver.GetAssemblyNames(_workingDirectory);
+
+                // assert
+                _logger.Verify(i => i.WarnFormat(
+                    It.IsAny<IFormatProvider>(),
+                    It.Is<string>(x => x == "Cannot find compatible binaries for {0} in: {1} {2}"),
+                    It.IsAny<object>(),
+                    It.IsAny<object>(),
+                    It.IsAny<object>()),
+                    Times.Exactly(_packageContainer.Object.FindReferences("foo").Count()));
             }
 
             [Fact]
@@ -280,7 +299,7 @@ namespace ScriptCs.Tests
                 _fs = new Mock<IFileSystem>();
                 _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
                 _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
-                
+
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }
@@ -321,7 +340,7 @@ namespace ScriptCs.Tests
                 _fs = new Mock<IFileSystem>();
                 _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
                 _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
-                
+
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
-using ScriptCs.Exceptions;
 
 namespace ScriptCs
 {
@@ -60,28 +60,28 @@ namespace ScriptCs
             var packageDir = Path.Combine(workingDirectory, _fileSystem.PackagesFolder);
 
             var foundAssemblyPaths = new List<string>();
-            var missingAssemblies = new List<IPackageReference>();
 
-            LoadFiles(packageDir, packages, missingAssemblies, foundAssemblyPaths, _fileSystem.FileExists(packageFile));
-
-            if (missingAssemblies.Count > 0)
-            {
-                var missingAssembliesString = string.Join(",", missingAssemblies.Select(i => i.PackageId + " " + i.FrameworkName.FullName));
-                throw new MissingAssemblyException(string.Format("Missing: {0}", missingAssembliesString));
-            }
+            LoadFiles(packageDir, packages, foundAssemblyPaths, _fileSystem.FileExists(packageFile));
 
             return foundAssemblyPaths;
         }
 
-        private void LoadFiles(string packageDir, IEnumerable<IPackageReference> packageReferences, List<IPackageReference> missingAssemblies, List<string> foundAssemblies, bool strictLoad = true)
+        private void LoadFiles(
+            string packageDir,
+            IEnumerable<IPackageReference> packageReferences,
+            List<string> foundAssemblies,
+            bool strictLoad = true)
         {
             foreach (var packageRef in packageReferences)
             {
                 var nugetPackage = _packageContainer.FindPackage(packageDir, packageRef);
                 if (nugetPackage == null)
                 {
-                    missingAssemblies.Add(packageRef);
-                    _logger.Info("Cannot find: " + packageRef.PackageId + " " + packageRef.Version);
+                    _logger.WarnFormat(
+                        CultureInfo.InvariantCulture,
+                        "Cannot find: {0} {1}",
+                        packageRef.PackageId,
+                        packageRef.Version);
 
                     continue;
                 }
@@ -89,8 +89,12 @@ namespace ScriptCs
                 var compatibleFiles = nugetPackage.GetCompatibleDlls(packageRef.FrameworkName);
                 if (compatibleFiles == null)
                 {
-                    missingAssemblies.Add(packageRef);
-                    _logger.Info("Cannot find binaries for " + packageRef.FrameworkName + " in: " + packageRef.PackageId + " " + packageRef.Version);
+                    _logger.WarnFormat(
+                        CultureInfo.InvariantCulture,
+                        "Cannot find compatible binaries for {0} in: {1} {2}",
+                        packageRef.FrameworkName,
+                        packageRef.PackageId,
+                        packageRef.Version);
 
                     continue;
                 }
@@ -117,7 +121,7 @@ namespace ScriptCs
                     .Where(i => _topLevelPackages.All(x => x.PackageId != i.Id))
                     .Select(i => new PackageReference(i.Id, i.FrameworkName, i.Version));
 
-                LoadFiles(packageDir, dependencyReferences, missingAssemblies, foundAssemblies, true);
+                LoadFiles(packageDir, dependencyReferences, foundAssemblies, true);
             }
         }
     }
