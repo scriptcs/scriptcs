@@ -159,27 +159,27 @@ namespace ScriptCs
 
         public virtual string BinFolder
         {
-            get { return "bin"; }
+            get { return "scriptcs_bin"; }
         }
 
         public virtual string DllCacheFolder
         {
-            get { return ".cache"; }
+            get { return ".scriptcs_cache"; }
         }
 
         public virtual string PackagesFile
         {
-            get { return "packages.config"; }
+            get { return "scriptcs_packages.config"; }
         }
 
         public virtual string PackagesFolder
         {
-            get { return "packages"; }
+            get { return "scriptcs_packages"; }
         }
 
         public virtual string NugetFile
         {
-            get { return "nuget.config"; }
+            get { return "scriptcs_nuget.config"; }
         }
 
         public virtual string GlobalOptsFile
