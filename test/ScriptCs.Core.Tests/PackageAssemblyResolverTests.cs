@@ -46,6 +46,7 @@ namespace ScriptCs.Tests
                 _package.SetupGet(i => i.Version).Returns(new Version("3.0"));
                 _package.SetupGet(i => i.TextVersion).Returns("3.0");
                 _package.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+                _package.SetupGet(i => i.FrameworkAssemblies).Returns(new[] { "System.Net.Http", "System.ComponentModel" });
 
                 _packageIds = new List<IPackageReference>
                     {
@@ -66,7 +67,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
 
             [Fact]
@@ -87,7 +88,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -104,7 +105,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(1);
+                found.Count.ShouldEqual(3);
             }
 
             [Fact]
@@ -132,7 +133,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
 
             [Fact]
@@ -232,7 +233,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -259,7 +260,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -284,7 +285,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
         }
 
