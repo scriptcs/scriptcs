@@ -99,7 +99,9 @@ namespace ScriptCs
                     continue;
                 }
 
-                var compatibleFilePaths = compatibleFiles.Select(packageFile => Path.Combine(packageDir, nugetPackage.FullName, packageFile));
+                var compatibleFilePaths = compatibleFiles
+                    .Select(packageFile => Path.Combine(packageDir, nugetPackage.FullName, packageFile))
+                    .Concat(nugetPackage.FrameworkAssemblies);
 
                 foreach (var path in compatibleFilePaths)
                 {
