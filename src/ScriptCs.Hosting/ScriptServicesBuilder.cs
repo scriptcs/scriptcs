@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -19,17 +20,29 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
+        private AppDomainAssemblyResolver _appDomainAssemblyResolver;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null, ITypeResolver typeResolver = null, IInitializationServices initializationServices = null)
         {
             InitializationServices = initializationServices ?? new InitializationServices(logger);
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
-
             _typeResolver = typeResolver ?? new TypeResolver();
 
             ConsoleInstance = console;
             _logger = logger;
+            InitializeAppDomainAssemblyResolver(InitializationServices.GetAssemblyResolver(), InitializationServices.GetFileSystem());
+        }
+
+        private void InitializeAppDomainAssemblyResolver(IAssemblyResolver resolver, IFileSystem fileSystem)
+        {
+            _appDomainAssemblyResolver = new AppDomainAssemblyResolver(_logger);
+
+            var hostAssemblyPaths = fileSystem.EnumerateFiles(fileSystem.HostBin, "*.dll", SearchOption.TopDirectoryOnly);
+            _appDomainAssemblyResolver.AddAssemblyPaths(hostAssemblyPaths);
+
+            var scriptAssemblyPaths = resolver.GetAssemblyPaths(fileSystem.CurrentDirectory);
+            _appDomainAssemblyResolver.AddAssemblyPaths(scriptAssemblyPaths);
         }
 
         public ScriptServices Build()

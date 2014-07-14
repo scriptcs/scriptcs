@@ -35,7 +35,8 @@ namespace ScriptCs.Hosting
                 {
                     try
                     {
-                        var assembly = Assembly.LoadFrom(p);
+                        var name = AssemblyName.GetAssemblyName(p);
+                        var assembly = Assembly.Load(name);
                         catalog.Catalogs.Add(new AssemblyCatalog(assembly));
                     }
                     catch(Exception exception)

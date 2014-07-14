@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Reflection.Emit;
 using Common.Logging;
 
 using ScriptCs.Contracts;
@@ -34,6 +34,7 @@ namespace ScriptCs
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
             _assemblyUtility = assemblyUtility;
+
         }
 
         public IEnumerable<string> GetAssemblyPaths(string path)
@@ -47,7 +48,7 @@ namespace ScriptCs
             }
 
             var packageAssemblies = GetPackageAssemblies(path);
-            var binAssemblies = GetBinAssemblies(path);
+            var binAssemblies = GetBinAssemblyPaths(path);
 
             assemblies = packageAssemblies.Union(binAssemblies).ToList();
             _assemblyPathCache.Add(path, assemblies);
@@ -55,7 +56,7 @@ namespace ScriptCs
             return assemblies;
         }
 
-        private IEnumerable<string> GetBinAssemblies(string path)
+        public IEnumerable<string> GetBinAssemblyPaths(string path)
         {
             var binFolder = Path.Combine(path, _fileSystem.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))
