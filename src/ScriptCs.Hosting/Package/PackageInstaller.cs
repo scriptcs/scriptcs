@@ -32,7 +32,7 @@ namespace ScriptCs.Hosting.Package
                 return;
             }
 
-            bool successful = true;
+            var exceptions = new List<Exception>();
             foreach (var packageId in packageIds)
             {
                 if (_installer.IsInstalled(packageId, allowPreRelease))
@@ -40,15 +40,20 @@ namespace ScriptCs.Hosting.Package
                     continue;
                 }
 
-                if(!_installer.InstallPackage(packageId, allowPreRelease))
+                try
                 {
-                    successful = false;
+                    _installer.InstallPackage(packageId, allowPreRelease);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex.Message, ex);
+                    exceptions.Add(ex);
                 }
             }
-            
-            if (packageIds.Count() > 1)
+
+            if (exceptions.Any())
             {
-                _logger.Info(successful ? "Installation successful." : "Installation unsuccessful.");
+                throw new AggregateException(exceptions);
             }
         }
     }

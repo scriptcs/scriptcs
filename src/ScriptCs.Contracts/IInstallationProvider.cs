@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ScriptCs.Contracts
 {
@@ -8,6 +7,6 @@ namespace ScriptCs.Contracts
         IEnumerable<string> GetRepositorySources(string path);
         void Initialize();
         bool IsInstalled(IPackageReference packageId, bool allowPreRelease = false);
-        bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false);
+        void InstallPackage(IPackageReference packageId, bool allowPreRelease = false);
     }
 }
