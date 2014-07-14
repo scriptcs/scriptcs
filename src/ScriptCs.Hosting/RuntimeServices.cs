@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -64,7 +65,10 @@ namespace ScriptCs.Hosting
             {
                 var fileSystem = _initializationServices.GetFileSystem();
                 var currentDirectory = fileSystem.GetWorkingDirectory(_scriptName);
-                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
+
+                var assemblies = assemblyResolver
+                    .GetAssemblyPaths(currentDirectory)
+                    .Where(assembly => ShouldLoadAssembly(fileSystem, assembly));
 
                 var aggregateCatalog = new AggregateCatalog();
                 bool assemblyLoadFailures = false;
@@ -105,6 +109,14 @@ namespace ScriptCs.Hosting
             }
 
             return builder.Build();
+        }
+
+        /// <summary>
+        /// HACK: Filter out GAC'ed assemblies by checking if full path is specified.
+        /// </summary>
+        private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
+        {
+            return fileSystem.IsPathRooted(assembly);
         }
 
         private void RegisterLineProcessors(ContainerBuilder builder)
