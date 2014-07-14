@@ -25,7 +25,7 @@ namespace ScriptCs
             AssemblyInfo assemblyInfo = null;
             var name = new AssemblyName(args.Name);
             
-            if (_assemblyInfoMap.TryGetValue(name.Name, out assemblyInfo) && _assemblyInfoMap.TryGetValue(name.Name, out assemblyInfo))
+            if (_assemblyInfoMap.TryGetValue(name.Name, out assemblyInfo))
             {
                 lock(assemblyInfo)
                 {
