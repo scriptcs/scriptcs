@@ -1,7 +1,9 @@
 ﻿namespace ScriptCs.Tests.Acceptance.Support
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
 
     public class ScriptFile
     {
@@ -45,9 +47,29 @@
             return this;
         }
 
-        public string Execute(params string[] scriptArgs)
+        public string Execute()
         {
-            return ScriptCsExe.Execute(new[] { this.name, "-debug" }, scriptArgs, this.log, directory);
+            return Execute(Enumerable.Empty<string>(), Enumerable.Empty<string>());
+        }
+
+        public string Execute(IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        {
+            return Execute(true, args, scriptArgs);
+        }
+
+        public string ExecuteWithoutDebug()
+        {
+            return Execute(false, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+        }
+
+        private string Execute(bool debug, IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        {
+            var debugArgs = debug && !args.Select(arg => arg.ToUpperInvariant()).Contains("-DEBUG")
+                ? new[] { "-debug" }
+                : new string[0];
+
+            return ScriptCsExe.Execute(
+                new[] { this.name }.Concat(debugArgs).Concat(args), scriptArgs, this.log, directory);
         }
     }
 }
