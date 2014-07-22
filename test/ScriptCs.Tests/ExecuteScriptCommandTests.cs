@@ -165,6 +165,38 @@ namespace ScriptCs.Tests
                 result.ShouldEqual(CommandResult.Error);
                 logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
             }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnErrorIfTheScriptIsIncomplete(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IScriptExecutor> executor,
+                [Frozen] Mock<ILog> logger,
+                [Frozen] Mock<IInitializationServices> initializationServices,
+                ScriptServices services)
+            {
+                // Arrange
+                var args = new ScriptCsArgs { ScriptName = "test.csx" };
+                var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                var servicesBuilder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
+
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+
+                executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
+                    .Returns(ScriptResult.Incomplete);
+
+                initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
+                servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
+
+                var factory = fixture.Create<CommandFactory>();
+
+                // Act
+                var result = factory.CreateCommand(args, new string[0]).Execute();
+
+                // Assert
+                result.ShouldEqual(CommandResult.Error);
+                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+            }
         }
     }
 }
