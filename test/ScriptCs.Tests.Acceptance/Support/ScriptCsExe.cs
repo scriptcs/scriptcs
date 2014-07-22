@@ -4,15 +4,17 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
 
     public static class ScriptCsExe
     {
         private static readonly bool isMono = Type.GetType("Mono.Runtime") != null;
 
-        public static string Execute(string[] args, string[] scriptArgs, string logFile, string workingDirectory)
+        public static string Execute(
+            IEnumerable<string> args, IEnumerable<string> scriptArgs, string logFile, string workingDirectory)
         {
             var commandArgs = new List<string>(args);
-            if (scriptArgs.Length > 0)
+            if (scriptArgs.Count() > 0)
             {
                 commandArgs.Add("--");
                 commandArgs.AddRange(scriptArgs);

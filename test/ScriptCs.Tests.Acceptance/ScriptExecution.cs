@@ -41,5 +41,20 @@
             "And I see the exception message"
                 .f(() => ex.Message.ShouldContain("BOOM!"));
         }
+
+        [Scenario]
+        public static void IncompleteScript(ScriptFile script, Exception ex)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given an incomplete script"
+                .f(() => script = ScriptFile.Create(scenario).WriteLine(@"Console.WriteLine(""hi"""));
+
+            "When I execute the script"
+                .f(() => ex = Record.Exception(() => script.ExecuteWithoutDebug()));
+
+            "Then the script fails"
+                .f(() => ex.ShouldNotBeNull());
+        }
     }
 }
