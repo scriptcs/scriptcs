@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using Common.Logging;
-
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Command;
 using ScriptCs.Contracts;
-
-using System.Linq;
-using System.Runtime.ExceptionServices;
 using ScriptCs.Hosting;
 using Should;
-
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -79,7 +73,7 @@ namespace ScriptCs.Tests
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
                 servicesBuilder.Setup(b => b.Build()).Returns(services);
-                
+
                 var factory = fixture.Create<CommandFactory>();
 
                 // Act
@@ -132,7 +126,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnErrorIfThereIsExecutionException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger, 
+                [Frozen] Mock<ILog> logger,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 ScriptServices services)
             {
