@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Logging;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -125,6 +124,7 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             Logger.Debug("Starting execution");
+
             var result = Execute(code, sessionState.Session);
             Logger.Debug("Finished execution");
             return result;
@@ -134,7 +134,7 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            if (!IsCompleteSubmission(code))
+            if (string.IsNullOrWhiteSpace(FileName) && !IsCompleteSubmission(code))
             {
                 return ScriptResult.Incomplete;
             }
