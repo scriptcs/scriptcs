@@ -22,7 +22,7 @@ namespace ScriptCs
             configurator.Configure(console);
             var logger = configurator.GetLogger();
             var initializationServices = new InitializationServices(logger);
-            initializationServices.GetAppDomainAssemblyResolver().InitializeAppDomainAssemblyResolver();
+            initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
                 .Cache(commandArgs.Cache)

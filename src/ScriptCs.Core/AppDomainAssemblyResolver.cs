@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Common.Logging;
+﻿using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ScriptCs.Contracts;
+using System.IO;
 
 namespace ScriptCs
 {
@@ -33,8 +33,9 @@ namespace ScriptCs
             if (_assemblyInfoMap.TryGetValue(name.Name, out assemblyInfo))
             {
                 lock(assemblyInfo)
-                {
-                    assemblyInfo.Assembly = Assembly.LoadFile(assemblyInfo.Path);
+                {                    
+                    if (assemblyInfo.Assembly == null)
+                        assemblyInfo.Assembly = Assembly.LoadFile(assemblyInfo.Path);
                 }
                 _logger.DebugFormat("Resolving: from: {0} to: {1}", args.Name, assemblyInfo.Assembly.GetName());
                 return assemblyInfo.Assembly;
@@ -42,7 +43,7 @@ namespace ScriptCs
             return null;
         }
 
-        public void InitializeAppDomainAssemblyResolver()
+        public void Initialize()
         {
             var hostAssemblyPaths = _fileSystem.EnumerateFiles(_fileSystem.HostBin, "*.dll", SearchOption.TopDirectoryOnly);
             AddAssemblyPaths(hostAssemblyPaths);
