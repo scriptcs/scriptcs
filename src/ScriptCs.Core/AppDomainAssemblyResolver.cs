@@ -13,11 +13,15 @@ namespace ScriptCs
     public class AppDomainAssemblyResolver : IAppDomainAssemblyResolver
     {
         private readonly ILog _logger;
+        private readonly IFileSystem _fileSystem;
+        private readonly IAssemblyResolver _resolver;
         private IDictionary<string, AssemblyInfo> _assemblyInfoMap = new Dictionary<string, AssemblyInfo>();
 
-        public AppDomainAssemblyResolver(ILog logger)
+        public AppDomainAssemblyResolver(ILog logger, IFileSystem fileSystem, IAssemblyResolver resolver)
         {
             _logger = logger;
+            _fileSystem = fileSystem;
+            _resolver = resolver;
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
         }
 
@@ -36,6 +40,18 @@ namespace ScriptCs
                 return assemblyInfo.Assembly;
             }
             return null;
+        }
+
+        public void InitializeAppDomainAssemblyResolver()
+        {
+            var hostAssemblyPaths = _fileSystem.EnumerateFiles(_fileSystem.HostBin, "*.dll", SearchOption.TopDirectoryOnly);
+            AddAssemblyPaths(hostAssemblyPaths);
+
+            var globalPaths = _resolver.GetAssemblyPaths(_fileSystem.ModulesFolder);
+            AddAssemblyPaths(globalPaths);
+
+            var scriptAssemblyPaths = _resolver.GetAssemblyPaths(_fileSystem.CurrentDirectory);
+            AddAssemblyPaths(scriptAssemblyPaths);
         }
 
         public void AddAssemblyPaths(IEnumerable<string> assemblyPaths)
