@@ -6,10 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class AppDomainAssemblyResolver
+    public class AppDomainAssemblyResolver : IAppDomainAssemblyResolver
     {
         private readonly ILog _logger;
         private IDictionary<string, AssemblyInfo> _assemblyInfoMap = new Dictionary<string, AssemblyInfo>();

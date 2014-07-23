@@ -28,6 +28,7 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
             RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<IModuleLoader>(builder, b => b.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance());
+            RegisterOverrideOrDefault<IAppDomainAssemblyResolver>(builder, b => b.RegisterType<AppDomainAssemblyResolver>().As<IAppDomainAssemblyResolver>().SingleInstance());
             return builder.Build();
         }
 
@@ -107,6 +108,19 @@ namespace ScriptCs.Hosting
             }
 
             return _packageInstaller;
+        }
+
+        private IAppDomainAssemblyResolver _appDomainAssemblyResolver;
+
+        public IAppDomainAssemblyResolver GetAppDomainAssemblyResolver()
+        {
+            if (_appDomainAssemblyResolver == null)
+            {
+                this.Logger.Debug("Resolving App Domain Assembly Resolver");
+                _appDomainAssemblyResolver = Container.Resolve<IAppDomainAssemblyResolver>();
+            }
+
+            return _appDomainAssemblyResolver;
         }
     }
 }

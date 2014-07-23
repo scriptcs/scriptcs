@@ -75,7 +75,7 @@ namespace ScriptCs.Hosting
                     {
                         var catalog = new AssemblyCatalog(assemblyPath);
                         //force the parts to be queried to catch any errors that will shwo up later
-                        var parts = catalog.Parts.ToList();
+                        catalog.Parts.ToList();
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
                     catch (ReflectionTypeLoadException typeLoadEx)

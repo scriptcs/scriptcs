@@ -49,6 +49,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="IAppDomainAssemblyResolver.cs" />
     <Compile Include="IDirectiveLineProcessor.cs" />
     <Compile Include="DirectiveLineProcessor.cs" />
     <Compile Include="Exceptions\InvalidDirectiveUseException.cs" />

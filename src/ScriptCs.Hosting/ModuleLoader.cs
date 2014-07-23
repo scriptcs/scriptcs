@@ -21,7 +21,7 @@ namespace ScriptCs.Hosting
 
         [ImportingConstructor]
         public ModuleLoader(IAssemblyResolver resolver, ILog logger, IFileSystem fileSystem) :
-            this(resolver, logger, null, null, fileSystem)
+            this(resolver, logger, null, null, fileSystem )
         {         
         }
 
@@ -37,7 +37,8 @@ namespace ScriptCs.Hosting
                     {
                         var name = AssemblyName.GetAssemblyName(p);
                         var assembly = Assembly.Load(name);
-                        catalog.Catalogs.Add(new AssemblyCatalog(assembly));
+                        var assemblyCatalog = new AssemblyCatalog(assembly);
+                        catalog.Catalogs.Add(assemblyCatalog);
                     }
                     catch(Exception exception)
                     {
@@ -86,7 +87,7 @@ namespace ScriptCs.Hosting
             var paths = new List<string>();
             foreach (var modulePackagesPath in modulePackagesPaths)
             {
-                var modulePaths = _resolver.GetAssemblyPaths(modulePackagesPath);
+                var modulePaths = _resolver.GetAssemblyPaths(modulePackagesPath).Where(m=>m.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase));
                 paths.AddRange(modulePaths);
             }
 

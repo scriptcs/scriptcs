@@ -20,7 +20,7 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _scriptEngineType;
         private ILog _logger;
-        private AppDomainAssemblyResolver _appDomainAssemblyResolver;
+        private IAppDomainAssemblyResolver _appDomainAssemblyResolver;
 
         public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null, ITypeResolver typeResolver = null, IInitializationServices initializationServices = null)
         {
@@ -28,6 +28,7 @@ namespace ScriptCs.Hosting
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
             _typeResolver = typeResolver ?? new TypeResolver();
+            _appDomainAssemblyResolver = InitializationServices.GetAppDomainAssemblyResolver();
 
             ConsoleInstance = console;
             _logger = logger;
@@ -36,10 +37,11 @@ namespace ScriptCs.Hosting
 
         private void InitializeAppDomainAssemblyResolver(IAssemblyResolver resolver, IFileSystem fileSystem)
         {
-            _appDomainAssemblyResolver = new AppDomainAssemblyResolver(_logger);
-
             var hostAssemblyPaths = fileSystem.EnumerateFiles(fileSystem.HostBin, "*.dll", SearchOption.TopDirectoryOnly);
             _appDomainAssemblyResolver.AddAssemblyPaths(hostAssemblyPaths);
+
+            var globalPaths = resolver.GetAssemblyPaths(fileSystem.ModulesFolder);
+            _appDomainAssemblyResolver.AddAssemblyPaths(globalPaths);
 
             var scriptAssemblyPaths = resolver.GetAssemblyPaths(fileSystem.CurrentDirectory);
             _appDomainAssemblyResolver.AddAssemblyPaths(scriptAssemblyPaths);
