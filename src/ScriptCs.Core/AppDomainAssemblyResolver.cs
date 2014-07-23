@@ -60,7 +60,12 @@ namespace ScriptCs
             {
                 var info = new AssemblyInfo {Path = assemblyPath};
                 var name = AssemblyName.GetAssemblyName(assemblyPath);
-                if (!_assemblyInfoMap.ContainsKey(name.Name))
+                info.Version = name.Version;
+
+                AssemblyInfo foundInfo = null;
+                var found = _assemblyInfoMap.TryGetValue(name.Name, out foundInfo );
+
+                if (!found || foundInfo.Version.CompareTo(info.Version) < 0)
                 {
                     _logger.DebugFormat("Mapping Assembly {0} to version:{1}", name.Name, name.Version);
                     _assemblyInfoMap[name.Name] = info;
@@ -72,6 +77,7 @@ namespace ScriptCs
         {
             public string Path { get; set; }
             public Assembly Assembly { get; set; }
+            public Version Version { get; set; }
         }
     }
 }
