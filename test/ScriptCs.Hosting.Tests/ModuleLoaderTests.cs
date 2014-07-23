@@ -29,7 +29,7 @@ namespace ScriptCs.Hosting.Tests
 
             public TheLoadMethod()
             {
-                var paths = new[] { "path1", "path2" };
+                var paths = new[] { "path1.dll", "path2.dll" };
                 _mockAssemblyResolver.Setup(r => r.GetAssemblyPaths(It.IsAny<string>())).Returns(paths);
                 _modules.Add(
                     new Lazy<IModule, IModuleMetadata>(
