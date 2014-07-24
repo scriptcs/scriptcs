@@ -90,6 +90,12 @@ namespace ScriptCs.Command
                 return CommandResult.Error;
             }
 
+            if (!result.IsCompleteSubmission)
+            {
+                _logger.Error("The script is incomplete.");
+                return CommandResult.Error;
+            }
+
             return CommandResult.Success;
         }
     }
