@@ -10,30 +10,34 @@
     public static class ScriptExecution
     {
         [Scenario]
-        public static void HelloWorld(ScriptFile script, string output)
+        [Example(true)]
+        [Example(false)]
+        public static void HelloWorld(bool debug, ScriptFile script, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
                 .f(() => script = ScriptFile.Create(scenario).WriteLine(@"Console.WriteLine(""Hello world!"");"));
 
-            "When I execute the script"
-                .f(() => output = script.Execute());
+            "When I execute the script with debug set to {0}"
+                .f(() => output = script.Execute(debug));
 
             "Then I see 'Hello world!'"
                 .f(() => output.ShouldContain("Hello world!"));
         }
 
         [Scenario]
-        public static void ScriptThrowsAnException(ScriptFile script, Exception ex)
+        [Example(true)]
+        [Example(false)]
+        public static void ScriptThrowsAnException(bool debug, ScriptFile script, Exception ex)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
                 .f(() => script = ScriptFile.Create(scenario).WriteLine(@"throw new Exception(""BOOM!"");"));
 
-            "When I execute the script"
-                .f(() => ex = Record.Exception(() => script.Execute()));
+            "When I execute the script with debug set to {0}"
+                .f(() => ex = Record.Exception(() => script.Execute(debug)));
 
             "Then the script fails"
                 .f(() => ex.ShouldNotBeNull());
