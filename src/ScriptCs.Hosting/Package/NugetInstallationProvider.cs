@@ -66,24 +66,14 @@ namespace ScriptCs.Hosting.Package
             return sources.Select(i => i.Source);
         }
 
-        public bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
+        public void InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
         {
             Guard.AgainstNullArgument("packageId", packageId);
 
             var version = GetVersion(packageId);
             var packageName = packageId.PackageId + " " + (version == null ? string.Empty : packageId.Version.ToString());
-            try
-            {
-                _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
-                _logger.Info("Installed: " + packageName);
-                return true;
-            }
-            catch (Exception e)
-            {
-                _logger.Error("Installation failed: " + packageName);
-                _logger.Error(e.Message);
-                return false;
-            }
+            _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
+            _logger.Info("Installed: " + packageName);
         }
 
         private static SemanticVersion GetVersion(IPackageReference packageReference)

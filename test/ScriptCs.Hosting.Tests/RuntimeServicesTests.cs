@@ -257,19 +257,19 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldLogOnDebugAnAssemblyLoadFailure()
             {
                 var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "foo.dll" });
+                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
                 var container = runtimeServices.Container;
-                _mockLogger.Verify(l => l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "foo.dll", It.IsAny<string>()));
+                _mockLogger.Verify(l => l.DebugFormat("Failure loading assembly: {0}. Exception: {1}", "/foo.dll", It.IsAny<string>()));
             }
 
             [Fact]
             public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningScript()
             {
                 var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "foo.dll" });
+                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "script.csx");
@@ -281,7 +281,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningInRepl()
             {
                 var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "foo.dll" });
+                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(_mockLogger.Object, _overrides, _mockConsole.Object, _scriptEngineType, _scriptExecutorType, true, initializationServices, "");
