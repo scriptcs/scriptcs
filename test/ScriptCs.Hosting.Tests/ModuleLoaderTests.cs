@@ -17,7 +17,6 @@ namespace ScriptCs.Hosting.Tests
         public class TheLoadMethod
         {
             private Mock<IAssemblyResolver> _mockAssemblyResolver = new Mock<IAssemblyResolver>();
-            private IList<string> _paths = new List<string>();
             private IList<Lazy<IModule, IModuleMetadata>> _modules = new List<Lazy<IModule, IModuleMetadata>>();
             private Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> _getModules;
             private Mock<ILog> _mockLogger = new Mock<ILog>();
