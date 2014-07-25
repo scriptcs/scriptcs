@@ -49,6 +49,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="FileSystemExtensions.cs" />
     <Compile Include="IAppDomainAssemblyResolver.cs" />
     <Compile Include="IDirectiveLineProcessor.cs" />
     <Compile Include="DirectiveLineProcessor.cs" />

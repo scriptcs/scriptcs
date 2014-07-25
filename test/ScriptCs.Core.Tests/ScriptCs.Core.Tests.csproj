@@ -46,6 +46,7 @@
     <Compile Include="..\ScriptCsMoqCustomization.cs">
       <Link>ScriptCsMoqCustomization.cs</Link>
     </Compile>
+    <Compile Include="AppDomainAssemblyResolverTests.cs" />
     <Compile Include="AssemblyResolverTests.cs" />
     <Compile Include="DirectiveLineProcessorTests.cs" />
     <Compile Include="PackageReferenceTests.cs" />
