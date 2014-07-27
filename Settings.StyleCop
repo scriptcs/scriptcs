@@ -120,7 +120,7 @@
         <Rule Name="StaticReadonlyFieldsMustBeginWithUpperCaseLetter">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
+          </RuleSettings
         </Rule>
       </Rules>
       <AnalyzerSettings />

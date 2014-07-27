@@ -113,7 +113,7 @@ namespace ScriptCs.Hosting
         }
 
         /// <summary>
-        /// HACK: Filter out GAC'ed assemblies by checking if full path is specified.
+        /// HACK: Filter out assemblies in the GAC by checking if full path is specified.
         /// </summary>
         private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
         {

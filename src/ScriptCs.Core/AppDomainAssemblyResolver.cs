@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.Data;
+using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,23 +19,26 @@ namespace ScriptCs
         private readonly IAssemblyUtility _assemblyUtility;
         private IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
-        public AppDomainAssemblyResolver(ILog logger, IFileSystem fileSystem, IAssemblyResolver resolver, IDictionary<string, AssemblyInfo> assemblyInfoMap = null, IAssemblyUtility assemblyUtility = null )
+        public AppDomainAssemblyResolver(ILog logger, IFileSystem fileSystem, IAssemblyResolver resolver, IAssemblyUtility assemblyUtility, IDictionary<string, AssemblyInfo> assemblyInfoMap = null, Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
         {
-            if (_assemblyUtility == null)
-            {
-                _assemblyUtility = new AssemblyUtility();
-            }
-
             _assemblyInfoMap = assemblyInfoMap;
             if (_assemblyInfoMap == null)
             {
                 _assemblyInfoMap = new Dictionary<string, AssemblyInfo>();
             }
+
+            _assemblyUtility = assemblyUtility;
             
             _logger = logger;
             _fileSystem = fileSystem;
             _resolver = resolver;
-            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+
+            if (resolveHandler == null)
+            {
+                resolveHandler = AssemblyResolve;
+            }
+
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(resolveHandler);
         }
 
         internal Assembly AssemblyResolve(object sender, ResolveEventArgs args)
@@ -67,7 +71,7 @@ namespace ScriptCs
             AddAssemblyPaths(scriptAssemblyPaths);
         }
 
-        public void AddAssemblyPaths(IEnumerable<string> assemblyPaths)
+        public virtual void AddAssemblyPaths(IEnumerable<string> assemblyPaths)
         {
             foreach (var assemblyPath in assemblyPaths)
             {
@@ -83,20 +87,13 @@ namespace ScriptCs
                     //if the assembly being passed is a higher version and an assembly with it's name has already been resolved
                     if (found && foundInfo.Assembly != null)
                     {
-                        _logger.Warn(string.Format("Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved", assemblyPath));
+                        _logger.WarnFormat("Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved", assemblyPath, info.Version);
                         continue;
                     }
                     _logger.DebugFormat("Mapping Assembly {0} to version:{1}", name.Name, name.Version);
                     _assemblyInfoMap[name.Name] = info;
                 }
             }
-        }
-
-        public class AssemblyInfo
-        {
-            public string Path { get; set; }
-            public Assembly Assembly { get; set; }
-            public Version Version { get; set; }
         }
     }
 }

@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAssemblyResolver.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="ReplCommands\CdCommand.cs" />
