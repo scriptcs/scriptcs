@@ -64,10 +64,10 @@ namespace ScriptCs
             var hostAssemblyPaths = _fileSystem.EnumerateBinaries(_fileSystem.HostBin, SearchOption.TopDirectoryOnly);
             AddAssemblyPaths(hostAssemblyPaths);
 
-            var globalPaths = _resolver.GetAssemblyPaths(_fileSystem.ModulesFolder);
+            var globalPaths = _resolver.GetAssemblyPaths(_fileSystem.ModulesFolder,true);
             AddAssemblyPaths(globalPaths);
 
-            var scriptAssemblyPaths = _resolver.GetAssemblyPaths(_fileSystem.CurrentDirectory);
+            var scriptAssemblyPaths = _resolver.GetAssemblyPaths(_fileSystem.CurrentDirectory, true);
             AddAssemblyPaths(scriptAssemblyPaths);
         }
 
