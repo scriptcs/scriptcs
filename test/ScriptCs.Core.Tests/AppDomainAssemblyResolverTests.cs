@@ -239,8 +239,8 @@ namespace ScriptCs.Tests
                 assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof(Mock).Assembly);
                 assemblyInfoMap[_assemblyName.Name] = _info;
                 var args = new ResolveEventArgs(_assemblyName.Name);
-                resolver.AssemblyResolve(this, args);
-                _info.Assembly.ShouldEqual(_info.Assembly);
+                var assembly = resolver.AssemblyResolve(this, args);
+                assembly.ShouldEqual(_info.Assembly);
             }
 
             [Theory, ScriptCsAutoData]
