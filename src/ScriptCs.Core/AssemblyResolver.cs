@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Reflection.Emit;
 using Common.Logging;
 
 using ScriptCs.Contracts;
@@ -34,28 +35,34 @@ namespace ScriptCs
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
             _assemblyUtility = assemblyUtility;
+
         }
 
-        public IEnumerable<string> GetAssemblyPaths(string path)
+        public IEnumerable<string> GetAssemblyPaths(string path, bool binariesOnly = false)
         {
             Guard.AgainstNullArgument("path", path);
 
             List<string> assemblies;
-            if (_assemblyPathCache.TryGetValue(path, out assemblies))
+            if (!_assemblyPathCache.TryGetValue(path, out assemblies))
             {
-                return assemblies;
+                var packageAssemblies = GetPackageAssemblies(path);
+                var binAssemblies = GetBinAssemblyPaths(path);
+
+                assemblies = packageAssemblies.Union(binAssemblies).ToList();
+
+                _assemblyPathCache.Add(path, assemblies);
             }
 
-            var packageAssemblies = GetPackageAssemblies(path);
-            var binAssemblies = GetBinAssemblies(path);
-
-            assemblies = packageAssemblies.Union(binAssemblies).ToList();
-            _assemblyPathCache.Add(path, assemblies);
+            if (binariesOnly)
+            {
+                return assemblies.Where(
+                    m => m.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || m.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
+            }
 
             return assemblies;
         }
 
-        private IEnumerable<string> GetBinAssemblies(string path)
+        public IEnumerable<string> GetBinAssemblyPaths(string path)
         {
             var binFolder = Path.Combine(path, _fileSystem.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))
@@ -63,8 +70,7 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var assemblies = _fileSystem.EnumerateFiles(binFolder, "*.dll")
-                .Union(_fileSystem.EnumerateFiles(binFolder, "*.exe"))
+            var assemblies = _fileSystem.EnumerateBinaries(binFolder)
                 .Where(f => _assemblyUtility.IsManagedAssembly(f))
                 .ToList();
 

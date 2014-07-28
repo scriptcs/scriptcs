@@ -73,12 +73,13 @@ namespace ScriptCs.Hosting
                 var aggregateCatalog = new AggregateCatalog();
                 bool assemblyLoadFailures = false;
 
-                foreach (var assembly in assemblies)
+                foreach (var assemblyPath in assemblies)
                 {
                     try
                     {
-                        var catalog = new AssemblyCatalog(assembly);
-                        catalog.Parts.ToList(); //force the Parts to be read
+                        var catalog = new AssemblyCatalog(assemblyPath);
+                        //force the parts to be queried to catch any errors that will shwo up later
+                        catalog.Parts.ToList();
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
                     catch (ReflectionTypeLoadException typeLoadEx)
@@ -88,7 +89,7 @@ namespace ScriptCs.Hosting
                         {
                             foreach (var ex in typeLoadEx.LoaderExceptions.GroupBy(x => x.Message))
                             {
-                                Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly,
+                                Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath,
                                     ex.First().Message);
                             }
                         }
@@ -96,7 +97,7 @@ namespace ScriptCs.Hosting
                     catch (Exception ex)
                     {
                         assemblyLoadFailures = true;
-                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly, ex.Message);
+                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.Message);
                     }
                 }
                 if (assemblyLoadFailures)
@@ -111,9 +112,7 @@ namespace ScriptCs.Hosting
             return builder.Build();
         }
 
-        /// <summary>
-        /// HACK: Filter out GAC'ed assemblies by checking if full path is specified.
-        /// </summary>
+        // HACK: Filter out assemblies in the GAC by checking if full path is specified.
         private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
         {
             return fileSystem.IsPathRooted(assembly);

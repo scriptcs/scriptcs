@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -25,9 +26,7 @@ namespace ScriptCs.Hosting
             InitializationServices = initializationServices ?? new InitializationServices(logger);
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
-
             _typeResolver = typeResolver ?? new TypeResolver();
-
             ConsoleInstance = console;
             _logger = logger;
         }
