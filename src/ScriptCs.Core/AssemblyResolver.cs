@@ -56,7 +56,7 @@ namespace ScriptCs
             if (binariesOnly)
             {
                 return assemblies.Where(
-                    m => m.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || m.EndsWith("*.exe", StringComparison.CurrentCultureIgnoreCase));
+                    m => m.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || m.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
             }
 
             return assemblies;

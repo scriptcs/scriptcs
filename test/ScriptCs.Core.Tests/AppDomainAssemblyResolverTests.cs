@@ -74,7 +74,7 @@ namespace ScriptCs.Tests
             {
                 var modulesFolder = "c:\test";
                 var dll = "c:\test\test.dll";
-                assemblyResolverMock.Setup(a => a.GetAssemblyPaths(modulesFolder, false)).Returns(new[] { dll });
+                assemblyResolverMock.Setup(a => a.GetAssemblyPaths(modulesFolder, true)).Returns(new[] { dll });
                 fileSystemMock.SetupGet(fs => fs.ModulesFolder).Returns(modulesFolder);
                 resolverMock.Setup(r => r.AddAssemblyPaths(It.IsAny<IEnumerable<string>>()));
                 resolverMock.Object.Initialize();
@@ -89,7 +89,7 @@ namespace ScriptCs.Tests
             {
                 var scriptAssemblyPath = "c:\test";
                 var dll = "c:\test\test.dll";
-                assemblyResolverMock.Setup(a => a.GetAssemblyPaths(scriptAssemblyPath, false)).Returns(new[] { dll });
+                assemblyResolverMock.Setup(a => a.GetAssemblyPaths(scriptAssemblyPath, true)).Returns(new[] { dll });
                 fileSystemMock.SetupGet(fs => fs.CurrentDirectory).Returns(scriptAssemblyPath);
                 resolverMock.Setup(r => r.AddAssemblyPaths(It.IsAny<IEnumerable<string>>()));
                 resolverMock.Object.Initialize();
