@@ -112,9 +112,7 @@ namespace ScriptCs.Hosting
             return builder.Build();
         }
 
-        /// <summary>
-        /// HACK: Filter out assemblies in the GAC by checking if full path is specified.
-        /// </summary>
+        // HACK: Filter out assemblies in the GAC by checking if full path is specified.
         private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
         {
             return fileSystem.IsPathRooted(assembly);

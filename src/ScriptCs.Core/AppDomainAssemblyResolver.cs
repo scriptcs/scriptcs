@@ -53,7 +53,7 @@ namespace ScriptCs
                     if (assemblyInfo.Assembly == null)
                         assemblyInfo.Assembly = _assemblyUtility.LoadFile(assemblyInfo.Path);
                 }
-                _logger.DebugFormat("Resolving: from: {0} to: {1}", args.Name, assemblyInfo.Assembly.GetName());
+                _logger.DebugFormat("Resolving from: {0} to: {1}", args.Name, assemblyInfo.Assembly.GetName());
                 return assemblyInfo.Assembly;
             }
             return null;

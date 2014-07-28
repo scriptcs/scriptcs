@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,12 +12,19 @@ using ScriptCs.Contracts;
 using Xunit;
 using Xunit.Extensions;
 using Should;
-//using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
 namespace ScriptCs.Tests
 {
     public class AppDomainAssemblyResolverTests
     {
+        static AppDomainAssemblyResolverTests()
+        {
+            _assemblyName = typeof(Mock).Assembly.GetName();
+            _info = new AssemblyInfo { Path = _assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar) };
+        }
+
+        private static AssemblyName _assemblyName;
+        private static AssemblyInfo _info;
 
         public class TheConstructor {
             [Theory, ScriptCsAutoData]
@@ -98,9 +106,7 @@ namespace ScriptCs.Tests
             {
                 var assemblyUtilityMock = new Mock<IAssemblyUtility>();
                 var assemblyInfoMapMock = new Mock<IDictionary<string, AssemblyInfo>>();
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo {Path=assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar)};
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
                 AssemblyInfo foundInfo = null;
                 assemblyInfoMapMock.Setup(m => m.TryGetValue(It.IsAny<string>(), out foundInfo)).Returns(false);
 
@@ -112,8 +118,8 @@ namespace ScriptCs.Tests
                     assemblyInfoMapMock.Object
                 );
 
-                resolver.AddAssemblyPaths(new[]{info.Path});
-                assemblyInfoMapMock.Verify(m => m.TryGetValue(assemblyName.Name, out foundInfo));
+                resolver.AddAssemblyPaths(new[] {_info.Path});
+                assemblyInfoMapMock.Verify(m => m.TryGetValue(_assemblyName.Name, out foundInfo));
             }
 
             //Here I can use [Frozen] as I don't need to override members
@@ -123,27 +129,22 @@ namespace ScriptCs.Tests
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap, 
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar) };
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                resolver.AddAssemblyPaths(new[] { info.Path });
-                assemblyInfoMap.ContainsKey(assemblyName.Name).ShouldBeTrue();
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                resolver.AddAssemblyPaths(new[] { _info.Path });
+                assemblyInfoMap.ContainsKey(_assemblyName.Name).ShouldBeTrue();
             }
 
-            
             [Theory, ScriptCsAutoData]
             public void ShouldOverrideIfTheAssemblyVersionIsGreaterThanTheMappedAssemblyAndItWasNotLoaded(
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar) };
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                info.Version = new Version(0,0);
-                resolver.AddAssemblyPaths(new[] { info.Path });
-                info = assemblyInfoMap[assemblyName.Name];
-                info.Version.ShouldEqual(assemblyName.Version);
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                _info.Version = new Version(0,0);
+                resolver.AddAssemblyPaths(new[] { _info.Path });
+                _info = assemblyInfoMap[_assemblyName.Name];
+                _info.Version.ShouldEqual(_assemblyName.Version);
             }
 
             [Theory, ScriptCsAutoData]
@@ -152,12 +153,10 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<ILog> loggerMock,
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar) };
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                resolver.AddAssemblyPaths(new[] { info.Path });
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                resolver.AddAssemblyPaths(new[] { _info.Path });
                 loggerMock.Verify(
-                    l => l.DebugFormat("Mapping Assembly {0} to version:{1}", assemblyName.Name, assemblyName.Version));
+                    l => l.DebugFormat("Mapping Assembly {0} to version:{1}", _assemblyName.Name, _assemblyName.Version));
             }
 
             [Theory, ScriptCsAutoData]
@@ -167,14 +166,14 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<ILog> loggerMock,
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar), Assembly = typeof(Mock).Assembly };
-                info.Version = new Version(0,0);
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                assemblyInfoMap[assemblyName.Name] = info;
-                resolver.AddAssemblyPaths(new[] { info.Path });
+                _info.Version = new Version(0,0);
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                _info.Assembly = typeof (Mock).Assembly;
+                assemblyInfoMap[_assemblyName.Name] = _info;
+                resolver.AddAssemblyPaths(new[] { _info.Path });
+
                 loggerMock.Verify(
-                    l => l.WarnFormat("Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved", info.Path, assemblyName.Version));
+                    l => l.WarnFormat("Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved", _info.Path, _assemblyName.Version));
             }
 
             [Theory, ScriptCsAutoData]
@@ -183,14 +182,13 @@ namespace ScriptCs.Tests
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar), Assembly = typeof(Mock).Assembly };
-                info.Version = new Version(0,1,0);
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                assemblyInfoMap[assemblyName.Name] = info;
-                resolver.AddAssemblyPaths(new[] { info.Path });
-                var newInfo = assemblyInfoMap[assemblyName.Name];
-                newInfo.Version.ShouldEqual(info.Version);
+                _info.Version = new Version(0,0);
+                _info.Assembly = typeof(Mock).Assembly;
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                assemblyInfoMap[_assemblyName.Name] = _info;
+                resolver.AddAssemblyPaths(new[] { _info.Path });
+                var newInfo = assemblyInfoMap[_assemblyName.Name];
+                newInfo.Version.ShouldEqual(_info.Version);
             }
 
             [Theory, ScriptCsAutoData]
@@ -199,37 +197,80 @@ namespace ScriptCs.Tests
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
-                var assemblyName = typeof(Mock).Assembly.GetName();
-                var info = new AssemblyInfo { Path = assemblyName.CodeBase.Substring(8).Replace('/', Path.DirectorySeparatorChar), Assembly = typeof(Mock).Assembly };
-                info.Version = new Version(99, 0, 0);
-                assemblyUtilityMock.Setup(u => u.GetAssemblyName(info.Path)).Returns(assemblyName);
-                assemblyInfoMap[assemblyName.Name] = info;
-                resolver.AddAssemblyPaths(new[] { info.Path });
-                var newInfo = assemblyInfoMap[assemblyName.Name];
-                newInfo.Version.ShouldEqual(info.Version);
+                _info.Version = new Version(99, 0, 0);
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                assemblyInfoMap[_assemblyName.Name] = _info;
+                resolver.AddAssemblyPaths(new[] { _info.Path });
+                var newInfo = assemblyInfoMap[_assemblyName.Name];
+                newInfo.Version.ShouldEqual(_info.Version);
             }
         }
 
         public class TheAssemblyResolveMethod
         {
             [Fact]
-            public void ShouldRetrievedTheMappedAssemblyInfo()
+            public void ShouldRetrieveTheMappedAssemblyInfo()
             {
+                var assemblyUtilityMock = new Mock<IAssemblyUtility>();
+                var assemblyInfoMapMock = new Mock<IDictionary<string, AssemblyInfo>>();
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                AssemblyInfo foundInfo = null;
+                assemblyInfoMapMock.Setup(m => m.TryGetValue(It.IsAny<string>(), out foundInfo)).Returns(false);
+
+                var resolver = new AppDomainAssemblyResolver(
+                    Mock.Of<ILog>(),
+                    Mock.Of<IFileSystem>(),
+                    Mock.Of<IAssemblyResolver>(),
+                    assemblyUtilityMock.Object,
+                    assemblyInfoMapMock.Object
+                    );
+
+                resolver.AssemblyResolve(this, new ResolveEventArgs(_assemblyName.Name));
+                assemblyInfoMapMock.Verify(m => m.TryGetValue(_assemblyName.Name, out foundInfo));
             }
 
-            [Fact]
-            public void ShouldLoadTheAssemblyIfTheMappedAssemblyInfoExistsAndItHasNotBeenLoaded()
+            [Theory, ScriptCsAutoData]
+            public void ShouldLoadTheAssemblyIfTheMappedAssemblyInfoExistsAndItHasNotBeenLoaded(
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
+                AppDomainAssemblyResolver resolver)
             {
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof(Mock).Assembly);
+                assemblyInfoMap[_assemblyName.Name] = _info;
+                var args = new ResolveEventArgs(_assemblyName.Name);
+                resolver.AssemblyResolve(this, args);
+                _info.Assembly.ShouldEqual(_info.Assembly);
             }
 
-            [Fact]
-            public void ShouldLogTheAssemblyThatIsBeingResolved()
+            [Theory, ScriptCsAutoData]
+            public void ShouldLogTheAssemblyThatIsBeingResolved(
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                [Frozen] Mock<ILog> loggerMock,
+                [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
+                AppDomainAssemblyResolver resolver)
             {
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof(Mock).Assembly);
+                assemblyInfoMap[_assemblyName.Name] = _info;
+
+                resolver.AssemblyResolve(this, new ResolveEventArgs(_assemblyName.Name));
+                loggerMock.Verify(
+                    l => l.DebugFormat("Resolving from: {0} to: {1}", _assemblyName.Name, It.Is<AssemblyName>(n=> n.ToString().Equals(_assemblyName.ToString()))));
             }
 
-            [Fact]
-            public void ShouldReturnTheAssemblyIfItWasLoaded()
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnTheAssemblyIfItWasLoaded(
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
+                AppDomainAssemblyResolver resolver)
             {
+                assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
+                assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof (Mock).Assembly);
+                assemblyInfoMap[_assemblyName.Name] = _info;
+                var args = new ResolveEventArgs(_assemblyName.Name);
+                var assembly = resolver.AssemblyResolve(this, args);
+                assembly.ShouldEqual(_info.Assembly);
             }
         }
     }
