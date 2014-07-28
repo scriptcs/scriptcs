@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
             {
                 bool called = false;
 
-                var resolver = new AppDomainAssemblyResolver(logger, fileSystem, assemblyResolver,
+                new AppDomainAssemblyResolver(logger, fileSystem, assemblyResolver,
                     assemblyUtility,
                     resolveHandler: (o, r) =>
                     {
