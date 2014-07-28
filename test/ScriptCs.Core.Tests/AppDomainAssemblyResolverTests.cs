@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +7,9 @@ using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
+using Should;
 using Xunit;
 using Xunit.Extensions;
-using Should;
 
 namespace ScriptCs.Tests
 {
@@ -26,12 +24,13 @@ namespace ScriptCs.Tests
         private static AssemblyName _assemblyName;
         private static AssemblyInfo _info;
 
-        public class TheConstructor {
+        public class TheConstructor
+        {
             [Theory, ScriptCsAutoData]
             public void ShouldSubscribeToTheResolveEvent(
-                ILog logger, 
-                IFileSystem fileSystem, 
-                IAssemblyResolver assemblyResolver, 
+                ILog logger,
+                IFileSystem fileSystem,
+                IAssemblyResolver assemblyResolver,
                 IAssemblyUtility assemblyUtility)
             {
                 bool called = false;
@@ -46,20 +45,20 @@ namespace ScriptCs.Tests
                 );
                 Assembly.Load("test");
                 called.ShouldBeTrue();
-            } 
+            }
         }
 
         public class TheInitializeMethod
         {
             [Theory, ScriptCsAutoData]
             public void ShouldAddHostAssemblyPaths(
-                [Frozen] Mock<IFileSystem> fileSystemMock, 
+                [Frozen] Mock<IFileSystem> fileSystemMock,
                 Mock<AppDomainAssemblyResolver> resolverMock)
             {
                 var hostBin = "c:\test";
                 var dll = "c:\test\test.dll";
 
-                fileSystemMock.Setup(fs => fs.EnumerateFiles(hostBin, "*.dll", SearchOption.TopDirectoryOnly)).Returns(new[] {dll});
+                fileSystemMock.Setup(fs => fs.EnumerateFiles(hostBin, "*.dll", SearchOption.TopDirectoryOnly)).Returns(new[] { dll });
                 fileSystemMock.SetupGet(fs => fs.HostBin).Returns(hostBin);
                 resolverMock.Setup(r => r.AddAssemblyPaths(It.IsAny<IEnumerable<string>>()));
                 resolverMock.Object.Initialize();
@@ -68,8 +67,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddModuleAssemblyPaths(
-                [Frozen] Mock<IFileSystem> fileSystemMock, 
-                [Frozen] Mock<IAssemblyResolver> assemblyResolverMock, 
+                [Frozen] Mock<IFileSystem> fileSystemMock,
+                [Frozen] Mock<IAssemblyResolver> assemblyResolverMock,
                 Mock<AppDomainAssemblyResolver> resolverMock)
             {
                 var modulesFolder = "c:\test";
@@ -83,8 +82,8 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddScriptPackAssemblyPaths(
-                [Frozen] Mock<IFileSystem> fileSystemMock, 
-                [Frozen] Mock<IAssemblyResolver> assemblyResolverMock, 
+                [Frozen] Mock<IFileSystem> fileSystemMock,
+                [Frozen] Mock<IAssemblyResolver> assemblyResolverMock,
                 Mock<AppDomainAssemblyResolver> resolverMock)
             {
                 var scriptAssemblyPath = "c:\test";
@@ -96,7 +95,7 @@ namespace ScriptCs.Tests
                 resolverMock.Verify(r => r.AddAssemblyPaths(It.Is<IEnumerable<string>>(paths => paths.Contains(dll))));
             }
         }
-        
+
         public class TheAddAssemblyPathsMethod
         {
             //I can't use Autofixture's [Frozen] attribute here as there appears to be a bug. If you try to freeze a Mock<IDictionary<>>
@@ -118,15 +117,15 @@ namespace ScriptCs.Tests
                     assemblyInfoMapMock.Object
                 );
 
-                resolver.AddAssemblyPaths(new[] {_info.Path});
+                resolver.AddAssemblyPaths(new[] { _info.Path });
                 assemblyInfoMapMock.Verify(m => m.TryGetValue(_assemblyName.Name, out foundInfo));
             }
 
             //Here I can use [Frozen] as I don't need to override members
             [Theory, ScriptCsAutoData]
             public void ShouldRegisterTheAssemblyIfTheAssemblyDoesNotExist(
-                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock, 
-                [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap, 
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
@@ -141,7 +140,7 @@ namespace ScriptCs.Tests
                 AppDomainAssemblyResolver resolver)
             {
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
-                _info.Version = new Version(0,0);
+                _info.Version = new Version(0, 0);
                 resolver.AddAssemblyPaths(new[] { _info.Path });
                 _info = assemblyInfoMap[_assemblyName.Name];
                 _info.Version.ShouldEqual(_assemblyName.Version);
@@ -166,9 +165,9 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<ILog> loggerMock,
                 AppDomainAssemblyResolver resolver)
             {
-                _info.Version = new Version(0,0);
+                _info.Version = new Version(0, 0);
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
-                _info.Assembly = typeof (Mock).Assembly;
+                _info.Assembly = typeof(Mock).Assembly;
                 assemblyInfoMap[_assemblyName.Name] = _info;
                 resolver.AddAssemblyPaths(new[] { _info.Path });
 
@@ -182,7 +181,7 @@ namespace ScriptCs.Tests
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
-                _info.Version = new Version(0,0);
+                _info.Version = new Version(0, 0);
                 _info.Assembly = typeof(Mock).Assembly;
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
                 assemblyInfoMap[_assemblyName.Name] = _info;
@@ -256,7 +255,7 @@ namespace ScriptCs.Tests
 
                 resolver.AssemblyResolve(this, new ResolveEventArgs(_assemblyName.Name));
                 loggerMock.Verify(
-                    l => l.DebugFormat("Resolving from: {0} to: {1}", _assemblyName.Name, It.Is<AssemblyName>(n=> n.ToString().Equals(_assemblyName.ToString()))));
+                    l => l.DebugFormat("Resolving from: {0} to: {1}", _assemblyName.Name, It.Is<AssemblyName>(n => n.ToString().Equals(_assemblyName.ToString()))));
             }
 
             [Theory, ScriptCsAutoData]
@@ -266,7 +265,7 @@ namespace ScriptCs.Tests
                 AppDomainAssemblyResolver resolver)
             {
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
-                assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof (Mock).Assembly);
+                assemblyUtilityMock.Setup(u => u.LoadFile(_info.Path)).Returns(typeof(Mock).Assembly);
                 assemblyInfoMap[_assemblyName.Name] = _info;
                 var args = new ResolveEventArgs(_assemblyName.Name);
                 var assembly = resolver.AssemblyResolve(this, args);
