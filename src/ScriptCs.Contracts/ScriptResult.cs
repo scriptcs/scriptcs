@@ -5,38 +5,45 @@ namespace ScriptCs.Contracts
 {
     public class ScriptResult
     {
-        public object ReturnValue { get; set; }
+        public static readonly ScriptResult Empty = new ScriptResult();
 
-        public ExceptionDispatchInfo ExecuteExceptionInfo { get; set; }
+        public static readonly ScriptResult Incomplete = new ScriptResult { IsCompleteSubmission = false };
 
-        public ExceptionDispatchInfo CompileExceptionInfo { get; set; }
-
-        public bool IsPendingClosingChar { get; set; }
-
-        public char? ExpectingClosingChar { get; set; }
-
-        public void UpdateClosingExpectation(Exception ex)
+        public ScriptResult()
         {
-            Guard.AgainstNullArgument("ex", ex);
-
-            var message = ex.Message;
-            char? closingChar = null;
-
-            if (message.Contains("CS1026: ) expected"))
-            {
-                closingChar = ')';
-            }
-            else if (message.Contains("CS1513: } expected"))
-            {
-                closingChar = '}';
-            }
-            else if (message.Contains("CS1003: Syntax error, ']' expected"))
-            {
-                closingChar = ']';
-            }
-
-            ExpectingClosingChar = closingChar;
-            IsPendingClosingChar = closingChar.HasValue;
+            // Explicit default ctor to use as mock return value.
+            IsCompleteSubmission = true;
         }
+
+        public ScriptResult(
+            object returnValue = null,
+            Exception executionException = null,
+            Exception compilationException = null)
+        {
+            if (returnValue != null)
+            {
+                ReturnValue = returnValue;
+            }
+
+            if (executionException != null)
+            {
+                ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(executionException);
+            }
+
+            if (compilationException != null)
+            {
+                CompileExceptionInfo = ExceptionDispatchInfo.Capture(compilationException);
+            }
+
+            IsCompleteSubmission = true;
+        }
+
+        public object ReturnValue { get; private set; }
+
+        public ExceptionDispatchInfo ExecuteExceptionInfo { get; private set; }
+
+        public ExceptionDispatchInfo CompileExceptionInfo { get; private set; }
+
+        public bool IsCompleteSubmission { get; private set; }
     }
 }

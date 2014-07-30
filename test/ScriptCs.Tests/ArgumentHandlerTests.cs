@@ -1,6 +1,7 @@
 ﻿using Moq;
 using ScriptCs.Argument;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting;
 using Should;
 using Xunit;
 
@@ -76,18 +77,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleInvalidCommandLineArguments()
-            {
-                string[] args = { "-version", "-foo", "-bar" };
-
-                var argumentHandler = Setup(null, "test.txt", false);
-                var result = argumentHandler.Parse(args);
-
-                result.CommandArguments.ShouldBeNull();
-                result.Arguments.Length.ShouldEqual<int>(3);
-            }
-
-            [Fact]
             public void ShouldHandleOnlyCommandLineArguments()
             {
                 string[] args = { "server.csx", "--", "-port", "8080" };
@@ -145,6 +134,38 @@ namespace ScriptCs.Tests
                 result.Arguments.ShouldEqual(args);
                 result.CommandArguments.ScriptName.ShouldBeNull();
                 result.CommandArguments.Help.ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldHandleScriptNameStartingWithRepl()
+            {
+                const string file = "{\"repl\": true}";
+                string[] args = { "replication.csx", "--", "-port", "8080" };
+
+                var argumentHandler = Setup(file);
+                var result = argumentHandler.Parse(args);
+
+                result.ShouldNotBeNull();
+                result.Arguments.ShouldEqual(args);
+                result.CommandArguments.ScriptName.ShouldEqual("replication.csx");
+                result.CommandArguments.Repl.ShouldBeTrue();
+                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+            }
+
+            [Fact]
+            public void ShouldUseScriptOptsIfParsingFailed()
+            {
+                var parser = new Mock<IArgumentParser>();
+                parser.Setup(x => x.Parse(It.IsAny<string[]>())).Returns<ScriptCsArgs>(null);
+                var system = new Mock<IFileSystem>();
+                system.Setup(x => x.CurrentDirectory).Returns(@"C:");
+
+                var configParser = new Mock<IConfigFileParser>();
+                var argumentHandler = new ArgumentHandler(parser.Object, configParser.Object, system.Object);
+
+                argumentHandler.Parse(new string[0]);
+
+                system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
             }
         }
     }

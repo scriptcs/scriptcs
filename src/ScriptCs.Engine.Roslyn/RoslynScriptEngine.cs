@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
@@ -9,8 +11,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    using System.Runtime.ExceptionServices;
-
     public class RoslynScriptEngine : IScriptEngine
     {
         protected readonly ScriptEngine ScriptEngine;
@@ -27,10 +27,10 @@ namespace ScriptCs.Engine.Roslyn
         }
 
         protected ILog Logger { get; private set; }
-        
+
         public string BaseDirectory
         {
-            get { return ScriptEngine.BaseDirectory;  }
+            get { return ScriptEngine.BaseDirectory; }
             set { ScriptEngine.BaseDirectory = value; }
         }
 
@@ -45,8 +45,10 @@ namespace ScriptCs.Engine.Roslyn
 
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
-            
-            references.PathReferences.UnionWith(scriptPackSession.References);
+
+            var executionReferences = new AssemblyReferences(references.PathReferences, references.Assemblies);
+            executionReferences.PathReferences.UnionWith(scriptPackSession.References);
+
             SessionState<Session> sessionState;
 
             if (!scriptPackSession.State.ContainsKey(SessionKey))
@@ -57,26 +59,27 @@ namespace ScriptCs.Engine.Roslyn
                 var hostType = host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
                 var session = ScriptEngine.CreateSession(host, hostType);
+                var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
-                foreach (var reference in references.PathReferences)
+                foreach (var reference in executionReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     session.AddReference(reference);
                 }
 
-                foreach (var assembly in references.Assemblies)
+                foreach (var assembly in executionReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     session.AddReference(assembly);
                 }
 
-                foreach (var @namespace in namespaces.Union(scriptPackSession.Namespaces).Distinct())
+                foreach (var @namespace in allNamespaces)
                 {
                     Logger.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = references, Session = session };
+                sessionState = new SessionState<Session> { References = executionReferences, Session = session, Namespaces = new HashSet<string>(allNamespaces) };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -84,23 +87,44 @@ namespace ScriptCs.Engine.Roslyn
                 Logger.Debug("Reusing existing session");
                 sessionState = (SessionState<Session>)scriptPackSession.State[SessionKey];
 
-                var newReferences = sessionState.References == null ? references : references.Except(sessionState.References);
+                if (sessionState.References == null)
+                {
+                    sessionState.References = new AssemblyReferences();
+                }
+
+                if (sessionState.Namespaces == null)
+                {
+                    sessionState.Namespaces = new HashSet<string>();
+                }
+
+                var newReferences = executionReferences.Except(sessionState.References);
+
                 foreach (var reference in newReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.AddReference(reference);
+                    sessionState.References.PathReferences.Add(reference);
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     sessionState.Session.AddReference(assembly);
+                    sessionState.References.Assemblies.Add(assembly);
                 }
 
-                sessionState.References = newReferences;
+                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+
+                foreach (var @namespace in newNamespaces)
+                {
+                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    sessionState.Session.ImportNamespace(@namespace);
+                    sessionState.Namespaces.Add(@namespace);
+                }
             }
 
             Logger.Debug("Starting execution");
+
             var result = Execute(code, sessionState.Session);
             Logger.Debug("Finished execution");
             return result;
@@ -110,29 +134,42 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            var result = new ScriptResult();
+            if (string.IsNullOrWhiteSpace(FileName) && !IsCompleteSubmission(code))
+            {
+                return ScriptResult.Incomplete;
+            }
+
             try
             {
                 var submission = session.CompileSubmission<object>(code);
+
                 try
                 {
-                    result.ReturnValue = submission.Execute();
+                    return new ScriptResult(returnValue: submission.Execute());
                 }
                 catch (Exception ex)
                 {
-                    result.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
+                    return new ScriptResult(executionException: ex);
                 }
             }
             catch (Exception ex)
             {
-                 result.UpdateClosingExpectation(ex);
-                if (!result.IsPendingClosingChar)
-                {
-                    result.CompileExceptionInfo = ExceptionDispatchInfo.Capture(ex);
-                }
+                return new ScriptResult(compilationException: ex);
             }
+        }
 
-            return result;
+        private static bool IsCompleteSubmission(string code)
+        {
+            var options = new ParseOptions(
+                CompatibilityMode.None,
+                LanguageVersion.CSharp4,
+                true,
+                SourceCodeKind.Interactive,
+                default(ReadOnlyArray<string>));
+
+            var syntaxTree = SyntaxTree.ParseText(code, options: options);
+
+            return Syntax.IsCompleteSubmission(syntaxTree);
         }
     }
 }

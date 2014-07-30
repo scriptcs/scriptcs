@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Package;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class InitializationServices : ScriptServicesRegistration, IInitializationServices
     {
@@ -30,7 +25,10 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IPackageContainer>(builder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>().SingleInstance());
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyResolver>(builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
+            RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
+            RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
             RegisterOverrideOrDefault<IModuleLoader>(builder, b => b.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance());
+            RegisterOverrideOrDefault<IAppDomainAssemblyResolver>(builder, b => b.RegisterType<AppDomainAssemblyResolver>().As<IAppDomainAssemblyResolver>().SingleInstance());
             return builder.Build();
         }
 
@@ -61,7 +59,7 @@ namespace ScriptCs
         }
 
         private IFileSystem _fileSystem;
-        
+
         public IFileSystem GetFileSystem()
         {
             if (_fileSystem == null)
@@ -71,6 +69,58 @@ namespace ScriptCs
             }
 
             return _fileSystem;
+        }
+
+        private IInstallationProvider _installationProvider;
+
+        public IInstallationProvider GetInstallationProvider()
+        {
+            if (_installationProvider == null)
+            {
+                this.Logger.Debug("Resolving Installation Provider");
+                _installationProvider = Container.Resolve<IInstallationProvider>();
+            }
+
+            return _installationProvider;
+        }
+
+        private IPackageAssemblyResolver _packageAssemblyResolver;
+
+        public IPackageAssemblyResolver GetPackageAssemblyResolver()
+        {
+            if (_packageAssemblyResolver == null)
+            {
+                this.Logger.Debug("Resolving Package Assembly Resolver");
+                _packageAssemblyResolver = Container.Resolve<IPackageAssemblyResolver>();
+            }
+
+            return _packageAssemblyResolver;
+        }
+
+        private IPackageInstaller _packageInstaller;
+
+        public IPackageInstaller GetPackageInstaller()
+        {
+            if (_packageInstaller == null)
+            {
+                this.Logger.Debug("Resolving Package Installer");
+                _packageInstaller = Container.Resolve<IPackageInstaller>();
+            }
+
+            return _packageInstaller;
+        }
+
+        private IAppDomainAssemblyResolver _appDomainAssemblyResolver;
+
+        public IAppDomainAssemblyResolver GetAppDomainAssemblyResolver()
+        {
+            if (_appDomainAssemblyResolver == null)
+            {
+                this.Logger.Debug("Resolving App Domain Assembly Resolver");
+                _appDomainAssemblyResolver = Container.Resolve<IAppDomainAssemblyResolver>();
+            }
+
+            return _appDomainAssemblyResolver;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections.Generic;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -9,6 +9,7 @@ namespace ScriptCs.Command
     {
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyResolver _assemblyResolver;
+        private readonly IEnumerable<IReplCommand> _replCommands;
         private readonly IFilePreProcessor _filePreProcessor;
         private readonly IObjectSerializer _serializer;
         private readonly IScriptEngine _scriptEngine;
@@ -28,7 +29,8 @@ namespace ScriptCs.Command
             IObjectSerializer serializer,
             ILog logger,
             IConsole console,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            IEnumerable<IReplCommand> replCommands)
         {
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -40,14 +42,18 @@ namespace ScriptCs.Command
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
+            _replCommands = replCommands;
         }
 
-        public string[] ScriptArgs { get; private set; }
+        public string[] ScriptArgs
+        {
+            get { return _scriptArgs; }
+        }
 
         public CommandResult Execute()
         {
-            _console.WriteLine("scriptcs (ctrl-c to exit)\r\n");
-            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _serializer, _logger, _console, _filePreProcessor);
+            _console.WriteLine("scriptcs (ctrl-c to exit)" + Environment.NewLine);
+            var repl = new Repl(_scriptArgs, _fileSystem, _scriptEngine, _serializer, _logger, _console, _filePreProcessor, _replCommands);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
@@ -59,7 +65,7 @@ namespace ScriptCs.Command
             {
                 if (!string.IsNullOrWhiteSpace(_scriptName))
                 {
-                    _logger.Info(string.Format("Loading preseeded script: {0}", _scriptName));
+                    _logger.Info(string.Format("Loading script: {0}", _scriptName));
                     repl.Execute(string.Format("#load {0}", _scriptName));
                 }
 
@@ -81,28 +87,23 @@ namespace ScriptCs.Command
 
         private bool ExecuteLine(Repl repl)
         {
-            if (string.IsNullOrWhiteSpace(repl.Buffer))
-            {
-                _console.Write("> ");
-            }
+            _console.Write(string.IsNullOrWhiteSpace(repl.Buffer) ? "> " : "* ");
 
-            string line = null;
-            
             try
             {
-                line = _console.ReadLine();
+                var line = _console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    repl.Execute(line);
+                }
+
+                return true;
             }
             catch
             {
                 return false;
             }
-
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                repl.Execute(line);
-            }
-
-            return true;
         }
     }
 }

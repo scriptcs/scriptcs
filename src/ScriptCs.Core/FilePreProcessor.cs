@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using Common.Logging;
 
@@ -62,23 +61,7 @@ namespace ScriptCs
         protected virtual string GenerateCode(FileParserContext context)
         {
             Guard.AgainstNullArgument("context", context);
-
-            var stringBuilder = new StringBuilder();
-
-            var usingLines = context.Namespaces
-                .Where(ns => !string.IsNullOrWhiteSpace(ns))
-                .Select(ns => string.Format("using {0};", ns))
-                .ToList();
-
-            if (usingLines.Count > 0)
-            {
-                stringBuilder.AppendLine(string.Join(_fileSystem.NewLine, usingLines));
-                stringBuilder.AppendLine(); // Insert a blank separator line
-            }
-
-            stringBuilder.Append(string.Join(_fileSystem.NewLine, context.BodyLines));
-
-            return stringBuilder.ToString();
+            return string.Join(_fileSystem.NewLine, context.BodyLines);
         }
 
         public virtual void ParseFile(string path, FileParserContext context)
@@ -101,7 +84,7 @@ namespace ScriptCs
             context.LoadedScripts.Add(fullPath);
 
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
-            
+
             InsertLineDirective(fullPath, scriptLines);
             InDirectory(fullPath, () => ParseScript(scriptLines, context));
         }
@@ -151,10 +134,12 @@ namespace ScriptCs
             _fileSystem.CurrentDirectory = oldCurrentDirectory;
         }
 
-        private static bool IsNonDirectiveLine(string line)
+        private bool IsNonDirectiveLine(string line)
         {
-            var trimmedLine = line.TrimStart(' ');
-            return !trimmedLine.StartsWith("#r ") && !trimmedLine.StartsWith("#load ") && line.Trim() != string.Empty;
+            var directiveLineProcessors =
+                _lineProcessors.OfType<IDirectiveLineProcessor>();
+
+            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(line));
         }
 
         private static bool IsUsingLine(string line)

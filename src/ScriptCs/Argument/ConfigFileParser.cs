@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using PowerArgs;
 using ScriptCs.Contracts;
-using ServiceStack.Text;
 
 namespace ScriptCs.Argument
 {
@@ -32,27 +32,27 @@ namespace ScriptCs.Argument
                     foreach (var property in typeof(ScriptCsArgs).GetProperties(BindingFlags.Instance | BindingFlags.Public))
                     {
                         string key = "";
-
-                        var attributes = property.GetCustomAttributes(false)
-                                                 .ToDictionary(a => a.GetType().Name, a => a);
-
-                        if (attributes.ContainsKey(typeof(ArgIgnoreAttribute).Name))
-                            continue;
-
-                        if (attributes.ContainsKey(typeof(ArgShortcut).Name))
+                        if (configFileValues.ContainsKey(property.Name))
                         {
-                            var attribute = (attributes[typeof(ArgShortcut).Name] as ArgShortcut);
+                            key = property.Name;
+                        }
+                        else
+                        {
+                            var attributes = property.GetCustomAttributes(false)
+                                                     .ToDictionary(a => a.GetType().Name, a => a);
 
-                            if (attribute != null)
+                            if (attributes.ContainsKey(typeof(ArgIgnoreAttribute).Name)) continue;
+
+                            if (attributes.ContainsKey(typeof(ArgShortcut).Name))
                             {
-                                if (configFileValues.ContainsKey(property.Name))
-                                {
-                                    key = property.Name;
-                                }
+                                var attribute = (attributes[typeof(ArgShortcut).Name] as ArgShortcut);
 
-                                if (string.IsNullOrEmpty(key) && configFileValues.ContainsKey(attribute.Shortcut))
+                                if (attribute != null)
                                 {
-                                    key = attribute.Shortcut;
+                                    if (string.IsNullOrEmpty(key) && configFileValues.ContainsKey(attribute.Shortcut))
+                                    {
+                                        key = attribute.Shortcut;
+                                    }
                                 }
                             }
                         }
@@ -80,7 +80,7 @@ namespace ScriptCs.Argument
 
             try
             {
-                dict = JsonSerializer.DeserializeFromString<Dictionary<string, string>>(content);
+                dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
             }
             catch 
             {

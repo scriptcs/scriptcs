@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public abstract class ServiceOverrides<TConfig> : IServiceOverrides<TConfig>
         where TConfig : class, IServiceOverrides<TConfig>
     {
-        protected readonly IList<Type> LineProcessors = new List<Type>();
-
-        public readonly IDictionary<Type, object> Overrides = new Dictionary<Type, object>();
+        public IDictionary<Type, object> Overrides { get; private set; }
 
         private readonly TConfig _this;
 
         protected ServiceOverrides()
         {
             _this = this as TConfig;
+            Overrides = new Dictionary<Type, object>();
+        }
+
+        protected ServiceOverrides(IDictionary<Type, object> overrides)
+            : this()
+        {
+            Overrides = overrides;
         }
 
         public TConfig ScriptHostFactory<T>() where T : IScriptHostFactory
         {
-            Overrides[typeof (IScriptHostFactory)] = typeof (T);
+            Overrides[typeof(IScriptHostFactory)] = typeof(T);
             return _this;
-        }
-
-        protected ServiceOverrides(IDictionary<Type, object> overrides)
-        {
-            Overrides = overrides;
         }
 
         public TConfig ScriptExecutor<T>() where T : IScriptExecutor
@@ -116,7 +116,25 @@ namespace ScriptCs
 
         public TConfig LineProcessor<T>() where T : ILineProcessor
         {
-            LineProcessors.Add(typeof(T));
+            var key = typeof(ILineProcessor);
+            object value;
+            if (!Overrides.TryGetValue(key, out value) || value == null)
+            {
+                value = Enumerable.Empty<Type>();
+            }
+
+            IEnumerable<Type> processors;
+            try
+            {
+                processors = (IEnumerable<Type>)value;
+            }
+            catch (InvalidCastException ex)
+            {
+                throw new InvalidOperationException("The line processors override has an invalid type.", ex);
+            }
+
+            Overrides[typeof(ILineProcessor)] = new[] { typeof(T) }.Concat(processors).ToList();
+
             return _this;
         }
     }

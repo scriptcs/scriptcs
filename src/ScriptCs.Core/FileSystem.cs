@@ -8,22 +8,32 @@ namespace ScriptCs
 {
     public class FileSystem : IFileSystem
     {
-        public IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        public virtual IEnumerable<string> EnumerateFiles(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
             return Directory.EnumerateFiles(dir, searchPattern, searchOption);
         }
 
-        public void Copy(string source, string dest, bool overwrite)
+        public virtual IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            return Directory.EnumerateDirectories(dir, searchPattern, searchOption);
+        }
+
+        public virtual IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            return Directory.EnumerateFileSystemEntries(dir, searchPattern, searchOption);
+        }
+
+        public virtual void Copy(string source, string dest, bool overwrite)
         {
             File.Copy(source, dest, overwrite);
         }
 
-        public bool DirectoryExists(string path)
+        public virtual bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
         }
 
-        public void CreateDirectory(string path, bool hidden)
+        public virtual void CreateDirectory(string path, bool hidden)
         {
             var directory = Directory.CreateDirectory(path);
 
@@ -33,88 +43,88 @@ namespace ScriptCs
             }
         }
 
-        public void DeleteDirectory(string path)
+        public virtual void DeleteDirectory(string path)
         {
             Directory.Delete(path, true);
         }
 
-        public string ReadFile(string path)
+        public virtual string ReadFile(string path)
         {
             return File.ReadAllText(path);
         }
 
-        public string[] ReadFileLines(string path)
+        public virtual string[] ReadFileLines(string path)
         {
             return File.ReadAllLines(path);
         }
 
-        public bool IsPathRooted(string path)
+        public virtual bool IsPathRooted(string path)
         {
             return Path.IsPathRooted(path);
         }
 
-        public string CurrentDirectory
+        public virtual string CurrentDirectory
         {
             get { return Environment.CurrentDirectory; }
             set { Environment.CurrentDirectory = value; }
         }
 
-        public string NewLine
+        public virtual string NewLine
         {
             get { return Environment.NewLine; }
         }
 
-        public DateTime GetLastWriteTime(string file)
+        public virtual DateTime GetLastWriteTime(string file)
         {
             return File.GetLastWriteTime(file);
         }
 
-        public void Move(string source, string dest)
+        public virtual void Move(string source, string dest)
         {
             File.Move(source, dest);
         }
 
-        public bool FileExists(string path)
+        public virtual bool FileExists(string path)
         {
             return File.Exists(path);
         }
 
-        public void FileDelete(string path)
+        public virtual void FileDelete(string path)
         {
             File.Delete(path);
         }
 
-        public IEnumerable<string> SplitLines(string value)
+        public virtual IEnumerable<string> SplitLines(string value)
         {
             Guard.AgainstNullArgument("value", value);
 
             return value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
         }
 
-        public void WriteToFile(string path, string text)
+        public virtual void WriteToFile(string path, string text)
         {
             File.WriteAllText(path, text);
         }
 
-        public Stream CreateFileStream(string filePath, FileMode mode)
+        public virtual Stream CreateFileStream(string filePath, FileMode mode)
         {
             return new FileStream(filePath, mode);
         }
 
-        public void WriteAllBytes(string filePath, byte[] bytes)
+        public virtual void WriteAllBytes(string filePath, byte[] bytes)
         {
             File.WriteAllBytes(filePath, bytes);
         }
 
-        public string ModulesFolder
+        public virtual string ModulesFolder
         {
-            get 
+            get
             {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
             }
         }
 
-        public string GetWorkingDirectory(string path)
+        public virtual string GetWorkingDirectory(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -138,9 +148,39 @@ namespace ScriptCs
             return Path.GetDirectoryName(realPath);
         }
 
-        public string GetFullPath(string path)
+        public virtual string GetFullPath(string path)
         {
             return Path.GetFullPath(path);
+        }
+
+        public virtual string HostBin
+        {
+            get { return AppDomain.CurrentDomain.BaseDirectory; }
+        }
+
+        public virtual string BinFolder
+        {
+            get { return "bin"; }
+        }
+
+        public virtual string DllCacheFolder
+        {
+            get { return ".cache"; }
+        }
+
+        public virtual string PackagesFile
+        {
+            get { return "packages.config"; }
+        }
+
+        public virtual string PackagesFolder
+        {
+            get { return "packages"; }
+        }
+
+        public virtual string NugetFile
+        {
+            get { return "nuget.config"; }
         }
     }
 }

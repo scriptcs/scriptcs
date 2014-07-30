@@ -1,12 +1,5 @@
-﻿using Moq;
-using ScriptCs.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ScriptCs.Contracts;
 using Should;
-using Moq.Protected;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -34,6 +27,48 @@ namespace ScriptCs.Tests
             }
         }
 
+        public class TheMatchesMethod
+        {
+            [Fact]
+            public void ShouldReturnTrueWhenLineMatchesDirectiveStringWithAnArgument()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#Test argument").ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldReturnTrueWhenLineMatchesDirectiveStringWithoutAnArgument()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#Test").ShouldBeTrue();
+            }
+
+            [Fact]
+            public void ShouldReturnFalseWhenLineDoesNotMatchDirectiveStringWithAnArgument()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#NotATest argument").ShouldBeFalse();
+            }
+
+            [Fact]
+            public void ShouldReturnFalseWhenLineDoesNotMatchDirectiveStringWithoutAnArgument()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor();
+                directiveLineProcessor.Matches("#NotATest").ShouldBeFalse();
+            }
+        }
+
+        public class TheGetDirectiveArgumentMethod
+        {
+            [Fact]
+            public void ShouldParseTheArgumentFromTheDirectiveLine()
+            {
+                var directiveLineProcessor = new TestableDirectiveLineProcessor(BehaviorAfterCode.Allow);
+                directiveLineProcessor.ProcessLine(null, null, "#Test argument", false);
+                directiveLineProcessor.ArgumentParsedCorrectly.ShouldBeTrue();
+            }
+        }
+
         public class TestableDirectiveLineProcessor : DirectiveLineProcessor
         {
             private BehaviorAfterCode? _behaviourAfterCode;
@@ -54,9 +89,11 @@ namespace ScriptCs.Tests
             {
                 get { return "Test"; }
             }
+            public bool ArgumentParsedCorrectly { get; private set; }
             public bool InheritedProcessLineCalled { get; private set; }
             protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
             {
+                ArgumentParsedCorrectly = GetDirectiveArgument(line) == "argument";
                 InheritedProcessLineCalled = true;
                 return true;
             }

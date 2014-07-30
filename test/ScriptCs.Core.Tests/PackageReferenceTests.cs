@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Versioning;
-using ScriptCs.Package;
 using Should;
 using Xunit;
 

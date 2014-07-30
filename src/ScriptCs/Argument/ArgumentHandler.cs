@@ -1,6 +1,5 @@
 ﻿using PowerArgs;
 using ScriptCs.Contracts;
-using ServiceStack.Text;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -29,8 +28,8 @@ namespace ScriptCs.Argument
             var sr = SplitScriptArgs(args);
 
             var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : null));
-            var finalArguments = ReconcileArguments(configArgs, commandArgs, sr);
+            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : "scriptcs.opts"));
+            var finalArguments = ReconcileArguments(configArgs ?? new ScriptCsArgs(), commandArgs, sr);
 
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
         }
@@ -104,9 +103,9 @@ namespace ScriptCs.Argument
             var attribute = property.GetCustomAttribute<ArgShortcut>();
 
             if (attribute != null)
-                attributeFound = args.Any(a => a.Contains((attribute as ArgShortcut).Shortcut));
+                attributeFound = args.Any(a => a.Contains("-" + (attribute as ArgShortcut).Shortcut));
 
-            var result = args.Any(a => a.Contains(property.Name)) || attributeFound;
+            var result = args.Any(a => a.Contains("-" + property.Name)) || attributeFound;
             return result;
         }
 
@@ -116,7 +115,7 @@ namespace ScriptCs.Argument
 
             return defaultAttribute != null
                        ? ((PowerArgs.DefaultValueAttribute)defaultAttribute).Value
-                       : property.PropertyType.GetDefaultValue();
+                       : property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null;
         }
 
         public class SplitResult

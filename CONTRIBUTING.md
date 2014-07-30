@@ -10,7 +10,7 @@ We definitely want to soak up all that energy you have!
 * Features - By default all issues tagged as enhancements which we file will be fixed by the core team. However if you'd like to take it, please comment in the issue that you'd like to implement it so we can discuss before you put in a potentially wasted effort.
 * YOU TAKE IT - These are items that are important, but which we'd available for the community to take. One place we use this is for investigations and prototyping for features that would be really awesome, but which the core team just don't have bandwith for. As an example @dschenkelman [investigated](https://github.com/scriptcs/scriptcs/issues/68?source=cc) a VS debugging story. This lead to him ultimately implementing the feature, however don't feel pressure that you have to that. It's extremely valuable if you can just show us how it might be done.
 
-A few other points:
+### Other points
 
 * If an issue is marked as "Taken" then it is assigned to another member of the community.
 * To take an issue, reply in the comments "I'll take it"
@@ -19,18 +19,18 @@ A few other points:
 
 We'd like the design for all features to get socialized either via github issues or our [discussion group](https://groups.google.com/forum/?fromgroups#!forum/scriptcs). Please do this before you implement so that we can all get on the same page of the feature and not waste your time, which we really appreciate.
 
-## Summary:
+## Summary
 
-* unassigned bug - available for you
-* assigned bug / taken bug - unavailable
-* you take it issue - available for you
-* taken issue - unavailable as someone already took it.
+* Unassigned bug - Available for you
+* Assigned bug / Taken bug - unavailable
+* You take it issue - Available for you
+* Taken issue - Unavailable as someone already took it.
 
 We really appreciate your help in taking scriptcs forward!
 
-Before submitting a feature or substantial code contribution please discuss it with the team in our
+Before submitting a feature or substantial code contribution please discuss it with the team.
 
-Also please see the discussion [here] on which things are open for contribution (https://github.com/scriptcs/scriptcs/issues/79)
+Also please see the discussion [here](https://github.com/scriptcs/scriptcs/issues/79) on which things are open for contribution.
 
 ## Workflow
 

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Autofac;
-
 using Common.Logging;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public abstract class ScriptServicesRegistration
     {
         private readonly IDictionary<Type, object> _overrides = null;
 
-        protected ILog Logger { get; private set; }
+        public ILog Logger { get; private set; }
 
         public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
         {
@@ -57,6 +55,11 @@ namespace ScriptCs
 
                 return _container;
             }
+        }
+
+        protected IDictionary<Type, object> Overrides
+        {
+            get { return _overrides; }
         }
 
         protected abstract IContainer CreateContainer();

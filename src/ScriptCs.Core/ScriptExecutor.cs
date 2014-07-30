@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace ScriptCs
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO" };
 
         public IFileSystem FileSystem { get; private set; }
-        
+
         public IFilePreProcessor FilePreProcessor { get; private set; }
 
         public IScriptEngine ScriptEngine { get; private set; }
@@ -30,6 +29,10 @@ namespace ScriptCs
 
         public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
+            Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
+
             References = new AssemblyReferences();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
@@ -83,7 +86,7 @@ namespace ScriptCs
         public void RemoveReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
-            
+
             foreach (var path in paths)
             {
                 References.PathReferences.Remove(path);
@@ -103,8 +106,8 @@ namespace ScriptCs
         public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
-            var bin = Path.Combine(FileSystem.CurrentDirectory, Constants.BinFolder);
-            var cache = Path.Combine(FileSystem.CurrentDirectory, Constants.DllCacheFolder);
+            var bin = Path.Combine(FileSystem.CurrentDirectory, FileSystem.BinFolder);
+            var cache = Path.Combine(FileSystem.CurrentDirectory, FileSystem.DllCacheFolder);
 
             ScriptEngine.BaseDirectory = bin;
             ScriptEngine.CacheDirectory = cache;

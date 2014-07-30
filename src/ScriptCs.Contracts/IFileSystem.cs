@@ -8,6 +8,10 @@ namespace ScriptCs.Contracts
     {
         IEnumerable<string> EnumerateFiles(string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
 
+        IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+
+        IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+
         void Copy(string source, string dest, bool overwrite);
 
         bool DirectoryExists(string path);
@@ -21,7 +25,7 @@ namespace ScriptCs.Contracts
         string[] ReadFileLines(string path);
 
         DateTime GetLastWriteTime(string file);
-        
+
         bool IsPathRooted(string path);
 
         string GetFullPath(string path);
@@ -41,11 +45,23 @@ namespace ScriptCs.Contracts
         IEnumerable<string> SplitLines(string value);
 
         void WriteToFile(string path, string text);
-        
+
         Stream CreateFileStream(string filePath, FileMode mode);
 
         void WriteAllBytes(string filePath, byte[] bytes);
 
         string ModulesFolder { get; }
+
+        string HostBin { get; }
+
+        string BinFolder { get; }
+
+        string DllCacheFolder { get; }
+
+        string PackagesFile { get; }
+
+        string PackagesFolder { get; }
+
+        string NugetFile { get; }
     }
 }

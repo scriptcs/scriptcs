@@ -4,11 +4,8 @@ using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using NuGet;
-
 using ScriptCs.Contracts;
-
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.Package.PackageReference;
 
 namespace ScriptCs.Hosting.Package
 {
@@ -16,22 +13,26 @@ namespace ScriptCs.Hosting.Package
     {
         private const string DotNetFramework = ".NETFramework";
 
+        private const string DotNetPortable = ".NETPortable";
+
         private readonly IFileSystem _fileSystem;
 
         private readonly ILog _logger;
 
         public PackageContainer(IFileSystem fileSystem, ILog logger)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+
             _fileSystem = fileSystem;
             _logger = logger;
         }
 
         public void CreatePackageFile()
         {
-            var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFile);
+            var packagesFile = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFile);
             var packageReferenceFile = new PackageReferenceFile(packagesFile);
 
-            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
+            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             var repository = new LocalPackageRepository(packagesFolder);
 
             var newestPackages = repository.GetPackages().GroupBy(p => p.Id)
@@ -43,7 +44,7 @@ namespace ScriptCs.Hosting.Package
                 return;
             }
 
-            _logger.InfoFormat("{0} {1}...", (File.Exists(packagesFile) ? "Updating" : "Creating") , Constants.PackagesFile);
+            _logger.InfoFormat("{0} {1}...", (File.Exists(packagesFile) ? "Updating" : "Creating"), _fileSystem.PackagesFile);
 
             foreach (var package in newestPackages)
             {
@@ -51,24 +52,24 @@ namespace ScriptCs.Hosting.Package
 
                 if (!packageReferenceFile.EntryExists(package.Id, package.Version))
                 {
-                    packageReferenceFile.AddEntry(package.Id, package.Version, newestFramework);
+                    packageReferenceFile.AddEntry(package.Id, package.Version, package.DevelopmentDependency, newestFramework);
 
                     if (newestFramework == null)
                     {
-                        _logger.InfoFormat("Added {0} (v{1}) to {2}", package.Id, package.Version, Constants.PackagesFile);
+                        _logger.InfoFormat("Added {0} (v{1}) to {2}", package.Id, package.Version, _fileSystem.PackagesFile);
                     }
                     else
                     {
-                        _logger.InfoFormat("Added {0} (v{1}, .NET {2}) to {3}", package.Id, package.Version, newestFramework.Version, Constants.PackagesFile);
+                        _logger.InfoFormat("Added {0} (v{1}, .NET {2}) to {3}", package.Id, package.Version, newestFramework.Version, _fileSystem.PackagesFile);
                     }
-  
+
                     continue;
                 }
 
                 _logger.InfoFormat("Skipped {0} because it already exists.", package.Id);
             }
 
-            _logger.InfoFormat("Successfully {0} {1}.", (File.Exists(packagesFile) ? "updated" : "created"), Constants.PackagesFile);
+            _logger.InfoFormat("Successfully {0} {1}.", (File.Exists(packagesFile) ? "updated" : "created"), _fileSystem.PackagesFile);
         }
 
         public IPackageObject FindPackage(string path, IPackageReference packageRef)
@@ -77,8 +78,8 @@ namespace ScriptCs.Hosting.Package
 
             var repository = new LocalPackageRepository(path);
 
-            var package = packageRef.Version != null 
-                ? repository.FindPackage(packageRef.PackageId, new SemanticVersion(packageRef.Version, packageRef.SpecialVersion), true, true) 
+            var package = packageRef.Version != null && !(packageRef.Version.Major == 0 && packageRef.Version.Minor == 0)
+                ? repository.FindPackage(packageRef.PackageId, new SemanticVersion(packageRef.Version, packageRef.SpecialVersion), true, true)
                 : repository.FindPackage(packageRef.PackageId);
 
             return package == null ? null : new PackageObject(package, packageRef.FrameworkName);
@@ -104,7 +105,7 @@ namespace ScriptCs.Hosting.Package
             }
 
             // No packages.config, check packages folder
-            var packagesFolder = Path.Combine(_fileSystem.GetWorkingDirectory(path), Constants.PackagesFolder);
+            var packagesFolder = Path.Combine(_fileSystem.GetWorkingDirectory(path), _fileSystem.PackagesFolder);
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
                 yield break;
@@ -120,7 +121,7 @@ namespace ScriptCs.Hosting.Package
 
             foreach (var arbitraryPackage in arbitraryPackages)
             {
-                var newestFramework = GetNewestSupportedFramework(arbitraryPackage) 
+                var newestFramework = GetNewestSupportedFramework(arbitraryPackage)
                     ?? VersionUtility.EmptyFramework;
 
                 yield return new PackageReference(
@@ -134,9 +135,21 @@ namespace ScriptCs.Hosting.Package
         private static FrameworkName GetNewestSupportedFramework(IPackage packageMetadata)
         {
             return packageMetadata.GetSupportedFrameworks()
-                .Where(x => x.Identifier == DotNetFramework)
+                .Where(IsValidFramework)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
+        }
+
+        private static bool IsValidFramework(FrameworkName frameworkName)
+        {
+            return frameworkName.Identifier == DotNetFramework
+                || (frameworkName.Identifier == DotNetPortable
+                    && frameworkName.Profile.Split('+').Any(IsValidProfile));
+        }
+
+        private static bool IsValidProfile(string profile)
+        {
+            return profile == "net40" || profile == "net45";
         }
     }
 }

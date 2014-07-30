@@ -1,10 +1,9 @@
 ﻿using Moq;
-
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
-
 using ScriptCs.Command;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting;
 using Should;
 using Xunit;
 
@@ -14,22 +13,29 @@ namespace ScriptCs.Tests
     {
         public class CreateCommandMethod
         {
-            private static ScriptServices CreateRoot(bool packagesFileExists = true, bool packagesFolderExists = true)
+            private static IScriptServicesBuilder CreateBuilder(bool packagesFileExists = true, bool packagesFolderExists = true)
             {
                 const string CurrentDirectory = "C:\\";
                 const string PackagesFile = "C:\\packages.config";
                 const string PackagesFolder = "C:\\packages";
-
+                
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
+                var fileSystem = fixture.Freeze<Mock<IFileSystem>>();
+                fileSystem.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
+                fileSystem.SetupGet(x => x.PackagesFile).Returns("packages.config");
+                fileSystem.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
+                fileSystem.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
+                fileSystem.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
 
-                var fs = new Mock<IFileSystem>();
-                fs.SetupGet(x => x.CurrentDirectory).Returns(CurrentDirectory);
-                fs.Setup(x => x.FileExists(PackagesFile)).Returns(packagesFileExists);
-                fs.Setup(x => x.DirectoryExists(PackagesFolder)).Returns(packagesFolderExists);
+                var builder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
+                var services = fixture.Create<ScriptServices>();
+                builder.Setup(b => b.Build()).Returns(services);
 
-                fixture.Register(() => fs.Object);
-
-                return fixture.Create<ScriptServices>();
+                var initServices = fixture.Freeze<Mock<IInitializationServices>>();
+                initServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
+                builder.SetupGet(b => b.InitializationServices).Returns(initServices.Object);
+                return fixture.Create<IScriptServicesBuilder>();
             }
 
             [Fact]
@@ -44,7 +50,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -68,7 +74,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -87,8 +93,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var root = CreateRoot(packagesFileExists: true, packagesFolderExists: false);
-                var factory = new CommandFactory(root);
+                var factory = new CommandFactory(CreateBuilder(true, false));
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -97,7 +102,7 @@ namespace ScriptCs.Tests
 
                 compositeCommand.Commands.Count.ShouldEqual(2);
                 compositeCommand.Commands[0].ShouldImplement<IInstallCommand>();
-                compositeCommand.Commands[1].ShouldImplement<IScriptCommand>();
+                compositeCommand.Commands[1].ShouldImplement<IDeferredCreationCommand<IScriptCommand>>();
             }
 
             [Fact]
@@ -112,7 +117,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -126,7 +131,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Clean = true, ScriptName = null };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -145,7 +150,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Save = true, ScriptName = null };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -165,7 +170,7 @@ namespace ScriptCs.Tests
                 };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -179,7 +184,7 @@ namespace ScriptCs.Tests
                 var args = new ScriptCsArgs { Help = true };
 
                 // Act
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
@@ -199,7 +204,7 @@ namespace ScriptCs.Tests
 
                 // Act
                 var scriptArgs = new string[0];
-                var factory = new CommandFactory(CreateRoot());
+                var factory = new CommandFactory(CreateBuilder());
                 var result = factory.CreateCommand(args, scriptArgs) as IScriptCommand;
 
                 // Assert

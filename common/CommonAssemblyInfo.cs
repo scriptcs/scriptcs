@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 #endif
 
 [assembly: AssemblyProduct("scriptcs")]
+[assembly: AssemblyCompany("Glenn Block, Filip Wojcieszyn, Justin Rusbatch, Kristian Hellang, Damian Schenkelman, Adam Ralph")]
 [assembly: AssemblyCopyright("Copyright 2013 Glenn Block, Justin Rusbatch, Filip Wojcieszyn")]
 
 [assembly: ComVisible(false)]

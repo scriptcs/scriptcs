@@ -1,6 +1,6 @@
 ﻿using ScriptCs.Contracts;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public interface IScriptServicesBuilder : IServiceOverrides<IScriptServicesBuilder>
     {
@@ -17,5 +17,9 @@ namespace ScriptCs
         IScriptServicesBuilder LogLevel(LogLevel level);
 
         IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
+
+        IInitializationServices InitializationServices { get; }
+
+        IConsole ConsoleInstance { get; }
     }
 }

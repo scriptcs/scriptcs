@@ -1,16 +1,15 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using Common.Logging;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Exceptions;
 using Should;
 using Xunit;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
-using PackageReference = ScriptCs.Package.PackageReference;
 
 namespace ScriptCs.Tests
 {
@@ -27,10 +26,14 @@ namespace ScriptCs.Tests
 
             public GetAssemblyNamesMethod()
             {
-                _workingDirectory = "c:\\test";
+                _workingDirectory = Path.GetTempPath();
 
                 _filesystem = new Mock<IFileSystem>();
-                _filesystem.SetupGet(i => i.CurrentDirectory).Returns("c:\\test");
+
+                _filesystem.SetupGet(i => i.CurrentDirectory).Returns(_workingDirectory);
+                _filesystem.SetupGet(i => i.PackagesFile).Returns("packages.config");
+                _filesystem.SetupGet(i => i.PackagesFolder).Returns("packages");
+
                 _filesystem.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(true);
                 _filesystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
 
@@ -43,6 +46,7 @@ namespace ScriptCs.Tests
                 _package.SetupGet(i => i.Version).Returns(new Version("3.0"));
                 _package.SetupGet(i => i.TextVersion).Returns("3.0");
                 _package.SetupGet(i => i.FullName).Returns(_package.Object.Id + "." + _package.Object.Version);
+                _package.SetupGet(i => i.FrameworkAssemblies).Returns(new[] { "System.Net.Http", "System.ComponentModel" });
 
                 _packageIds = new List<IPackageReference>
                     {
@@ -63,7 +67,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
 
             [Fact]
@@ -84,7 +88,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -101,7 +105,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(1);
+                found.Count.ShouldEqual(3);
             }
 
             [Fact]
@@ -129,7 +133,7 @@ namespace ScriptCs.Tests
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
 
             [Fact]
@@ -139,29 +143,52 @@ namespace ScriptCs.Tests
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
 
-                found.First().ShouldEqual("c:\\test\\packages\\id.3.0\\test.dll");
-                found.ElementAt(1).ShouldEqual("c:\\test\\packages\\id.3.0\\test2.dll");
+                found.First().ShouldEqual(
+                    Path.Combine(_workingDirectory, "packages", "id.3.0", "test.dll"));
+                found.ElementAt(1).ShouldEqual(
+                    Path.Combine(_workingDirectory, "packages", "id.3.0", "test2.dll"));
             }
 
             [Fact]
-            public void WhenNoPackagesAreFoundShouldThrowArgumentEx()
+            public void WhenNoPackagesAreFoundShouldLogWarning()
             {
+                // arrange
                 _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                                  .Returns<List<IPackageObject>>(null);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
 
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
+                // act
+                resolver.GetAssemblyNames(_workingDirectory);
+
+                // assert
+                _logger.Verify(i => i.WarnFormat(
+                    It.IsAny<IFormatProvider>(),
+                    It.Is<string>(x => x == "Cannot find: {0} {1}"),
+                    It.IsAny<object>(),
+                    It.IsAny<object>()),
+                    Times.Exactly(_packageContainer.Object.FindReferences("foo").Count()));
             }
 
             [Fact]
-            public void WhenPackagesAreFoundButNoMatchingDllsExistShouldThrowArgumentEx()
+            public void WhenPackagesAreFoundButNoMatchingDllsExistShouldLogWarning()
             {
+                // arrange
                 _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>())).Returns<List<string>>(null);
 
                 var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logger.Object);
 
-                Assert.Throws<MissingAssemblyException>(() => resolver.GetAssemblyNames(_workingDirectory));
+                // act
+                resolver.GetAssemblyNames(_workingDirectory);
+
+                // assert
+                _logger.Verify(i => i.WarnFormat(
+                    It.IsAny<IFormatProvider>(),
+                    It.Is<string>(x => x == "Cannot find compatible binaries for {0} in: {1} {2}"),
+                    It.IsAny<object>(),
+                    It.IsAny<object>(),
+                    It.IsAny<object>()),
+                    Times.Exactly(_packageContainer.Object.FindReferences("foo").Count()));
             }
 
             [Fact]
@@ -206,7 +233,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -233,7 +260,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(4);
+                found.Count.ShouldEqual(6);
             }
 
             [Fact]
@@ -258,7 +285,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Verify(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()), Times.Exactly(2));
                 found.ShouldNotBeEmpty();
-                found.Count.ShouldEqual(2);
+                found.Count.ShouldEqual(4);
             }
         }
 
@@ -271,6 +298,9 @@ namespace ScriptCs.Tests
             public GetPackagesMethod()
             {
                 _fs = new Mock<IFileSystem>();
+                _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
+                _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
+
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }
@@ -309,6 +339,9 @@ namespace ScriptCs.Tests
             public SavePackagesMethod()
             {
                 _fs = new Mock<IFileSystem>();
+                _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
+                _fs.SetupGet(f => f.PackagesFolder).Returns("packages");
+
                 _pc = new Mock<IPackageContainer>();
                 _logger = new Mock<ILog>();
             }

@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 using Common.Logging;
 
 using Moq;
-
+using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 
 using Should;
 
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -18,21 +20,23 @@ namespace ScriptCs.Tests
     {
         public class GetAssemblyPathsMethod
         {
-            [Fact]
-            public void ShouldReturnAssembliesFromPackagesFolder()
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnAssembliesFromPackagesFolder(
+                [Frozen] Mock<IFileSystem> fileSystemMock,
+                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock,
+                AssemblyResolver resolver
+            )
             {
                 const string WorkingDirectory = @"C:\";
 
-                var packagesFolder = Path.Combine(WorkingDirectory, Constants.PackagesFolder);
+                var packagesFolder = Path.Combine(WorkingDirectory, "packages");
                 var assemblyFile = Path.Combine(packagesFolder, "MyAssembly.dll");
 
-                var fileSystem = new Mock<IFileSystem>();
-                fileSystem.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
+                fileSystemMock.Setup(x => x.DirectoryExists(packagesFolder)).Returns(true);
+                fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
 
-                var packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
-                packageAssemblyResolver.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
-
-                var resolver = new AssemblyResolver(fileSystem.Object, packageAssemblyResolver.Object, Mock.Of<IAssemblyUtility>(), Mock.Of<ILog>());
+                packageAssemblyResolverMock.Setup(x => x.GetAssemblyNames(WorkingDirectory)).Returns(new[] { assemblyFile });
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
@@ -40,22 +44,25 @@ namespace ScriptCs.Tests
                 assemblies[0].ShouldEqual(assemblyFile);
             }
 
-            [Fact]
-            public void ShouldReturnAssembliesFromBinFolder()
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnAssembliesFromBinFolder(
+                [Frozen] Mock<IFileSystem> fileSystemMock,
+                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock,
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                AssemblyResolver resolver
+            )
             {
                 const string WorkingDirectory = @"C:\";
 
-                var binFolder = Path.Combine(WorkingDirectory, Constants.BinFolder);
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var assemblyFile = Path.Combine(binFolder, "MyAssembly.dll");
 
-                var fileSystem = new Mock<IFileSystem>();
-                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
-                fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new[] { assemblyFile });
+                fileSystemMock.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
+                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new[] { assemblyFile });
 
-                var assemblyUtility = new Mock<IAssemblyUtility>();
-                assemblyUtility.Setup(x => x.IsManagedAssembly(assemblyFile)).Returns(true);
-
-                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
+                assemblyUtilityMock.Setup(x => x.IsManagedAssembly(assemblyFile)).Returns(true);
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
@@ -63,30 +70,57 @@ namespace ScriptCs.Tests
                 assemblies[0].ShouldEqual(assemblyFile);
             }
 
-            [Fact]
-            public void ShouldNotReturnNonManagedAssemblies()
+            [Theory, ScriptCsAutoData]
+            public void ShouldNotReturnNonManagedAssemblies(
+                [Frozen] Mock<IFileSystem> fileSystemMock,
+                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock,
+                [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
+                AssemblyResolver resolver
+            )
             {
                 const string WorkingDirectory = @"C:\";
 
-                var binFolder = Path.Combine(WorkingDirectory, Constants.BinFolder);
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
                 var managed = Path.Combine(binFolder, "MyAssembly.dll");
                 var nonManaged = Path.Combine(binFolder, "MyNonManagedAssembly.dll");
 
-                var fileSystem = new Mock<IFileSystem>();
-                fileSystem.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
-                fileSystem.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                fileSystemMock.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
+                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
                     .Returns(new[] { managed, nonManaged });
 
-                var assemblyUtility = new Mock<IAssemblyUtility>();
-                assemblyUtility.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
-                assemblyUtility.Setup(x => x.IsManagedAssembly(nonManaged)).Returns(false);
-
-                var resolver = new AssemblyResolver(fileSystem.Object, Mock.Of<IPackageAssemblyResolver>(), assemblyUtility.Object, Mock.Of<ILog>());
+                assemblyUtilityMock.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
+                assemblyUtilityMock.Setup(x => x.IsManagedAssembly(nonManaged)).Returns(false);
 
                 var assemblies = resolver.GetAssemblyPaths(WorkingDirectory).ToList();
 
                 assemblies.Count.ShouldEqual(1);
                 assemblies[0].ShouldEqual(managed);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldOnlyReturnBinariesWhenFlagIsSet(
+                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock, 
+                [Frozen] Mock<IFileSystem> fileSystemMock, 
+                AssemblyResolver resolver)
+            {
+                const string WorkingDirectory = @"C:\";
+
+                var binFolder = Path.Combine(WorkingDirectory, "bin");
+                fileSystemMock.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
+                fileSystemMock.Setup(x => x.DirectoryExists(@"C:\packages")).Returns(true);
+                fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
+                fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
+                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                    .Returns(Enumerable.Empty<string>());
+
+                packageAssemblyResolverMock.Setup(p=>p.GetAssemblyNames(WorkingDirectory)).Returns(new string[] {"test.dll", "test.exe", "test.foo"});
+
+                var assemblies = resolver.GetAssemblyPaths(WorkingDirectory, true).ToList();
+                assemblies.ShouldNotContain("test.foo");
+                assemblies.ShouldContain("test.dll");
+                assemblies.ShouldContain("test.exe");
             }
         }
     }

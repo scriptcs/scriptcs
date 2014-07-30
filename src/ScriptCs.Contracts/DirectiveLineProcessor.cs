@@ -1,8 +1,8 @@
-﻿using System;
-using ScriptCs.Contracts.Exceptions;
+﻿using ScriptCs.Contracts.Exceptions;
+
 namespace ScriptCs.Contracts
 {
-    public abstract class DirectiveLineProcessor : ILineProcessor
+    public abstract class DirectiveLineProcessor : IDirectiveLineProcessor
     {
         protected virtual BehaviorAfterCode BehaviorAfterCode
         {
@@ -13,12 +13,12 @@ namespace ScriptCs.Contracts
 
         private string DirectiveString
         {
-            get { return string.Format("#{0} ", DirectiveName); }
+            get { return string.Format("#{0}", DirectiveName); }
         }
 
         public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
         {
-            if (!IsDirective(line))
+            if (!Matches(line))
             {
                 return false;
             }
@@ -27,13 +27,13 @@ namespace ScriptCs.Contracts
             {
                 if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Throw)
                 {
-                    throw new InvalidDirectiveUseException(string.Format("Encountered {0}directive after the start of code. Please move this directive to the beginning of the file.", DirectiveString));
+                    throw new InvalidDirectiveUseException(string.Format("Encountered directive '{0}' after the start of code. Please move this directive to the beginning of the file.", DirectiveString));
                 }
                 else if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Ignore)
                 {
                     return true;
                 }
-             }
+            }
 
             return ProcessLine(parser, context, line);
         }
@@ -43,16 +43,19 @@ namespace ScriptCs.Contracts
             Guard.AgainstNullArgument("line", line);
 
             return line.Replace(DirectiveString, string.Empty)
-                .Trim(' ')
+                .Trim()
                 .Replace("\"", string.Empty)
                 .Replace(";", string.Empty);
         }
 
         protected abstract bool ProcessLine(IFileParser parser, FileParserContext context, string line);
 
-        private bool IsDirective(string line)
+        public bool Matches(string line)
         {
-            return line.Trim(' ').StartsWith(DirectiveString);
+            Guard.AgainstNullArgument("line", line);
+
+            var tokens = line.Split();
+            return tokens[0] == DirectiveString;
         }
     }
 }

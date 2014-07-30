@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -10,11 +10,10 @@ using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 
-namespace ScriptCs
+namespace ScriptCs.Hosting
 {
     public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
     {
-        private readonly IList<Type> _lineProcessors;
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
@@ -22,10 +21,9 @@ namespace ScriptCs
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IList<Type> lineProcessors, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) : 
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
             base(logger, overrides)
         {
-            _lineProcessors = lineProcessors;
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -45,6 +43,7 @@ namespace ScriptCs
             builder.RegisterType<ScriptServices>().SingleInstance();
 
             RegisterLineProcessors(builder);
+            RegisterReplCommands(builder);
 
             RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
             RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
@@ -61,36 +60,51 @@ namespace ScriptCs
             RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
-            
+
             if (_initDirectoryCatalog)
             {
                 var fileSystem = _initializationServices.GetFileSystem();
                 var currentDirectory = fileSystem.GetWorkingDirectory(_scriptName);
-                var assemblies = assemblyResolver.GetAssemblyPaths(currentDirectory);
+
+                var assemblies = assemblyResolver
+                    .GetAssemblyPaths(currentDirectory)
+                    .Where(assembly => ShouldLoadAssembly(fileSystem, assembly));
 
                 var aggregateCatalog = new AggregateCatalog();
                 bool assemblyLoadFailures = false;
 
-                foreach (var assembly in assemblies)
+                foreach (var assemblyPath in assemblies)
                 {
                     try
                     {
-                        var catalog = new AssemblyCatalog(assembly);
-                        catalog.Parts.ToList(); //force the Parts to be read
+                        var catalog = new AssemblyCatalog(assemblyPath);
+                        //force the parts to be queried to catch any errors that will shwo up later
+                        catalog.Parts.ToList();
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
-                    catch(Exception ex)
+                    catch (ReflectionTypeLoadException typeLoadEx)
                     {
                         assemblyLoadFailures = true;
-                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assembly, ex.Message);
+                        if (typeLoadEx.LoaderExceptions != null && typeLoadEx.LoaderExceptions.Any())
+                        {
+                            foreach (var ex in typeLoadEx.LoaderExceptions.GroupBy(x => x.Message))
+                            {
+                                Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath,
+                                    ex.First().Message);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        assemblyLoadFailures = true;
+                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.Message);
                     }
                 }
                 if (assemblyLoadFailures)
                 {
-                    if (_scriptName == null || _scriptName.Length == 0)
-                        Logger.Warn("Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
-                    else    
-                        Logger.Warn("Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
+                    Logger.Warn(string.IsNullOrEmpty(_scriptName)
+                        ? "Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"
+                        : "Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
                 }
                 builder.RegisterComposablePartCatalog(aggregateCatalog);
             }
@@ -98,23 +112,39 @@ namespace ScriptCs
             return builder.Build();
         }
 
+        // HACK: Filter out assemblies in the GAC by checking if full path is specified.
+        private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
+        {
+            return fileSystem.IsPathRooted(assembly);
+        }
+
         private void RegisterLineProcessors(ContainerBuilder builder)
         {
-            var loadProcessorType = _lineProcessors
-                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x)) 
+            object processors;
+            this.Overrides.TryGetValue(typeof(ILineProcessor), out processors);
+            var processorList = (processors as IEnumerable<Type> ?? Enumerable.Empty<Type>()).ToArray();
+
+            var loadProcessorType = processorList
+                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
                 ?? typeof(LoadLineProcessor);
 
-            var usingProcessorType = _lineProcessors
+            var usingProcessorType = processorList
                 .FirstOrDefault(x => typeof(IUsingLineProcessor).IsAssignableFrom(x))
                 ?? typeof(UsingLineProcessor);
 
-            var referenceProcessorType = _lineProcessors
+            var referenceProcessorType = processorList
                 .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
                 ?? typeof(ReferenceLineProcessor);
 
-            var lineProcessors = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(_lineProcessors);
+            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(processorList).ToArray();
 
-            builder.RegisterTypes(lineProcessors.ToArray()).As<ILineProcessor>();
+            builder.RegisterTypes(processorArray).As<ILineProcessor>();
+        }
+
+        private void RegisterReplCommands(ContainerBuilder builder)
+        {
+            var replCommands = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic).SelectMany(x => x.GetExportedTypes()).Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass && !x.IsAbstract);
+            builder.RegisterTypes(replCommands.ToArray()).As<IReplCommand>();
         }
 
         public ScriptServices GetScriptServices()

@@ -2,7 +2,7 @@
 
 namespace ScriptCs.Command
 {
-    public interface IScriptCommand : ICommand 
+    public interface IScriptCommand : ICommand
     {
         string[] ScriptArgs { get; }
     }
@@ -36,8 +36,24 @@ namespace ScriptCs.Command
     {
     }
 
+    public interface IDeferredCreationCommand<TCommand> : ICommand where TCommand : ICommand
+    {
+    }
+
     public interface ICommand
     {
         CommandResult Execute();
+    }
+
+    public interface ICrossAppDomainCommand
+    {
+        CommandResult Result { get; }
+
+        void Execute();
+    }
+
+    public interface ICrossAppDomainScriptCommand : ICrossAppDomainCommand
+    {
+        string[] ScriptArgs { get; }
     }
 }

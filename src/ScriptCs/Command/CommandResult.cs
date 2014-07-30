@@ -2,7 +2,7 @@
 {
     public enum CommandResult
     {
-        Success,
-        Error
+        Success = 0,
+        Error = 1,
     }
 }

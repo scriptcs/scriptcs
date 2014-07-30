@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using Common.Logging;
 
 using Roslyn.Scripting;
@@ -13,8 +12,9 @@ namespace ScriptCs.Engine.Roslyn
 {
     public abstract class RoslynScriptCompilerEngine : RoslynScriptEngine
     {
-        protected const string CompiledScriptClass = "Submission#0";
-        protected const string CompiledScriptMethod = "<Factory>";
+        private const string CompiledScriptClass = "Submission#0";
+
+        private const string CompiledScriptMethod = "<Factory>";
         
         protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
@@ -31,69 +31,47 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            var scriptResult = new ScriptResult();
-
-            if (ShouldCompile())
-            {
-                CompileAndExecute(code, session, scriptResult);
-            }
-            else
-            {
-                var assembly = LoadAssemblyFromCache();
-                InvokeEntryPointMethod(session, assembly, scriptResult);
-            }
-            
-            return scriptResult;
+            return ShouldCompile() 
+                ? CompileAndExecute(code, session) 
+                : InvokeEntryPointMethod(session, LoadAssemblyFromCache());
         }
 
-        private void CompileAndExecute(string code, Session session, ScriptResult scriptResult)
+        private ScriptResult CompileAndExecute(string code, Session session)
         {
-            Submission<object> submission = null;
-
             Logger.Debug("Compiling submission");
             try
             {
-                submission = session.CompileSubmission<object>(code);
-
-                var exeBytes = new byte[0];
-                var pdbBytes = new byte[0];
-                var compileSuccess = false;
+                var submission = session.CompileSubmission<object>(code);
 
                 using (var exeStream = new MemoryStream())
                 using (var pdbStream = new MemoryStream())
                 {
                     var result = submission.Compilation.Emit(exeStream, pdbStream: pdbStream);
-                    compileSuccess = result.Success;
 
                     if (result.Success)
                     {
                         Logger.Debug("Compilation was successful.");
-                        exeBytes = exeStream.ToArray();
-                        pdbBytes = pdbStream.ToArray();
-                    }
-                    else
-                    {
-                        var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
-                        Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
-                    }
-                }
 
-                if (compileSuccess)
-                {
-                    var assembly = LoadAssembly(exeBytes, pdbBytes);
+                        var assembly = LoadAssembly(exeStream.ToArray(), pdbStream.ToArray());
 
-                    InvokeEntryPointMethod(session, assembly, scriptResult);
+                        return InvokeEntryPointMethod(session, assembly);
+                    }
+
+                    var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
+                    
+                    Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
+
+                    return new ScriptResult(compilationException: new ScriptCompilationException(errors));
                 }
             }
             catch (Exception compileException)
             {
                 //we catch Exception rather than CompilationErrorException because there might be issues with assembly loading too
-                scriptResult.CompileExceptionInfo =
-                    ExceptionDispatchInfo.Capture(new ScriptCompilationException(compileException.Message, compileException));
+                return new ScriptResult(compilationException: new ScriptCompilationException(compileException.Message, compileException));
             }
         }
 
-        private void InvokeEntryPointMethod(Session session, Assembly assembly, ScriptResult scriptResult)
+        private ScriptResult InvokeEntryPointMethod(Session session, Assembly assembly)
         {
             Logger.Debug("Retrieving compiled script class (reflection).");
 
@@ -105,13 +83,16 @@ namespace ScriptCs.Engine.Roslyn
             try
             {
                 Logger.Debug("Invoking method.");
-                scriptResult.ReturnValue = method.Invoke(null, new[] { session });
+
+                return new ScriptResult(returnValue: method.Invoke(null, new object[] { session }));
             }
             catch (Exception executeException)
             {
-                var ex = executeException.InnerException ?? executeException;
-                scriptResult.ExecuteExceptionInfo = ExceptionDispatchInfo.Capture(ex);
                 Logger.Error("An error occurred when executing the scripts.");
+
+                var ex = executeException.InnerException ?? executeException;
+
+                return new ScriptResult(executionException: ex);
             }
         }
     }

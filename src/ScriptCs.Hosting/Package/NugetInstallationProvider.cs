@@ -6,8 +6,6 @@ using Common.Logging;
 using NuGet;
 
 using ScriptCs.Contracts;
-using ScriptCs.Package;
-
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
 namespace ScriptCs.Hosting.Package
@@ -31,7 +29,7 @@ namespace ScriptCs.Hosting.Package
 
         public void Initialize()
         {
-            var path = Path.Combine(_fileSystem.CurrentDirectory, Constants.PackagesFolder);
+            var path = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
             var remoteRepository = new AggregateRepository(PackageRepositoryFactory.Default, _repositoryUrls, true);
             _manager = new PackageManager(remoteRepository, path);
@@ -42,9 +40,10 @@ namespace ScriptCs.Hosting.Package
             var configFileSystem = new PhysicalFileSystem(path);
 
             ISettings settings;
-            if (_fileSystem.FileExists(Path.Combine(_fileSystem.CurrentDirectory, Constants.NugetFile)))
+            var localNuGetConfigFile = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.NugetFile);
+            if (_fileSystem.FileExists(localNuGetConfigFile))
             {
-                settings = new Settings(configFileSystem, Constants.NugetFile);
+                settings = Settings.LoadDefaultSettings(configFileSystem, localNuGetConfigFile, null);
             }
             else
             {
@@ -67,24 +66,14 @@ namespace ScriptCs.Hosting.Package
             return sources.Select(i => i.Source);
         }
 
-        public bool InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
+        public void InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
         {
             Guard.AgainstNullArgument("packageId", packageId);
 
             var version = GetVersion(packageId);
             var packageName = packageId.PackageId + " " + (version == null ? string.Empty : packageId.Version.ToString());
-            try
-            {
-                _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
-                _logger.Info("Installed: " + packageName);
-                return true;
-            }
-            catch (Exception e)
-            {
-                _logger.Error("Installation failed: " + packageName);
-                _logger.Error(e.Message);
-                return false;
-            }
+            _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
+            _logger.Info("Installed: " + packageName);
         }
 
         private static SemanticVersion GetVersion(IPackageReference packageReference)

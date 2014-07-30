@@ -1,4 +1,4 @@
-# scriptcs
+# scriptcs [![Chocolatey Version](http://img.shields.io/chocolatey/v/scriptcs.svg?style=flat)](http://chocolatey.org/packages/scriptcs) [![Chocolatey Downloads](http://img.shields.io/chocolatey/dt/scriptcs.svg?style=flat)](http://chocolatey.org/packages/scriptcs) [![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/bt949.svg?style=flat)](http://ci.scriptcs.net)
 
 
 ## What is it?
@@ -27,7 +27,7 @@ Once Chocolatey has been installed, you can install the latest stable version of
 
     cinst scriptcs
 
-Chocolatey will install scriptcs to `%APPDATA%\scriptcs\` and update your PATH accordingly.
+Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your PATH accordingly.
 
 **Note:** You may need to restart your command prompt after the installation completes.
 
@@ -45,8 +45,27 @@ Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be in
 
 ### Building from source
 
-Execute `build.cmd` to start the build script.
+#### Windows
 
+1. Ensure you have .NET Framework 4.5 installed.
+
+1. Execute the build script.
+
+    `build.cmd`
+
+#### Linux
+
+1. Ensure you have Mono development tools 3.0 or later installed.
+
+    `sudo apt-get install mono-devel`
+
+1. Ensure your mono instance has root SSL certificates
+
+    `mozroots --import --sync`
+    
+1. Execute the build script
+
+    `./build.sh`
 
 ## Getting Started
 
@@ -269,6 +288,7 @@ Want to chat? In addition to Twitter, you can find us on [Google Groups](https:/
 
 * [Damian Schenkelman](http://github.com/dschenkelman) ([@dschenkelman](https://twitter.com/intent/user?screen_name=dschenkelman))
 * [Kristian Hellang](http://github.com/khellang) ([@khellang](https://twitter.com/intent/user?screen_name=khellang))
+* [Adam Ralph](http://github.com/adamralph) ([@adamralph](https://twitter.com/intent/user?screen_name=adamralph))
 
 
 ## Credits 

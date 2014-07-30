@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask AssemblyFile="..\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  <UsingTask AssemblyFile="..\packages\xunit.runners.1.9.2\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
@@ -13,9 +13,7 @@
     <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
     <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
     
-    <NuGetPath>$(Root).nuget\</NuGetPath>
-    <NuGetExePath>$(NuGetPath)NuGet.exe</NuGetExePath>
-    <NuGetProjectPath>$(NuGetPath)NuGet.targets</NuGetProjectPath>
+    <NuGetExePath>$(Root).nuget\NuGet.exe</NuGetExePath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
 
@@ -32,8 +30,7 @@
       <AdditionalProperties>
         Configuration=$(Configuration);
         ArtifactsPath=$(ArtifactsPath);
-        RunCodeAnalysis=false;
-        RestorePackages=false
+        RunCodeAnalysis=false
       </AdditionalProperties>
     </Solution>
 
@@ -78,7 +75,7 @@
 
   <Target Name="Test" DependsOnTargets="Build">
     <ItemGroup>
-      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
+      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll;$(Root)test\**\bin\$(Configuration)\**\*.Tests.Acceptance.dll" />
     </ItemGroup>
     
     <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
@@ -113,6 +110,7 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
@@ -120,15 +118,9 @@
 
   <Target Name="RestorePackages">
     <Message Text="Restoring NuGet packages..." Importance="high" />
-    
-    <ItemGroup>
-      <PackageConfigs Include="$(Root)**\packages.config" Exclude="$(BaseArtifactsPath)**\packages.config" />
-    </ItemGroup>
 
-    <CombinePackageConfigs PackageConfigFiles="@(PackageConfigs)" OutputPath="$(BaseArtifactsPath)packages.config" />
-    
-    <MSBuild Projects="$(NuGetProjectPath)" Targets="RestorePackages"
-             Properties="SolutionDir=$(Root); RestorePackages=true; PackagesConfig=$(BaseArtifactsPath)packages.config" />
+    <Exec Command="&quot;$(NuGetExePath)&quot; restore -Verbosity detailed -NonInteractive"
+          WorkingDirectory="$(Root)" StandardOutputImportance="Low" />
   </Target>
 
   <Target Name="_CleanSolution">
