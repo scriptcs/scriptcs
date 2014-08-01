@@ -1,4 +1,16 @@
 ﻿try { 
+    $oldpaths = @(
+        "$env:APPDATA\scriptcs"
+    )
+
+    $oldpaths | foreach {
+        if (Test-Path $_) {
+            Remove-Item $_ -Recurse -Force
+        }
+
+        Write-Host "'$_' has been removed." -ForegroundColor DarkYellow
+    }
+
     $tools = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
     $nuget = "$env:ChocolateyInstall\ChocolateyInstall\nuget"
     $binPath = "$env:LOCALAPPDATA\scriptcs"
