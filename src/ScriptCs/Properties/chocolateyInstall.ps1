@@ -1,6 +1,6 @@
 ﻿try { 
     $oldpaths = @(
-        "$env:APPDATA\scriptcs",
+        "$env:APPDATA\scriptcs"
     )
 
     $oldpaths | foreach {
