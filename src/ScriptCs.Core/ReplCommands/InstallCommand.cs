@@ -34,7 +34,7 @@ namespace ScriptCs.ReplCommands
             get { return "install"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 

@@ -29,7 +29,7 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var fs = new Mock<IFileSystem>();
-                var executor = new Mock<IScriptExecutor>();
+                var executor = new Mock<Contracts.IRepl>();
 
                 var tempPath = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
 

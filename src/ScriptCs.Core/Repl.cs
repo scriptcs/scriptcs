@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class Repl : ScriptExecutor
+    public class Repl : ScriptExecutor, IRepl
     {
         private readonly string[] _scriptArgs;
 
@@ -161,6 +161,12 @@ namespace ScriptCs
             {
                 Console.ResetColor();
             }
+        }
+
+        public void Quit()
+        {
+            Terminate();
+            Environment.Exit(0);
         }
 
         private static string GetInvalidCommandArgumentMessage(string argument)

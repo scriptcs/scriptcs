@@ -19,7 +19,7 @@ namespace ScriptCs.ReplCommands
             get { return "cwd"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 
