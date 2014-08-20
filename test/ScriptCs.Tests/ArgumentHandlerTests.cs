@@ -167,6 +167,30 @@ namespace ScriptCs.Tests
 
                 system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
             }
+
+            [Fact]
+            public void ShouldSetLogLevelToDebugWhenDebugIsSetOnCommandLine()
+            {
+                var argumentHandler = Setup(null);
+                string[] args = { "server.csx", "-debug" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
+
+            [Fact]
+            public void ShouldSetLogLevelToDebugWhenDebugIsSetInOptsFile()
+            {
+                var argumentHandler = Setup("{ Debug: \"True\" }");
+                string[] args = { "server.csx" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
         }
     }
 }
