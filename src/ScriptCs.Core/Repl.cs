@@ -170,6 +170,12 @@ namespace ScriptCs
             }
         }
 
+        public void Quit()
+        {
+            Terminate();
+            Environment.Exit(0);
+        }
+
         private static string GetInvalidCommandArgumentMessage(string argument)
         {
             return string.Format(CultureInfo.InvariantCulture, "Argument is not a valid expression: {0}", argument);

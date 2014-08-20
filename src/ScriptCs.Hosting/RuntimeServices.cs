@@ -52,6 +52,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
+            builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
 
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);
