@@ -31,6 +31,11 @@ namespace ScriptCs.Argument
             var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : "scriptcs.opts"));
             var finalArguments = ReconcileArguments(configArgs ?? new ScriptCsArgs(), commandArgs, sr);
 
+            if (finalArguments.Debug)
+            {
+                finalArguments.LogLevel = LogLevel.Debug;
+            }
+
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
         }
 
