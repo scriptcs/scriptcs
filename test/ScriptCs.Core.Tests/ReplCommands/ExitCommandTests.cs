@@ -28,6 +28,7 @@ namespace ScriptCs.Tests.ReplCommands
                 // arrange
                 const string message = "Are you sure you wish to exit? (y/n): ";
                 var console = new Mock<IConsole>();
+                console.Setup(x => x.ReadLine()).Returns("n");
                 var executor = new Mock<IRepl>();
                 var cmd = new ExitCommand(console.Object);
 
