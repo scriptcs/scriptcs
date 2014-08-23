@@ -43,7 +43,7 @@ namespace ScriptCs.Tests.ReplCommands
                 _packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
                 _logger = new Mock<ILog>();
                 _installationProvider = new Mock<IInstallationProvider>();
-                _executor = new Mock<Contracts.IRepl>();
+                _executor = new Mock<IRepl>();
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(x => x.CurrentDirectory).Returns(@"c:\dir");
