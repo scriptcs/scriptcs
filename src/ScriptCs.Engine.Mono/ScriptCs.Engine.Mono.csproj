@@ -81,9 +81,9 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="MonoHostBuilder.cs" />
     <Compile Include="MonoModule.cs" />
     <Compile Include="MonoScriptEngine.cs" />
-    <Compile Include="MonoHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parser\Visitors\ClassTypeVisitor.cs" />
     <Compile Include="Parser\Visitors\MethodVisitor.cs" />
@@ -108,7 +108,5 @@
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Parser\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
