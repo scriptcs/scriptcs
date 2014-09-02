@@ -51,8 +51,11 @@ namespace ScriptCs.Engine.Roslyn
 
             SessionState<Session> sessionState;
 
-            if (!scriptPackSession.State.ContainsKey(SessionKey))
+            var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);
+
+            if (isFirstExecution)
             {
+                code = code.DefineTrace();
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 Logger.Debug("Creating session");
 
