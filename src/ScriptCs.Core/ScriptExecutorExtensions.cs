@@ -8,19 +8,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public static class StringExtensions
-    {
-        public static string DefineTrace(this string code)
-        {
-            return string.Format("#define TRACE{0}{1}", Environment.NewLine, code);
-        }
-
-        public static string UndefineTrace(this string code)
-        {
-            return string.Format("#undefine TRACE{0}{1}", Environment.NewLine, code);
-        }
-    }
-
     public static class ScriptExecutorExtensions
     {
         public static void ImportNamespaces(this IScriptExecutor executor, params Type[] typesFromReferencedAssembly)
