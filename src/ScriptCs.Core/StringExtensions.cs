@@ -11,7 +11,7 @@ namespace ScriptCs
 
         public static string UndefineTrace(this string code)
         {
-            return string.Format("#undefine TRACE{0}{1}", Environment.NewLine, code);
+            return string.Format("#undef TRACE{0}{1}", Environment.NewLine, code);
         }
     }
 }
