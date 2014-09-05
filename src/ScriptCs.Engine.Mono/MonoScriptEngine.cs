@@ -33,12 +33,15 @@ namespace ScriptCs.Engine.Mono
         {
             Guard.AgainstNullArgument("references", references);
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
-
+            
             references.PathReferences.UnionWith(scriptPackSession.References);
 
             SessionState<Evaluator> sessionState;
-            if (!scriptPackSession.State.ContainsKey(SessionKey))
+            var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);
+
+            if (isFirstExecution)
             {
+                code = code.DefineTrace();
                 Logger.Debug("Creating session");
                 var context = new CompilerContext(new CompilerSettings
                 {
