@@ -294,8 +294,8 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                //default references = 6, + 1 we just added
-                _repl.References.PathReferences.Count().ShouldEqual(7);
+                //default references = 7, + 1 we just added
+                _repl.References.PathReferences.Count().ShouldEqual(8);
             }
 
             [Fact]
