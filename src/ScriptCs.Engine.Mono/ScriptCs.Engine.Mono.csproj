@@ -38,7 +38,7 @@
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp">
-      <HintPath>..\..\packages\Mono.CSharp.3.4.0\lib\net40\Mono.CSharp.dll</HintPath>
+      <HintPath>..\..\packages\Mono.CSharp.3.6.1\lib\net40\Mono.CSharp.dll</HintPath>
       <Aliases>MonoCSharp</Aliases>
     </Reference>
     <Reference Include="System" />
@@ -108,7 +108,5 @@
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Parser\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
