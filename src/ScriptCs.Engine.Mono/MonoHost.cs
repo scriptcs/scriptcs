@@ -5,7 +5,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Mono
 {
-    public class MonoHost : InteractiveBase, IScriptHost
+    public class MonoHost : IScriptHost
     {
         private static ScriptHost _scriptHost;
 
