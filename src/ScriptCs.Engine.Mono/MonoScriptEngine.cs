@@ -39,7 +39,7 @@ namespace ScriptCs.Engine.Mono
                 var vars = _evaluator.GetVars();
                 if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
                 {
-                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
                 }
 
                 return new Collection<string>();

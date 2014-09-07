@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Common.Logging;
 using Roslyn.Compilers;
 using Roslyn.Compilers.Common;
@@ -9,7 +10,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
-    public class RoslynReplEngine : RoslynScriptEngine
+    public class RoslynReplEngine : RoslynScriptEngine, IReplEngine
     {
         public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger) : base(scriptHostFactory, logger)
         {
@@ -39,7 +40,8 @@ namespace ScriptCs.Engine.Roslyn
 
                 try
                 {
-                    return new ScriptResult(returnValue: submission.Execute());
+                    var result = submission.Execute();
+                    return new ScriptResult(returnValue: result);
                 }
                 catch (Exception ex)
                 {
