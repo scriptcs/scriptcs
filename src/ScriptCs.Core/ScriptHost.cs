@@ -1,4 +1,7 @@
-﻿using ScriptCs.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -17,6 +20,16 @@ namespace ScriptCs
         public T Require<T>() where T : IScriptPackContext
         {
             return _scriptPackManager.Get<T>();
+        }
+
+        public void GetVars()
+        {
+            var fields = this.GetType().GetFields(BindingFlags.Instance);
+
+            foreach (var field in fields)
+            {
+                Console.WriteLine(field.Name + " - " + field.GetValue(this));
+            }
         }
     }
 }

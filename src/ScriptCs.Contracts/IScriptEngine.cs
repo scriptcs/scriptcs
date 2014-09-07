@@ -9,7 +9,12 @@ namespace ScriptCs.Contracts
         string CacheDirectory { get; set; }
         
         string FileName { get; set; }
-        
+            
         ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession);
+    }
+
+    public interface IReplEngine : IScriptEngine
+    {
+        ICollection<string> LocalVariables { get; } 
     }
 }

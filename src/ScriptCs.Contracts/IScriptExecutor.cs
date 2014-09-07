@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace ScriptCs.Contracts
@@ -6,6 +7,10 @@ namespace ScriptCs.Contracts
     public interface IScriptExecutor
     {
         AssemblyReferences References { get; }
+
+        Collection<string> Namespaces { get; }
+
+        IScriptEngine ScriptEngine { get; }
 
         IFileSystem FileSystem { get; }
 
