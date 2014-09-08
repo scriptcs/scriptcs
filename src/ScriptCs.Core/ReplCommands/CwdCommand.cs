@@ -14,6 +14,11 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
+        public string Description
+        {
+            get { return "Displays the current working directory."; }
+        }
+
         public string CommandName
         {
             get { return "cwd"; }

@@ -30,6 +30,11 @@ namespace ScriptCs.ReplCommands
             _installationProvider = installationProvider;
         }
 
+        public string Description
+        {
+            get { return "Installs a Nuget package. I.e. :install <package> <version>"; }
+        }
+
         public string CommandName
         {
             get { return "install"; }

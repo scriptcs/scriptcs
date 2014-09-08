@@ -6,6 +6,11 @@ namespace ScriptCs.ReplCommands
     {
         private readonly IConsole _console;
 
+        public string Description
+        {
+            get { return "Clears the console window."; }
+        }
+
         public ClearCommand(IConsole console)
         {
             Guard.AgainstNullArgument("console", console);

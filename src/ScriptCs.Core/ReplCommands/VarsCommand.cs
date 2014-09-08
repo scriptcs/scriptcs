@@ -9,6 +9,11 @@ namespace ScriptCs.ReplCommands
             get { return "vars"; }
         }
 
+        public string Description
+        {
+            get { return "Displays a list of variables defined within the REPL, along with their types and values."; }
+        }
+
         public object Execute(IScriptExecutor repl, object[] args)
         {
             var replEngine = repl.ScriptEngine as IReplEngine;

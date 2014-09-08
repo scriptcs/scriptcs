@@ -10,6 +10,11 @@ namespace ScriptCs.ReplCommands
             get { return "references"; }
         }
 
+        public string Description
+        {
+            get { return "Displays a list of assemblies referenced from the REPL context."; }
+        }
+
         public object Execute(IScriptExecutor repl, object[] args)
         {
             if (repl.References != null)
