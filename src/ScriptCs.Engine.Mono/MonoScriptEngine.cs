@@ -36,10 +36,13 @@ namespace ScriptCs.Engine.Mono
         {
             get
             {
-                var vars = _evaluator.GetVars();
-                if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
+                if (_evaluator != null)
                 {
-                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                    var vars = _evaluator.GetVars();
+                    if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
+                    {
+                        return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                    }
                 }
 
                 return new Collection<string>();

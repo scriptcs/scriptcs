@@ -19,19 +19,41 @@ namespace ScriptCs.Engine.Roslyn
         {
             get
             {
-                var submissionObjectField = Session.GetType().GetField("submissions", BindingFlags.Instance | BindingFlags.NonPublic);
-                var submissionObjects = (submissionObjectField.GetValue(Session) as object[]).Where(x => x != null);
                 var variables = new Collection<string>();
-
-                if (submissionObjects.Any())
+                if (Session != null)
                 {
-                    foreach (var submissionObject in submissionObjects)
+                    var submissionObjectField = Session.GetType()
+                        .GetField("submissions", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                    if (submissionObjectField != null)
                     {
-                        var fields = submissionObject.GetType().GetFields().Where(x => x.Name.ToLowerInvariant() != "<host-object>");
-                        foreach (var field in fields)
+                        var submissionObjectFieldValue = submissionObjectField.GetValue(Session);
+                        if (submissionObjectFieldValue != null)
                         {
-                            variables.Add(string.Format("{0} {1} = {2}", field.FieldType, field.Name, field.GetValue(submissionObject)));
-                        }                        
+                            var submissionObjects = submissionObjectFieldValue as object[];
+
+                            if (submissionObjects != null && submissionObjects.Any(x => x != null))
+                            {
+                                var processedFields = new Collection<string>();
+                                foreach (var submissionObject in submissionObjects.Where(x => x != null).Reverse()) //reversing to get the latest submission first
+                                {
+                                    var fields =
+                                        submissionObject.GetType()
+                                            .GetFields()
+                                            .Where(x => x.Name.ToLowerInvariant() != "<host-object>");
+                                    foreach (var field in fields)
+                                    {
+                                        if (!processedFields.Contains(field.Name))
+                                        {
+                                            variables.Add(string.Format("{0} {1} = {2}", field.FieldType, field.Name,
+                                                field.GetValue(submissionObject)));
+                                            processedFields.Add(field.Name);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
 
