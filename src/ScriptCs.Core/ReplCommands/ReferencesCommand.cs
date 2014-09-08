@@ -7,7 +7,7 @@ namespace ScriptCs.ReplCommands
     {
         public string CommandName
         {
-            get { return "refs"; }
+            get { return "references"; }
         }
 
         public object Execute(IScriptExecutor repl, object[] args)
