@@ -16,6 +16,7 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected readonly ScriptEngine ScriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
+        protected Session Session;
 
         public const string SessionKey = "Session";
         private const string InvalidNamespaceError = "error CS0246";
@@ -63,28 +64,28 @@ namespace ScriptCs.Engine.Roslyn
 
                 var hostType = host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
-                var session = ScriptEngine.CreateSession(host, hostType);
+                Session = ScriptEngine.CreateSession(host, hostType);
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 foreach (var reference in executionReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
-                    session.AddReference(reference);
+                    Session.AddReference(reference);
                 }
 
                 foreach (var assembly in executionReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
-                    session.AddReference(assembly);
+                    Session.AddReference(assembly);
                 }
 
                 foreach (var @namespace in allNamespaces)
                 {
                     Logger.DebugFormat("Importing namespace {0}", @namespace);
-                    session.ImportNamespace(@namespace);
+                    Session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = executionReferences, Session = session, Namespaces = new HashSet<string>(allNamespaces) };
+                sessionState = new SessionState<Session> { References = executionReferences, Session = Session, Namespaces = new HashSet<string>(allNamespaces) };
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else

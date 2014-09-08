@@ -425,7 +425,7 @@ namespace ScriptCs.Tests
             {
             }
 
-            public Session Session { get; private set; }
+            public new Session Session { get; private set; }
 
             protected override ScriptResult Execute(string code, Session session)
             {

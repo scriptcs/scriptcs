@@ -13,10 +13,31 @@ namespace ScriptCs.Engine.Roslyn
     {
         public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger) : base(scriptHostFactory, logger)
         {
-            LocalVariables = new Collection<string>();
         }
 
-        public ICollection<string> LocalVariables { get; private set; }
+        public ICollection<string> LocalVariables
+        {
+            get
+            {
+                var submissionObjectField = Session.GetType().GetField("submissions", BindingFlags.Instance | BindingFlags.NonPublic);
+                var submissionObjects = (submissionObjectField.GetValue(Session) as object[]).Where(x => x != null);
+                var variables = new Collection<string>();
+
+                if (submissionObjects.Any())
+                {
+                    foreach (var submissionObject in submissionObjects)
+                    {
+                        var fields = submissionObject.GetType().GetFields().Where(x => x.Name.ToLowerInvariant() != "<host-object>");
+                        foreach (var field in fields)
+                        {
+                            variables.Add(string.Format("{0} {1} = {2}", field.FieldType, field.Name, field.GetValue(submissionObject)));
+                        }                        
+                    }
+                }
+
+                return variables;
+            }
+        }
 
         protected override ScriptResult Execute(string code, Session session)
         {
@@ -27,37 +48,7 @@ namespace ScriptCs.Engine.Roslyn
                 return ScriptResult.Incomplete;
             }
 
-            try
-            {
-                var submission = session.CompileSubmission<object>(code);
-
-                try
-                {
-                    var result = submission.Execute();
-
-                    var submissionObjectField = session.GetType().GetField("submissions", BindingFlags.Instance | BindingFlags.NonPublic);
-                    var submissionObject = (submissionObjectField.GetValue(session) as object[]).LastOrDefault(x => x != null);
-
-                    if (submissionObject != null)
-                    {
-                        var fields = submissionObject.GetType().GetFields().Where(x => x.Name.ToLowerInvariant() != "<host-object>");
-                        foreach (var field in fields)
-                        {
-                            LocalVariables.Add(string.Format("{0} {1} = {2}", field.FieldType, field.Name, field.GetValue(submissionObject)));
-                        }
-                    }
-
-                    return new ScriptResult(returnValue: result);
-                }
-                catch (Exception ex)
-                {
-                    return new ScriptResult(executionException: ex);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ScriptResult(compilationException: ex);
-            }
+            return base.Execute(code, session);
         }
     }
 }
