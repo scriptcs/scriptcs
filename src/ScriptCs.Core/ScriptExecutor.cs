@@ -23,7 +23,7 @@ namespace ScriptCs
 
         public AssemblyReferences References { get; private set; }
 
-        public Collection<string> Namespaces { get; private set; }
+        public ICollection<string> Namespaces { get; private set; }
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 

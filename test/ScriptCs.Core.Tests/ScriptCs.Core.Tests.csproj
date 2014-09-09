@@ -61,7 +61,10 @@
     <Compile Include="ReplCommands\ClearCommandTests.cs" />
     <Compile Include="ReplCommands\CwdCommandTests.cs" />
     <Compile Include="ReplCommands\InstallCommandTests.cs" />
+    <Compile Include="ReplCommands\ReferencesCommandTests.cs" />
     <Compile Include="ReplCommands\ResetCommandTests.cs" />
+    <Compile Include="ReplCommands\UsingsCommandTests.cs" />
+    <Compile Include="ReplCommands\VarsCommandTests.cs" />
     <Compile Include="ReplTests.cs" />
     <Compile Include="ScriptExecutorTests.cs" />
     <Compile Include="ScriptHostTests.cs" />
