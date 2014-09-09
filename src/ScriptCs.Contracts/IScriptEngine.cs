@@ -15,6 +15,6 @@ namespace ScriptCs.Contracts
 
     public interface IReplEngine : IScriptEngine
     {
-        ICollection<string> LocalVariables { get; } 
+        ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession);
     }
 }

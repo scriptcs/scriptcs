@@ -16,8 +16,6 @@ namespace ScriptCs.Engine.Mono
     {
         private readonly IScriptHostFactory _scriptHostFactory;
 
-        private Evaluator _evaluator;
-
         public string BaseDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
@@ -32,21 +30,19 @@ namespace ScriptCs.Engine.Mono
 
         public ILog Logger { get; set; }
 
-        public ICollection<string> LocalVariables
+        public ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession)
         {
-            get
+            if (scriptPackSession != null && scriptPackSession.State.ContainsKey(SessionKey))
             {
-                if (_evaluator != null)
+                var sessionState = (SessionState<Evaluator>) scriptPackSession.State[SessionKey];
+                var vars = sessionState.Session.GetVars();
+                if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
                 {
-                    var vars = _evaluator.GetVars();
-                    if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
-                    {
-                        return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
-                    }
+                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
                 }
-
-                return new Collection<string>();
             }
+
+            return new Collection<string>();
         }
 
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces,
@@ -69,20 +65,20 @@ namespace ScriptCs.Engine.Mono
                     AssemblyReferences = references.PathReferences.ToList()
                 }, new ConsoleReportPrinter());
 
-                _evaluator = new Evaluator(context);
+                var evaluator = new Evaluator(context);
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
                 MonoHost.SetHost((ScriptHost)host);
 
-                _evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
-                _evaluator.InteractiveBaseClass = typeof(MonoHost);
+                evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
+                evaluator.InteractiveBaseClass = typeof(MonoHost);
 
                 sessionState = new SessionState<Evaluator>
                 {
                     References = new AssemblyReferences(references.PathReferences, references.Assemblies),
                     Namespaces = new HashSet<string>(),
-                    Session = _evaluator
+                    Session = evaluator
                 };
 
                 ImportNamespaces(allNamespaces, sessionState);

@@ -14,6 +14,8 @@ namespace ScriptCs.Contracts
 
         IFileSystem FileSystem { get; }
 
+        ScriptPackSession ScriptPackSession { get; }
+
         void ImportNamespaces(params string[] namespaces);
 
         void RemoveNamespaces(params string[] namespaces);

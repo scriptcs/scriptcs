@@ -36,7 +36,7 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 var locals = new List<string> {"int x = 0"};
                 var replEngine = new Mock<IReplEngine>();
-                replEngine.SetupGet(x => x.LocalVariables).Returns(locals);
+                replEngine.Setup(x => x.GetLocalVariables(It.IsAny<ScriptPackSession>())).Returns(locals);
                 _executor.SetupGet(x => x.ScriptEngine).Returns(replEngine.Object);
 
                 var cmd = new VarsCommand();

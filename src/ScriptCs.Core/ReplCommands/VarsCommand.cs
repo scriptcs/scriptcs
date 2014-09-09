@@ -19,7 +19,7 @@ namespace ScriptCs.ReplCommands
             var replEngine = repl.ScriptEngine as IReplEngine;
             if (replEngine != null)
             {
-                return replEngine.LocalVariables;
+                return replEngine.GetLocalVariables(repl.ScriptPackSession);
             }
 
             return null;

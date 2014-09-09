@@ -15,19 +15,18 @@ namespace ScriptCs.Engine.Roslyn
         {
         }
 
-        public ICollection<string> LocalVariables
+        public ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession)
         {
-            get
-            {
                 var variables = new Collection<string>();
-                if (Session != null)
+                if (scriptPackSession != null && scriptPackSession.State.ContainsKey(SessionKey))
                 {
-                    var submissionObjectField = Session.GetType()
+                    var sessionState  = (SessionState<Session>)scriptPackSession.State[SessionKey];
+                    var submissionObjectField = sessionState.Session.GetType()
                         .GetField("submissions", BindingFlags.Instance | BindingFlags.NonPublic);
 
                     if (submissionObjectField != null)
                     {
-                        var submissionObjectFieldValue = submissionObjectField.GetValue(Session);
+                        var submissionObjectFieldValue = submissionObjectField.GetValue(sessionState.Session);
                         if (submissionObjectFieldValue != null)
                         {
                             var submissionObjects = submissionObjectFieldValue as object[];
@@ -58,7 +57,6 @@ namespace ScriptCs.Engine.Roslyn
                 }
 
                 return variables;
-            }
         }
 
         protected override ScriptResult Execute(string code, Session session)

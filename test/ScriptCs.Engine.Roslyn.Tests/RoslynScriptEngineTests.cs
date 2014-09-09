@@ -297,27 +297,7 @@ namespace ScriptCs.Tests
                 result.ReturnValue.ShouldBeNull();
             }
 
-            [Theory, ScriptCsAutoData]
-            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingCurlyBracket(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
-                ScriptPackSession scriptPackSession)
-            {
-                // Arrange
-                const string Code = "class test {";
 
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
-
-                // Act
-                var result = engine.Execute(
-                    Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
-
-                // Assert
-                result.IsCompleteSubmission.ShouldBeFalse();
-            }
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotMarkSubmissionsAsIncompleteWhenRunningScript(
@@ -341,54 +321,6 @@ namespace ScriptCs.Tests
                 // Assert
                 result.IsCompleteSubmission.ShouldBeTrue();
                 result.CompileExceptionInfo.ShouldNotBeNull();
-            }
-
-            [Theory, ScriptCsAutoData]
-            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingSquareBracket(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
-                ScriptPackSession scriptPackSession)
-            {
-                // Arrange
-                const string Code = "var x = new[1] { 1 }; var y = x[0";
-
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
-
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
-
-                // Act
-                var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
-
-                // Assert
-                result.IsCompleteSubmission.ShouldBeFalse();
-            }
-
-            [Theory, ScriptCsAutoData]
-            public void ShouldSetIsPendingClosingCharToTrueIfCodeIsMissingParenthesis(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] RoslynScriptEngine engine,
-                ScriptPackSession scriptPackSession)
-            {
-                // Arrange
-                const string Code = "System.Diagnostics.Debug.WriteLine(\"a\"";
-
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
-
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
-
-                // Act
-                var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
-
-                // Assert
-                result.IsCompleteSubmission.ShouldBeFalse();
             }
         }
 
@@ -425,7 +357,7 @@ namespace ScriptCs.Tests
             {
             }
 
-            public new Session Session { get; private set; }
+            public Session Session { get; private set; }
 
             protected override ScriptResult Execute(string code, Session session)
             {
