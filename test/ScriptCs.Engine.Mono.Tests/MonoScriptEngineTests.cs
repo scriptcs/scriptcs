@@ -1,23 +1,64 @@
 ﻿extern alias MonoCSharp;
-
+using System.Collections.ObjectModel;
 using System.Linq;
-
 using Common.Logging;
 using Moq;
 using MonoCSharp::Mono.CSharp;
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Tests;
 using ScriptCs.Contracts;
-
 using Should;
-
 using Xunit.Extensions;
 
 namespace ScriptCs.Engine.Mono.Tests
 {
     public class MonoScriptEngineTests
     {
+        public class GetLocalVariablesMethod
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnDeclaredVariables([NoAutoProperties]MonoScriptEngine engine, ScriptPackSession scriptPackSession)
+            {
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
+                scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
+
+                engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
+                    scriptPackSession);
+                engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
+    scriptPackSession);
+
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { "int x = 1", @"string y = ""www""" });
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturnOnlyLastValueOfVariablesDeclaredManyTimes([NoAutoProperties]MonoScriptEngine engine, ScriptPackSession scriptPackSession)
+            {
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
+                scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
+
+                engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute("int x = 2;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
+
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { "int x = 2" });
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldReturn0VariablesAfterReset([NoAutoProperties]MonoScriptEngine engine, ScriptPackSession scriptPackSession)
+            {
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
+                scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
+
+                engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
+                    scriptPackSession);
+                engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
+    scriptPackSession);
+
+                scriptPackSession.State[MonoScriptEngine.SessionKey] = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
+
+                engine.GetLocalVariables(scriptPackSession).ShouldBeEmpty();
+            }
+        }
+
         public class TheExecuteMethod
         {
             [Theory, ScriptCsAutoData]
