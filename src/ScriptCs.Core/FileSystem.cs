@@ -184,7 +184,7 @@ namespace ScriptCs
 
         public virtual string GlobalOptsFile
         {
-            get { return Path.Combine(GlobalFolder, "scriptcs.opts"); }
+            get { return Path.Combine(GlobalFolder, Constants.ConfigFilename); }
         }
     }
 }

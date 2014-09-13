@@ -18,7 +18,9 @@ namespace ScriptCs
 
         [Obsolete("Use IFileSystem instead.")]
         public const string DllCacheFolder = ".cache";
-        
+
+        public const string ConfigFilename = "scriptcs.opts";
+
         public const string DefaultRepositoryUrl = "https://nuget.org/api/v2/";
     }
 }

@@ -11,13 +11,13 @@ namespace ScriptCs.Tests
     {
         public class ParseMethod
         {
-            private static IArgumentHandler Setup(string fileContent, string fileName = "scriptcs.opts", bool fileExists = true, string globalFileContent = null)
+            private static IArgumentHandler Setup(string fileContent, string fileName = Constants.ConfigFilename, bool fileExists = true, string globalFileContent = null)
             {
                 const string currentDirectory = "C:\\test\\folder";
                 const string moduleDirectory = "C:\\test\\moduleFolder";
 
                 string filePath = currentDirectory + '\\' + fileName;
-                string globalFilePath = moduleDirectory + "\\scriptcs.opts";
+                string globalFilePath = moduleDirectory + "\\" + Constants.ConfigFilename;
 
                 var fs = new Mock<IFileSystem>();
                 fs.SetupGet(x => x.CurrentDirectory).Returns(currentDirectory);
@@ -238,7 +238,7 @@ namespace ScriptCs.Tests
 
                 argumentHandler.Parse(new string[0]);
 
-                system.Verify(x => x.FileExists(@"C:\scriptcs.opts"), Times.Once());
+                system.Verify(x => x.FileExists(@"C:\" + Constants.ConfigFilename), Times.Once());
             }
 
             [Fact]
