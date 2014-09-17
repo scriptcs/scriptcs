@@ -41,9 +41,12 @@
       <Link>ScriptCsMoqCustomization.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Parser\SyntaxParserTests.cs" />
     <Compile Include="MonoModuleTest.cs" />
     <Compile Include="MonoScriptEngineTests.cs" />
+    <Compile Include="Segmenter\ScriptLexerTests.cs" />
+    <Compile Include="Segmenter\RegionParserTests.cs" />
+    <Compile Include="Segmenter\ScriptSegmenterTests.cs" />
+    <Compile Include="Segmenter\CodeAnalyserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -106,4 +109,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets'))" />
   </Target>
+  <ItemGroup>
+    <Folder Include="Segmenter\" />
+  </ItemGroup>
 </Project>

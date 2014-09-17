@@ -1,11 +1,11 @@
-namespace ScriptCs.Engine.Mono.Parser.Visitors
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using ICSharpCode.NRefactory.CSharp;
+
+namespace ScriptCs.Engine.Mono.Segmenter.Analyser.Visitors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using ICSharpCode.NRefactory.CSharp;
-
     internal class MethodVisitor : DepthFirstAstVisitor
     {
         private readonly List<MethodVisitorResult> _methods;
@@ -58,7 +58,8 @@ namespace ScriptCs.Engine.Mono.Parser.Visitors
                 .FirstOrDefault();
             if (methodBody == null)
             {
-                throw new NullReferenceException(string.Format("Method '{0}' has no method body", methodName));
+                // method has no method body
+                return;
             }
             methodBody = (BlockStatement)methodBody.Clone();
 
