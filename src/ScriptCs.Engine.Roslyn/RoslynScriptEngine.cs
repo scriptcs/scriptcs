@@ -150,6 +150,10 @@ namespace ScriptCs.Engine.Roslyn
                 {
                     return new ScriptResult(returnValue: submission.Execute());
                 }
+                catch (AggregateException ex)
+                {
+                    return new ScriptResult(executionException: ex.InnerException);
+                }
                 catch (Exception ex)
                 {
                     return new ScriptResult(executionException: ex);

@@ -130,11 +130,14 @@ namespace ScriptCs.Engine.Mono
                     return new ScriptResult(returnValue: scriptResult);
                 }
             }
+            catch (AggregateException ex)
+            {
+                return new ScriptResult(executionException: ex.InnerException);
+            }
             catch (Exception ex)
             {
                 return new ScriptResult(executionException: ex);
             }
-
             return ScriptResult.Empty;
         }
 
