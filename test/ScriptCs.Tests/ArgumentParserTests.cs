@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
                 result.LogLevel.ShouldEqual(LogLevel.Info);
-                result.Config.ShouldEqual("scriptcs.opts");
+                result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
             [Fact]
@@ -58,7 +58,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
                 result.LogLevel.ShouldEqual(LogLevel.Info);
-                result.Config.ShouldEqual("scriptcs.opts");
+                result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
             [Fact]

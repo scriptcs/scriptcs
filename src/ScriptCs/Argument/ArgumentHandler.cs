@@ -1,8 +1,8 @@
-﻿using PowerArgs;
-using ScriptCs.Contracts;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
+using PowerArgs;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Argument
 {
@@ -28,8 +28,11 @@ namespace ScriptCs.Argument
             var sr = SplitScriptArgs(args);
 
             var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var configArgs = _configFileParser.Parse(GetFileContent(commandArgs != null ? commandArgs.Config : "scriptcs.opts"));
-            var finalArguments = ReconcileArguments(configArgs ?? new ScriptCsArgs(), commandArgs, sr);
+            var localConfigFile = commandArgs != null ? commandArgs.Config : Constants.ConfigFilename;
+            var localConfigPath = string.Format("{0}\\{1}", _fileSystem.CurrentDirectory, localConfigFile);
+            var localConfigArgs = _configFileParser.Parse(GetFileContent(localConfigPath));
+            var globalConfigArgs = _configFileParser.Parse(GetFileContent(_fileSystem.GlobalOptsFile));
+            var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, commandArgs, sr);
 
             if (finalArguments.Debug)
             {
@@ -39,9 +42,8 @@ namespace ScriptCs.Argument
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
         }
 
-        private string GetFileContent(string fileName)
+        private string GetFileContent(string filePath)
         {
-            string filePath = _fileSystem.CurrentDirectory + '\\' + fileName;
             if (_fileSystem.FileExists(filePath))
             {
                 return _fileSystem.ReadFile(filePath);
@@ -70,35 +72,59 @@ namespace ScriptCs.Argument
             return result;
         }
 
-        private static ScriptCsArgs ReconcileArguments(ScriptCsArgs configArgs, ScriptCsArgs commandArgs, SplitResult splitResult)
+        private static ScriptCsArgs ReconcileArguments(ScriptCsArgs globalConfigArgs, ScriptCsArgs localConfigArgs, ScriptCsArgs commandArgs, SplitResult splitResult)
         {
-            if (configArgs == null)
+            if (globalConfigArgs == null && localConfigArgs == null)
                 return commandArgs;
 
-            if (commandArgs == null)
-                return configArgs;
+            if (globalConfigArgs == null && commandArgs == null)
+                return localConfigArgs;
+
+            if (localConfigArgs == null && commandArgs == null)
+                return globalConfigArgs;
+
+            var reconciledArgs = new ScriptCsArgs();
 
             foreach (var property in typeof(ScriptCsArgs).GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                var configValue = property.GetValue(configArgs);
-                var commandValue = property.GetValue(commandArgs);
                 var defaultValue = GetPropertyDefaultValue(property);
 
-                if (!object.Equals(configValue, commandValue))
+                if (commandArgs != null)
                 {
-                    if (!object.Equals(commandValue, defaultValue))
+                    var commandValue = property.GetValue(commandArgs);
+                    if (!Equals(commandValue, defaultValue))
                     {
-                        property.SetValue(configArgs, commandValue);
+                        property.SetValue(reconciledArgs, commandValue);
+                        continue;
                     }
-                    else
+                    if (IsCommandLinePresent(splitResult.CommandArguments, property))
                     {
-                        if (IsCommandLinePresent(splitResult.CommandArguments, property))
-                            property.SetValue(configArgs, commandValue);
+                        property.SetValue(reconciledArgs, commandValue);
+                        continue;
+                    }
+                }
+
+                if (localConfigArgs != null)
+                {
+                    var localConfigValue = property.GetValue(localConfigArgs);
+                    if (!Equals(localConfigValue, defaultValue))
+                    {
+                        property.SetValue(reconciledArgs, localConfigValue);
+                        continue;
+                    }
+                }
+
+                if (globalConfigArgs != null)
+                {
+                    var globalConfigValue = property.GetValue(globalConfigArgs);
+                    if (!Equals(globalConfigValue, defaultValue))
+                    {
+                        property.SetValue(reconciledArgs, globalConfigValue);
                     }
                 }
             }
 
-            return configArgs;
+            return reconciledArgs;
         }
 
         private static bool IsCommandLinePresent(string[] args, PropertyInfo property)

@@ -45,7 +45,7 @@ namespace ScriptCs.Command
 
             if (args.Global)
             {
-                var currentDir = _fileSystem.ModulesFolder;
+                var currentDir = _fileSystem.GlobalFolder;
                 if (!_fileSystem.DirectoryExists(currentDir))
                 {
                     _fileSystem.CreateDirectory(currentDir);
@@ -110,7 +110,7 @@ namespace ScriptCs.Command
 
                 if (args.Global)
                 {
-                    var currentDirectory = _fileSystem.ModulesFolder;
+                    var currentDirectory = _fileSystem.GlobalFolder;
                     _fileSystem.CurrentDirectory = currentDirectory;
                     if (!_fileSystem.DirectoryExists(currentDirectory))
                     {

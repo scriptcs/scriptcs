@@ -12,7 +12,7 @@ namespace ScriptCs
         public ScriptCsArgs()
         {
             LogLevel = LogLevel.Info;
-            Config = "scriptcs.opts";
+            Config = Constants.ConfigFilename;
         }
 
         [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
@@ -67,7 +67,7 @@ namespace ScriptCs
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
 
-        [DefaultValue("scriptcs.opts")]
+        [DefaultValue(Constants.ConfigFilename)]
         [ArgDescription("Defines config file name")]
         public string Config { get; set; }
 
