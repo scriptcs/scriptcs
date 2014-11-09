@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask AssemblyFile="..\packages\xunit.runners.1.9.2\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  <UsingTask AssemblyFile="..\packages\xunit.runners\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
