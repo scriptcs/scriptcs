@@ -1,7 +1,5 @@
-Autofac
 Autofac.Mef
 Common.Logging
-Microsoft.Web.Xdt
 Newtonsoft.Json
 NuGet.Core
 StyleCop.MSBuild

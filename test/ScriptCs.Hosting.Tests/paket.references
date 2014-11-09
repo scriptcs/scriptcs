@@ -1,12 +1,7 @@
 Autofac
-AutoFixture
 AutoFixture.AutoMoq
 AutoFixture.Xunit
 Common.Logging
-Microsoft.Web.Xdt
-Moq
 NuGet.Core
 Should
 StyleCop.MSBuild
-xunit
-xunit.extensions
