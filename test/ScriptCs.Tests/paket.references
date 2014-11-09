@@ -1,0 +1,9 @@
+AutoFixture
+AutoFixture.AutoMoq
+AutoFixture.Xunit
+Common.Logging
+Moq
+Should
+StyleCop.MSBuild
+xunit
+xunit.extensions

@@ -1,0 +1,11 @@
+AutoFixture
+AutoFixture.AutoMoq
+AutoFixture.Xunit
+Common.Logging
+Moq
+Roslyn.Compilers.Common
+Roslyn.Compilers.CSharp
+Should
+StyleCop.MSBuild
+xunit
+xunit.extensions

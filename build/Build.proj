@@ -13,7 +13,9 @@
     <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
     <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
     
-    <NuGetExePath>$(Root).nuget\NuGet.exe</NuGetExePath>
+    <NuGetExePath>$(Root)packages\NuGet.CommandLine\tools\NuGet.exe</NuGetExePath>
+    <PaketBootstrapperPath>$(Root).paket\paket.bootstrapper.exe</PaketBootstrapperPath>
+    <PaketExePath>$(Root).paket\paket.exe</PaketExePath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
 
@@ -117,10 +119,12 @@
   </Target>
 
   <Target Name="RestorePackages">
-    <Message Text="Restoring NuGet packages..." Importance="high" />
+    <Message Text="Restoring Paket packages..." Importance="high" />
 
-    <Exec Command="&quot;$(NuGetExePath)&quot; restore -Verbosity detailed -NonInteractive"
+    <Exec Command="&quot;$(PaketBootstrapperPath)&quot;"
           WorkingDirectory="$(Root)" StandardOutputImportance="Low" />
+  <Exec Command="&quot;$(PaketExePath)&quot; restore"
+          WorkingDirectory="$(Root)" StandardOutputImportance="Low" />          
   </Target>
 
   <Target Name="_CleanSolution">

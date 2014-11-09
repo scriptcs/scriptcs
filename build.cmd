@@ -1,6 +1,16 @@
 @echo Off
 setlocal
 
+.paket\paket.bootstrapper.exe
+if errorlevel 1 (
+  exit /b %errorlevel%
+)
+
+.paket\paket.exe restore
+if errorlevel 1 (
+  exit /b %errorlevel%
+)
+
 if exist artifacts goto Build
 mkdir artifacts
 

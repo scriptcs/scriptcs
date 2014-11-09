@@ -1,0 +1,8 @@
+Mono.CSharp
+Moq
+Should
+xunit
+xunit.extensions
+Common.Logging
+AutoFixture.Xunit
+AutoFixture.AutoMoq
