@@ -21,6 +21,10 @@ Releases and nightly builds should be installed using [Chocolatey](http://chocol
 
     @powershell -NoProfile -ExecutionPolicy Unrestricted -Command "iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%systemdrive%\chocolatey\bin
 
+If the above fails with the error indicating that proxy authentication is required (i.e. [HTTP 407](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.8)) then try again with the following on the command prompt that uses your default credentials:
+
+    @powershell -NoProfile -ExecutionPolicy Unrestricted -Command "[Net.WebRequest]::DefaultWebProxy.Credentials = [Net.CredentialCache]::DefaultCredentials; iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%systemdrive%\chocolatey\bin
+
 ### Installing scriptcs
 
 Once Chocolatey has been installed, you can install the latest stable version of scriptcs from your command prompt:
