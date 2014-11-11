@@ -118,7 +118,7 @@ namespace ScriptCs.Engine.Roslyn
                     sessionState.References.Assemblies.Add(assembly);
                 }
 
-               var newNamespaces = namespaces.Except(sessionState.Namespaces);
+                var newNamespaces = namespaces.Except(sessionState.Namespaces);
 
                 foreach (var @namespace in newNamespaces)
                 {
@@ -132,7 +132,7 @@ namespace ScriptCs.Engine.Roslyn
 
             var result = Execute(code, sessionState.Session);
 
-            if (result.InvalidNamespaces != null && result.InvalidNamespaces.Any())
+            if (result.InvalidNamespaces.Any())
             {
                 var pendingNamespacesField = sessionState.Session.GetType().GetField("pendingNamespaces", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
