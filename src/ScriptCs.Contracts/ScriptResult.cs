@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 
 namespace ScriptCs.Contracts
@@ -18,7 +19,8 @@ namespace ScriptCs.Contracts
         public ScriptResult(
             object returnValue = null,
             Exception executionException = null,
-            Exception compilationException = null)
+            Exception compilationException = null, 
+            IEnumerable<string> invalidNamespaces = null)
         {
             if (returnValue != null)
             {
@@ -35,6 +37,11 @@ namespace ScriptCs.Contracts
                 CompileExceptionInfo = ExceptionDispatchInfo.Capture(compilationException);
             }
 
+            if (invalidNamespaces != null)
+            {
+                InvalidNamespaces = new HashSet<string>(invalidNamespaces);
+            }
+
             IsCompleteSubmission = true;
         }
 
@@ -43,6 +50,8 @@ namespace ScriptCs.Contracts
         public ExceptionDispatchInfo ExecuteExceptionInfo { get; private set; }
 
         public ExceptionDispatchInfo CompileExceptionInfo { get; private set; }
+
+        public HashSet<string> InvalidNamespaces { get; private set; }
 
         public bool IsCompleteSubmission { get; private set; }
     }

@@ -8,6 +8,7 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 using ScriptCs.Contracts;
+using System.Text.RegularExpressions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -116,7 +117,7 @@ namespace ScriptCs.Engine.Roslyn
                     sessionState.References.Assemblies.Add(assembly);
                 }
 
-                var newNamespaces = namespaces.Except(sessionState.Namespaces);
+               var newNamespaces = namespaces.Except(sessionState.Namespaces);
 
                 foreach (var @namespace in newNamespaces)
                 {
@@ -129,6 +130,22 @@ namespace ScriptCs.Engine.Roslyn
             Logger.Debug("Starting execution");
 
             var result = Execute(code, sessionState.Session);
+
+            if (result.InvalidNamespaces != null && result.InvalidNamespaces.Any())
+            {
+                var pendingNamespacesField = sessionState.Session.GetType().GetField("pendingNamespaces", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var pendingNamespacesValue = (ReadOnlyArray<string>)pendingNamespacesField.GetValue(sessionState.Session);
+                var fixedNamespaces = pendingNamespacesValue.ToList();
+
+                foreach (var @namespace in result.InvalidNamespaces)
+                {
+                    sessionState.Namespaces.Remove(@namespace);
+                    fixedNamespaces.Remove(@namespace);
+                }
+
+                pendingNamespacesField.SetValue(sessionState.Session, ReadOnlyArray<string>.CreateFrom<string>(fixedNamespaces));
+            }
+
             Logger.Debug("Finished execution");
             return result;
         }
@@ -161,6 +178,12 @@ namespace ScriptCs.Engine.Roslyn
             }
             catch (Exception ex)
             {
+                if (ex.Message.StartsWith("error CS0246"))
+                {
+                    var offendingNamespace = Regex.Match(ex.Message, @"\'([^']*)\'").Groups[1].Value;
+                    return new ScriptResult(compilationException: ex, invalidNamespaces: new string[1] {offendingNamespace});
+                }
+           
                 return new ScriptResult(compilationException: ex);
             }
         }

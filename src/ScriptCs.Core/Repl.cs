@@ -124,6 +124,11 @@ namespace ScriptCs
                     Console.WriteLine(result.ExecuteExceptionInfo.SourceException.Message);
                 }
 
+                if (result.InvalidNamespaces != null && result.InvalidNamespaces.Any())
+                {
+                    RemoveNamespaces(result.InvalidNamespaces.ToArray());
+                }
+
                 if (!result.IsCompleteSubmission)
                 {
                     return result;
