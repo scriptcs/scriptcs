@@ -205,6 +205,24 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldRemoveInvalidNamespacesIfScriptResultContainsany()
+            {
+                _mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.Is<string>(i => i == "#load foo.csx")))
+                    .Returns(new FilePreProcessorResult { Namespaces = new List<string> { "Foo", "Bar" } });
+                _mocks.ScriptEngine.Setup(
+                    x => x.Execute(
+                            It.IsAny<string>(),
+                            It.IsAny<string[]>(),
+                            It.IsAny<AssemblyReferences>(),
+                            It.IsAny<IEnumerable<string>>(),
+                            It.IsAny<ScriptPackSession>())).Returns(new ScriptResult(invalidNamespaces: new string[] {"Foo"}));
+
+                _repl.Execute("#load foo.csx");
+                _repl.Namespaces.Count().ShouldEqual(ScriptExecutor.DefaultNamespaces.Count() + 1);
+                _repl.Namespaces.ShouldNotContain("Foo");
+            }
+
+            [Fact]
             public void CatchesExceptionsAndWritesThemInRed()
             {
                 _mocks.ScriptEngine.Setup(

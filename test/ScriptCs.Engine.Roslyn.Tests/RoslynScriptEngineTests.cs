@@ -156,6 +156,44 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
+            public void ShouldReturnInvalidNamespacesIfCS0241Encountered(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine engine,
+                ScriptPackSession scriptPackSession)
+            {
+                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+
+                // Act
+                var result = engine.Execute(string.Empty, new string[0], new AssemblyReferences(), new[] {"foo"}, scriptPackSession);
+
+                // Assert
+                result.CompileExceptionInfo.ShouldNotBeNull();
+                result.InvalidNamespaces.ShouldContain("foo");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldRemoveInvalidNamespacesFromSessionStateAndEngine(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [NoAutoProperties] RoslynScriptEngine engine,
+                ScriptPackSession scriptPackSession)
+            {
+                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
+                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+
+                // Act
+                engine.Execute(string.Empty, new string[0], new AssemblyReferences(), new[] { "System", "foo" }, scriptPackSession);
+
+                // Assert
+                session.Namespaces.ShouldNotBeEmpty();
+                session.Namespaces.ShouldNotContain("foo");
+                var pendingNamespacesField = session.Session.GetType().GetField("pendingNamespaces", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var pendingNamespacesValue = (ReadOnlyArray<string>)pendingNamespacesField.GetValue(session.Session);
+                pendingNamespacesValue.AsEnumerable().ShouldNotBeEmpty();
+                pendingNamespacesValue.AsEnumerable().ShouldNotContain("foo");
+            }
+
+            [Theory, ScriptCsAutoData]
             public void ShouldNotReturnCompileExceptionIfCodeDoesCompile(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] RoslynScriptEngine engine,
