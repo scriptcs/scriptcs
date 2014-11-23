@@ -14,6 +14,8 @@ namespace ScriptCs
         private readonly string[] _scriptArgs;
 
         private readonly IObjectSerializer _serializer;
+
+        // will match on setting of a variable so that those lines are ignored.
         private Regex _returnVariablePattern = new Regex(@"^\s*.+=\n");
 
         public Repl(
