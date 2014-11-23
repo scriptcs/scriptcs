@@ -19,7 +19,7 @@
     <AssemblyInformationalVersion Condition=" '$(BuildQuality)' != '' ">$(AssemblyInformationalVersion)-$(BuildQuality)</AssemblyInformationalVersion>
 
     <PackageVersion>$(AssemblyInformationalVersion)</PackageVersion>
-    <PackageVersion Condition=" '$(IsNightlyBuild)' != '' ">$(PackageVersion)-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</PackageVersion>
+    <PackageVersion Condition=" '$(IsNightlyBuild)' != '' ">$(PackageVersion)-nightly-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
