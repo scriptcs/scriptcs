@@ -18,7 +18,8 @@ namespace ScriptCs
                 console = new FileConsole(commandArgs.Output, console);
             }
 
-            var configurator = new LoggerConfigurator(commandArgs.LogLevel);
+            var logLevel = commandArgs.LogLevel ?? (commandArgs.Debug ? LogLevel.Debug : LogLevel.Info);
+            var configurator = new LoggerConfigurator(logLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
             var initializationServices = new InitializationServices(logger);
@@ -27,7 +28,7 @@ namespace ScriptCs
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
                 .Cache(commandArgs.Cache)
                 .Debug(commandArgs.Debug)
-                .LogLevel(commandArgs.LogLevel)
+                .LogLevel(logLevel)
                 .ScriptName(commandArgs.ScriptName)
                 .Repl(commandArgs.Repl);
 
