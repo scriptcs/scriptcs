@@ -264,6 +264,30 @@ namespace ScriptCs.Tests
                 result.CommandArguments.Debug.ShouldBeTrue();
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
             }
+
+            [Fact]
+            public void ShouldAllowTraceLogLevelWhenDebugIsSet()
+            {
+                var argumentHandler = Setup(null);
+                string[] args = { "server.csx", "-debug", "-log", "trace" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Trace);
+            }
+
+            [Fact]
+            public void ShouldSetLogLevelToDebugWhenDebugIsSetAndLogLevelIsLowerThanDebug()
+            {
+                var argumentHandler = Setup(null);
+                string[] args = { "server.csx", "-debug", "-log", "info" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
+            }
         }
     }
 }
