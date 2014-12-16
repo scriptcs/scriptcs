@@ -17,8 +17,7 @@ namespace ScriptCs
             {
                 console = new FileConsole(commandArgs.Output, console);
             }
-
-            var logLevel = commandArgs.LogLevel ?? (commandArgs.Debug ? LogLevel.Debug : LogLevel.Info);
+            var logLevel = commandArgs.LogLevel ?? LogLevel.Info;
             var configurator = new LoggerConfigurator(logLevel);
             configurator.Configure(console);
             var logger = configurator.GetLogger();
