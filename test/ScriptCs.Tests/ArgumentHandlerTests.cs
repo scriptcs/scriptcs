@@ -264,6 +264,41 @@ namespace ScriptCs.Tests
                 result.CommandArguments.Debug.ShouldBeTrue();
                 result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
             }
+
+            [Fact]
+            public void ShouldOverrideDebugLogLevelIfLogLevelIsSetOnCommandLine()
+            {
+                var argumentHandler = Setup(null);
+                string[] args = { "server.csx", "-debug", "-loglevel", "error" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+            }
+
+            [Fact]
+            public void ShouldOverrideDebugLogLevelIfLogLevelIsSetInOptsFile()
+            {
+                var argumentHandler = Setup("{ LogLevel: \"Error\" }");
+                string[] args = { "server.csx", "-debug" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.Debug.ShouldBeTrue();
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+            }
+
+            [Fact]
+            public void ShouldSetLogLevelToInfoIfNotSpecifiedAndNotInDebugMode()
+            {
+                var argumentHandler = Setup(null);
+                string[] args = { "server.csx" };
+
+                var result = argumentHandler.Parse(args);
+
+                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Info);
+            }
         }
     }
 }

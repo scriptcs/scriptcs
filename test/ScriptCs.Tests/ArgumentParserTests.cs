@@ -45,7 +45,7 @@ namespace ScriptCs.Tests
 
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
                 result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
 
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
                 result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
@@ -72,7 +72,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldBeNull();
                 result.Help.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
             }
 
             [Fact]

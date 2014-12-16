@@ -34,9 +34,9 @@ namespace ScriptCs.Argument
             var globalConfigArgs = _configFileParser.Parse(GetFileContent(_fileSystem.GlobalOptsFile));
             var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, commandArgs, sr);
 
-            if (finalArguments.Debug)
+            if (finalArguments.LogLevel == null)
             {
-                finalArguments.LogLevel = LogLevel.Debug;
+                finalArguments.LogLevel = finalArguments.Debug ? LogLevel.Debug : LogLevel.Info;
             }
 
             return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
