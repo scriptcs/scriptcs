@@ -38,7 +38,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleEmptyAttray()
+            public void ShouldHandleEmptyArray()
             {
                 var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(new string[0]);
