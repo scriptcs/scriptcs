@@ -59,6 +59,7 @@
     <Compile Include="ReplCommands\CdCommandTests.cs" />
     <Compile Include="ReplCommands\ClearCommandTests.cs" />
     <Compile Include="ReplCommands\CwdCommandTests.cs" />
+    <Compile Include="ReplCommands\ExitCommandTests.cs" />
     <Compile Include="ReplCommands\InstallCommandTests.cs" />
     <Compile Include="ReplCommands\ResetCommandTests.cs" />
     <Compile Include="ReplTests.cs" />

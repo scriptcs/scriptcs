@@ -4,6 +4,6 @@
     {
         string CommandName { get; }
 
-        object Execute(IScriptExecutor repl, object[] args);
+        object Execute(IRepl repl, object[] args);
     }
 }

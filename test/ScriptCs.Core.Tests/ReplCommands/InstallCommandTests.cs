@@ -35,7 +35,7 @@ namespace ScriptCs.Tests.ReplCommands
             private readonly Mock<IPackageAssemblyResolver> _packageAssemblyResolver;
             private readonly Mock<ILog> _logger;
             private readonly Mock<IInstallationProvider> _installationProvider;
-            private Mock<IScriptExecutor> _executor;
+            private Mock<Contracts.IRepl> _executor;
 
             public ExecuteMethod()
             {
@@ -43,7 +43,7 @@ namespace ScriptCs.Tests.ReplCommands
                 _packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
                 _logger = new Mock<ILog>();
                 _installationProvider = new Mock<IInstallationProvider>();
-                _executor = new Mock<IScriptExecutor>();
+                _executor = new Mock<IRepl>();
 
                 var fs = new Mock<IFileSystem>();
                 fs.Setup(x => x.CurrentDirectory).Returns(@"c:\dir");

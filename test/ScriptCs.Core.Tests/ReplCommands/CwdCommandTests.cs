@@ -30,7 +30,7 @@ namespace ScriptCs.Tests.ReplCommands
                 // arrange
                 var console = new Mock<IConsole>();
                 var fs = new Mock<IFileSystem>();
-                var executor = new Mock<IScriptExecutor>();
+                var executor = new Mock<Contracts.IRepl>();
 
                 var tempPath = Path.GetTempPath();
 
@@ -51,7 +51,7 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
-                var executor = new Mock<IScriptExecutor>();
+                var executor = new Mock<IRepl>();
 
                 console.SetupProperty(x => x.ForegroundColor);
                 executor.Setup(x => x.FileSystem).Returns(new Mock<IFileSystem>().Object);

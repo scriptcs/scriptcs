@@ -26,7 +26,7 @@ namespace ScriptCs.Tests.ReplCommands
             public void CallsReplReset()
             {
                 // arrange
-                var executor = new Mock<IScriptExecutor>();
+                var executor = new Mock<IRepl>();
 
                 var cmd = new ResetCommand();
 
