@@ -28,7 +28,7 @@ namespace ScriptCs
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
-            Commands = replCommands != null && replCommands.Any(x => x.CommandName != null) ? replCommands.Where(x => x.CommandName != null).ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
+            Commands = replCommands != null ? replCommands.Where(x => x.CommandName != null).ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
         }
 
         public string Buffer { get; set; }

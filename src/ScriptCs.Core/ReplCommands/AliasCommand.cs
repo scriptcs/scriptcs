@@ -43,7 +43,7 @@ namespace ScriptCs.ReplCommands
             }
 
             var oldReplCommand = replInstance.Commands[originalCommandName];
-            replInstance.Commands.Add(aliasName, oldReplCommand);
+            replInstance.Commands[aliasName] = oldReplCommand;
             _console.WriteLine(string.Format("Aliased {0} as {1}", originalCommandName, aliasName));
 
             return null;
