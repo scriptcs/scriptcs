@@ -3,6 +3,8 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
 {
+    using System.Globalization;
+
     public class AliasCommand : IReplCommand
     {
         private readonly IConsole _console;
@@ -40,7 +42,18 @@ namespace ScriptCs.ReplCommands
                 return null;
             }
 
-            var oldReplCommand = repl.Commands[originalCommandName];
+            IReplCommand oldReplCommand;
+            if (!repl.Commands.TryGetValue(originalCommandName, out oldReplCommand))
+            {
+                var message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "There is no command named or aliased \"{0}\".",
+                    aliasName);
+
+                _console.WriteLine(message);
+                return null;
+            }
+
             repl.Commands[aliasName] = oldReplCommand;
             _console.WriteLine(string.Format("Aliased {0} as {1}", originalCommandName, aliasName));
 
