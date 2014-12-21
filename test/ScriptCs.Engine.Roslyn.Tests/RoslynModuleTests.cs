@@ -62,11 +62,11 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldRegisterTheScriptEngineWhenReplIsEnabled()
+            public void ShouldRegisterTheReplEngineWhenReplIsEnabled()
             {
                 _configMock.Setup(c => c.Repl).Returns(true);
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynScriptEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynReplEngine));
             }
         }
     }

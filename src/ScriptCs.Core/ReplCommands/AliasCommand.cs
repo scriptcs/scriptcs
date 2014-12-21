@@ -13,6 +13,11 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
+        public string Description
+        {
+            get { return "Allows you to alias a command with a custom name"; }
+        }
+
         public string CommandName
         {
             get { return "alias"; }

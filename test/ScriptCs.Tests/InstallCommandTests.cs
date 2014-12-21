@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Xunit;
-
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using Xunit;
 using Xunit.Extensions;
-using Xunit.Sdk;
 
 namespace ScriptCs.Tests
 {

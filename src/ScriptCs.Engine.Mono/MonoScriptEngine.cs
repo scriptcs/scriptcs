@@ -5,15 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Common.Logging;
+using Mono.Collections.Generic;
 using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Mono.Parser;
 
 namespace ScriptCs.Engine.Mono
 {
-    public class MonoScriptEngine : IScriptEngine
+    public class MonoScriptEngine : IScriptEngine, IReplEngine
     {
         private readonly IScriptHostFactory _scriptHostFactory;
+
         public string BaseDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
@@ -27,6 +29,21 @@ namespace ScriptCs.Engine.Mono
         }
 
         public ILog Logger { get; set; }
+
+        public ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession)
+        {
+            if (scriptPackSession != null && scriptPackSession.State.ContainsKey(SessionKey))
+            {
+                var sessionState = (SessionState<Evaluator>) scriptPackSession.State[SessionKey];
+                var vars = sessionState.Session.GetVars();
+                if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
+                {
+                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+
+            return new Collection<string>();
+        }
 
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces,
             ScriptPackSession scriptPackSession)

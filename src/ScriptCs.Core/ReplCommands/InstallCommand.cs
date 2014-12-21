@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Runtime.Versioning;
+using System.Security.Cryptography.X509Certificates;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -27,6 +28,11 @@ namespace ScriptCs.ReplCommands
             _packageAssemblyResolver = packageAssemblyResolver;
             _logger = logger;
             _installationProvider = installationProvider;
+        }
+
+        public string Description
+        {
+            get { return "Installs a Nuget package. I.e. :install <package> <version>"; }
         }
 
         public string CommandName
