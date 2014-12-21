@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
