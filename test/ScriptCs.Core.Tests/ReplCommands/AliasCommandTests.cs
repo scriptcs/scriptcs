@@ -50,6 +50,19 @@ namespace ScriptCs.Tests.ReplCommands
                 executor.Commands.Count.ShouldEqual(2);
                 executor.Commands["bar"].ShouldBeSameAs(executor.Commands["foo"]);
             }
+
+            [Fact]
+            public void ShouldNotThrowAnExceptionWhenAnUnknownCommandIsPassed()
+            {
+                // arrange
+                var command = new AliasCommand(new Mock<IConsole>().Object);
+
+                // act
+                var exception = Record.Exception(() => command.Execute(new Mock<IRepl>().Object, null));
+
+                // assert
+                exception.ShouldBeNull();
+            }
         }
     }
 }
