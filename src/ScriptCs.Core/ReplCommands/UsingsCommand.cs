@@ -14,8 +14,10 @@ namespace ScriptCs.ReplCommands
             get { return "usings"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
+            Guard.AgainstNullArgument("repl", repl);
+
             return repl.Namespaces;
         }
     }

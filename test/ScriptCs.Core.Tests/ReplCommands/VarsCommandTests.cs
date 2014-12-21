@@ -24,11 +24,11 @@ namespace ScriptCs.Tests.ReplCommands
 
         public class ExecuteMethod
         {
-            private Mock<IScriptExecutor> _executor;
+            private Mock<IRepl> _repl;
 
             public ExecuteMethod()
             {
-                _executor = new Mock<IScriptExecutor>();
+                _repl = new Mock<IRepl>();
             }
 
             [Fact]
@@ -37,10 +37,10 @@ namespace ScriptCs.Tests.ReplCommands
                 var locals = new List<string> {"int x = 0"};
                 var replEngine = new Mock<IReplEngine>();
                 replEngine.Setup(x => x.GetLocalVariables(It.IsAny<ScriptPackSession>())).Returns(locals);
-                _executor.SetupGet(x => x.ScriptEngine).Returns(replEngine.Object);
+                _repl.SetupGet(x => x.ScriptEngine).Returns(replEngine.Object);
 
                 var cmd = new VarsCommand();
-                var result = cmd.Execute(_executor.Object, null);
+                var result = cmd.Execute(_repl.Object, null);
 
                 result.ShouldBeSameAs(locals);
             }
@@ -49,10 +49,10 @@ namespace ScriptCs.Tests.ReplCommands
             public void ShouldReturnNullForEngineWhichisNotReplEngine()
             {
                 var replEngine = new Mock<IScriptEngine>();
-                _executor.SetupGet(x => x.ScriptEngine).Returns(replEngine.Object);
+                _repl.SetupGet(x => x.ScriptEngine).Returns(replEngine.Object);
 
                 var cmd = new VarsCommand();
-                var result = cmd.Execute(_executor.Object, null);
+                var result = cmd.Execute(_repl.Object, null);
 
                 result.ShouldBeNull();
             }

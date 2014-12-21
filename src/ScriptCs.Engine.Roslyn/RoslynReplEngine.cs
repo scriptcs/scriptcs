@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -63,12 +62,9 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            if (string.IsNullOrWhiteSpace(FileName) && !IsCompleteSubmission(code))
-            {
-                return ScriptResult.Incomplete;
-            }
-
-            return base.Execute(code, session);
+            return string.IsNullOrWhiteSpace(FileName) && !IsCompleteSubmission(code)
+                ? ScriptResult.Incomplete
+                : base.Execute(code, session);
         }
     }
 }

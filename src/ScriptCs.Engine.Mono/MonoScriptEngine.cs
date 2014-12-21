@@ -12,7 +12,7 @@ using ScriptCs.Engine.Mono.Parser;
 
 namespace ScriptCs.Engine.Mono
 {
-    public class MonoScriptEngine : IScriptEngine, IReplEngine
+    public class MonoScriptEngine : IReplEngine
     {
         private readonly IScriptHostFactory _scriptHostFactory;
 

@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class Repl : ScriptExecutor
+    public class Repl : ScriptExecutor, IRepl
     {
         private readonly string[] _scriptArgs;
 

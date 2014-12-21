@@ -30,7 +30,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = new ClearCommand(console.Object);
 
                 // act
-                cmd.Execute(new Mock<IScriptExecutor>().Object, null);
+                cmd.Execute(new Mock<IRepl>().Object, null);
 
                 // assert
                 console.Verify(x => x.Clear(), Times.Once);

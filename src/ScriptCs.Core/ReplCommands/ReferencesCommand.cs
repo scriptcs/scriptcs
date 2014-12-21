@@ -15,14 +15,13 @@ namespace ScriptCs.ReplCommands
             get { return "Displays a list of assemblies referenced from the REPL context."; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
-            if (repl.References != null)
-            {
-                return repl.References.Assemblies.Select(x => x.FullName).Union(repl.References.PathReferences);
-            }
+            Guard.AgainstNullArgument("repl", repl);
 
-            return null;
+            return repl.References != null
+                ? repl.References.Assemblies.Select(x => x.FullName).Union(repl.References.PathReferences)
+                : null;
         }
     }
 }

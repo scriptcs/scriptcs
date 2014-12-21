@@ -26,15 +26,15 @@ namespace ScriptCs.Tests.ReplCommands
             public void CallsReplReset()
             {
                 // arrange
-                var executor = new Mock<IScriptExecutor>();
+                var repl = new Mock<IRepl>();
 
                 var cmd = new ResetCommand();
 
                 // act
-                cmd.Execute(executor.Object, null);
+                cmd.Execute(repl.Object, null);
 
                 // assert
-                executor.Verify(x => x.Reset(), Times.Once);
+                repl.Verify(x => x.Reset(), Times.Once);
             }
         }
     }
