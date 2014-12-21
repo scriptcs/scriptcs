@@ -28,7 +28,7 @@ namespace ScriptCs.ReplCommands
             if (typedRepl != null)
             {
                 _console.WriteLine("The following commands are available in the REPL:");
-                foreach (var command in typedRepl.Commands.OrderBy(x => x.CommandName))
+                foreach (var command in typedRepl.Commands.Values.OrderBy(x => x.CommandName))
                 {
                     _console.WriteLine(string.Format(":{0,-15}{1,10}", command.CommandName, command.Description));
                 }
