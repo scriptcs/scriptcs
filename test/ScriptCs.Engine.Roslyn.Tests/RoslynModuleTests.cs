@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
@@ -15,10 +12,10 @@ namespace ScriptCs.Tests
     {
         public class TheInitializeMethod
         {
-            private Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
-            private IModuleConfiguration _config;
-            private RoslynModule _module = new RoslynModule();
-            private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
+            private readonly Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
+            private readonly IModuleConfiguration _config;
+            private readonly RoslynModule _module = new RoslynModule();
+            private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             
             public TheInitializeMethod()
             {

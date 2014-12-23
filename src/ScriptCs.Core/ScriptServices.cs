@@ -8,17 +8,17 @@ namespace ScriptCs
     {
         public ScriptServices(
             IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver, 
+            IPackageAssemblyResolver packageAssemblyResolver,
             IScriptExecutor executor,
             IRepl repl,
             IScriptEngine engine,
             IFilePreProcessor filePreProcessor,
-            IScriptPackResolver scriptPackResolver, 
+            IScriptPackResolver scriptPackResolver,
             IPackageInstaller packageInstaller,
             IObjectSerializer objectSerializer,
             ILog logger,
             IAssemblyResolver assemblyResolver,
-            IEnumerable<IReplCommand> replCommands, 
+            IEnumerable<IReplCommand> replCommands,
             IConsole console = null,
             IInstallationProvider installationProvider = null)
         {

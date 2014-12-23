@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -22,8 +21,17 @@ namespace ScriptCs.Hosting
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, Type replType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
-            base(logger, overrides)
+        public RuntimeServices(
+            ILog logger,
+            IDictionary<Type, object> overrides,
+            IConsole console,
+            Type scriptEngineType,
+            Type scriptExecutorType,
+            Type replType,
+            bool initDirectoryCatalog,
+            IInitializationServices initializationServices,
+            string scriptName)
+            : base(logger, overrides)
         {
             _console = console;
             _scriptEngineType = scriptEngineType;
@@ -39,7 +47,7 @@ namespace ScriptCs.Hosting
             var builder = new ContainerBuilder();
             this.Logger.Debug("Registering runtime services");
 
-            builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
+            builder.RegisterInstance(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
@@ -48,19 +56,44 @@ namespace ScriptCs.Hosting
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);
 
-            RegisterOverrideOrDefault<IFileSystem>(builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
-            RegisterOverrideOrDefault<IAssemblyUtility>(builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
-            RegisterOverrideOrDefault<IPackageContainer>(builder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>().SingleInstance());
-            RegisterOverrideOrDefault<IPackageAssemblyResolver>(builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
-            RegisterOverrideOrDefault<IAssemblyResolver>(builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
-            RegisterOverrideOrDefault<IScriptHostFactory>(builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>().SingleInstance());
-            RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
-            RegisterOverrideOrDefault<IScriptPackResolver>(builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>().SingleInstance());
-            RegisterOverrideOrDefault<IInstallationProvider>(builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
-            RegisterOverrideOrDefault<IPackageInstaller>(builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
-            RegisterOverrideOrDefault<ScriptServices>(builder, b => b.RegisterType<ScriptServices>().SingleInstance());
-            RegisterOverrideOrDefault<IObjectSerializer>(builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
-            RegisterOverrideOrDefault<IConsole>(builder, b => b.RegisterInstance(_console));
+            RegisterOverrideOrDefault<IFileSystem>(
+                builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IAssemblyUtility>(
+                builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IPackageContainer>(
+                builder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IPackageAssemblyResolver>(
+                builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IAssemblyResolver>(
+                builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IScriptHostFactory>(
+                builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IFilePreProcessor>(
+                builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IScriptPackResolver>(
+                builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IInstallationProvider>(
+                builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IPackageInstaller>(
+                builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
+            
+            RegisterOverrideOrDefault<ScriptServices>(
+                builder, b => b.RegisterType<ScriptServices>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IObjectSerializer>(
+                builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
+            
+            RegisterOverrideOrDefault<IConsole>(
+                builder, b => b.RegisterInstance(_console));
 
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
 
@@ -81,7 +114,7 @@ namespace ScriptCs.Hosting
                     try
                     {
                         var catalog = new AssemblyCatalog(assemblyPath);
-                        //force the parts to be queried to catch any errors that will shwo up later
+                        // force the parts to be queried to catch any errors that would otherwise show up later
                         catalog.Parts.ToList();
                         aggregateCatalog.Catalogs.Add(catalog);
                     }
@@ -139,15 +172,21 @@ namespace ScriptCs.Hosting
                 .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
                 ?? typeof(ReferenceLineProcessor);
 
-            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }.Union(processorList).ToArray();
+            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }
+                .Union(processorList).ToArray();
 
             builder.RegisterTypes(processorArray).As<ILineProcessor>();
         }
 
-        private void RegisterReplCommands(ContainerBuilder builder)
+        private static void RegisterReplCommands(ContainerBuilder builder)
         {
-            var replCommands = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic).SelectMany(x => x.GetExportedTypes()).Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass && !x.IsAbstract);
-            builder.RegisterTypes(replCommands.ToArray()).As<IReplCommand>();
+            var replCommands = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic)
+                .SelectMany(x => x.GetExportedTypes())
+                .Where(x => typeof(IReplCommand).IsAssignableFrom(x) && x.IsClass && !x.IsAbstract)
+                .ToArray();
+
+            builder.RegisterTypes(replCommands).As<IReplCommand>();
         }
 
         public ScriptServices GetScriptServices()

@@ -14,13 +14,13 @@ namespace ScriptCs.Engine.Mono
 {
     public class MonoScriptEngine : IReplEngine
     {
+        public const string SessionKey = "MonoSession";
+
         private readonly IScriptHostFactory _scriptHostFactory;
 
         public string BaseDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
-
-        public const string SessionKey = "MonoSession";
 
         public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
@@ -34,23 +34,27 @@ namespace ScriptCs.Engine.Mono
         {
             if (scriptPackSession != null && scriptPackSession.State.ContainsKey(SessionKey))
             {
-                var sessionState = (SessionState<Evaluator>) scriptPackSession.State[SessionKey];
+                var sessionState = (SessionState<Evaluator>)scriptPackSession.State[SessionKey];
                 var vars = sessionState.Session.GetVars();
                 if (!string.IsNullOrWhiteSpace(vars) && vars.Contains(Environment.NewLine))
                 {
-                    return vars.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                    return vars.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 }
             }
 
             return new Collection<string>();
         }
 
-        public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces,
+        public ScriptResult Execute(
+            string code,
+            string[] scriptArgs,
+            AssemblyReferences references,
+            IEnumerable<string> namespaces,
             ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("references", references);
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
-            
+
             references.PathReferences.UnionWith(scriptPackSession.References);
 
             SessionState<Evaluator> sessionState;
@@ -60,15 +64,16 @@ namespace ScriptCs.Engine.Mono
             {
                 code = code.DefineTrace();
                 Logger.Debug("Creating session");
-                var context = new CompilerContext(new CompilerSettings
-                {
-                    AssemblyReferences = references.PathReferences.ToList()
-                }, new ConsoleReportPrinter());
+                var context = new CompilerContext(
+                    new CompilerSettings { AssemblyReferences = references.PathReferences.ToList() },
+                    new ConsoleReportPrinter());
 
                 var evaluator = new Evaluator(context);
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+                var host = _scriptHostFactory.CreateScriptHost(
+                    new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+
                 MonoHost.SetHost((ScriptHost)host);
 
                 evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
@@ -78,11 +83,10 @@ namespace ScriptCs.Engine.Mono
                 {
                     References = new AssemblyReferences(references.PathReferences, references.Assemblies),
                     Namespaces = new HashSet<string>(),
-                    Session = evaluator
+                    Session = evaluator,
                 };
 
                 ImportNamespaces(allNamespaces, sessionState);
-
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -90,7 +94,10 @@ namespace ScriptCs.Engine.Mono
                 Logger.Debug("Reusing existing session");
                 sessionState = (SessionState<Evaluator>)scriptPackSession.State[SessionKey];
 
-                var newReferences = sessionState.References == null ? references : references.Except(sessionState.References);
+                var newReferences = sessionState.References == null
+                    ? references
+                    : references.Except(sessionState.References);
+
                 foreach (var reference in newReferences.PathReferences)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
@@ -99,18 +106,24 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState.References = new AssemblyReferences(references.PathReferences, references.Assemblies);
 
-                var newNamespaces = sessionState.Namespaces == null ? namespaces : namespaces.Except(sessionState.Namespaces);
+                var newNamespaces = sessionState.Namespaces == null
+                    ? namespaces
+                    : namespaces.Except(sessionState.Namespaces);
+
                 ImportNamespaces(newNamespaces, sessionState);
             }
 
             Logger.Debug("Starting execution");
             var result = Execute(code, sessionState.Session);
             Logger.Debug("Finished execution");
+
             return result;
         }
 
         protected virtual ScriptResult Execute(string code, Evaluator session)
         {
+            Guard.AgainstNullArgument("session", session);
+
             try
             {
                 var parser = new SyntaxParser();
@@ -144,7 +157,7 @@ namespace ScriptCs.Engine.Mono
 
                     session.Evaluate(parseResult.Evaluations, out scriptResult, out resultSet);
 
-                    return new ScriptResult(returnValue: scriptResult);
+                    return new ScriptResult(scriptResult);
                 }
             }
             catch (AggregateException ex)
@@ -155,6 +168,7 @@ namespace ScriptCs.Engine.Mono
             {
                 return new ScriptResult(executionException: ex);
             }
+
             return ScriptResult.Empty;
         }
 
@@ -167,6 +181,7 @@ namespace ScriptCs.Engine.Mono
                 builder.AppendLine(string.Format("using {0};", ns));
                 sessionState.Namespaces.Add(ns);
             }
+
             sessionState.Session.Compile(builder.ToString());
         }
     }

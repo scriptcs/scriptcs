@@ -15,13 +15,13 @@ namespace ScriptCs.Hosting.Tests
     {
         public class TheCreateContainerMethod
         {
-            private Mock<IConsole> _mockConsole = new Mock<IConsole>();
-            private Type _scriptExecutorType = null;
-            private Type _replType = null;
-            private Type _scriptEngineType = null;
-            private Mock<ILog> _mockLogger = new Mock<ILog>();
-            private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
-            private RuntimeServices _runtimeServices = null;
+            private readonly Mock<IConsole> _mockConsole = new Mock<IConsole>();
+            private readonly Type _scriptExecutorType;
+            private readonly Type _replType;
+            private readonly Type _scriptEngineType;
+            private readonly Mock<ILog> _mockLogger = new Mock<ILog>();
+            private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
+            private readonly RuntimeServices _runtimeServices;
 
             public TheCreateContainerMethod()
             {
@@ -415,7 +415,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public System.IO.Stream CreateFileStream(string filePath, System.IO.FileMode mode)
+                public Stream CreateFileStream(string filePath, FileMode mode)
                 {
                     throw new NotImplementedException();
                 }
