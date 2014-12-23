@@ -18,6 +18,7 @@ namespace ScriptCs.Hosting
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
+        private Type _replType;
         private Type _scriptEngineType;
         private ILog _logger;
 
@@ -35,6 +36,10 @@ namespace ScriptCs.Hosting
         {
             Type defaultExecutorType = typeof(ScriptExecutor);
             _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
+
+            var defaultReplType = typeof(Repl);
+            _replType = Overrides.ContainsKey(typeof(IRepl)) ? (Type)Overrides[typeof(IRepl)] : defaultReplType;
+
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
             var initDirectoryCatalog = _scriptName != null || _repl;
@@ -42,7 +47,7 @@ namespace ScriptCs.Hosting
             if (_runtimeServices == null)
             {
                 _runtimeServices = new RuntimeServices(_logger, Overrides, ConsoleInstance,
-                                                                       _scriptEngineType, _scriptExecutorType,
+                                                                       _scriptEngineType, _scriptExecutorType, _replType,
                                                                        initDirectoryCatalog,
                                                                        InitializationServices, _scriptName);
             }

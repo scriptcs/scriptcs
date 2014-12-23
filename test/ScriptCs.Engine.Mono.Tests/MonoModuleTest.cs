@@ -22,7 +22,7 @@ namespace ScriptCs.Engine.Mono.Tests
             public TheInitializeMethod()
             {
                 _configMock.SetupGet(c => c.Debug).Returns(false);
-                _configMock.SetupGet(c => c.Repl).Returns(false);
+                _configMock.SetupGet(c => c.IsRepl).Returns(false);
                 _configMock.SetupGet(c => c.Cache).Returns(false);
                 _configMock.SetupGet(c => c.Overrides).Returns(_overrides);
                 _config = _configMock.Object;

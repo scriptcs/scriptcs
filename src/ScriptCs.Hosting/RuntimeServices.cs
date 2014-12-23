@@ -17,16 +17,18 @@ namespace ScriptCs.Hosting
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
+        private readonly Type _replType;
         private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
+        public RuntimeServices(ILog logger, IDictionary<Type, object> overrides, IConsole console, Type scriptEngineType, Type scriptExecutorType, Type replType, bool initDirectoryCatalog, IInitializationServices initializationServices, string scriptName) :
             base(logger, overrides)
         {
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
+            _replType = replType;
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
             _scriptName = scriptName;
@@ -40,6 +42,7 @@ namespace ScriptCs.Hosting
             builder.RegisterInstance<ILog>(this.Logger).Exported(x => x.As<ILog>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
+            builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
 
             RegisterLineProcessors(builder);

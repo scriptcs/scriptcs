@@ -10,7 +10,7 @@ namespace ScriptCs.Contracts
 
         string ScriptName { get; }
 
-        bool Repl { get; }
+        bool IsRepl { get; }
 
         LogLevel LogLevel { get; }
 

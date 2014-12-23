@@ -64,13 +64,10 @@ namespace ScriptCs.Command
                     scriptArgs,
                     scriptServices.FileSystem,
                     scriptServices.ScriptPackResolver,
-                    scriptServices.Engine,
-                    scriptServices.FilePreProcessor,
-                    scriptServices.ObjectSerializer,
+                    scriptServices.Repl,
                     scriptServices.Logger,
                     scriptServices.Console,
-                    scriptServices.AssemblyResolver,
-                    scriptServices.ReplCommands);
+                    scriptServices.AssemblyResolver);
 
                 return replCommand;
             }

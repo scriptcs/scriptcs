@@ -10,6 +10,7 @@ namespace ScriptCs
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver, 
             IScriptExecutor executor,
+            IRepl repl,
             IScriptEngine engine,
             IFilePreProcessor filePreProcessor,
             IScriptPackResolver scriptPackResolver, 
@@ -24,6 +25,7 @@ namespace ScriptCs
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
             Executor = executor;
+            Repl = repl;
             Engine = engine;
             FilePreProcessor = filePreProcessor;
             ScriptPackResolver = scriptPackResolver;
@@ -39,6 +41,7 @@ namespace ScriptCs
         public IFileSystem FileSystem { get; private set; }
         public IPackageAssemblyResolver PackageAssemblyResolver { get; private set; }
         public IScriptExecutor Executor { get; private set; }
+        public IRepl Repl { get; private set; }
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
         public IObjectSerializer ObjectSerializer { get; private set; }

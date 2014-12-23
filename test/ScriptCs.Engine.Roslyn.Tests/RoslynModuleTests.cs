@@ -23,7 +23,7 @@ namespace ScriptCs.Tests
             public TheInitializeMethod()
             {
                 _configMock.SetupGet(c => c.Debug).Returns(false);
-                _configMock.SetupGet(c => c.Repl).Returns(false);
+                _configMock.SetupGet(c => c.IsRepl).Returns(false);
                 _configMock.SetupGet(c => c.Cache).Returns(false);
                 _configMock.SetupGet(c => c.Overrides).Returns(_overrides);
                 _config = _configMock.Object;
@@ -64,7 +64,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldRegisterTheReplEngineWhenReplIsEnabled()
             {
-                _configMock.Setup(c => c.Repl).Returns(true);
+                _configMock.Setup(c => c.IsRepl).Returns(true);
                 _module.Initialize(_config);
                 _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynReplEngine));
             }

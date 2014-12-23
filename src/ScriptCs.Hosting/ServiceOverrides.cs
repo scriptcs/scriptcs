@@ -36,6 +36,12 @@ namespace ScriptCs.Hosting
             return _this;
         }
 
+        public TConfig Repl<T>() where T : IRepl
+        {
+            Overrides[typeof(IRepl)] = typeof(T);
+            return _this;
+        }
+
         public TConfig ScriptEngine<T>() where T : IScriptEngine
         {
             Overrides[typeof(IScriptEngine)] = typeof(T);
