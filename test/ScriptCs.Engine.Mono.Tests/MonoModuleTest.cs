@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using ScriptCs.Contracts;
 using Should;
@@ -14,15 +11,15 @@ namespace ScriptCs.Engine.Mono.Tests
     {
         public class TheInitializeMethod
         {
-            private Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
-            private IModuleConfiguration _config;
-            private MonoModule _module = new MonoModule();
-            private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
+            private readonly Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
+            private readonly IModuleConfiguration _config;
+            private readonly MonoModule _module = new MonoModule();
+            private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
 
             public TheInitializeMethod()
             {
                 _configMock.SetupGet(c => c.Debug).Returns(false);
-                _configMock.SetupGet(c => c.Repl).Returns(false);
+                _configMock.SetupGet(c => c.IsRepl).Returns(false);
                 _configMock.SetupGet(c => c.Cache).Returns(false);
                 _configMock.SetupGet(c => c.Overrides).Returns(_overrides);
                 _config = _configMock.Object;

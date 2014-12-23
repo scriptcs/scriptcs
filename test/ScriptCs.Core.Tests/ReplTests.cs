@@ -621,7 +621,7 @@ namespace ScriptCs.Tests
 
                 var helloCommand = new Mock<IReplCommand>();
                 helloCommand.SetupGet(x => x.CommandName).Returns("hello");
-                helloCommand.Setup(x => x.Execute(It.IsAny<IScriptExecutor>(), It.IsAny<object[]>()))
+                helloCommand.Setup(x => x.Execute(It.IsAny<IRepl>(), It.IsAny<object[]>()))
                     .Returns(returnValue);
 
                 var mocks = new Mocks { ReplCommands = new[] { helloCommand } };
@@ -642,7 +642,7 @@ namespace ScriptCs.Tests
 
                 var helloCommand = new Mock<IReplCommand>();
                 helloCommand.SetupGet(x => x.CommandName).Returns("hello");
-                helloCommand.Setup(x => x.Execute(It.IsAny<IScriptExecutor>(), It.IsAny<object[]>()))
+                helloCommand.Setup(x => x.Execute(It.IsAny<IRepl>(), It.IsAny<object[]>()))
                     .Returns(returnValue);
 
                 var mocks = new Mocks { ReplCommands = new[] { helloCommand } };

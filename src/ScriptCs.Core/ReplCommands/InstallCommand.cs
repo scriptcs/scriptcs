@@ -40,7 +40,7 @@ namespace ScriptCs.ReplCommands
             get { return "install"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 
@@ -50,13 +50,12 @@ namespace ScriptCs.ReplCommands
             }
 
             string version = null;
-            var allowPre = false;
             if (args.Length >= 2)
             {
                 version = args[1].ToString();
             }
 
-            allowPre = args.Length >= 3 && args[2].ToString().ToUpperInvariant() == "PRE";
+            var allowPre = args.Length >= 3 && args[2].ToString().ToUpperInvariant() == "PRE";
 
             _logger.InfoFormat("Installing {0}", args[0]);
 

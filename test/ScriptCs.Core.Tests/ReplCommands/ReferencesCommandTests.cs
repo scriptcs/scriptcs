@@ -26,11 +26,11 @@ namespace ScriptCs.Tests.ReplCommands
 
         public class ExecuteMethod
         {
-            private Mock<IScriptExecutor> _executor;
+            private readonly Mock<IRepl> _repl;
 
             public ExecuteMethod()
             {
-                _executor = new Mock<IScriptExecutor>();
+                _repl = new Mock<IRepl>();
             }
 
             [Fact]
@@ -38,10 +38,10 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 var assemblies = new AssemblyReferences(new List<string> {"path1", "path2"},
                     new List<Assembly> {typeof(string).Assembly});
-                _executor.SetupGet(x => x.References).Returns(assemblies);
+                _repl.SetupGet(x => x.References).Returns(assemblies);
 
                 var cmd = new ReferencesCommand();
-                var result = cmd.Execute(_executor.Object, null);
+                var result = cmd.Execute(_repl.Object, null);
 
                 var expected = new List<string> {typeof (string).Assembly.FullName, "path1", "path2"};
                     

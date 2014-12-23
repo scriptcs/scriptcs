@@ -14,15 +14,12 @@ namespace ScriptCs.ReplCommands
             get { return "Displays a list of variables defined within the REPL, along with their types and values."; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
-            var replEngine = repl.ScriptEngine as IReplEngine;
-            if (replEngine != null)
-            {
-                return replEngine.GetLocalVariables(repl.ScriptPackSession);
-            }
+            Guard.AgainstNullArgument("repl", repl);
 
-            return null;
+            var replEngine = repl.ScriptEngine as IReplEngine;
+            return replEngine != null ? replEngine.GetLocalVariables(repl.ScriptPackSession) : null;
         }
     }
 }

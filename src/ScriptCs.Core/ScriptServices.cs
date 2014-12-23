@@ -8,22 +8,24 @@ namespace ScriptCs
     {
         public ScriptServices(
             IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver, 
+            IPackageAssemblyResolver packageAssemblyResolver,
             IScriptExecutor executor,
+            IRepl repl,
             IScriptEngine engine,
             IFilePreProcessor filePreProcessor,
-            IScriptPackResolver scriptPackResolver, 
+            IScriptPackResolver scriptPackResolver,
             IPackageInstaller packageInstaller,
             IObjectSerializer objectSerializer,
             ILog logger,
             IAssemblyResolver assemblyResolver,
-            IEnumerable<IReplCommand> replCommands, 
+            IEnumerable<IReplCommand> replCommands,
             IConsole console = null,
             IInstallationProvider installationProvider = null)
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
             Executor = executor;
+            Repl = repl;
             Engine = engine;
             FilePreProcessor = filePreProcessor;
             ScriptPackResolver = scriptPackResolver;
@@ -39,6 +41,7 @@ namespace ScriptCs
         public IFileSystem FileSystem { get; private set; }
         public IPackageAssemblyResolver PackageAssemblyResolver { get; private set; }
         public IScriptExecutor Executor { get; private set; }
+        public IRepl Repl { get; private set; }
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
         public IObjectSerializer ObjectSerializer { get; private set; }

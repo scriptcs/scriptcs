@@ -29,17 +29,17 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var fs = new Mock<IFileSystem>();
-                var executor = new Mock<IScriptExecutor>();
+                var repl = new Mock<IRepl>();
 
                 var tempPath = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
 
                 fs.Setup(x => x.CurrentDirectory).Returns(Path.Combine(tempPath, "dir"));
-                executor.Setup(x => x.FileSystem).Returns(fs.Object);
+                repl.Setup(x => x.FileSystem).Returns(fs.Object);
 
                 var cmd = new CdCommand();
 
                 // act
-                cmd.Execute(executor.Object, new[] { ".." });
+                cmd.Execute(repl.Object, new[] { ".." });
 
                 // assert
                 fs.VerifySet(x => x.CurrentDirectory = tempPath, Times.Once());

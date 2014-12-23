@@ -22,16 +22,14 @@ namespace ScriptCs.ReplCommands
             get { return "help"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
-            var typedRepl = repl as Repl;
-            if (typedRepl != null)
+            Guard.AgainstNullArgument("repl", repl);
+
+            _console.WriteLine("The following commands are available in the REPL:");
+            foreach (var command in repl.Commands.Values.OrderBy(x => x.CommandName))
             {
-                _console.WriteLine("The following commands are available in the REPL:");
-                foreach (var command in typedRepl.Commands.Values.OrderBy(x => x.CommandName))
-                {
-                    _console.WriteLine(string.Format(":{0,-15}{1,10}", command.CommandName, command.Description));
-                }
+                _console.WriteLine(string.Format(":{0,-15}{1,10}", command.CommandName, command.Description));
             }
 
             return null;

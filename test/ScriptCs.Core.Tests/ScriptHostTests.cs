@@ -12,9 +12,9 @@ namespace ScriptCs.Tests
     {
         public class TheGetMethod
         {
-            private Mock<IScriptPackContext> _mockContext = new Mock<IScriptPackContext>();
-            private Mock<IScriptPackManager> _mockScriptPackManager = new Mock<IScriptPackManager>();
-            private ScriptHost _scriptHost; 
+            private readonly Mock<IScriptPackContext> _mockContext = new Mock<IScriptPackContext>();
+            private readonly Mock<IScriptPackManager> _mockScriptPackManager = new Mock<IScriptPackManager>();
+            private readonly ScriptHost _scriptHost; 
 
             public TheGetMethod()
             {
@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
             public void ShouldSetScriptEnvironment()
             {
                 var environment = new ScriptEnvironment(new string[0]);
-                var scriptHost = new ScriptHost(null, environment);
+                var scriptHost = new ScriptHost(new Mock<IScriptPackManager>().Object, environment);
 
                 scriptHost.Env.ShouldEqual(environment);
             }

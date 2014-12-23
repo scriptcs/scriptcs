@@ -7,14 +7,14 @@ namespace ScriptCs.Contracts
         string BaseDirectory { get; set; }
 
         string CacheDirectory { get; set; }
-        
-        string FileName { get; set; }
-            
-        ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession);
-    }
 
-    public interface IReplEngine : IScriptEngine
-    {
-        ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession);
+        string FileName { get; set; }
+
+        ScriptResult Execute(
+            string code,
+            string[] scriptArgs,
+            AssemblyReferences references,
+            IEnumerable<string> namespaces,
+            ScriptPackSession scriptPackSession);
     }
 }

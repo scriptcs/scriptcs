@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
@@ -23,32 +22,26 @@ namespace ScriptCs.ReplCommands
             get { return "alias"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 
             if (args == null || args.Length != 2)
             {
-                return null;
-            }
-
-            var replInstance = repl as Repl;
-
-            if (replInstance == null)
-            {
+                _console.WriteLine("You must specifiy the command name and alias, e.g. :alias \"clear\" \"cls\"");
                 return null;
             }
 
             var originalCommandName = args[0].ToString();
             var aliasName = args[1].ToString();
 
-            if (replInstance.Commands.Any(x => x.Key.ToLowerInvariant() == aliasName.ToLowerInvariant()))
+            if (repl.Commands.Any(x => x.Key.ToLowerInvariant() == aliasName.ToLowerInvariant()))
             {
                 return null;
             }
 
-            var oldReplCommand = replInstance.Commands[originalCommandName];
-            replInstance.Commands[aliasName] = oldReplCommand;
+            var oldReplCommand = repl.Commands[originalCommandName];
+            repl.Commands[aliasName] = oldReplCommand;
             _console.WriteLine(string.Format("Aliased {0} as {1}", originalCommandName, aliasName));
 
             return null;
