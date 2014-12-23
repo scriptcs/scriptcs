@@ -3,6 +3,9 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
 {
+    using System;
+    using System.Globalization;
+
     public class AliasCommand : IReplCommand
     {
         private readonly IConsole _console;
@@ -32,17 +35,32 @@ namespace ScriptCs.ReplCommands
                 return null;
             }
 
-            var originalCommandName = args[0].ToString();
-            var aliasName = args[1].ToString();
+            var commandName = args[0].ToString();
+            var alias = args[1].ToString();
 
-            if (repl.Commands.Any(x => x.Key.ToLowerInvariant() == aliasName.ToLowerInvariant()))
+            if (repl.Commands.Any(x => string.Equals(x.Key, alias, StringComparison.InvariantCultureIgnoreCase)))
             {
+                var message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "\"{0}\" cannot be used as an alias since it is the name of an existing command.",
+                    alias);
+
+                _console.WriteLine(message);
                 return null;
             }
 
-            var oldReplCommand = repl.Commands[originalCommandName];
-            repl.Commands[aliasName] = oldReplCommand;
-            _console.WriteLine(string.Format("Aliased {0} as {1}", originalCommandName, aliasName));
+            IReplCommand command;
+            if (!repl.Commands.TryGetValue(commandName, out command))
+            {
+                var message = string.Format(
+                    CultureInfo.InvariantCulture, "There is no command named or aliased \"{0}\".", alias);
+
+                _console.WriteLine(message);
+                return null;
+            }
+
+            repl.Commands[alias] = command;
+            _console.WriteLine(string.Format("Aliased \"{0}\" as \"{1}\".", commandName, alias));
 
             return null;
         }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
@@ -49,6 +48,19 @@ namespace ScriptCs.Tests.ReplCommands
                 // assert
                 executor.Commands.Count.ShouldEqual(2);
                 executor.Commands["bar"].ShouldBeSameAs(executor.Commands["foo"]);
+            }
+
+            [Fact]
+            public void ShouldNotThrowAnExceptionWhenAnUnknownCommandIsPassed()
+            {
+                // arrange
+                var command = new AliasCommand(new Mock<IConsole>().Object);
+
+                // act
+                var exception = Record.Exception(() => command.Execute(new Mock<IRepl>().Object, null));
+
+                // assert
+                exception.ShouldBeNull();
             }
         }
     }
