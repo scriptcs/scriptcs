@@ -8,9 +8,6 @@
     <DebugSymbols>true</DebugSymbols>
 
     <StyleCopEnabled Condition=" '$(StyleCopEnabled)' == '' ">true</StyleCopEnabled>
-    <RunCodeAnalysis Condition=" '$(RunCodeAnalysis)' == '' " >false</RunCodeAnalysis>
-
-    <DefineConstants Condition=" '$(RunCodeAnalysis)' == 'true' ">$(DefineConstants);CODE_ANALYSIS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
@@ -21,13 +18,13 @@
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
