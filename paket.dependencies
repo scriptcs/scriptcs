@@ -1,0 +1,18 @@
+source https://nuget.org/api/v2
+
+nuget Autofac.Mef 3.0.3
+nuget AutoFixture.AutoMoq 3.18.8
+nuget AutoFixture.Xunit 3.18.8
+nuget Common.Logging 2.1.2
+nuget ICSharpCode.NRefactory 5.3.0
+nuget LiteGuard.Source 0.8.0
+nuget Mono.CSharp 3.6.1
+nuget Newtonsoft.Json 6.0.3
+nuget NuGet.Core 2.8.2
+nuget PowerArgs 2.0.5
+nuget Roslyn.Compilers.CSharp 1.2.20906.2
+nuget Should 1.1.20
+nuget StyleCop.MSBuild 4.7.49.0
+nuget Xbehave 1.1.0
+nuget xunit.runners 1.9.2
+nuget NuGet.CommandLine

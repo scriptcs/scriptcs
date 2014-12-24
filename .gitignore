@@ -114,3 +114,4 @@ Backup*/
 UpgradeLog*.XML
 
 artifacts
+.paket/paket.exe

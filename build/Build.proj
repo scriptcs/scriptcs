@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask AssemblyFile="..\packages\xunit.runners.1.9.2\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
+  <UsingTask AssemblyFile="..\packages\xunit.runners\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
@@ -13,7 +13,9 @@
     <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
     <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
     
-    <NuGetExePath>$(Root).nuget\NuGet.exe</NuGetExePath>
+    <NuGetExePath>$(Root)packages\NuGet.CommandLine\tools\NuGet.exe</NuGetExePath>
+    <PaketBootstrapperPath>$(Root).paket\paket.bootstrapper.exe</PaketBootstrapperPath>
+    <PaketExePath>$(Root).paket\paket.exe</PaketExePath>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
@@ -87,10 +89,12 @@
   </Target>
 
   <Target Name="RestorePackages">
-    <Message Text="Restoring NuGet packages..." Importance="high" />
+    <Message Text="Restoring Paket packages..." Importance="high" />
 
-    <Exec Command="&quot;$(NuGetExePath)&quot; restore -Verbosity detailed -NonInteractive"
+    <Exec Command="&quot;$(PaketBootstrapperPath)&quot;"
           WorkingDirectory="$(Root)" StandardOutputImportance="Low" />
+  <Exec Command="&quot;$(PaketExePath)&quot; restore"
+          WorkingDirectory="$(Root)" StandardOutputImportance="Low" />          
   </Target>
 
   <Target Name="_CleanSolution">

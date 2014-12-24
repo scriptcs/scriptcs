@@ -1,0 +1,5 @@
+AutoFixture.AutoMoq
+AutoFixture.Xunit
+Common.Logging
+Should
+StyleCop.MSBuild
