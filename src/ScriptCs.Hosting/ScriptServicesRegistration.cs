@@ -7,11 +7,11 @@ namespace ScriptCs.Hosting
 {
     public abstract class ScriptServicesRegistration
     {
-        private readonly IDictionary<Type, object> _overrides = null;
+        private readonly IDictionary<Type, object> _overrides;
 
         public ILog Logger { get; private set; }
 
-        public ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
+        protected ScriptServicesRegistration(ILog logger, IDictionary<Type, object> overrides)
         {
             _overrides = overrides ?? new Dictionary<Type, object>();
             Logger = logger;
@@ -46,15 +46,7 @@ namespace ScriptCs.Hosting
 
         public IContainer Container
         {
-            get
-            {
-                if (_container == null)
-                {
-                    _container = CreateContainer();
-                }
-
-                return _container;
-            }
+            get { return _container ?? (_container = CreateContainer()); }
         }
 
         protected IDictionary<Type, object> Overrides

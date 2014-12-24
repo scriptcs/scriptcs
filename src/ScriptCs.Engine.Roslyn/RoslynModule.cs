@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
             {
                 var engineType = config.Cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
                 engineType = config.Debug ? typeof(RoslynScriptInMemoryEngine) : engineType;
-                engineType = config.Repl ? typeof(RoslynScriptEngine) : engineType;
+                engineType = config.IsRepl ? typeof(RoslynReplEngine) : engineType;
                 config.Overrides[typeof(IScriptEngine)] = engineType;
             }
         }

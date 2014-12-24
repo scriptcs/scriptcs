@@ -7,7 +7,13 @@ namespace ScriptCs.Contracts
     {
         AssemblyReferences References { get; }
 
+        ICollection<string> Namespaces { get; }
+
+        IScriptEngine ScriptEngine { get; }
+
         IFileSystem FileSystem { get; }
+
+        ScriptPackSession ScriptPackSession { get; }
 
         void ImportNamespaces(params string[] namespaces);
 

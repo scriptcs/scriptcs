@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
@@ -15,15 +12,15 @@ namespace ScriptCs.Tests
     {
         public class TheInitializeMethod
         {
-            private Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
-            private IModuleConfiguration _config;
-            private RoslynModule _module = new RoslynModule();
-            private IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
+            private readonly Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
+            private readonly IModuleConfiguration _config;
+            private readonly RoslynModule _module = new RoslynModule();
+            private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             
             public TheInitializeMethod()
             {
                 _configMock.SetupGet(c => c.Debug).Returns(false);
-                _configMock.SetupGet(c => c.Repl).Returns(false);
+                _configMock.SetupGet(c => c.IsRepl).Returns(false);
                 _configMock.SetupGet(c => c.Cache).Returns(false);
                 _configMock.SetupGet(c => c.Overrides).Returns(_overrides);
                 _config = _configMock.Object;
@@ -62,11 +59,11 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldRegisterTheScriptEngineWhenReplIsEnabled()
+            public void ShouldRegisterTheReplEngineWhenReplIsEnabled()
             {
-                _configMock.Setup(c => c.Repl).Returns(true);
+                _configMock.Setup(c => c.IsRepl).Returns(true);
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynScriptEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynReplEngine));
             }
         }
     }

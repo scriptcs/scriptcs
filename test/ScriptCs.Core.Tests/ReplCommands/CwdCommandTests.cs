@@ -30,17 +30,17 @@ namespace ScriptCs.Tests.ReplCommands
                 // arrange
                 var console = new Mock<IConsole>();
                 var fs = new Mock<IFileSystem>();
-                var executor = new Mock<IScriptExecutor>();
+                var repl = new Mock<IRepl>();
 
                 var tempPath = Path.GetTempPath();
 
                 fs.Setup(x => x.CurrentDirectory).Returns(tempPath);
-                executor.Setup(x => x.FileSystem).Returns(fs.Object);
+                repl.Setup(x => x.FileSystem).Returns(fs.Object);
 
                 var cmd = new CwdCommand(console.Object);
 
                 // act
-                cmd.Execute(executor.Object, null);
+                cmd.Execute(repl.Object, null);
 
                 // assert
                 console.Verify(x => x.WriteLine(tempPath));
@@ -51,16 +51,16 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
-                var executor = new Mock<IScriptExecutor>();
+                var repl = new Mock<IRepl>();
 
                 console.SetupProperty(x => x.ForegroundColor);
-                executor.Setup(x => x.FileSystem).Returns(new Mock<IFileSystem>().Object);
+                repl.Setup(x => x.FileSystem).Returns(new Mock<IFileSystem>().Object);
 
                 var cmd = new CwdCommand(console.Object);
                 var expectedForegroundColor = console.Object.ForegroundColor;
 
                 // act
-                cmd.Execute(executor.Object, null);
+                cmd.Execute(repl.Object, null);
 
                 // assert
                 Assert.Equal(expectedForegroundColor, console.Object.ForegroundColor);

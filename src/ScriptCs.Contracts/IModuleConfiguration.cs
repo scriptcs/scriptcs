@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ScriptCs.Contracts
@@ -10,7 +9,7 @@ namespace ScriptCs.Contracts
 
         string ScriptName { get; }
 
-        bool Repl { get; }
+        bool IsRepl { get; }
 
         LogLevel LogLevel { get; }
 

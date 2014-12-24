@@ -5,12 +5,17 @@ namespace ScriptCs.ReplCommands
 {
     public class CdCommand : IReplCommand
     {
+        public string Description
+        {
+            get { return "Changes the working directory to the path provided."; }
+        }
+
         public string CommandName
         {
             get { return "cd"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 

@@ -38,14 +38,14 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldHandleEmptyAttray()
+            public void ShouldHandleEmptyArray()
             {
                 var parser = new ArgumentParser(new ScriptConsole());
                 var result = parser.Parse(new string[0]);
 
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
                 result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
@@ -57,7 +57,7 @@ namespace ScriptCs.Tests
 
                 result.ShouldNotBeNull();
                 result.Repl.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
                 result.Config.ShouldEqual(Constants.ConfigFilename);
             }
 
@@ -72,7 +72,7 @@ namespace ScriptCs.Tests
                 result.ShouldNotBeNull();
                 result.ScriptName.ShouldBeNull();
                 result.Help.ShouldBeTrue();
-                result.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldBeNull();
             }
 
             [Fact]

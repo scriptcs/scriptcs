@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -10,18 +9,25 @@ namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
-        private IRuntimeServices _runtimeServices;
         private readonly ITypeResolver _typeResolver;
+        private readonly ILog _logger;
+
+        private IRuntimeServices _runtimeServices;
         private bool _repl;
         private bool _cache;
         private bool _debug;
         private string _scriptName;
         private LogLevel _logLevel;
         private Type _scriptExecutorType;
+        private Type _replType;
         private Type _scriptEngineType;
-        private ILog _logger;
 
-        public ScriptServicesBuilder(IConsole console, ILog logger, IRuntimeServices runtimeServices = null, ITypeResolver typeResolver = null, IInitializationServices initializationServices = null)
+        public ScriptServicesBuilder(
+            IConsole console,
+            ILog logger,
+            IRuntimeServices runtimeServices = null,
+            ITypeResolver typeResolver = null,
+            IInitializationServices initializationServices = null)
         {
             InitializationServices = initializationServices ?? new InitializationServices(logger);
             _runtimeServices = runtimeServices;
@@ -33,35 +39,42 @@ namespace ScriptCs.Hosting
 
         public ScriptServices Build()
         {
-            Type defaultExecutorType = typeof(ScriptExecutor);
-            _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor)) ? (Type)Overrides[typeof(IScriptExecutor)] : defaultExecutorType;
+            var defaultExecutorType = typeof(ScriptExecutor);
+            _scriptExecutorType = Overrides.ContainsKey(typeof(IScriptExecutor))
+                ? (Type)Overrides[typeof(IScriptExecutor)]
+                : defaultExecutorType;
+
+            var defaultReplType = typeof(Repl);
+            _replType = Overrides.ContainsKey(typeof(IRepl)) ? (Type)Overrides[typeof(IRepl)] : defaultReplType;
+
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
             var initDirectoryCatalog = _scriptName != null || _repl;
 
             if (_runtimeServices == null)
             {
-                _runtimeServices = new RuntimeServices(_logger, Overrides, ConsoleInstance,
-                                                                       _scriptEngineType, _scriptExecutorType,
-                                                                       initDirectoryCatalog,
-                                                                       InitializationServices, _scriptName);
+                _runtimeServices = new RuntimeServices(
+                    _logger,
+                    Overrides,
+                    ConsoleInstance,
+                    _scriptEngineType,
+                    _scriptExecutorType,
+                    _replType,
+                    initDirectoryCatalog,
+                    InitializationServices,
+                    _scriptName);
             }
 
             return _runtimeServices.GetScriptServices();
         }
 
-        private string GetEngineModule(string[] modules)
-        {
-            if (_typeResolver.ResolveType("Mono.Runtime") != null || modules.Contains("mono"))
-            {
-                return "mono";
-            }
-            return "roslyn";
-        }
-
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            moduleNames = moduleNames.Union(new[] { GetEngineModule(moduleNames) }).ToArray();
+            var engineModule = _typeResolver.ResolveType("Mono.Runtime") != null || moduleNames.Contains("mono")
+                ? "mono" 
+                : "roslyn";
+            
+            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 

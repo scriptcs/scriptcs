@@ -11,7 +11,6 @@ namespace ScriptCs
     {
         public ScriptCsArgs()
         {
-            LogLevel = LogLevel.Info;
             Config = Constants.ConfigFilename;
         }
 
@@ -37,9 +36,8 @@ namespace ScriptCs
 
         [ArgIgnoreCase]
         [ArgShortcut("log")]
-        [DefaultValue(LogLevel.Info)]
         [ArgDescription("Flag which defines the log level used.")]
-        public LogLevel LogLevel { get; set; }
+        public LogLevel? LogLevel { get; set; }
 
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
         public string Install { get; set; }

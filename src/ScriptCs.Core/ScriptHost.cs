@@ -8,6 +8,8 @@ namespace ScriptCs
 
         public ScriptHost(IScriptPackManager scriptPackManager, ScriptEnvironment environment)
         {
+            Guard.AgainstNullArgument("scriptPackManager", scriptPackManager);
+
             _scriptPackManager = scriptPackManager;
             Env = environment;
         }

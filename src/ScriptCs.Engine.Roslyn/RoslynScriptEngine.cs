@@ -163,11 +163,6 @@ namespace ScriptCs.Engine.Roslyn
         {
             Guard.AgainstNullArgument("session", session);
 
-            if (string.IsNullOrWhiteSpace(FileName) && !IsCompleteSubmission(code))
-            {
-                return ScriptResult.Incomplete;
-            }
-
             try
             {
                 var submission = session.CompileSubmission<object>(code);
@@ -197,7 +192,7 @@ namespace ScriptCs.Engine.Roslyn
             }
         }
 
-        private static bool IsCompleteSubmission(string code)
+        protected static bool IsCompleteSubmission(string code)
         {
             var options = new ParseOptions(
                 CompatibilityMode.None,

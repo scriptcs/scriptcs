@@ -14,12 +14,17 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
+        public string Description
+        {
+            get { return "Displays the current working directory."; }
+        }
+
         public string CommandName
         {
             get { return "cwd"; }
         }
 
-        public object Execute(IScriptExecutor repl, object[] args)
+        public object Execute(IRepl repl, object[] args)
         {
             Guard.AgainstNullArgument("repl", repl);
 
