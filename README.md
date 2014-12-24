@@ -88,7 +88,7 @@ Hello, world!
 C:\>
 ```
 
-REPL supports all C# language constructs (i.e. class defnition, method definition), as well as multi-line input. For example:
+REPL supports all C# language constructs (i.e. class definition, method definition), as well as multi-line input. For example:
 
 ```batchfile
 C:\> scriptcs
@@ -238,7 +238,7 @@ Instructions for debugging scripts using Visual Studio can be found on the [wiki
 
 You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the packages folder.
 
-Once the packages are installed, you can simply start using them in your script code directly (just import the namespaces - no additional bootstraping or DLL referencing is needed).
+Once the packages are installed, you can simply start using them in your script code directly (just import the namespaces - no additional bootstrapping or DLL referencing is needed).
 
 The `install` command will also create a `packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
 
