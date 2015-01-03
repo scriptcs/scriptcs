@@ -27,12 +27,12 @@ namespace ScriptCs.Argument
         {
             var sr = SplitScriptArgs(args);
 
-            var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var localConfigFile = commandArgs.Config;
+            var scriptCsArgs = _argumentParser.Parse(sr.CommandArguments);
+            var localConfigFile = scriptCsArgs.Config;
             var localConfigPath = string.Format("{0}\\{1}", _fileSystem.CurrentDirectory, localConfigFile);
             var localConfigArgs = _configFileParser.Parse(GetFileContent(localConfigPath));
             var globalConfigArgs = _configFileParser.Parse(GetFileContent(_fileSystem.GlobalOptsFile));
-            var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, commandArgs, sr);
+            var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, scriptCsArgs, sr);
 
             if (finalArguments.LogLevel == null)
             {
