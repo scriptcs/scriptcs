@@ -27,25 +27,28 @@ namespace ScriptCs.Command
 
         public void Start()
         {
-            if (_timer != null)
+            lock (_timerLock)
             {
-                return;
-            }
+                if (_timer != null)
+                {
+                    return;
+                }
 
-            _lastWriteTime = _fileSystem.GetLastWriteTime(_file);
-            _timer = new Timer(_ => CheckLastWriteTime(), null, Timeout.Infinite, Timeout.Infinite);
-            _timer.Change(_intervalMilliseconds, Timeout.Infinite);
+                _lastWriteTime = _fileSystem.GetLastWriteTime(_file);
+                _timer = new Timer(_ => CheckLastWriteTime(), null, Timeout.Infinite, Timeout.Infinite);
+                _timer.Change(_intervalMilliseconds, Timeout.Infinite);
+            }
         }
 
         public void Stop()
         {
-            if (_timer == null)
-            {
-                return;
-            }
-
             lock (_timerLock)
             {
+                if (_timer == null)
+                {
+                    return;
+                }
+
                 _timer.Dispose();
                 _timer = null;
             }
