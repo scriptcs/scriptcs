@@ -43,6 +43,7 @@
     <Compile Include="..\..\src\ScriptCs.Core\Guard.cs">
       <Link>Support\Guard.cs</Link>
     </Compile>
+    <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />
     <Compile Include="Support\ScriptFile.cs" />
@@ -67,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Support\Gallery\ScriptCs.Adder.Local.0.1.1.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

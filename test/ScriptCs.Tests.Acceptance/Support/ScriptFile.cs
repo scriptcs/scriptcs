@@ -7,33 +7,40 @@
 
     public class ScriptFile
     {
-        private static readonly string directory = "scenarios";
+        private static readonly string rootDirectory = "scenarios";
 
         private readonly string path;
         private readonly string name;
         private readonly string log;
+        private readonly string directory;
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "They are initialized inline. The constructor does other things.")]
         static ScriptFile()
         {
-            FileSystem.EnsureDirectoryCreated(directory);
+            FileSystem.EnsureDirectoryCreated(rootDirectory);
         }
 
-        private ScriptFile(string scenario, bool createWorkingDirectory)
+        private ScriptFile(string scenario, bool createDirectory)
         {
+            if (createDirectory)
+            {
+                this.directory = Path.Combine(rootDirectory, scenario);
+                FileSystem.EnsureDirectoryDeleted(directory);
+                FileSystem.EnsureDirectoryCreated(directory);
+            }
+            else
+            {
+                this.directory = rootDirectory;
+
+            }
+
             File.Delete(this.path = Path.Combine(directory, this.name = string.Concat(scenario, ".csx")));
             File.Delete(this.log = Path.Combine(directory, string.Concat(scenario, ".log")));
-
-            if (createWorkingDirectory)
-            {
-                FileSystem.EnsureDirectoryDeleted(Path.Combine(directory, scenario));
-                FileSystem.EnsureDirectoryCreated(Path.Combine(directory, scenario));
-            }
         }
 
-        public static ScriptFile Create(string scenario, bool createWorkingDirectory = false)
+        public static ScriptFile Create(string scenario, bool createDirectory = false)
         {
-            return new ScriptFile(scenario, createWorkingDirectory);
+            return new ScriptFile(scenario, createDirectory);
         }
 
         public ScriptFile WriteLine(string code)
@@ -73,6 +80,34 @@
 
             return ScriptCsExe.Execute(
                 new[] { this.name }.Concat(debugArgs).Concat(args), scriptArgs, this.log, directory);
+        }
+
+        public string Install(string package)
+        {
+            var packagesDirectory = Path.Combine(this.directory, "packages");
+            FileSystem.EnsureDirectoryCreated(packagesDirectory);
+
+            var nugetConfig = Path.Combine(this.directory, "nuget.config");
+            File.Delete(nugetConfig);
+            using (var writer = new StreamWriter(nugetConfig))
+            {
+                writer.Write(
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key=""Local"" value=""" + Path.GetFullPath(Path.Combine("Support", "Gallery")) + @""" />
+  </packageSources>
+  <activePackageSource>
+    <add key=""All"" value=""(Aggregate source)"" />
+  </activePackageSource>
+</configuration>"
+                    );
+
+                writer.Flush();
+            }
+
+            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, new string[0], this.log, this.directory);
         }
     }
 }
