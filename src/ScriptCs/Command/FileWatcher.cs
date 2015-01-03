@@ -6,13 +6,13 @@ namespace ScriptCs.Command
 {
     public sealed class FileWatcher : IDisposable
     {
+        private readonly object _timerLock = new object();
         private readonly string _file;
-        private readonly int _intervalMilliseconds = 500;
+        private readonly int _intervalMilliseconds;
         private readonly IFileSystem _fileSystem;
 
         private DateTime _lastWriteTime;
         private Timer _timer;
-        private object _timerLock = new object();
 
         public FileWatcher(string file, int intervalMilliseconds, IFileSystem fileSystem)
         {
@@ -37,7 +37,7 @@ namespace ScriptCs.Command
             _timer.Change(_intervalMilliseconds, Timeout.Infinite);
         }
 
-        private void Stop()
+        public void Stop()
         {
             if (_timer == null)
             {
@@ -49,6 +49,11 @@ namespace ScriptCs.Command
                 _timer.Dispose();
                 _timer = null;
             }
+        }
+
+        public void Dispose()
+        {
+            Stop();
         }
 
         private void CheckLastWriteTime()
@@ -73,11 +78,6 @@ namespace ScriptCs.Command
 
                 _timer.Change(_intervalMilliseconds, Timeout.Infinite);
             }
-        }
-
-        public void Dispose()
-        {
-            Stop();
         }
     }
 }
