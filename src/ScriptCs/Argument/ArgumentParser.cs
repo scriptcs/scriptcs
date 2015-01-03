@@ -20,7 +20,7 @@ namespace ScriptCs.Argument
             if (args == null || args.Length <= 0) 
                 return new ScriptCsArgs { Repl = true };
 
-            ScriptCsArgs commandArgs = null;
+            var scriptCsArgs = new ScriptCsArgs();
             const string unexpectedArgumentMessage = "unexpected named argument: ";
 
             try
@@ -35,16 +35,16 @@ namespace ScriptCs.Argument
                     args = argsList.ToArray();
                 }
 
-                commandArgs = Args.Parse<ScriptCsArgs>(args);
+                scriptCsArgs = Args.Parse<ScriptCsArgs>(args);
 
                 //if there is only 1 arg and it is a loglevel, it's also REPL
                 if (args.Length == 2 && args.Any(x => x.ToLowerInvariant() == "-loglevel" || x.ToLowerInvariant() == "-log"))
                 {
-                    commandArgs.Repl = true;
+                    scriptCsArgs.Repl = true;
                 }
                 
                 if (!string.IsNullOrWhiteSpace(packageVersion))
-                    commandArgs.PackageVersion = packageVersion;
+                    scriptCsArgs.PackageVersion = packageVersion;
             }
             catch(ArgException ex)
             {
@@ -59,7 +59,7 @@ namespace ScriptCs.Argument
                 }
             }
 
-            return commandArgs;
+            return scriptCsArgs;
         }
     }
 }
