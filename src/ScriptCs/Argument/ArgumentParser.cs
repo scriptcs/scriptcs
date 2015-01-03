@@ -20,7 +20,7 @@ namespace ScriptCs.Argument
             if (args == null || args.Length <= 0) 
                 return new ScriptCsArgs { Repl = true };
 
-            ScriptCsArgs commandArgs = null;
+            var commandArgs = new ScriptCsArgs();
             const string unexpectedArgumentMessage = "unexpected named argument: ";
 
             try

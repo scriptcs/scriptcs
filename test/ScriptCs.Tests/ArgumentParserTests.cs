@@ -34,7 +34,7 @@ namespace ScriptCs.Tests
                 var result = parser.Parse(args);
 
                 console.Verify(x => x.WriteLine(It.Is<string>(i => i.StartsWith("Parameter \"foo\" is not supported!"))));
-                result.ShouldBeNull();
+                result.ShouldNotBeNull();
             }
 
             [Fact]

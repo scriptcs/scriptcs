@@ -28,7 +28,7 @@ namespace ScriptCs.Argument
             var sr = SplitScriptArgs(args);
 
             var commandArgs = _argumentParser.Parse(sr.CommandArguments);
-            var localConfigFile = commandArgs != null ? commandArgs.Config : Constants.ConfigFilename;
+            var localConfigFile = commandArgs.Config;
             var localConfigPath = string.Format("{0}\\{1}", _fileSystem.CurrentDirectory, localConfigFile);
             var localConfigArgs = _configFileParser.Parse(GetFileContent(localConfigPath));
             var globalConfigArgs = _configFileParser.Parse(GetFileContent(_fileSystem.GlobalOptsFile));
