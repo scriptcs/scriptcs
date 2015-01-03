@@ -13,18 +13,18 @@ namespace ScriptCs.Hosting.Package
 
         public PackageInstaller(IInstallationProvider installer, ILog logger)
         {
+            Guard.AgainstNullArgument("installer", installer);
+            Guard.AgainstNullArgument("logger", logger);
+
             _installer = installer;
             _logger = logger;
         }
 
         public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false)
         {
-            if (packageIds == null)
-            {
-                throw new ArgumentNullException("packageIds");
-            }
+            Guard.AgainstNullArgument("packageIds", packageIds);
 
-            packageIds = packageIds.ToList();
+            packageIds = packageIds.Where(packageId => !_installer.IsInstalled(packageId, allowPreRelease)).ToList();
 
             if (!packageIds.Any())
             {
@@ -35,11 +35,6 @@ namespace ScriptCs.Hosting.Package
             var exceptions = new List<Exception>();
             foreach (var packageId in packageIds)
             {
-                if (_installer.IsInstalled(packageId, allowPreRelease))
-                {
-                    continue;
-                }
-
                 try
                 {
                     _installer.InstallPackage(packageId, allowPreRelease);
