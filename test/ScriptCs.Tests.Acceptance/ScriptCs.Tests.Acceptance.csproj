@@ -46,7 +46,7 @@
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />
-    <Compile Include="Support\ScriptFile.cs" />
+    <Compile Include="Support\ScriptDirectory.cs" />
     <Compile Include="Support\ProcessStartInfoExtensions.cs" />
     <Compile Include="Support\FileSystem.cs" />
     <Compile Include="Support\MethodBaseExtensions.cs" />

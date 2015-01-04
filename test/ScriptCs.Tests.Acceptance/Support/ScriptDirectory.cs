@@ -5,34 +5,31 @@
     using System.IO;
     using System.Linq;
 
-    public class ScriptFile
+    public class ScriptDirectory
     {
         private static readonly string rootDirectory = "scenarios";
 
-        private readonly string _path;
-        private readonly string _name;
-        private readonly string _log;
         private readonly string _directory;
+        private readonly string _log;
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "They are initialized inline. The constructor does other things.")]
-        static ScriptFile()
+        static ScriptDirectory()
         {
             FileSystem.EnsureDirectoryCreated(rootDirectory);
         }
 
-        public ScriptFile(string scenario)
+        public ScriptDirectory(string scenario)
         {
             _directory = Path.Combine(rootDirectory, scenario);
             FileSystem.EnsureDirectoryDeleted(_directory);
             FileSystem.EnsureDirectoryCreated(_directory);
 
-            File.Delete(_path = Path.Combine(_directory, _name = string.Concat(scenario, ".csx")));
-            File.Delete(_log = Path.Combine(_directory, string.Concat(scenario, ".log")));
+            _log = Path.Combine(_directory, string.Concat(scenario, ".log"));
         }
 
-        public ScriptFile WriteLine(string code)
+        public ScriptDirectory WriteLine(string scriptName, string code)
         {
-            using (var writer = new StreamWriter(_path, true))
+            using (var writer = new StreamWriter(Path.Combine(_directory, scriptName), true))
             {
                 writer.WriteLine(code);
                 writer.Flush();
@@ -41,22 +38,22 @@
             return this;
         }
 
-        public string Execute()
+        public string Execute(string scriptName)
         {
-            return Execute(Enumerable.Empty<string>(), Enumerable.Empty<string>());
+            return Execute(scriptName, Enumerable.Empty<string>(), Enumerable.Empty<string>());
         }
 
-        public string Execute(IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        public string Execute(string scriptName, IEnumerable<string> args, IEnumerable<string> scriptArgs)
         {
-            return Execute(true, args, scriptArgs);
+            return Execute(scriptName, true, args, scriptArgs);
         }
 
-        public string Execute(bool debug)
+        public string Execute(string scriptName, bool debug)
         {
-            return Execute(debug, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+            return Execute(scriptName, debug, Enumerable.Empty<string>(), Enumerable.Empty<string>());
         }
 
-        public string Execute(bool debug, IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        public string Execute(string scriptName,bool debug, IEnumerable<string> args, IEnumerable<string> scriptArgs)
         {
             var debugArgs =
                     debug &&
@@ -66,7 +63,7 @@
                 : new string[0];
 
             return ScriptCsExe.Execute(
-                new[] { _name }.Concat(debugArgs).Concat(args), scriptArgs, _log, _directory);
+                new[] { scriptName }.Concat(debugArgs).Concat(args), scriptArgs, _log, _directory);
         }
 
         public string Install(string package)
