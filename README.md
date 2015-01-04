@@ -1,6 +1,8 @@
 # scriptcs
 
-[![Chocolatey Version](http://img.shields.io/chocolatey/v/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![Chocolatey Downloads](http://img.shields.io/chocolatey/dt/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![NuGet version (ScriptCs.Hosting)](https://img.shields.io/nuget/v/ScriptCs.Hosting.svg?style=flat-square)](https://www.nuget.org/packages/ScriptCs.Hosting/) [![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat-square&label=linux-build)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/Scriptcs_Ci.svg?style=flat-square&label=windows-build)](http://ci.scriptcs.net) [![Coverity Scan Build Status](https://img.shields.io/badge/coverity-passed-brightgreen.svg?style=flat-square)](https://scan.coverity.com/projects/2356)
+[![Chocolatey Version](http://img.shields.io/chocolatey/v/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![Chocolatey Downloads](http://img.shields.io/chocolatey/dt/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![NuGet version (ScriptCs.Hosting)](https://img.shields.io/nuget/v/ScriptCs.Hosting.svg?style=flat-square)](https://www.nuget.org/packages/ScriptCs.Hosting/)
+
+[![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat-square&label=linux-build)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/Scriptcs_Ci.svg?style=flat-square&label=windows-build)](http://ci.scriptcs.net) [![Coverity Scan Build Status](https://img.shields.io/badge/coverity-passed-brightgreen.svg?style=flat-square)](https://scan.coverity.com/projects/2356)
 
 ## What is it?
 
