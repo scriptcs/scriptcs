@@ -59,18 +59,18 @@ namespace ScriptCs.Command
 
             if (args.Repl)
             {
-                var scriptServices = _scriptServicesBuilder.Build();
-                var replCommand = new ExecuteReplCommand(
+                var replScriptServices = _scriptServicesBuilder.Build();
+                var explicitReplCommand = new ExecuteReplCommand(
                     args.ScriptName,
                     scriptArgs,
-                    scriptServices.FileSystem,
-                    scriptServices.ScriptPackResolver,
-                    scriptServices.Repl,
-                    scriptServices.Logger,
-                    scriptServices.Console,
-                    scriptServices.AssemblyResolver);
+                    replScriptServices.FileSystem,
+                    replScriptServices.ScriptPackResolver,
+                    replScriptServices.Repl,
+                    replScriptServices.Logger,
+                    replScriptServices.Console,
+                    replScriptServices.AssemblyResolver);
 
-                return replCommand;
+                return explicitReplCommand;
             }
 
             if (args.ScriptName != null)
@@ -143,7 +143,19 @@ namespace ScriptCs.Command
                 return new CompositeCommand(installCommand, new SaveCommand(packageAssemblyResolver, _fileSystem, logger));
             }
 
-            return new ShowUsageCommand(logger, false);
+            // NOTE (adamralph): no script name or command so assume REPL
+            var scriptServices = _scriptServicesBuilder.Build();
+            var replCommand = new ExecuteReplCommand(
+                args.ScriptName,
+                scriptArgs,
+                scriptServices.FileSystem,
+                scriptServices.ScriptPackResolver,
+                scriptServices.Repl,
+                scriptServices.Logger,
+                scriptServices.Console,
+                scriptServices.AssemblyResolver);
+
+            return replCommand;
         }
 
         private static IScriptCommand CreateScriptCommand(

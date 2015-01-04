@@ -4,7 +4,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteReplCommand : IScriptCommand
+    internal class ExecuteReplCommand : IExecuteReplCommand
     {
         private readonly IScriptPackResolver _scriptPackResolver;
         private readonly IAssemblyResolver _assemblyResolver;

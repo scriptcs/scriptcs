@@ -159,7 +159,7 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldReturnInvalidWhenNoNameOrInstallSet()
+            public void ShouldReturnReplWhenNoNameOrInstallSet()
             {
                 // Arrange
                 var args = new ScriptCsArgs
@@ -174,7 +174,7 @@ namespace ScriptCs.Tests
                 var result = factory.CreateCommand(args, new string[0]);
 
                 // Assert
-                result.ShouldImplement<IInvalidCommand>();
+                result.ShouldImplement<IExecuteReplCommand>();
             }
 
             [Fact]
