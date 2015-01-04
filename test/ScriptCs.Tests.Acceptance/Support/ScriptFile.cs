@@ -84,7 +84,7 @@
 
         public string Install(string package)
         {
-            var nugetConfig = Path.Combine(this.directory, "nuget.config");
+            var nugetConfig = Path.Combine(this.directory, "scriptcs_nuget.config");
             File.Delete(nugetConfig);
             using (var writer = new StreamWriter(nugetConfig))
             {
