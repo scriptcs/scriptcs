@@ -83,6 +83,11 @@ namespace ScriptCs
             File.Move(source, dest);
         }
 
+        public virtual void MoveFolder(string source, string dest)
+        {
+            Directory.Move(source, dest);
+        }
+
         public virtual bool FileExists(string path)
         {
             return File.Exists(path);
