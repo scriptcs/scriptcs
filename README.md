@@ -1,4 +1,4 @@
-# scriptcs [![Chocolatey Version](http://img.shields.io/chocolatey/v/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![Chocolatey Downloads](http://img.shields.io/chocolatey/dt/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat-square)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/Scriptcs_Ci.svg?style=flat-square)](http://ci.scriptcs.net)
+# scriptcs [![Chocolatey Version](http://img.shields.io/chocolatey/v/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![Chocolatey Downloads](http://img.shields.io/chocolatey/dt/scriptcs.svg?style=flat-square)](http://chocolatey.org/packages/scriptcs) [![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat-square&label=linux-build)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/Scriptcs_Ci.svg?style=flat-square&label=windows-build)](http://ci.scriptcs.net)
 
 
 ## What is it?
