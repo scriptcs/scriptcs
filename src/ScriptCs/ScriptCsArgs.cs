@@ -74,5 +74,8 @@ namespace ScriptCs
 
         [ArgDescription("Write all console output to the specified file")]
         public string Output { get; set; }
+
+        [ArgDescription("Migrate a current script folder to the latest file system conventions")]
+        public bool Migrate { get; set; }
     }
 }

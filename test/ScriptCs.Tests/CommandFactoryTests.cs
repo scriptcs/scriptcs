@@ -159,6 +159,21 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldMigrateWhenMigrateFlagIsPassed()
+            {
+                // Arrange
+                var args = new ScriptCsArgs { Migrate = true };
+
+                // Act
+                var factory = new CommandFactory(CreateBuilder());
+                var result = factory.CreateCommand(args, new string[0]);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.ShouldImplement<IMigrateCommand>();
+            }
+
+            [Fact]
             public void ShouldReturnReplWhenNoNameOrInstallSet()
             {
                 // Arrange

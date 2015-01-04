@@ -40,6 +40,10 @@ namespace ScriptCs.Command
     {
     }
 
+    public interface IMigrateCommand : ICommand
+    {
+    }
+
     public interface IDeferredCreationCommand<TCommand> : ICommand where TCommand : ICommand
     {
     }

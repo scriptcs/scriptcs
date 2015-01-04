@@ -12,15 +12,16 @@
         [Scenario]
         [Example(true)]
         [Example(false)]
-        public static void HelloWorld(bool debug, ScriptFile script, string output)
+        public static void HelloWorld(bool debug, ScriptDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
-                .f(() => script = ScriptFile.Create(scenario).WriteLine(@"Console.WriteLine(""Hello world!"");"));
+                .f(() => directory = new ScriptDirectory(scenario)
+                    .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => output = script.Execute(debug));
+                .f(() => output = directory.Execute("foo.csx", debug));
 
             "Then I see 'Hello world!'"
                 .f(() => output.ShouldContain("Hello world!"));
@@ -29,15 +30,15 @@
         [Scenario]
         [Example(true)]
         [Example(false)]
-        public static void ScriptThrowsAnException(bool debug, ScriptFile script, Exception ex)
+        public static void ScriptThrowsAnException(bool debug, ScriptDirectory directory, Exception ex)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
-                .f(() => script = ScriptFile.Create(scenario).WriteLine(@"throw new Exception(""BOOM!"");"));
+                .f(() => directory = new ScriptDirectory(scenario).WriteLine("foo.csx", @"throw new Exception(""BOOM!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => ex = Record.Exception(() => script.Execute(debug)));
+                .f(() => ex = Record.Exception(() => directory.Execute("foo.csx", debug)));
 
             "Then the script fails"
                 .f(() => ex.ShouldNotBeNull());
