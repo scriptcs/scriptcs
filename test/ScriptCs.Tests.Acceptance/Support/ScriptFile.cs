@@ -84,9 +84,6 @@
 
         public string Install(string package)
         {
-            var packagesDirectory = Path.Combine(this.directory, "packages");
-            FileSystem.EnsureDirectoryCreated(packagesDirectory);
-
             var nugetConfig = Path.Combine(this.directory, "nuget.config");
             File.Delete(nugetConfig);
             using (var writer = new StreamWriter(nugetConfig))
