@@ -17,7 +17,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
-                .f(() => script = ScriptFile.Create(scenario).WriteLine(@"Console.WriteLine(""Hello world!"");"));
+                .f(() => script = new ScriptFile(scenario).WriteLine(@"Console.WriteLine(""Hello world!"");"));
 
             "When I execute the script with debug set to {0}"
                 .f(() => output = script.Execute(debug));
@@ -34,7 +34,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
-                .f(() => script = ScriptFile.Create(scenario).WriteLine(@"throw new Exception(""BOOM!"");"));
+                .f(() => script = new ScriptFile(scenario).WriteLine(@"throw new Exception(""BOOM!"");"));
 
             "When I execute the script with debug set to {0}"
                 .f(() => ex = Record.Exception(() => script.Execute(debug)));

@@ -13,7 +13,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Adder to print the sum of 1234 and 5678"
-                .f(() => script = ScriptFile.Create(scenario, true).WriteLine(
+                .f(() => script = new ScriptFile(scenario).WriteLine(
                     @"Console.WriteLine(Require<Adder>().Add(1234, 5678));"));
 
             "When I install ScriptCs.Adder"

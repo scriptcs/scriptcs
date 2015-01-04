@@ -20,27 +20,14 @@
             FileSystem.EnsureDirectoryCreated(rootDirectory);
         }
 
-        private ScriptFile(string scenario, bool createDirectory)
+        public ScriptFile(string scenario)
         {
-            if (createDirectory)
-            {
-                _directory = Path.Combine(rootDirectory, scenario);
-                FileSystem.EnsureDirectoryDeleted(_directory);
-                FileSystem.EnsureDirectoryCreated(_directory);
-            }
-            else
-            {
-                _directory = rootDirectory;
-
-            }
+            _directory = Path.Combine(rootDirectory, scenario);
+            FileSystem.EnsureDirectoryDeleted(_directory);
+            FileSystem.EnsureDirectoryCreated(_directory);
 
             File.Delete(_path = Path.Combine(_directory, _name = string.Concat(scenario, ".csx")));
             File.Delete(_log = Path.Combine(_directory, string.Concat(scenario, ".log")));
-        }
-
-        public static ScriptFile Create(string scenario, bool createDirectory = false)
-        {
-            return new ScriptFile(scenario, createDirectory);
         }
 
         public ScriptFile WriteLine(string code)
