@@ -9,10 +9,10 @@
     {
         private static readonly string rootDirectory = "scenarios";
 
-        private readonly string path;
-        private readonly string name;
-        private readonly string log;
-        private readonly string directory;
+        private readonly string _path;
+        private readonly string _name;
+        private readonly string _log;
+        private readonly string _directory;
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "They are initialized inline. The constructor does other things.")]
         static ScriptFile()
@@ -24,18 +24,18 @@
         {
             if (createDirectory)
             {
-                this.directory = Path.Combine(rootDirectory, scenario);
-                FileSystem.EnsureDirectoryDeleted(directory);
-                FileSystem.EnsureDirectoryCreated(directory);
+                _directory = Path.Combine(rootDirectory, scenario);
+                FileSystem.EnsureDirectoryDeleted(_directory);
+                FileSystem.EnsureDirectoryCreated(_directory);
             }
             else
             {
-                this.directory = rootDirectory;
+                _directory = rootDirectory;
 
             }
 
-            File.Delete(this.path = Path.Combine(directory, this.name = string.Concat(scenario, ".csx")));
-            File.Delete(this.log = Path.Combine(directory, string.Concat(scenario, ".log")));
+            File.Delete(_path = Path.Combine(_directory, _name = string.Concat(scenario, ".csx")));
+            File.Delete(_log = Path.Combine(_directory, string.Concat(scenario, ".log")));
         }
 
         public static ScriptFile Create(string scenario, bool createDirectory = false)
@@ -45,7 +45,7 @@
 
         public ScriptFile WriteLine(string code)
         {
-            using (var writer = new StreamWriter(this.path, true))
+            using (var writer = new StreamWriter(_path, true))
             {
                 writer.WriteLine(code);
                 writer.Flush();
@@ -79,12 +79,12 @@
                 : new string[0];
 
             return ScriptCsExe.Execute(
-                new[] { this.name }.Concat(debugArgs).Concat(args), scriptArgs, this.log, directory);
+                new[] { _name }.Concat(debugArgs).Concat(args), scriptArgs, _log, _directory);
         }
 
         public string Install(string package)
         {
-            var nugetConfig = Path.Combine(this.directory, "scriptcs_nuget.config");
+            var nugetConfig = Path.Combine(_directory, "scriptcs_nuget.config");
             File.Delete(nugetConfig);
             using (var writer = new StreamWriter(nugetConfig))
             {
@@ -104,7 +104,7 @@
                 writer.Flush();
             }
 
-            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, new string[0], this.log, this.directory);
+            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, new string[0], _log, _directory);
         }
     }
 }
