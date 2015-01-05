@@ -60,7 +60,7 @@ namespace ScriptCs.Tests
                 fileSystemMock.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
                 fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
                 fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
-                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new[] { assemblyFile });
+                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.TopDirectoryOnly)).Returns(new[] { assemblyFile });
 
                 assemblyUtilityMock.Setup(x => x.IsManagedAssembly(assemblyFile)).Returns(true);
 
@@ -87,7 +87,8 @@ namespace ScriptCs.Tests
                 fileSystemMock.Setup(x => x.DirectoryExists(binFolder)).Returns(true);
                 fileSystemMock.SetupGet(x => x.PackagesFolder).Returns("packages");
                 fileSystemMock.SetupGet(x => x.BinFolder).Returns("bin");
-                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.AllDirectories))
+                fileSystemMock.Setup(x => x.EnumerateFiles(binFolder, It.IsAny<string>(), SearchOption.TopDirectoryOnly
+                    ))
                     .Returns(new[] { managed, nonManaged });
 
                 assemblyUtilityMock.Setup(x => x.IsManagedAssembly(managed)).Returns(true);
