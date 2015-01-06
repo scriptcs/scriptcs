@@ -44,6 +44,9 @@
       <Link>Support\Guard.cs</Link>
     </Compile>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="WorkDirectoryCleaning.cs" />
+    <Compile Include="PackageSaving.cs" />
+    <Compile Include="PackageInstallation.cs" />
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />

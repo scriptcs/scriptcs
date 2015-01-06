@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using Should;
 
     public class ScriptDirectory
     {
@@ -30,9 +31,36 @@
             _log = Path.Combine(_directory, string.Concat(scenario, ".log"));
         }
 
+        public virtual string BinFolder
+        {
+            get { return Path.GetFullPath(Path.Combine(this._directory, "scriptcs_bin")); }
+        }
+
+        public virtual string DllCacheFolder
+        {
+            get { return Path.GetFullPath(Path.Combine(this._directory, ".scriptcs_cache")); }
+        }
+
+        public virtual string PackagesFile
+        {
+            get { return Path.GetFullPath(Path.Combine(this._directory, "scriptcs_packages.config")); }
+        }
+
+        public virtual string PackagesFolder
+        {
+            get { return Path.GetFullPath(Path.Combine(this._directory, "scriptcs_packages")); }
+        }
+
+        public virtual string NugetFile
+        {
+            get { return Path.GetFullPath(Path.Combine(this._directory, "scriptcs_nuget.config")); }
+        }
+
         public ScriptDirectory WriteLine(string fileName, string text)
         {
-            using (var writer = new StreamWriter(Path.Combine(_directory, fileName), true))
+            fileName = Path.Combine(_directory, fileName);
+            FileSystem.EnsureDirectoryCreated(Path.GetDirectoryName(fileName));
+            using (var writer = new StreamWriter(fileName, true))
             {
                 writer.WriteLine(text);
                 writer.Flush();
@@ -71,9 +99,8 @@
 
         public string Install(string package)
         {
-            var nugetConfig = Path.Combine(_directory, "scriptcs_nuget.config");
-            File.Delete(nugetConfig);
-            using (var writer = new StreamWriter(nugetConfig))
+            File.Delete(this.NugetFile);
+            using (var writer = new StreamWriter(this.NugetFile))
             {
                 writer.Write(
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -92,6 +119,25 @@
             }
 
             return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, _log, _directory);
+        }
+
+        public void InstallManually(string package)
+        {
+            this.Install(package);
+            File.Delete(this.PackagesFile);
+            File.Delete(this.NugetFile);
+            File.Exists(this.PackagesFile).ShouldBeFalse(this.PackagesFile + " should not exist");
+            File.Exists(this.NugetFile).ShouldBeFalse(this.NugetFile + " should not exist");
+        }
+
+        public string Save()
+        {
+            return ScriptCsExe.Execute(new[] { "-save" }, new string[0], _log, _directory);
+        }
+
+        public string Clean()
+        {
+            return ScriptCsExe.Execute(new[] { "-clean" }, new string[0], _log, _directory);
         }
 
         public string Execute(string arg)
