@@ -18,7 +18,7 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => directory = new ScriptDirectory(scenario));
 
             "When I execute scriptcs.exe with an argument of '-unknownoption'"
-                .f(() => exception = Record.Exception(() => directory.ExecuteScriptCsExe("-unknownoption")));
+                .f(() => exception = Record.Exception(() => directory.Execute("-unknownoption")));
 
             "Then the process errors"
                 .f(() => exception.ShouldNotBeNull());

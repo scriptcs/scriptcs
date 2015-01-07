@@ -12,7 +12,10 @@
         private readonly string _directory;
         private readonly string _log;
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "They are initialized inline. The constructor does other things.")]
+        [SuppressMessage(
+            "Microsoft.Performance",
+            "CA1810:InitializeReferenceTypeStaticFieldsInline",
+            Justification = "They are initialized inline. The constructor does other things.")]
         static ScriptDirectory()
         {
             FileSystem.EnsureDirectoryCreated(rootDirectory);
@@ -27,33 +30,33 @@
             _log = Path.Combine(_directory, string.Concat(scenario, ".log"));
         }
 
-        public ScriptDirectory WriteLine(string scriptName, string code)
+        public ScriptDirectory WriteLine(string fileName, string text)
         {
-            using (var writer = new StreamWriter(Path.Combine(_directory, scriptName), true))
+            using (var writer = new StreamWriter(Path.Combine(_directory, fileName), true))
             {
-                writer.WriteLine(code);
+                writer.WriteLine(text);
                 writer.Flush();
             }
 
             return this;
         }
 
-        public string Execute(string scriptName)
+        public string RunScript(string scriptName)
         {
-            return Execute(scriptName, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+            return RunScript(scriptName, Enumerable.Empty<string>(), Enumerable.Empty<string>());
         }
 
-        public string Execute(string scriptName, IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        public string RunScript(string scriptName, IEnumerable<string> args, IEnumerable<string> scriptArgs)
         {
-            return Execute(scriptName, true, args, scriptArgs);
+            return RunScript(scriptName, true, args, scriptArgs);
         }
 
-        public string Execute(string scriptName, bool debug)
+        public string RunScript(string scriptName, bool debug)
         {
-            return Execute(scriptName, debug, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+            return RunScript(scriptName, debug, Enumerable.Empty<string>(), Enumerable.Empty<string>());
         }
 
-        public string Execute(string scriptName,bool debug, IEnumerable<string> args, IEnumerable<string> scriptArgs)
+        public string RunScript(string scriptName, bool debug, IEnumerable<string> args, IEnumerable<string> scriptArgs)
         {
             var debugArgs =
                     debug &&
@@ -64,11 +67,6 @@
 
             return ScriptCsExe.Execute(
                 new[] { scriptName }.Concat(debugArgs).Concat(args), scriptArgs, _log, _directory);
-        }
-
-        public string ExecuteScriptCsExe(string arg)
-        {
-            return ScriptCsExe.Execute(new[] { arg }, Enumerable.Empty<string>(), _log, _directory);
         }
 
         public string Install(string package)
@@ -93,12 +91,17 @@
                 writer.Flush();
             }
 
-            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, new string[0], _log, _directory);
+            return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, _log, _directory);
         }
 
         public string Migrate()
         {
-            return ScriptCsExe.Execute(new[] { "-migrate" }, new string[0], _log, _directory);
+            return ScriptCsExe.Execute("-migrate", _log, _directory);
+        }
+
+        public string Execute(string arg)
+        {
+            return ScriptCsExe.Execute(arg, _log, _directory);
         }
 
         public ScriptDirectory AddDirectory(string path)

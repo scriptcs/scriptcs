@@ -21,7 +21,7 @@
                     .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => output = directory.Execute("foo.csx", debug));
+                .f(() => output = directory.RunScript("foo.csx", debug));
 
             "Then I see 'Hello world!'"
                 .f(() => output.ShouldContain("Hello world!"));
@@ -38,7 +38,7 @@
                 .f(() => directory = new ScriptDirectory(scenario).WriteLine("foo.csx", @"throw new Exception(""BOOM!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => ex = Record.Exception(() => directory.Execute("foo.csx", debug)));
+                .f(() => ex = Record.Exception(() => directory.RunScript("foo.csx", debug)));
 
             "Then the script fails"
                 .f(() => ex.ShouldNotBeNull());

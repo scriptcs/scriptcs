@@ -20,7 +20,7 @@
                 .f(() => directory.Install("ScriptCs.Adder.Local"));
 
             "And execute the script"
-                .f(() => output = directory.Execute("foo.csx"));
+                .f(() => output = directory.RunScript("foo.csx"));
 
             "Then I see 6912"
                 .f(() => output.ShouldContain("6912"));
