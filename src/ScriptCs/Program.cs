@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using PowerArgs;
 using ScriptCs.Argument;
 using ScriptCs.Command;
 using ScriptCs.Hosting;
@@ -12,7 +13,27 @@ namespace ScriptCs
         private static int Main(string[] args)
         {
             SetProfile();
-            var arguments = ParseArguments(args);
+            
+            ArgumentParseResult arguments;
+            var console = new ScriptConsole();
+            try
+            {
+                var parser = new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(console), new FileSystem());
+                arguments = parser.Parse(args);
+            }
+            catch(Exception ex)
+            {
+                console.WriteLine(ex.Message);
+                var options = new ArgUsageOptions { ShowPosition = false, ShowType = false };
+                var usage = ArgUsage.GetUsage<ScriptCsArgs>(options: options);
+                console.WriteLine(usage);
+                return 1;
+            }
+            finally
+            {
+                console.Exit();
+            }
+
             var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(arguments.CommandArguments, arguments.ScriptArguments);
             var factory = new CommandFactory(scriptServicesBuilder);
             var command = factory.CreateCommand(arguments.CommandArguments, arguments.ScriptArguments);
@@ -29,20 +50,6 @@ namespace ScriptCs
 
                 var startProfile = profileOptimizationType.GetMethod("StartProfile", BindingFlags.Public | BindingFlags.Static);
                 startProfile.Invoke(null, new object[] { typeof(Program).Assembly.GetName().Name + ".profile" });
-            }
-        }
-
-        private static ArgumentParseResult ParseArguments(string[] args)
-        {
-            var console = new ScriptConsole();
-            try
-            {
-                var parser = new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), new FileSystem());
-                return parser.Parse(args);
-            }
-            finally
-            {
-                console.Exit();
             }
         }
     }
