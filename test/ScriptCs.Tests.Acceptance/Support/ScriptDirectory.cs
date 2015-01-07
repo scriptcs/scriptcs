@@ -66,6 +66,11 @@
                 new[] { scriptName }.Concat(debugArgs).Concat(args), scriptArgs, _log, _directory);
         }
 
+        public string ExecuteScriptCsExe(string arg)
+        {
+            return ScriptCsExe.Execute(new[] { arg }, Enumerable.Empty<string>(), _log, _directory);
+        }
+
         public string Install(string package)
         {
             var nugetConfig = Path.Combine(_directory, "scriptcs_nuget.config");
