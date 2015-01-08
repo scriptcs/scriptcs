@@ -43,7 +43,6 @@
     <Compile Include="..\..\src\ScriptCs.Core\Guard.cs">
       <Link>Support\Guard.cs</Link>
     </Compile>
-    <Compile Include="Migration.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />

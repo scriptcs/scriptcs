@@ -94,30 +94,9 @@
             return ScriptCsExe.Execute(new[] { "-install", package, "-debug" }, _log, _directory);
         }
 
-        public string Migrate()
-        {
-            return ScriptCsExe.Execute("-migrate", _log, _directory);
-        }
-
         public string Execute(string arg)
         {
             return ScriptCsExe.Execute(arg, _log, _directory);
-        }
-
-        public ScriptDirectory AddDirectory(string path)
-        {
-            FileSystem.EnsureDirectoryCreated(Path.Combine(_directory, path));
-            return this;
-        }
-
-        public bool DirectoryExists(string path)
-        {
-            return Directory.Exists(Path.Combine(_directory, path));
-        }
-
-        public bool FileExists(string path)
-        {
-            return File.Exists(Path.Combine(_directory, path));
         }
     }
 }
