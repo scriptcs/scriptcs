@@ -48,6 +48,7 @@
     <Compile Include="DirectoryCleaning.cs" />
     <Compile Include="PackageSaving.cs" />
     <Compile Include="PackageInstallation.cs" />
+    <Compile Include="Migration.cs" />
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />
