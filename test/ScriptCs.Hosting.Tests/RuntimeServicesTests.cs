@@ -395,11 +395,6 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void MoveFolder(string source, string dest)
-                {
-                    throw new NotImplementedException();
-                }
-
                 public bool FileExists(string path)
                 {
                     throw new NotImplementedException();

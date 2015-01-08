@@ -38,8 +38,6 @@ namespace ScriptCs.Contracts
 
         void Move(string source, string dest);
 
-        void MoveFolder(string source, string dest);
-
         bool FileExists(string path);
 
         void FileDelete(string path);

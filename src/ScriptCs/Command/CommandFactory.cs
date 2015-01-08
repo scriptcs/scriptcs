@@ -143,11 +143,6 @@ namespace ScriptCs.Command
                 return new CompositeCommand(installCommand, new SaveCommand(packageAssemblyResolver, _fileSystem, logger));
             }
 
-            if (args.Migrate)
-            {
-                return new MigrateCommand(_fileSystem, logger);
-            }
-
             // NOTE (adamralph): no script name or command so assume REPL
             var scriptServices = _scriptServicesBuilder.Build();
             var replCommand = new ExecuteReplCommand(

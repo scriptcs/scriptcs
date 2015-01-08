@@ -98,7 +98,6 @@
     <Compile Include="Command\CrossAppDomainExecuteScriptCommand.cs" />
     <Compile Include="Command\FileWatcher.cs" />
     <Compile Include="Command\DeferredCreationCommand.cs" />
-    <Compile Include="Command\MigrateCommand.cs" />
     <Compile Include="Command\WatchScriptCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
     <Compile Include="Command\ShowUsageCommand.cs" />
