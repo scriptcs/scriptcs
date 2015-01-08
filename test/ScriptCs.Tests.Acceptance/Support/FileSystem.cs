@@ -3,6 +3,7 @@
     using System;
     using System.Globalization;
     using System.IO;
+    using Should;
 
     // NOTE (adamralph): difficult to believe the retry stuff is required, but it is. System.IO and the filesystem race.
     public static class FileSystem
@@ -99,6 +100,12 @@
 
                 break;
             }
+        }
+
+        public static void EnsureFileDeleted(string fileName)
+        {
+            File.Delete(fileName);
+            File.Exists(fileName).ShouldBeFalse(fileName + " should be deleted");
         }
     }
 }

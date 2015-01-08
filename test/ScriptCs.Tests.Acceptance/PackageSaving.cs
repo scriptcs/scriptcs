@@ -9,22 +9,23 @@
     public static class PackageSaving
     {
         [Scenario]
-        public static void SavingAPackage(ScriptDirectory directory, string output)
+        public static void SavingAPackage(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
-            "Given a script directory"
-                .f(() => directory = new ScriptDirectory(scenario));
+            "When I install ScriptCs.Adder manually"
+                .f(() =>
+                {
+                    ScriptCsExe.Install("ScriptCs.Adder.Local", directory = ScenarioDirectory.Create(scenario));
+                    directory.DeleteFile(ScriptCsExe.PackagesFile);
+                });
 
-            "When I install ScriptCs.Adder.Local manually"
-                .f(() => directory.InstallManually("ScriptCs.Adder.Local"));
+            "And I save packages"
+                .f(() => ScriptCsExe.Save(directory));
 
-            "When I save the package"
-                .f(() => directory.Save());
-
-            "Then packages file should contain an entry for ScriptCs.Adder.Local"
-                .f(() => File.ReadAllText(directory.PackagesFile).ShouldContain(
-                        @"<package id=""ScriptCs.Adder.Local"" version=""0.1.1"" targetFramework=""net45"" />"));
+            "Then ScriptCs.Adder is added to the packages file"
+                .f(() => File.ReadAllText(directory.Map(ScriptCsExe.PackagesFile)).ShouldContain(
+                    @"<package id=""ScriptCs.Adder.Local"" version=""0.1.1"" targetFramework=""net45"" />"));
         }
     }
 }

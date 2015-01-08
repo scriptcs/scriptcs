@@ -44,13 +44,14 @@
       <Link>Support\Guard.cs</Link>
     </Compile>
     <Compile Include="CommandLine.cs" />
-    <Compile Include="WorkDirectoryCleaning.cs" />
+    <Compile Include="Support\ScriptCsException.cs" />
+    <Compile Include="DirectoryCleaning.cs" />
     <Compile Include="PackageSaving.cs" />
     <Compile Include="PackageInstallation.cs" />
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />
-    <Compile Include="Support\ScriptDirectory.cs" />
+    <Compile Include="Support\ScenarioDirectory.cs" />
     <Compile Include="Support\ProcessStartInfoExtensions.cs" />
     <Compile Include="Support\FileSystem.cs" />
     <Compile Include="Support\MethodBaseExtensions.cs" />

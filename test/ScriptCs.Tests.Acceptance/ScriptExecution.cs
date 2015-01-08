@@ -12,16 +12,16 @@
         [Scenario]
         [Example(true)]
         [Example(false)]
-        public static void HelloWorld(bool debug, ScriptDirectory directory, string output)
+        public static void HelloWorld(bool debug, ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
-                .f(() => directory = new ScriptDirectory(scenario)
+                .f(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => output = directory.RunScript("foo.csx", debug));
+                .f(() => output = ScriptCsExe.Run("foo.csx", debug, directory));
 
             "Then I see 'Hello world!'"
                 .f(() => output.ShouldContain("Hello world!"));
@@ -30,21 +30,22 @@
         [Scenario]
         [Example(true)]
         [Example(false)]
-        public static void ScriptThrowsAnException(bool debug, ScriptDirectory directory, Exception ex)
+        public static void ScriptThrowsAnException(bool debug, ScenarioDirectory directory, Exception exception)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
-                .f(() => directory = new ScriptDirectory(scenario).WriteLine("foo.csx", @"throw new Exception(""BOOM!"");"));
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", @"throw new Exception(""BOOM!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => ex = Record.Exception(() => directory.RunScript("foo.csx", debug)));
+                .f(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", debug, directory)));
 
-            "Then the script fails"
-                .f(() => ex.ShouldNotBeNull());
+            "Then scriptcs fails"
+                .f(() => exception.ShouldBeType<ScriptCsException>());
 
             "And I see the exception message"
-                .f(() => ex.Message.ShouldContain("BOOM!"));
+                .f(() => exception.Message.ShouldContain("BOOM!"));
         }
     }
 }
