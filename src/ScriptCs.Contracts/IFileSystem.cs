@@ -14,6 +14,8 @@ namespace ScriptCs.Contracts
 
         void Copy(string source, string dest, bool overwrite);
 
+        void CopyDirectory(string source, string dest, bool overwrite);
+
         bool DirectoryExists(string path);
 
         void CreateDirectory(string path, bool hidden = false);
@@ -37,6 +39,8 @@ namespace ScriptCs.Contracts
         string GetWorkingDirectory(string path);
 
         void Move(string source, string dest);
+
+        void MoveDirectory(string source, string dest);
 
         bool FileExists(string path);
 

@@ -27,6 +27,24 @@ namespace ScriptCs
             File.Copy(source, dest, overwrite);
         }
 
+        public virtual void CopyDirectory(string source, string dest, bool overwrite)
+        {
+            if (!Directory.Exists(dest))
+            {
+                Directory.CreateDirectory(dest);
+            }
+
+            foreach (var file in Directory.GetFiles(source))
+            {
+                File.Copy(file, Path.Combine(dest, Path.GetFileName(file)), overwrite);
+            }
+
+            foreach (var directory in Directory.GetDirectories(source))
+            {
+                CopyDirectory(directory, Path.Combine(dest, Path.GetFileName(directory)), overwrite);
+            }
+        }
+
         public virtual bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
@@ -81,6 +99,11 @@ namespace ScriptCs
         public virtual void Move(string source, string dest)
         {
             File.Move(source, dest);
+        }
+
+        public virtual void MoveDirectory(string source, string dest)
+        {
+            Directory.Move(source, dest);
         }
 
         public virtual bool FileExists(string path)

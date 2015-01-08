@@ -68,7 +68,8 @@ namespace ScriptCs.Command
                     replScriptServices.Repl,
                     replScriptServices.Logger,
                     replScriptServices.Console,
-                    replScriptServices.AssemblyResolver);
+                    replScriptServices.AssemblyResolver,
+                    replScriptServices.FileSystemMigrator);
 
                 return explicitReplCommand;
             }
@@ -88,7 +89,8 @@ namespace ScriptCs.Command
                         _fileSystem,
                         packageAssemblyResolver,
                         _initializationServices.GetPackageInstaller(),
-                        logger);
+                        logger,
+                        _scriptServicesBuilder.Build().FileSystemMigrator);
 
                     var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
                         CreateScriptCommand(
@@ -104,7 +106,8 @@ namespace ScriptCs.Command
 
             if (args.Clean)
             {
-                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, logger);
+                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
+                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, logger, fileSystemMigrator);
 
                 if (args.Global)
                 {
@@ -116,12 +119,12 @@ namespace ScriptCs.Command
                     }
                 }
 
-                return new CompositeCommand(saveCommand, new CleanCommand(args.ScriptName, _fileSystem, logger));
+                return new CompositeCommand(saveCommand, new CleanCommand(args.ScriptName, _fileSystem, logger, fileSystemMigrator));
             }
 
             if (args.Save)
             {
-                return new SaveCommand(packageAssemblyResolver, _fileSystem, logger);
+                return new SaveCommand(packageAssemblyResolver, _fileSystem, logger, _scriptServicesBuilder.Build().FileSystemMigrator);
             }
 
             if (args.Version)
@@ -131,6 +134,8 @@ namespace ScriptCs.Command
 
             if (args.Install != null)
             {
+                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
+
                 var installCommand = new InstallCommand(
                     args.Install,
                     args.PackageVersion,
@@ -138,9 +143,10 @@ namespace ScriptCs.Command
                     _fileSystem,
                     packageAssemblyResolver,
                     _initializationServices.GetPackageInstaller(),
-                    logger);
+                    logger,
+                    fileSystemMigrator);
 
-                return new CompositeCommand(installCommand, new SaveCommand(packageAssemblyResolver, _fileSystem, logger));
+                return new CompositeCommand(installCommand, new SaveCommand(packageAssemblyResolver, _fileSystem, logger, fileSystemMigrator));
             }
 
             // NOTE (adamralph): no script name or command so assume REPL
@@ -153,7 +159,8 @@ namespace ScriptCs.Command
                 scriptServices.Repl,
                 scriptServices.Logger,
                 scriptServices.Console,
-                scriptServices.AssemblyResolver);
+                scriptServices.AssemblyResolver,
+                scriptServices.FileSystemMigrator);
 
             return replCommand;
         }
@@ -167,7 +174,8 @@ namespace ScriptCs.Command
                     scriptArgs,
                     scriptServices.Console,
                     scriptServices.FileSystem,
-                    scriptServices.Logger)
+                    scriptServices.Logger,
+                    scriptServices.FileSystemMigrator)
                 : new ExecuteScriptCommand(
                     args.ScriptName,
                     scriptArgs,
@@ -175,7 +183,8 @@ namespace ScriptCs.Command
                     scriptServices.Executor,
                     scriptServices.ScriptPackResolver,
                     scriptServices.Logger,
-                    scriptServices.AssemblyResolver);
+                    scriptServices.AssemblyResolver,
+                    scriptServices.FileSystemMigrator);
         }
     }
 }

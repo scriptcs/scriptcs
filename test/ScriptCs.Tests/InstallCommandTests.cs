@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
@@ -24,7 +25,8 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IPackageInstaller> packageInstaller,
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                [Frozen] Mock<IInitializationServices> initializationServices)
+                [Frozen] Mock<IInitializationServices> initializationServices,
+                ScriptServices services)
             {
                 // Arrange
                 var args = new ScriptCsArgs { AllowPreRelease = false, Install = "mypackage", ScriptName = null };
@@ -38,6 +40,7 @@ namespace ScriptCs.Tests
                 initializationServices.Setup(i => i.GetPackageInstaller()).Returns(packageInstaller.Object);
                 initializationServices.Setup(i => i.GetPackageAssemblyResolver()).Returns(resolver.Object);
 
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
                 var factory = fixture.Create<CommandFactory>();
 
@@ -56,7 +59,8 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IPackageInstaller> packageInstaller,
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                [Frozen] Mock<IInitializationServices> initServices)
+                [Frozen] Mock<IInitializationServices> initServices,
+                ScriptServices services)
             {
                 // Arrange
                 var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = null };
@@ -70,6 +74,7 @@ namespace ScriptCs.Tests
                 initServices.Setup(i => i.GetPackageInstaller()).Returns(packageInstaller.Object);
                 initServices.Setup(i => i.GetPackageAssemblyResolver()).Returns(resolver.Object);
                 
+                servicesBuilder.Setup(b => b.Build()).Returns(services);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initServices.Object);
       
                 resolver.Setup(i => i.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference>
@@ -84,6 +89,28 @@ namespace ScriptCs.Tests
 
                 // Assert
                 packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 2), It.IsAny<bool>()), Times.Once());
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void MigratesTheFileSystem(
+                [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator)
+            {
+                // Arrange
+                var sut = new InstallCommand(
+                    null,
+                    null,
+                    false,
+                    fileSystem.Object,
+                    new Mock<IPackageAssemblyResolver>().Object,
+                    new Mock<IPackageInstaller>().Object,
+                    new Mock<ILog>().Object,
+                    fileSystemMigrator.Object);
+
+                // Act
+                sut.Execute();
+
+                // Assert
+                fileSystemMigrator.Verify(m => m.Migrate(), Times.Once);
             }
         }
     }

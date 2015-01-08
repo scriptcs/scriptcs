@@ -191,6 +191,28 @@ namespace ScriptCs.Tests
                 result.ShouldEqual(CommandResult.Error);
                 logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
             }
+
+            [Theory, ScriptCsAutoData]
+            public void MigratesTheFileSystem(
+                [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator)
+            {
+                // Arrange
+                var sut = new ExecuteScriptCommand(
+                    null,
+                    null,
+                    fileSystem.Object,
+                    new Mock<IScriptExecutor>().Object,
+                    new Mock<IScriptPackResolver>().Object,
+                    new Mock<ILog>().Object,
+                    new Mock<IAssemblyResolver>().Object,
+                    fileSystemMigrator.Object);
+
+                // Act
+                sut.Execute();
+
+                // Assert
+                fileSystemMigrator.Verify(m => m.Migrate(), Times.Once);
+            }
         }
     }
 }

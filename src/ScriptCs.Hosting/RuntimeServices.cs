@@ -95,6 +95,9 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IConsole>(
                 builder, b => b.RegisterInstance(_console));
 
+            RegisterOverrideOrDefault<IFileSystemMigrator>(
+                builder, b => b.RegisterType<FileSystemMigrator>().As<IFileSystemMigrator>().SingleInstance());
+
             var assemblyResolver = _initializationServices.GetAssemblyResolver();
 
             if (_initDirectoryCatalog)

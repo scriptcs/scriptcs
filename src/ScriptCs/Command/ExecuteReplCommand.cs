@@ -14,6 +14,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IConsole _console;
         private readonly ILog _logger;
+        private readonly IFileSystemMigrator _fileSystemMigrator;
 
         public ExecuteReplCommand(
             string scriptName,
@@ -23,9 +24,11 @@ namespace ScriptCs.Command
             IRepl repl,
             ILog logger,
             IConsole console,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            IFileSystemMigrator fileSystemMigrator)
         {
             Guard.AgainstNullArgument("repl", repl);
+            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -35,6 +38,7 @@ namespace ScriptCs.Command
             _logger = logger;
             _console = console;
             _assemblyResolver = assemblyResolver;
+            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public string[] ScriptArgs
@@ -44,6 +48,8 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
+            _fileSystemMigrator.Migrate();
+
             _console.WriteLine("scriptcs (ctrl-c to exit)" + Environment.NewLine);
 
             var workingDirectory = _fileSystem.CurrentDirectory;

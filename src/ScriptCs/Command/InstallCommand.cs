@@ -23,6 +23,8 @@ namespace ScriptCs.Command
 
         private readonly ILog _logger;
 
+        private readonly IFileSystemMigrator _fileSystemMigrator;
+
         public InstallCommand(
             string name,
             string version,
@@ -30,8 +32,11 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IPackageInstaller packageInstaller,
-            ILog logger)
+            ILog logger,
+            IFileSystemMigrator fileSystemMigrator)
         {
+            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
+
             _name = name;
             _version = version ?? "";
             _allowPre = allowPre;
@@ -39,10 +44,13 @@ namespace ScriptCs.Command
             _packageAssemblyResolver = packageAssemblyResolver;
             _packageInstaller = packageInstaller;
             _logger = logger;
+            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public CommandResult Execute()
         {
+            _fileSystemMigrator.Migrate();
+
             var workingDirectory = _fileSystem.CurrentDirectory;
             _logger.Info("Installing packages...");
             _logger.TraceFormat("Packages folder: {0}", Path.Combine(workingDirectory, "Packages"));

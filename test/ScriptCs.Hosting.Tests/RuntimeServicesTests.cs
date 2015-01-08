@@ -334,6 +334,11 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
+                public void CopyDirectory(string source, string dest, bool overwrite)
+                {
+                    throw new NotImplementedException();
+                }
+
                 public bool DirectoryExists(string path)
                 {
                     throw new NotImplementedException();
@@ -391,6 +396,11 @@ namespace ScriptCs.Hosting.Tests
                 }
 
                 public void Move(string source, string dest)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void MoveDirectory(string source, string dest)
                 {
                     throw new NotImplementedException();
                 }

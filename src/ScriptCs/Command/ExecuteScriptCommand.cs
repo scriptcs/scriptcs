@@ -20,6 +20,8 @@ namespace ScriptCs.Command
         private readonly string _script;
 
         private readonly ILog _logger;
+        
+        private readonly IFileSystemMigrator _fileSystemMigrator;
 
         public ExecuteScriptCommand(string script,
             string[] scriptArgs,
@@ -27,8 +29,11 @@ namespace ScriptCs.Command
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
             ILog logger,
-            IAssemblyResolver assemblyResolver)
+            IAssemblyResolver assemblyResolver,
+            IFileSystemMigrator fileSystemMigrator)
         {
+            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
+
             _script = script;
             _fileSystem = fileSystem;
             ScriptArgs = scriptArgs;
@@ -36,6 +41,7 @@ namespace ScriptCs.Command
             _scriptPackResolver = scriptPackResolver;
             _logger = logger;
             _assemblyResolver = assemblyResolver;
+            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -44,6 +50,8 @@ namespace ScriptCs.Command
         {
             try
             {
+                _fileSystemMigrator.Migrate();
+
                 var assemblyPaths = Enumerable.Empty<string>();
 
                 var workingDirectory = _fileSystem.GetWorkingDirectory(_script);

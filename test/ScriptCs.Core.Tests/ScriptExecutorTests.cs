@@ -36,7 +36,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedBaseDirectory = Path.Combine(currentDirectory, "bin");
+                string expectedBaseDirectory = Path.Combine(currentDirectory, "scriptcs_bin");
                 expectedBaseDirectory.ShouldEqual(scriptEngine.Object.BaseDirectory);
             }
 
@@ -60,7 +60,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(paths, recipes);
 
                 // assert
-                string expectedCacheDirectory = Path.Combine(currentDirectory, ".cache");
+                string expectedCacheDirectory = Path.Combine(currentDirectory, ".scriptcs_cache");
                 expectedCacheDirectory.ShouldEqual(scriptEngine.Object.CacheDirectory);
             }
 

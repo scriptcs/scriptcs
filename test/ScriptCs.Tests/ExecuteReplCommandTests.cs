@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Common.Logging;
 using Moq;
 
+using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Xunit;
 
 using ScriptCs.Command;
@@ -116,6 +118,32 @@ namespace ScriptCs.Tests
                 // Assert
                 scriptEngine.Verify(
                     x => x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(), It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()), Times.Never());
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void MigratesTheFileSystem(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IConsole> console,
+                [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator)
+            {
+                // Arrange
+                console.Setup(c => c.ReadLine()).Throws(new Exception());
+                var sut = new ExecuteReplCommand(
+                    null,
+                    null,
+                    fileSystem.Object,
+                    new Mock<IScriptPackResolver>().Object,
+                    new Mock<IRepl>().Object,
+                    new Mock<ILog>().Object,
+                    console.Object,
+                    new Mock<IAssemblyResolver>().Object,
+                    fileSystemMigrator.Object);
+
+                // Act
+                sut.Execute();
+
+                // Assert
+                fileSystemMigrator.Verify(m => m.Migrate(), Times.Once);
             }
         }
     }

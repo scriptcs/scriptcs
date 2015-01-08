@@ -14,19 +14,25 @@ namespace ScriptCs.Command
 
         private readonly ILog _logger;
 
-        public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger)
+        private readonly IFileSystemMigrator _fileSystemMigrator;
+
+        public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger, IFileSystemMigrator fileSystemMigrator)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
+            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
             _scriptName = scriptName;
             _fileSystem = fileSystem;
             _logger = logger;
+            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public CommandResult Execute()
         {
+            _fileSystemMigrator.Migrate();
+
             _logger.Info("Cleaning initiated...");
 
             var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
