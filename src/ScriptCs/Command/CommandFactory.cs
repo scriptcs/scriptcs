@@ -38,7 +38,7 @@ namespace ScriptCs.Command
 
             if (args.Help)
             {
-                return new ShowUsageCommand(_initializationServices.Logger, true);
+                return new ShowUsageCommand(_initializationServices.Logger);
             }
 
             if (args.Global)
