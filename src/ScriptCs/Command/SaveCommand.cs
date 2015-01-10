@@ -34,9 +34,9 @@ namespace ScriptCs.Command
             {
                 _packageAssemblyResolver.SavePackages();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.ErrorFormat("Save failed: {0}.", e, e.Message);
+                _logger.ErrorFormat("Package saving failed: {0}.", ex, ex.Message);
                 return CommandResult.Error;
             }
 

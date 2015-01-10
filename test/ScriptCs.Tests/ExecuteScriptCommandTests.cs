@@ -119,7 +119,8 @@ namespace ScriptCs.Tests
 
                 // Assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+                logger.Verify(
+                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
             }
 
             [Theory, ScriptCsAutoData]
@@ -157,7 +158,8 @@ namespace ScriptCs.Tests
 
                 // Assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+                logger.Verify(
+                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
             }
 
             [Theory, ScriptCsAutoData]

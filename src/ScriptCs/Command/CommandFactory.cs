@@ -22,13 +22,13 @@ namespace ScriptCs.Command
             if (_fileSystem.PackagesFile == null)
             {
                 throw new ArgumentException(
-                    "The file system provided by the initialization services provided by the script services builder has a null packages file.");
+                    "The file system provided by the initialization services provided by the script services builder has a null packages file.", "scriptServicesBuilder");
             }
 
             if (_fileSystem.PackagesFolder == null)
             {
                 throw new ArgumentException(
-                    "The file system provided by the initialization services provided by the script services builder has a null package folder.");
+                    "The file system provided by the initialization services provided by the script services builder has a null package folder.", "scriptServicesBuilder");
             }
         }
 
@@ -36,12 +36,9 @@ namespace ScriptCs.Command
         {
             Guard.AgainstNullArgument("args", args);
 
-            var logger = _initializationServices.Logger;
-            var packageAssemblyResolver = _initializationServices.GetPackageAssemblyResolver();
-
             if (args.Help)
             {
-                return new ShowUsageCommand(logger, true);
+                return new ShowUsageCommand(_initializationServices.Logger, true);
             }
 
             if (args.Global)
@@ -87,9 +84,9 @@ namespace ScriptCs.Command
                         null,
                         true,
                         _fileSystem,
-                        packageAssemblyResolver,
+                        _initializationServices.GetPackageAssemblyResolver(),
                         _initializationServices.GetPackageInstaller(),
-                        logger,
+                        _initializationServices.Logger,
                         _scriptServicesBuilder.Build().FileSystemMigrator);
 
                     var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
@@ -107,7 +104,11 @@ namespace ScriptCs.Command
             if (args.Clean)
             {
                 var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
-                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, logger, fileSystemMigrator);
+                var saveCommand = new SaveCommand(
+                    _initializationServices.GetPackageAssemblyResolver(),
+                    _fileSystem,
+                    _initializationServices.Logger,
+                    fileSystemMigrator);
 
                 if (args.Global)
                 {
@@ -119,12 +120,19 @@ namespace ScriptCs.Command
                     }
                 }
 
-                return new CompositeCommand(saveCommand, new CleanCommand(args.ScriptName, _fileSystem, logger, fileSystemMigrator));
+                var cleanCommand = new CleanCommand(
+                    args.ScriptName, _fileSystem, _initializationServices.Logger, fileSystemMigrator);
+
+                return new CompositeCommand(saveCommand, cleanCommand);
             }
 
             if (args.Save)
             {
-                return new SaveCommand(packageAssemblyResolver, _fileSystem, logger, _scriptServicesBuilder.Build().FileSystemMigrator);
+                return new SaveCommand(
+                    _initializationServices.GetPackageAssemblyResolver(),
+                    _fileSystem,
+                    _initializationServices.Logger,
+                    _scriptServicesBuilder.Build().FileSystemMigrator);
             }
 
             if (args.Version)
@@ -134,6 +142,7 @@ namespace ScriptCs.Command
 
             if (args.Install != null)
             {
+                var packageAssemblyResolver = _initializationServices.GetPackageAssemblyResolver();
                 var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
 
                 var installCommand = new InstallCommand(
@@ -143,10 +152,13 @@ namespace ScriptCs.Command
                     _fileSystem,
                     packageAssemblyResolver,
                     _initializationServices.GetPackageInstaller(),
-                    logger,
+                    _initializationServices.Logger,
                     fileSystemMigrator);
 
-                return new CompositeCommand(installCommand, new SaveCommand(packageAssemblyResolver, _fileSystem, logger, fileSystemMigrator));
+                var saveCommand = new SaveCommand(
+                    packageAssemblyResolver, _fileSystem, _initializationServices.Logger, fileSystemMigrator);
+
+                return new CompositeCommand(installCommand, saveCommand);
             }
 
             // NOTE (adamralph): no script name or command so assume REPL

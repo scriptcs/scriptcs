@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -12,17 +11,11 @@ namespace ScriptCs.Command
     {
         private readonly string _name;
         private readonly string _version;
-
         private readonly bool _allowPre;
-
         private readonly IFileSystem _fileSystem;
-
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
-
         private readonly IPackageInstaller _packageInstaller;
-
         private readonly ILog _logger;
-
         private readonly IFileSystemMigrator _fileSystemMigrator;
 
         public InstallCommand(
@@ -38,7 +31,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
             _name = name;
-            _version = version ?? "";
+            _version = version ?? string.Empty;
             _allowPre = allowPre;
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
@@ -51,22 +44,17 @@ namespace ScriptCs.Command
         {
             _fileSystemMigrator.Migrate();
 
-            var workingDirectory = _fileSystem.CurrentDirectory;
             _logger.Info("Installing packages...");
-            _logger.TraceFormat("Packages folder: {0}", Path.Combine(workingDirectory, "Packages"));
- 
-            var packages = GetPackages(workingDirectory);
-            
+            var packages = GetPackages(_fileSystem.CurrentDirectory);
             try
             {
                 _packageInstaller.InstallPackages(packages, _allowPre);
-
-                _logger.Info("Installation completed successfully.");
+                _logger.Info("Package installation succeeded.");
                 return CommandResult.Success;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.ErrorFormat("Installation failed: {0}.", e.Message);
+                _logger.ErrorFormat("Package installation failed: {0}.", ex, ex.Message);
                 return CommandResult.Error;
             }
         }
