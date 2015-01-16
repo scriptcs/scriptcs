@@ -10,6 +10,16 @@
     {
         private static readonly bool isMono = Type.GetType("Mono.Runtime") != null;
 
+        public static string Execute(string arg, string logFile, string workingDirectory)
+        {
+            return Execute(new[] { arg }, Enumerable.Empty<string>(), logFile, workingDirectory);
+        }
+
+        public static string Execute(IEnumerable<string> args, string logFile, string workingDirectory)
+        {
+            return Execute(args, Enumerable.Empty<string>(), logFile, workingDirectory);
+        }
+
         public static string Execute(
             IEnumerable<string> args, IEnumerable<string> scriptArgs, string logFile, string workingDirectory)
         {

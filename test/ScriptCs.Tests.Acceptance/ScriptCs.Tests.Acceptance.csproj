@@ -44,6 +44,7 @@
       <Link>Support\Guard.cs</Link>
     </Compile>
     <Compile Include="Migration.cs" />
+    <Compile Include="CommandLine.cs" />
     <Compile Include="ScriptPacks.cs" />
     <Compile Include="ScriptExecution.cs" />
     <Compile Include="Support\ScriptCsExe.cs" />
