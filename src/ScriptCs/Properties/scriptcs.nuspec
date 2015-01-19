@@ -19,10 +19,9 @@
   </metadata>
   <files>
     <file src="Properties\chocolateyInstall.ps1" target="tools" />
-    <file src="Properties\chocolateyUninstall.ps1" target="tools" />
-    <file src="bin\$configuration$\scriptcs.exe" target="tools/scriptcs" />
-    <file src="bin\$configuration$\scriptcs.exe.config" target="tools/scriptcs" />
-    <file src="bin\$configuration$\*.dll" target="tools/scriptcs" />
-    <file src="bin\$configuration$\*.pdb" target="tools/scriptcs" />
+    <file src="bin\$configuration$\scriptcs.exe" target="tools" />
+    <file src="bin\$configuration$\scriptcs.exe.config" target="tools" />
+    <file src="bin\$configuration$\*.dll" target="tools" />
+    <file src="bin\$configuration$\*.pdb" target="tools" />
   </files>
 </package>
