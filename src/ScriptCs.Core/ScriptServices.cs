@@ -19,6 +19,7 @@ namespace ScriptCs
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IEnumerable<IReplCommand> replCommands,
+            IFileSystemMigrator fileSystemMigrator,
             IConsole console = null,
             IInstallationProvider installationProvider = null)
         {
@@ -36,6 +37,7 @@ namespace ScriptCs
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
             ReplCommands = replCommands;
+            FileSystemMigrator = fileSystemMigrator;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -52,5 +54,6 @@ namespace ScriptCs
         public IAssemblyResolver AssemblyResolver { get; private set; }
         public IInstallationProvider InstallationProvider { get; private set; }
         public IEnumerable<IReplCommand> ReplCommands { get; private set; }
+        public IFileSystemMigrator FileSystemMigrator { get; private set; }
     }
 }

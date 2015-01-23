@@ -14,10 +14,13 @@ namespace ScriptCs.Tests
             fixture.Register<Mock<IFileSystem>>(() =>
                 {
                     var fileSystem = new Mock<IFileSystem>();
-                    fileSystem.SetupGet(f => f.PackagesFile).Returns("packages.config");
-                    fileSystem.SetupGet(f => f.PackagesFolder).Returns("packages");
-                    fileSystem.SetupGet(f => f.BinFolder).Returns("bin");
-                    fileSystem.SetupGet(f => f.DllCacheFolder).Returns(".cache");
+                    fileSystem.SetupGet(f => f.PackagesFile).Returns("scriptcs_packages.config");
+                    fileSystem.SetupGet(f => f.PackagesFolder).Returns("scriptcs_packages");
+                    fileSystem.SetupGet(f => f.BinFolder).Returns("scriptcs_bin");
+                    fileSystem.SetupGet(f => f.DllCacheFolder).Returns(".scriptcs_cache");
+                    fileSystem.SetupGet(f => f.NugetFile).Returns("scriptcs_nuget.config");
+                    fileSystem.SetupGet(f => f.CurrentDirectory).Returns("workingdirectory");
+                    fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
                 });
         }

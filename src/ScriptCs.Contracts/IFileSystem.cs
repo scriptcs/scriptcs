@@ -6,13 +6,18 @@ namespace ScriptCs.Contracts
 {
     public interface IFileSystem
     {
-        IEnumerable<string> EnumerateFiles(string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
+        IEnumerable<string> EnumerateFiles(
+            string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
 
-        IEnumerable<string> EnumerateDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+        IEnumerable<string> EnumerateDirectories(
+            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
-        IEnumerable<string> EnumerateFilesAndDirectories(string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+        IEnumerable<string> EnumerateFilesAndDirectories(
+            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
         void Copy(string source, string dest, bool overwrite);
+
+        void CopyDirectory(string source, string dest, bool overwrite);
 
         bool DirectoryExists(string path);
 
@@ -38,7 +43,7 @@ namespace ScriptCs.Contracts
 
         void Move(string source, string dest);
 
-        void MoveFolder(string source, string dest);
+        void MoveDirectory(string source, string dest);
 
         bool FileExists(string path);
 

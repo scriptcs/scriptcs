@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -9,24 +8,31 @@ namespace ScriptCs.Command
     internal class CleanCommand : ICleanCommand
     {
         private readonly string _scriptName;
-
         private readonly IFileSystem _fileSystem;
-
         private readonly ILog _logger;
+        private readonly IFileSystemMigrator _fileSystemMigrator;
 
-        public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger)
+        public CleanCommand(
+            string scriptName, IFileSystem fileSystem, ILog logger, IFileSystemMigrator fileSystemMigrator)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
 
+            Guard.AgainstNullArgument("logger", logger);
+
+            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
+
             _scriptName = scriptName;
             _fileSystem = fileSystem;
             _logger = logger;
+            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public CommandResult Execute()
         {
+            _fileSystemMigrator.Migrate();
+
             _logger.Info("Cleaning initiated...");
 
             var workingDirectory = _fileSystem.GetWorkingDirectory(_scriptName);
@@ -52,12 +58,12 @@ namespace ScriptCs.Command
                     _fileSystem.DeleteDirectory(cacheFolder);
                 }
 
-                _logger.Info("Clean completed.");
+                _logger.Info("Cleaning completed.");
                 return CommandResult.Success;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.ErrorFormat("Clean failed: {0}.", e.Message);
+                _logger.ErrorFormat("Cleaning failed: {0}.", ex, ex.Message);
                 return CommandResult.Error;
             }
         }

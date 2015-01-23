@@ -10,4 +10,4 @@ using System.Runtime.InteropServices;
 
 [assembly: NeutralResourcesLanguage("en-US")]
 
-[assembly: InternalsVisibleTo("ScriptCs.Core.Tests")]
+[assembly: InternalsVisibleTo("ScriptCs.Tests")]
