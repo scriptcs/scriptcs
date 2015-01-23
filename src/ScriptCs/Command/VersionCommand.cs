@@ -19,7 +19,7 @@ namespace ScriptCs.Command
             var productVersion = FileVersionInfo
                 .GetVersionInfo(assembly.Location).ProductVersion;
 
-            _console.WriteAsciiArt(productVersion);
+            _console.WriteVersion(productVersion);
 
             return CommandResult.Success;
         }
