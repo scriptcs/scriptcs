@@ -85,11 +85,19 @@
     <Compile Include="MonoScriptEngine.cs" />
     <Compile Include="MonoHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Parser\Visitors\ClassTypeVisitor.cs" />
-    <Compile Include="Parser\Visitors\MethodVisitor.cs" />
-    <Compile Include="Parser\ParseResult.cs" />
-    <Compile Include="Parser\SyntaxParser.cs" />
-    <Compile Include="Parser\Visitors\MethodVisitorResult.cs" />
+    <Compile Include="Segmenter\Lexer\Token.cs" />
+    <Compile Include="Segmenter\Lexer\LexerResult.cs" />
+    <Compile Include="Segmenter\Lexer\ScriptLexer.cs" />
+    <Compile Include="Segmenter\Analyser\MethodResult.cs" />
+    <Compile Include="Segmenter\SegmentResult.cs" />
+    <Compile Include="Segmenter\SegmentType.cs" />
+    <Compile Include="Segmenter\ScriptSegmenter.cs" />
+    <Compile Include="Segmenter\Parser\RegionParser.cs" />
+    <Compile Include="Segmenter\Parser\RegionResult.cs" />
+    <Compile Include="Segmenter\Analyser\Visitors\ClassTypeVisitor.cs" />
+    <Compile Include="Segmenter\Analyser\Visitors\MethodVisitor.cs" />
+    <Compile Include="Segmenter\Analyser\Visitors\MethodVisitorResult.cs" />
+    <Compile Include="Segmenter\Analyser\CodeAnalyzer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
