@@ -30,7 +30,7 @@ namespace ScriptCs.Tests
 
                 var console = new ScriptConsole();
 
-                return new ArgumentHandler(new ArgumentParser(console), new ConfigFileParser(console), fs.Object);
+                return new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(console), fs.Object);
             }
 
             [Fact]

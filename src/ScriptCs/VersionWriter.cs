@@ -5,9 +5,12 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public static class AsciiArt
+    public static class VersionWriter
     {
-        public static void WriteAsciiArt(this IConsole console, string version)
+        private static readonly Regex colorRegex = new Regex(
+            @"\+(?<color>\w*)(?<ascii>(.*(?=\+))|.*)", RegexOptions.Compiled | RegexOptions.Singleline);
+
+        public static void WriteVersion(this IConsole console, string version)
         {
             Guard.AgainstNullArgument("console", console);
 
@@ -21,12 +24,9 @@ namespace ScriptCs
                 string.Format(@"+cyan                |_|+white Version: {0}", version)
             };
 
-            var colorRegex = new Regex(@"\+(?<color>\w*)(?<ascii>(.*(?=\+))|.*)",
-                RegexOptions.Compiled | RegexOptions.Singleline);
-
-            foreach (var matches in lines.Select(line => colorRegex.Matches(line))) 
+            foreach (var lineMatches in lines.Select(line => colorRegex.Matches(line)))
             {
-                foreach (Match match in matches)
+                foreach (Match match in lineMatches)
                 {
                     ConsoleColor color;
                     if (Enum.TryParse(match.Groups["color"].Value, true, out color))
@@ -34,9 +34,14 @@ namespace ScriptCs
                         console.ForegroundColor = color;
                     }
 
-                    console.Write(match.Groups["ascii"].Value);
-
-                    console.ResetColor();
+                    try
+                    {
+                        console.Write(match.Groups["ascii"].Value);
+                    }
+                    finally
+                    {
+                        console.ResetColor();
+                    }
                 }
 
                 console.WriteLine();

@@ -58,56 +58,56 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IFileSystem>(
                 builder, b => b.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IAssemblyUtility>(
                 builder, b => b.RegisterType<AssemblyUtility>().As<IAssemblyUtility>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IPackageContainer>(
                 builder, b => b.RegisterType<PackageContainer>().As<IPackageContainer>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IPackageAssemblyResolver>(
                 builder, b => b.RegisterType<PackageAssemblyResolver>().As<IPackageAssemblyResolver>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IAssemblyResolver>(
                 builder, b => b.RegisterType<AssemblyResolver>().As<IAssemblyResolver>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IScriptHostFactory>(
                 builder, b => b.RegisterType<ScriptHostFactory>().As<IScriptHostFactory>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IFilePreProcessor>(
                 builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IScriptPackResolver>(
                 builder, b => b.RegisterType<ScriptPackResolver>().As<IScriptPackResolver>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IInstallationProvider>(
                 builder, b => b.RegisterType<NugetInstallationProvider>().As<IInstallationProvider>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IPackageInstaller>(
                 builder, b => b.RegisterType<PackageInstaller>().As<IPackageInstaller>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<ScriptServices>(
                 builder, b => b.RegisterType<ScriptServices>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IObjectSerializer>(
                 builder, b => b.RegisterType<ObjectSerializer>().As<IObjectSerializer>().SingleInstance());
-            
+
             RegisterOverrideOrDefault<IConsole>(
                 builder, b => b.RegisterInstance(_console));
 
-            var assemblyResolver = _initializationServices.GetAssemblyResolver();
+            RegisterOverrideOrDefault<IFileSystemMigrator>(
+                builder, b => b.RegisterType<FileSystemMigrator>().As<IFileSystemMigrator>().SingleInstance());
 
             if (_initDirectoryCatalog)
             {
                 var fileSystem = _initializationServices.GetFileSystem();
-                var currentDirectory = fileSystem.GetWorkingDirectory(_scriptName);
 
-                var assemblies = assemblyResolver
-                    .GetAssemblyPaths(currentDirectory)
+                var assemblies = _initializationServices.GetAssemblyResolver()
+                    .GetAssemblyPaths(fileSystem.GetWorkingDirectory(_scriptName))
                     .Where(assembly => ShouldLoadAssembly(fileSystem, assembly));
 
                 var aggregateCatalog = new AggregateCatalog();
-                bool assemblyLoadFailures = false;
+                var assemblyLoadFailures = false;
 
                 foreach (var assemblyPath in assemblies)
                 {
@@ -125,8 +125,8 @@ namespace ScriptCs.Hosting
                         {
                             foreach (var ex in typeLoadEx.LoaderExceptions.GroupBy(x => x.Message))
                             {
-                                Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath,
-                                    ex.First().Message);
+                                Logger.DebugFormat(
+                                    "Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.First().Message);
                             }
                         }
                     }

@@ -2,15 +2,15 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Globalization;
     using System.IO;
     using System.Text;
 
     public static class ProcessStartInfoExtensions
     {
-        public static string Run(this ProcessStartInfo info, string logfile)
+        public static Tuple<int, string> Run(this ProcessStartInfo info, string outputFile)
         {
             var output = new StringBuilder();
+            int exitCode;
             using (var process = new Process())
             {
                 process.StartInfo = info;
@@ -19,27 +19,31 @@
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                process.WaitForExit();
+                if (!process.WaitForExit(30000))
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TimeoutException(
+                            "The process took too longer than 30 seconds to exit and killing the process failed.", ex);
+                    }
 
-                using (var writer = new StreamWriter(logfile, true))
+                    throw new TimeoutException("The process took longer than 30 seconds to exit.");
+                }
+
+                using (var writer = new StreamWriter(outputFile, true))
                 {
                     writer.WriteLine(output.ToString());
                     writer.Flush();
                 }
 
-                if (process.ExitCode != 0)
-                {
-                    var message = string.Format(
-                        CultureInfo.InvariantCulture,
-                        "The process exited with code {0}. The output was: {1}",
-                        process.ExitCode.ToString(CultureInfo.InvariantCulture),
-                        output.ToString());
-
-                    throw new InvalidOperationException(message);
-                }
+                exitCode = process.ExitCode;
             }
 
-            return output.ToString();
+            return Tuple.Create(exitCode, output.ToString());
         }
     }
 }

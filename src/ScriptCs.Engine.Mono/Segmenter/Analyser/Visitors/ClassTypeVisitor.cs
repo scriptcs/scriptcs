@@ -1,9 +1,9 @@
-﻿namespace ScriptCs.Engine.Mono.Parser.Visitors
+﻿using System.Collections.Generic;
+
+using ICSharpCode.NRefactory.CSharp;
+
+namespace ScriptCs.Engine.Mono.Segmenter.Analyser.Visitors
 {
-    using System.Collections.Generic;
-
-    using ICSharpCode.NRefactory.CSharp;
-
     internal class ClassTypeVisitor : DepthFirstAstVisitor
     {
         private readonly List<TypeDeclaration> _classes;

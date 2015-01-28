@@ -16,7 +16,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "server.csx", "-log", "error" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.ShouldNotBeNull();
@@ -25,22 +25,9 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldPrintHelpMessageForUnsupportedArgs()
-            {
-                var console = new Mock<IConsole>();
-                string[] args = { "-foo" };
-
-                var parser = new ArgumentParser(console.Object);
-                var result = parser.Parse(args);
-
-                console.Verify(x => x.WriteLine(It.Is<string>(i => i.StartsWith("Parameter \"foo\" is not supported!"))));
-                result.ShouldBeNull();
-            }
-
-            [Fact]
             public void ShouldHandleEmptyArray()
             {
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(new string[0]);
 
                 result.ShouldNotBeNull();
@@ -52,7 +39,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldHandleNull()
             {
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(null);
 
                 result.ShouldNotBeNull();
@@ -66,7 +53,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "-help" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.ShouldNotBeNull();
@@ -80,7 +67,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "-loglevel", "debug" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.Repl.ShouldBeTrue();
@@ -92,7 +79,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "-log", "debug" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.Repl.ShouldBeTrue();
@@ -104,7 +91,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "-install", "glimpse.scriptcs", "1.0.1" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.PackageVersion.ShouldEqual("1.0.1");
@@ -116,7 +103,7 @@ namespace ScriptCs.Tests
             {
                 string[] args = { "-install", "glimpse.scriptcs", "-packageversion", "1.0.1" };
 
-                var parser = new ArgumentParser(new ScriptConsole());
+                var parser = new ArgumentParser();
                 var result = parser.Parse(args);
 
                 result.PackageVersion.ShouldEqual("1.0.1");

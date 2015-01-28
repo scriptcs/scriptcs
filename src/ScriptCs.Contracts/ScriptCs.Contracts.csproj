@@ -62,6 +62,7 @@
     <Compile Include="IFileParser.cs" />
     <Compile Include="IFilePreProcessor.cs" />
     <Compile Include="IFileSystem.cs" />
+    <Compile Include="IFileSystemMigrator.cs" />
     <Compile Include="IInstallationProvider.cs" />
     <Compile Include="ILineProcessor.cs" />
     <Compile Include="IModule.cs" />

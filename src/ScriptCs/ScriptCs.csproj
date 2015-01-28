@@ -90,7 +90,7 @@
     <Compile Include="Argument\IArgumentHandler.cs" />
     <Compile Include="Argument\IArgumentParser.cs" />
     <Compile Include="Argument\IConfigFileParser.cs" />
-    <Compile Include="AsciiArt.cs" />
+    <Compile Include="VersionWriter.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
     <Compile Include="Command\CommandResult.cs" />
@@ -118,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Properties\chocolateyUninstall.ps1" />
     <None Include="Properties\chocolateyInstall.ps1" />
     <None Include="Properties\scriptcs.nuspec" />
     <None Include="packages.config" />

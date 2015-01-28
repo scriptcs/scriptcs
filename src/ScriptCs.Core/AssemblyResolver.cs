@@ -70,7 +70,7 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var assemblies = _fileSystem.EnumerateBinaries(binFolder)
+            var assemblies = _fileSystem.EnumerateBinaries(binFolder, SearchOption.TopDirectoryOnly)
                 .Where(f => _assemblyUtility.IsManagedAssembly(f))
                 .ToList();
 
