@@ -90,7 +90,9 @@ namespace ScriptCs
                 return Enumerable.Empty<string>();
             }
 
-            var assemblies = _packageAssemblyResolver.GetAssemblyNames(path).ToList();
+            var assemblies = _packageAssemblyResolver.GetAssemblyNames(path)
+                .Where(f => _assemblyUtility.IsManagedAssembly(f))
+                .ToList();
 
             foreach (var packageAssembly in assemblies)
             {

@@ -20,5 +20,7 @@ namespace ScriptCs.Hosting
         ILog Logger { get; }
 
         IAppDomainAssemblyResolver GetAppDomainAssemblyResolver();
+
+        IAssemblyUtility GetAssemblyUtility();
     }
 }

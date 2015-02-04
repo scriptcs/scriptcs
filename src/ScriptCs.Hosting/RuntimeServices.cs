@@ -104,7 +104,7 @@ namespace ScriptCs.Hosting
 
                 var assemblies = _initializationServices.GetAssemblyResolver()
                     .GetAssemblyPaths(fileSystem.GetWorkingDirectory(_scriptName))
-                    .Where(assembly => ShouldLoadAssembly(fileSystem, assembly));
+                    .Where(assembly => ShouldLoadAssembly(fileSystem, _initializationServices.GetAssemblyUtility(), assembly));
 
                 var aggregateCatalog = new AggregateCatalog();
                 var assemblyLoadFailures = false;
@@ -149,9 +149,9 @@ namespace ScriptCs.Hosting
         }
 
         // HACK: Filter out assemblies in the GAC by checking if full path is specified.
-        private static bool ShouldLoadAssembly(IFileSystem fileSystem, string assembly)
+        private static bool ShouldLoadAssembly(IFileSystem fileSystem, IAssemblyUtility assemblyUtility, string assembly)
         {
-            return fileSystem.IsPathRooted(assembly);
+            return fileSystem.IsPathRooted(assembly) && assemblyUtility.IsManagedAssembly(assembly);
         }
 
         private void RegisterLineProcessors(ContainerBuilder builder)

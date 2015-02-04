@@ -271,9 +271,14 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldLogOnDebugAnAssemblyLoadFailure()
             {
                 // arrange
-                var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
-                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var mockResolver = new Mock<IAssemblyResolver>();
+                mockResolver.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
+                _overrides[typeof(IAssemblyResolver)] = mockResolver.Object;
+
+                var mockAssemblyUtility = new Mock<IAssemblyUtility>();
+                mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
+                _overrides[typeof(IAssemblyUtility)] = mockAssemblyUtility.Object;
+
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(
                     _mockLogger.Object,
@@ -298,9 +303,14 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningScript()
             {
                 // arrange
-                var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
-                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var mockResolver = new Mock<IAssemblyResolver>();
+                mockResolver.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
+                _overrides[typeof(IAssemblyResolver)] = mockResolver.Object;
+
+                var mockAssemblyUtility = new Mock<IAssemblyUtility>();
+                mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
+                _overrides[typeof(IAssemblyUtility)] = mockAssemblyUtility.Object;
+
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(
                     _mockLogger.Object,
@@ -325,9 +335,14 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldLogAGeneralWarningOnAnAssemblyLoadFailureWhenRunningInRepl()
             {
                 // arrange
-                var mock = new Mock<IAssemblyResolver>();
-                mock.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
-                _overrides[typeof(IAssemblyResolver)] = mock.Object;
+                var mockResolver = new Mock<IAssemblyResolver>();
+                mockResolver.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), false)).Returns(new[] { "/foo.dll" });
+                _overrides[typeof(IAssemblyResolver)] = mockResolver.Object;
+
+                var mockAssemblyUtility = new Mock<IAssemblyUtility>();
+                mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
+                _overrides[typeof (IAssemblyUtility)] = mockAssemblyUtility.Object;
+
                 var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
                 var runtimeServices = new RuntimeServices(
                     _mockLogger.Object,
