@@ -9,12 +9,11 @@ namespace ScriptCs
 {
     public class AppDomainAssemblyResolver : IAppDomainAssemblyResolver
     {
-        private readonly IDictionary<string, AssemblyInfo> _assemblyInfoMap;
-
         private readonly ILog _logger;
         private readonly IFileSystem _fileSystem;
         private readonly IAssemblyResolver _resolver;
         private readonly IAssemblyUtility _assemblyUtility;
+        private IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
         public AppDomainAssemblyResolver(
             ILog logger,
@@ -22,8 +21,7 @@ namespace ScriptCs
             IAssemblyResolver resolver,
             IAssemblyUtility assemblyUtility,
             IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
-            Func<object, ResolveEventArgs,
-            Assembly> resolveHandler = null)
+            Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
         {
             _assemblyInfoMap = assemblyInfoMap ?? new Dictionary<string, AssemblyInfo>();
             _assemblyUtility = assemblyUtility;
@@ -79,29 +77,36 @@ namespace ScriptCs
 
             foreach (var assemblyPath in assemblyPaths)
             {
-                var info = new AssemblyInfo { Path = assemblyPath };
-                var name = _assemblyUtility.GetAssemblyName(assemblyPath);
-                info.Version = name.Version;
-
-                AssemblyInfo foundInfo;
-                var found = _assemblyInfoMap.TryGetValue(name.Name, out foundInfo);
-
-                if (!found || foundInfo.Version.CompareTo(info.Version) < 0)
+                if (_assemblyUtility.IsManagedAssembly(assemblyPath))
                 {
-                    // if the assembly being passed is a higher version
-                    // and an assembly with it's name has already been resolved
-                    if (found && foundInfo.Assembly != null)
+                    var info = new AssemblyInfo { Path = assemblyPath };
+                    var name = _assemblyUtility.GetAssemblyName(assemblyPath);
+                    info.Version = name.Version;
+
+                    AssemblyInfo foundInfo;
+                    var found = _assemblyInfoMap.TryGetValue(name.Name, out foundInfo);
+
+                    if (!found || foundInfo.Version.CompareTo(info.Version) < 0)
                     {
-                        _logger.WarnFormat(
-                            "Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved",
-                            assemblyPath,
-                            info.Version);
+                        // if the assembly being passed is a higher version
+                        // and an assembly with it's name has already been resolved
+                        if (found && foundInfo.Assembly != null)
+                        {
+                            _logger.WarnFormat(
+                                "Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved",
+                                assemblyPath,
+                                info.Version);
 
-                        continue;
+                            continue;
+                        }
+
+                        _logger.DebugFormat("Mapping Assembly {0} to version:{1}", name.Name, name.Version);
+                        _assemblyInfoMap[name.Name] = info;
                     }
-
-                    _logger.DebugFormat("Mapping Assembly {0} to version:{1}", name.Name, name.Version);
-                    _assemblyInfoMap[name.Name] = info;
+                }
+                else
+                {
+                    _logger.DebugFormat("Skipping Mapping Native Assembly {0}", assemblyPath);
                 }
             }
         }

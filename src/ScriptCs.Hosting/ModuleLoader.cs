@@ -107,9 +107,17 @@ namespace ScriptCs.Hosting
 
                 try
                 {
-                    var name = _assemblyUtility.GetAssemblyName(path);
-                    var assembly = _assemblyUtility.Load(name);
-                    _addToCatalog(assembly, catalog);
+                    if (_assemblyUtility.IsManagedAssembly(path))
+                    {
+                        _logger.DebugFormat("Adding Assembly: {0} to catalog", path);
+                        var name = _assemblyUtility.GetAssemblyName(path);
+                        var assembly = _assemblyUtility.Load(name);
+                        _addToCatalog(assembly, catalog);
+                    }
+                    else
+                    {
+                        _logger.DebugFormat("Skipping Adding Native Assembly {0} to catalog", path);
+                    }
                 }
                 catch (Exception exception)
                 {
