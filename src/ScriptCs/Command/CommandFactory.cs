@@ -73,6 +73,9 @@ namespace ScriptCs.Command
 
             if (args.ScriptName != null)
             {
+                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
+                fileSystemMigrator.Migrate();
+
                 var currentDirectory = _fileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, _fileSystem.PackagesFile);
                 var packagesFolder = Path.Combine(currentDirectory, _fileSystem.PackagesFolder);
@@ -87,7 +90,7 @@ namespace ScriptCs.Command
                         _initializationServices.GetPackageAssemblyResolver(),
                         _initializationServices.GetPackageInstaller(),
                         _initializationServices.Logger,
-                        _scriptServicesBuilder.Build().FileSystemMigrator);
+                        fileSystemMigrator);
 
                     var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
                         CreateScriptCommand(
