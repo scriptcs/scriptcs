@@ -13,7 +13,7 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IAssemblyResolver _resolver;
         private readonly IAssemblyUtility _assemblyUtility;
-        private IDictionary<string, AssemblyInfo> _assemblyInfoMap;
+        private readonly IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
         public AppDomainAssemblyResolver(
             ILog logger,

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
 using Common.Logging;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -12,7 +10,7 @@ namespace ScriptCs
     public class AssemblyResolver : IAssemblyResolver
     {
         private readonly Dictionary<string, List<string>> _assemblyPathCache = new Dictionary<string, List<string>>();
- 
+
         private readonly IFileSystem _fileSystem;
 
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
@@ -62,7 +60,7 @@ namespace ScriptCs
             return assemblies;
         }
 
-        public IEnumerable<string> GetBinAssemblyPaths(string path)
+        private IEnumerable<string> GetBinAssemblyPaths(string path)
         {
             var binFolder = Path.Combine(path, _fileSystem.BinFolder);
             if (!_fileSystem.DirectoryExists(binFolder))

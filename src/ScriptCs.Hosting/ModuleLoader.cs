@@ -5,8 +5,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -23,8 +21,8 @@ namespace ScriptCs.Hosting
 
         [ImportingConstructor]
         public ModuleLoader(IAssemblyResolver resolver, ILog logger, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
-            this(resolver, logger, null, null, fileSystem, assemblyUtility )
-        {         
+            this(resolver, logger, null, null, fileSystem, assemblyUtility)
+        {
         }
 
         public ModuleLoader(IAssemblyResolver resolver, ILog logger, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
@@ -41,7 +39,7 @@ namespace ScriptCs.Hosting
                         var assemblyCatalog = new AssemblyCatalog(assembly);
                         catalog.Catalogs.Add(assemblyCatalog);
                     }
-                    catch(Exception exception)
+                    catch (Exception exception)
                     {
                         logger.DebugFormat("Module Loader exception: {0}", exception.Message);
                     }
@@ -52,11 +50,9 @@ namespace ScriptCs.Hosting
 
             if (getLazyModules == null)
             {
-                getLazyModules = (container) =>
-                {
-                    return container.GetExports<IModule, IModuleMetadata>();
-                };
+                getLazyModules = container => container.GetExports<IModule, IModuleMetadata>();
             }
+
             _getLazyModules = getLazyModules;
             _fileSystem = fileSystem;
             _assemblyUtility = assemblyUtility;
@@ -78,13 +74,17 @@ namespace ScriptCs.Hosting
             InitializeModules(config, extension, moduleNames, lazyModules);
         }
 
-        private void InitializeModules(IModuleConfiguration config, string extension, string[] moduleNames,
+        private void InitializeModules(
+            IModuleConfiguration config,
+            string extension,
+            IEnumerable<string> moduleNames,
             IEnumerable<Lazy<IModule, IModuleMetadata>> lazyModules)
         {
             var modules = lazyModules
                 .Where(m => moduleNames.Contains(m.Metadata.Name) ||
                             (extension != null && m.Metadata.Extensions != null &&
-                             (m.Metadata.Extensions.Split(',').Contains(extension))) || m.Metadata.Autoload == true)
+                                (m.Metadata.Extensions.Split(',').Contains(extension))) ||
+                            m.Metadata.Autoload)
                 .Select(m => m.Value);
 
             _logger.Debug("Initializing modules");
@@ -98,7 +98,7 @@ namespace ScriptCs.Hosting
             _logger.Debug("Modules initialized");
         }
 
-        private AggregateCatalog CreateAggregateCatalog(List<string> paths)
+        private AggregateCatalog CreateAggregateCatalog(IEnumerable<string> paths)
         {
             var catalog = new AggregateCatalog();
             foreach (var path in paths)
@@ -127,27 +127,24 @@ namespace ScriptCs.Hosting
             return catalog;
         }
 
-        private void AddPaths(string[] modulePackagesPaths, string hostBin, List<string> paths)
+        private void AddPaths(IEnumerable<string> modulePackagesPaths, string hostBin, List<string> paths)
         {
-            foreach (var modulePackagesPath in modulePackagesPaths)
+            foreach (var modulePaths in modulePackagesPaths
+                .Select(modulePackagesPath => _resolver.GetAssemblyPaths(modulePackagesPath, true)))
             {
-                var modulePaths = _resolver.GetAssemblyPaths(modulePackagesPath, true);
                 paths.AddRange(modulePaths);
             }
 
             if (hostBin != null)
             {
                 var assemblyPaths = _fileSystem.EnumerateBinaries(hostBin, SearchOption.TopDirectoryOnly);
-                foreach (var path in assemblyPaths)
-                {
-                    paths.Add(path);
-                }
+                paths.AddRange(assemblyPaths);
             }
         }
 
         private IEnumerable<Lazy<IModule, IModuleMetadata>> GetLazyModules(CompositionContainer container)
         {
-            IEnumerable<Lazy<IModule, IModuleMetadata>> lazyModules = null;
+            IEnumerable<Lazy<IModule, IModuleMetadata>> lazyModules;
 
             try
             {
@@ -166,8 +163,10 @@ namespace ScriptCs.Hosting
                 {
                     _logger.DebugFormat("Module Loader exception:  {0}", exception.Message);
                 }
+
                 lazyModules = Enumerable.Empty<Lazy<IModule, IModuleMetadata>>();
             }
+
             return lazyModules;
         }
     }
