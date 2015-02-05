@@ -16,7 +16,6 @@ namespace ScriptCs.Command
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly IPackageInstaller _packageInstaller;
         private readonly ILog _logger;
-        private readonly IFileSystemMigrator _fileSystemMigrator;
 
         public InstallCommand(
             string name,
@@ -25,11 +24,8 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IPackageInstaller packageInstaller,
-            ILog logger,
-            IFileSystemMigrator fileSystemMigrator)
+            ILog logger)
         {
-            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
-
             _name = name;
             _version = version ?? string.Empty;
             _allowPre = allowPre;
@@ -37,13 +33,10 @@ namespace ScriptCs.Command
             _packageAssemblyResolver = packageAssemblyResolver;
             _packageInstaller = packageInstaller;
             _logger = logger;
-            _fileSystemMigrator = fileSystemMigrator;
         }
 
         public CommandResult Execute()
         {
-            _fileSystemMigrator.Migrate();
-
             _logger.Info("Installing packages...");
             var packages = GetPackages(_fileSystem.CurrentDirectory);
             try

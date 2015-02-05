@@ -53,7 +53,6 @@
     <Compile Include="ExecuteReplCommandTests.cs" />
     <Compile Include="ScriptArgsTests.cs" />
     <Compile Include="ArgumentHandlerTests.cs" />
-    <Compile Include="SaveCommandTests.cs" />
     <Compile Include="VersionCommandTests.cs" />
     <Compile Include="InstallCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

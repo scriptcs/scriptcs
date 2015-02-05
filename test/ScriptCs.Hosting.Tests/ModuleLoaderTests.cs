@@ -41,6 +41,7 @@ namespace ScriptCs.Hosting.Tests
                 _modules.Add(new Lazy<IModule, IModuleMetadata>(() => _mockModule4.Object, new ModuleMetadata { Name = "module4", Autoload = true }));
                 _getModules = c => _modules;
                 _mockFileSystem.Setup(f=>f.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(Enumerable.Empty<string>());
+                _mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
             }
 
             [Fact]
@@ -58,6 +59,19 @@ namespace ScriptCs.Hosting.Tests
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => assemblies.Add(a), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>(), _mockFileSystem.Object, _mockAssemblyUtility.Object);
                 loader.Load(null, new[] { "c:\test" }, null, null);
                 assemblies.Count.ShouldEqual(2);
+            }
+
+            [Fact]
+            public void ShouldIgnoreLoadingNativeAssemblies()
+            {
+                _mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.Is<string>(f => f == "managed.dll"))).Returns(true);
+                _mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.Is<string>(f => f == "native.dll"))).Returns(false);
+                var mockAssemblies = new List<string> {"managed.dll", "native.dll"};
+                _mockAssemblyResolver.Setup(a => a.GetAssemblyPaths(It.IsAny<string>(), true)).Returns(mockAssemblies);
+                var assemblies = new List<Assembly>();
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => assemblies.Add(a), c => Enumerable.Empty<Lazy<IModule, IModuleMetadata>>(), _mockFileSystem.Object, _mockAssemblyUtility.Object);
+                loader.Load(null, new[] { "c:\test" }, null, null);
+                assemblies.Count.ShouldEqual(1);
             }
 
             [Fact]

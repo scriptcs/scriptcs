@@ -38,20 +38,6 @@ namespace ScriptCs.Tests
                 fileSystem.Verify(i => i.DirectoryExists(It.Is<string>(x => x.Contains(folder))), Times.Once());
                 fileSystem.Verify(i => i.DeleteDirectory(It.Is<string>(x => x.Contains(folder))), Times.Once());
             }
-
-            [Theory, ScriptCsAutoData]
-            public void MigratesTheFileSystem(
-                [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IFileSystemMigrator> migrator)
-            {
-                // Arrange
-                var sut = new CleanCommand(null, fileSystem.Object, new Mock<ILog>().Object, migrator.Object);
-
-                // Act
-                sut.Execute();
-
-                // Assert
-                migrator.Verify(m => m.Migrate(), Times.Once);
-            }
         }
     }
 }
