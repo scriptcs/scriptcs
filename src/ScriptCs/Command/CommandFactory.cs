@@ -41,6 +41,18 @@ namespace ScriptCs.Command
                 return new ShowUsageCommand(_initializationServices.Logger);
             }
 
+            if (args.Version)
+            {
+                return new VersionCommand(_scriptServicesBuilder.ConsoleInstance);
+            }
+
+            var scriptServices = _scriptServicesBuilder.Build();
+
+            // HACK (Adam): This should not be the responsbility of the command factory
+            // but now is not the time to fix this.
+            // This should be addressed by a wider refactoring, i.e. https://github.com/scriptcs/scriptcs/issues/897
+            scriptServices.FileSystemMigrator.Migrate();
+
             if (args.Global)
             {
                 var currentDir = _fileSystem.GlobalFolder;
@@ -56,26 +68,22 @@ namespace ScriptCs.Command
 
             if (args.Repl)
             {
-                var replScriptServices = _scriptServicesBuilder.Build();
                 var explicitReplCommand = new ExecuteReplCommand(
                     args.ScriptName,
                     scriptArgs,
-                    replScriptServices.FileSystem,
-                    replScriptServices.ScriptPackResolver,
-                    replScriptServices.Repl,
-                    replScriptServices.Logger,
-                    replScriptServices.Console,
-                    replScriptServices.AssemblyResolver,
-                    replScriptServices.FileSystemMigrator);
+                    scriptServices.FileSystem,
+                    scriptServices.ScriptPackResolver,
+                    scriptServices.Repl,
+                    scriptServices.Logger,
+                    scriptServices.Console,
+                    scriptServices.AssemblyResolver,
+                    scriptServices.FileSystemMigrator);
 
                 return explicitReplCommand;
             }
 
             if (args.ScriptName != null)
             {
-                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
-                fileSystemMigrator.Migrate();
-
                 var currentDirectory = _fileSystem.CurrentDirectory;
                 var packageFile = Path.Combine(currentDirectory, _fileSystem.PackagesFile);
                 var packagesFolder = Path.Combine(currentDirectory, _fileSystem.PackagesFolder);
@@ -89,8 +97,7 @@ namespace ScriptCs.Command
                         _fileSystem,
                         _initializationServices.GetPackageAssemblyResolver(),
                         _initializationServices.GetPackageInstaller(),
-                        _initializationServices.Logger,
-                        fileSystemMigrator);
+                        _initializationServices.Logger);
 
                     var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
                         CreateScriptCommand(
@@ -101,17 +108,15 @@ namespace ScriptCs.Command
                     return new CompositeCommand(installCommand, executeCommand);
                 }
 
-                return CreateScriptCommand(args, scriptArgs, _scriptServicesBuilder.Build());
+                return CreateScriptCommand(args, scriptArgs, scriptServices);
             }
 
             if (args.Clean)
             {
-                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
                 var saveCommand = new SaveCommand(
                     _initializationServices.GetPackageAssemblyResolver(),
                     _fileSystem,
-                    _initializationServices.Logger,
-                    fileSystemMigrator);
+                    _initializationServices.Logger);
 
                 if (args.Global)
                 {
@@ -123,8 +128,7 @@ namespace ScriptCs.Command
                     }
                 }
 
-                var cleanCommand = new CleanCommand(
-                    args.ScriptName, _fileSystem, _initializationServices.Logger, fileSystemMigrator);
+                var cleanCommand = new CleanCommand(args.ScriptName, _fileSystem, _initializationServices.Logger);
 
                 return new CompositeCommand(saveCommand, cleanCommand);
             }
@@ -134,19 +138,12 @@ namespace ScriptCs.Command
                 return new SaveCommand(
                     _initializationServices.GetPackageAssemblyResolver(),
                     _fileSystem,
-                    _initializationServices.Logger,
-                    _scriptServicesBuilder.Build().FileSystemMigrator);
-            }
-
-            if (args.Version)
-            {
-                return new VersionCommand(_scriptServicesBuilder.ConsoleInstance);
+                    _initializationServices.Logger);
             }
 
             if (args.Install != null)
             {
                 var packageAssemblyResolver = _initializationServices.GetPackageAssemblyResolver();
-                var fileSystemMigrator = _scriptServicesBuilder.Build().FileSystemMigrator;
 
                 var installCommand = new InstallCommand(
                     args.Install,
@@ -155,17 +152,14 @@ namespace ScriptCs.Command
                     _fileSystem,
                     packageAssemblyResolver,
                     _initializationServices.GetPackageInstaller(),
-                    _initializationServices.Logger,
-                    fileSystemMigrator);
+                    _initializationServices.Logger);
 
-                var saveCommand = new SaveCommand(
-                    packageAssemblyResolver, _fileSystem, _initializationServices.Logger, fileSystemMigrator);
+                var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, _initializationServices.Logger);
 
                 return new CompositeCommand(installCommand, saveCommand);
             }
 
             // NOTE (adamralph): no script name or command so assume REPL
-            var scriptServices = _scriptServicesBuilder.Build();
             var replCommand = new ExecuteReplCommand(
                 args.ScriptName,
                 scriptArgs,

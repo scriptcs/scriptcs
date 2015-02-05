@@ -84,28 +84,6 @@ namespace ScriptCs.Tests
                 // Assert
                 packageInstaller.Verify(i => i.InstallPackages(It.Is<IEnumerable<IPackageReference>>(x => x.Count() == 2), It.IsAny<bool>()), Times.Once());
             }
-
-            [Theory, ScriptCsAutoData]
-            public void MigratesTheFileSystem(
-                [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator)
-            {
-                // Arrange
-                var sut = new InstallCommand(
-                    null,
-                    null,
-                    false,
-                    fileSystem.Object,
-                    new Mock<IPackageAssemblyResolver>().Object,
-                    new Mock<IPackageInstaller>().Object,
-                    new Mock<ILog>().Object,
-                    fileSystemMigrator.Object);
-
-                // Act
-                sut.Execute();
-
-                // Assert
-                fileSystemMigrator.Verify(m => m.Migrate(), Times.Once);
-            }
         }
     }
 }
