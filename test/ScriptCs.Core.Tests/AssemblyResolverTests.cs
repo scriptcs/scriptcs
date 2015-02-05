@@ -110,7 +110,7 @@ namespace ScriptCs.Tests
                 AssemblyResolver resolver)
             {
                 const string WorkingDirectory = @"C:\";
-               
+
                 var binFolder = Path.Combine(WorkingDirectory, "bin");
 
                 assemblyUtilityMock.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
