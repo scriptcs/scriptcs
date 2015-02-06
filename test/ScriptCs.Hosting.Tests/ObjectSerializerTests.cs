@@ -46,18 +46,31 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldSerializeTypeMethods()
             {
-                Assert.DoesNotThrow(() => _serializer.Serialize(typeof(Type).GetMethods()));
+                // arrange
+                var obj = typeof(Type).GetMethods();
+
+                // act
+                var exception = Record.Exception(() => _serializer.Serialize(obj));
+
+                // assert
+                exception.ShouldBeNull();
             }
 
             [Fact]
             public void ShouldSerializeDelegates()
             {
-                Assert.DoesNotThrow(() => _serializer.Serialize(new Action(() => { })));
-                Assert.DoesNotThrow(() => _serializer.Serialize(new FuncAndAction
+                // arrange
+                var obj = new FuncAndAction
                 {
                     Action = () => { },
-                    Func = () => "Hello World"
-                }));
+                    Func = () => "Hello World",
+                };
+
+                // act
+                var exception = Record.Exception(() => _serializer.Serialize(obj));
+
+                // assert
+                exception.ShouldBeNull();
             }
 
             [Fact]
