@@ -45,6 +45,7 @@
     </Compile>
     <Compile Include="CommandLine.cs" />
     <Compile Include="ImplicitInstallation.cs" />
+    <Compile Include="Packages.cs" />
     <Compile Include="Support\ScriptCsException.cs" />
     <Compile Include="DirectoryCleaning.cs" />
     <Compile Include="PackageSaving.cs" />
@@ -75,6 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Support\Gallery\FrameworkAssemblyReferencer.1.0.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Support\Gallery\ScriptCs.Adder.Local.0.1.1.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
