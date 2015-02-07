@@ -89,7 +89,6 @@ namespace ScriptCs
             }
 
             var assemblies = _packageAssemblyResolver.GetAssemblyNames(path)
-                .Where(f => _assemblyUtility.IsManagedAssembly(f))
                 .ToList();
 
             foreach (var packageAssembly in assemblies)

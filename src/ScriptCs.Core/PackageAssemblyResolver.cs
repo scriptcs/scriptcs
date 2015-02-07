@@ -12,17 +12,21 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IPackageContainer _packageContainer;
         private readonly ILog _logger;
+        private readonly IAssemblyUtility _assemblyUtility;
         private List<IPackageReference> _topLevelPackages;
 
-        public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger)
+        public PackageAssemblyResolver(IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger, IAssemblyUtility assemblyUtility)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFile", fileSystem.PackagesFile);
 
+            Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
+
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
             _logger = logger;
+            _assemblyUtility = assemblyUtility;
         }
 
         public void SavePackages()
@@ -101,6 +105,7 @@ namespace ScriptCs
 
                 var compatibleFilePaths = compatibleFiles
                     .Select(packageFile => Path.Combine(packageDir, nugetPackage.FullName, packageFile))
+                    .Where(path => _assemblyUtility.IsManagedAssembly(path))
                     .Concat(nugetPackage.FrameworkAssemblies);
 
                 foreach (var path in compatibleFilePaths)
