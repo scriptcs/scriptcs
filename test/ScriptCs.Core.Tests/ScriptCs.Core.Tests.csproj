@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="AppDomainAssemblyResolverTests.cs" />
     <Compile Include="AssemblyResolverTests.cs" />
+    <Compile Include="AssemblyUtilityTests.cs" />
     <Compile Include="DirectiveLineProcessorTests.cs" />
     <Compile Include="FileSystemMigratorTests.cs" />
     <Compile Include="PackageReferenceTests.cs" />
