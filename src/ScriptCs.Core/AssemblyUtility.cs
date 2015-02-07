@@ -5,10 +5,18 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
+    using System.IO;
+
     public class AssemblyUtility : IAssemblyUtility 
     {
         public bool IsManagedAssembly(string path)
         {
+            if (!Path.IsPathRooted(path) && !(path.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || 
+                path.EndsWith("*.exe", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return true;
+            }
+
             try
             {
                 AssemblyName.GetAssemblyName(path);
