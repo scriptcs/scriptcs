@@ -18,7 +18,7 @@ namespace ScriptCs.Tests
             private readonly IAssemblyUtility _assemblyUtility = new AssemblyUtility();
 
             [Fact]
-            public void ShouldReturnTrueWhenThePathIsNotRootedAndDoesNotHaveADllExtension()
+            public void ShouldReturnTrueWhenThePathIsNotRootedAndDoesNotHaveADllOrExeExtension()
             {
                 _assemblyUtility.IsManagedAssembly("System.Data").ShouldBeTrue();
             }
