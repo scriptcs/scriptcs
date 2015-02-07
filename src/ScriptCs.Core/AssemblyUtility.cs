@@ -12,7 +12,7 @@ namespace ScriptCs
         public bool IsManagedAssembly(string path)
         {
             if (!Path.IsPathRooted(path) && !(path.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || 
-                path.EndsWith("*.exe", StringComparison.InvariantCultureIgnoreCase)))
+                path.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase)))
             {
                 return true;
             }
