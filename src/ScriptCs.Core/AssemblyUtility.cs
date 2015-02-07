@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using ScriptCs.Contracts;
 
@@ -9,13 +8,6 @@ namespace ScriptCs
     {
         public bool IsManagedAssembly(string path)
         {
-            if (!Path.IsPathRooted(path) &&
-                !path.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) &&
-                !path.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
             try
             {
                 AssemblyName.GetAssemblyName(path);

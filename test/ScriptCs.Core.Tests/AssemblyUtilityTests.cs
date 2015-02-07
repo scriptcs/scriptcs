@@ -12,9 +12,9 @@ namespace ScriptCs.Tests
             private readonly IAssemblyUtility _assemblyUtility = new AssemblyUtility();
 
             [Fact]
-            public void ShouldReturnTrueWhenThePathIsNotRootedAndDoesNotHaveADllOrExeExtension()
+            public void ShouldReturnFalseWhenThePathDoesNotPointToAManagedAssembly()
             {
-                _assemblyUtility.IsManagedAssembly("System.Data").ShouldBeTrue();
+                _assemblyUtility.IsManagedAssembly("ScriptCs.Core.Tests.dll.config").ShouldBeFalse();
             }
 
             [Fact]
