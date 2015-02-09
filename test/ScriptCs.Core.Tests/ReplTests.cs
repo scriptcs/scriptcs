@@ -17,9 +17,11 @@ namespace ScriptCs.Tests
             public Mocks()
             {
                 FileSystem = new Mock<IFileSystem>();
+                FileSystem.SetupGet(x => x.CurrentDirectory).Returns("");
                 FileSystem.SetupGet(x => x.BinFolder).Returns("bin");
                 FileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
-                
+                FileSystem.SetupGet(x => x.PackageScriptsFile).Returns("PackageScripts.csx");
+                FileSystem.SetupGet(x => x.PackagesFolder).Returns("scriptcs_packages");
                 ScriptEngine = new Mock<IScriptEngine>();
                 Logger = new Mock<ILog>();
                 Console = new Mock<IConsole>();
@@ -159,6 +161,7 @@ namespace ScriptCs.Tests
                     .Returns(new FilePreProcessorResult { Code = "foo" });
                 _repl = GetRepl(_mocks);
                 _repl.Console.ForegroundColor = ConsoleColor.White;
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), String.Empty);
                 _repl.Execute("foo");
             }
 
@@ -265,8 +268,8 @@ namespace ScriptCs.Tests
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
                      .Returns(new FilePreProcessorResult());
                 mocks.FileSystem.Setup(x => x.FileExists("file.csx")).Returns(true);
-
                 _repl = GetRepl(mocks);
+                _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), "");
                 _repl.Execute("#load \"file.csx\"");
 
                 mocks.ScriptEngine.Verify(
@@ -312,8 +315,8 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                //default references = 7, + 1 we just added
-                _repl.References.PathReferences.Count().ShouldEqual(8);
+                //default references = 8, + 1 we just added
+                _repl.References.PathReferences.Count().ShouldEqual(9);
             }
 
             [Fact]

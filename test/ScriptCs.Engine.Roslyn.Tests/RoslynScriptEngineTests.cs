@@ -16,16 +16,6 @@ namespace ScriptCs.Tests
 {
     public class RoslynScriptEngineTests
     {
-        public class Constructor
-        {
-            [Fact]
-            public void ShouldAddReferenceToCore()
-            {
-                var engine = new RoslynTestScriptEngine(new Mock<IScriptHostFactory>().Object, new Mock<ILog>().Object);
-                engine.Engine.GetReferences().Where(x => x.Display.EndsWith("ScriptCs.Core.dll")).Count().ShouldEqual(1);
-            }
-        }
-
         public class TheExecuteMethod 
         {
             [Theory, ScriptCsAutoData]
@@ -349,6 +339,31 @@ namespace ScriptCs.Tests
                 result.CompileExceptionInfo.ShouldBeNull();
                 result.ExecuteExceptionInfo.ShouldBeNull();
             }
+
+
+        [Theory, ScriptCsAutoData]
+        public void ShouldInitializePackageScriptWrapperHost(
+            [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+            Mock<IScriptPackManager> manager,
+            [NoAutoProperties] RoslynScriptEngine engine,
+            ScriptPackSession scriptPackSession
+            )
+        {
+            // Arrange
+            const string Code = "var theNumber = 42; //this should compile";
+
+            var refs = new AssemblyReferences();
+            refs.PathReferences.Add("System");
+
+            scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                .Returns(new ScriptHost(manager.Object, null));
+
+            // Act
+            engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
+
+            // Assert
+            PackageScriptWrapper.ScriptHost.ShouldNotEqual(null);
+        }
 
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {

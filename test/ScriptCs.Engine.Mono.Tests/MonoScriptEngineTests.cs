@@ -325,6 +325,30 @@ namespace ScriptCs.Engine.Mono.Tests
                 // Assert
                 result.ReturnValue.ShouldBeNull();
             }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldInitializePackageScriptWrapperHost(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                Mock<IScriptPackManager> manager,
+                [NoAutoProperties] MonoScriptEngine engine,
+                ScriptPackSession scriptPackSession
+                )
+            {
+                // Arrange
+                const string Code = "var theNumber = 42; //this should compile";
+
+                var refs = new AssemblyReferences();
+                refs.PathReferences.Add("System");
+
+                scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                    .Returns(new ScriptHost(manager.Object, null));
+
+                // Act
+                engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
+
+                // Assert
+                PackageScriptWrapper.ScriptHost.ShouldNotEqual(null);
+            }
         }
 
         public class MonoTestScriptEngine : MonoScriptEngine

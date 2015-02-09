@@ -215,5 +215,10 @@ namespace ScriptCs
         {
             get { return Path.Combine(GlobalFolder, Constants.ConfigFilename); }
         }
+
+        public virtual string PackageScriptsFile
+        {
+            get { return  "PackageScripts.csx"; }
+        }
     }
 }

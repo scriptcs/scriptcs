@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -10,14 +11,17 @@ namespace ScriptCs.Hosting.Package
     {
         private readonly IInstallationProvider _installer;
         private readonly ILog _logger;
+        private readonly IPackageScriptsComposer _scriptsComposer;
 
-        public PackageInstaller(IInstallationProvider installer, ILog logger)
+        public PackageInstaller(IInstallationProvider installer, ILog logger, IPackageScriptsComposer scriptsComposer)
         {
             Guard.AgainstNullArgument("installer", installer);
             Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("scriptsComposer", scriptsComposer);
 
             _installer = installer;
             _logger = logger;
+            _scriptsComposer = scriptsComposer;
         }
 
         public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false)
@@ -45,6 +49,8 @@ namespace ScriptCs.Hosting.Package
                     exceptions.Add(ex);
                 }
             }
+            var builder = new StringBuilder();
+            _scriptsComposer.Compose(packageIds, builder);
 
             if (exceptions.Any())
             {

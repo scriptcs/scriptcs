@@ -20,6 +20,7 @@ namespace ScriptCs.Tests
                     fileSystem.SetupGet(f => f.DllCacheFolder).Returns(".scriptcs_cache");
                     fileSystem.SetupGet(f => f.NugetFile).Returns("scriptcs_nuget.config");
                     fileSystem.SetupGet(f => f.CurrentDirectory).Returns("workingdirectory");
+                    fileSystem.SetupGet(f => f.PackageScriptsFile).Returns("PackageScripts.csx");
                     fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
                 });

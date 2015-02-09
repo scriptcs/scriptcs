@@ -559,6 +559,11 @@ namespace ScriptCs.Hosting.Tests
                 {
                     get { throw new NotImplementedException(); }
                 }
+
+                public string PackageScriptsFile
+                {
+                    get { throw new NotImplementedException(); }
+                }
             }
         }
     }

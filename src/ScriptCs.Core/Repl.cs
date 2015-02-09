@@ -104,6 +104,8 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
+                
+                InjectPackageScripts(preProcessResult, _packageScriptsPreProcessorResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code

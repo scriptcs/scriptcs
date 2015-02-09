@@ -89,7 +89,7 @@
             return Execute(new[] { "-clean" }, Enumerable.Empty<string>(), directory);
         }
 
-        private static string Run(
+        public static string Run(
             string scriptName,
             bool debug,
             IEnumerable<string> args,
