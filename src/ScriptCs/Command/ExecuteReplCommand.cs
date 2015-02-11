@@ -55,7 +55,7 @@ namespace ScriptCs.Command
         {
             _fileSystemMigrator.Migrate();
 
-            _console.WriteLine("scriptcs (ctrl-c to exit)" + Environment.NewLine);
+            _console.WriteLine("scriptcs (ctrl-c to exit or :help for help)" + Environment.NewLine);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
