@@ -8,21 +8,21 @@ namespace ScriptCs
     public class FileSystem : IFileSystem
     {
         public virtual IEnumerable<string> EnumerateFiles(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFiles(dir, searchPattern, searchOption);
+            return Directory.EnumerateFiles(path, searchPattern, searchOption);
         }
 
         public virtual IEnumerable<string> EnumerateDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateDirectories(dir, searchPattern, searchOption);
+            return Directory.EnumerateDirectories(path, searchPattern, searchOption);
         }
 
         public virtual IEnumerable<string> EnumerateFilesAndDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFileSystemEntries(dir, searchPattern, searchOption);
+            return Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
         }
 
         public virtual void CopyFile(string source, string dest, bool overwrite)

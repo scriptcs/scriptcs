@@ -7,13 +7,13 @@ namespace ScriptCs.Contracts
     public interface IFileSystem
     {
         IEnumerable<string> EnumerateFiles(
-            string dir, string search, SearchOption searchOption = SearchOption.AllDirectories);
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
         IEnumerable<string> EnumerateDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
         IEnumerable<string> EnumerateFilesAndDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
         void CopyFile(string source, string dest, bool overwrite);
 

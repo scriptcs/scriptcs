@@ -397,19 +397,19 @@ namespace ScriptCs.Hosting.Tests
             private class MockFileSystem : IFileSystem
             {
                 public IEnumerable<string> EnumerateFiles(
-                    string dir, string search, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
 
                 public IEnumerable<string> EnumerateDirectories(
-                    string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
 
                 public IEnumerable<string> EnumerateFilesAndDirectories(
-                    string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
