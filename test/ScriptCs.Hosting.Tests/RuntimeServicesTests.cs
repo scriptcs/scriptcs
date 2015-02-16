@@ -397,24 +397,24 @@ namespace ScriptCs.Hosting.Tests
             private class MockFileSystem : IFileSystem
             {
                 public IEnumerable<string> EnumerateFiles(
-                    string dir, string search, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
 
                 public IEnumerable<string> EnumerateDirectories(
-                    string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
 
                 public IEnumerable<string> EnumerateFilesAndDirectories(
-                    string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+                    string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
                 {
                     throw new NotImplementedException();
                 }
 
-                public void Copy(string source, string dest, bool overwrite)
+                public void CopyFile(string source, string dest, bool overwrite)
                 {
                     throw new NotImplementedException();
                 }
@@ -480,7 +480,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void Move(string source, string dest)
+                public void MoveFile(string source, string dest)
                 {
                     throw new NotImplementedException();
                 }
@@ -495,7 +495,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void FileDelete(string path)
+                public void DeleteFile(string path)
                 {
                     throw new NotImplementedException();
                 }
@@ -510,12 +510,12 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public Stream CreateFileStream(string filePath, FileMode mode)
+                public Stream CreateFileStream(string path, FileMode mode)
                 {
                     throw new NotImplementedException();
                 }
 
-                public void WriteAllBytes(string filePath, byte[] bytes)
+                public void WriteToFile(string path, byte[] bytes)
                 {
                     throw new NotImplementedException();
                 }

@@ -70,7 +70,7 @@ namespace ScriptCs
                 _logger.InfoFormat(
                     CultureInfo.InvariantCulture, "Copying file '{0}' to '{1}'...", copy.Key, copy.Value);
 
-                _fileSystem.Copy(copy.Key, copy.Value, false);
+                _fileSystem.CopyFile(copy.Key, copy.Value, false);
             }
 
             foreach (var move in _directoryMoves

@@ -8,24 +8,24 @@ namespace ScriptCs
     public class FileSystem : IFileSystem
     {
         public virtual IEnumerable<string> EnumerateFiles(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFiles(dir, searchPattern, searchOption);
+            return Directory.EnumerateFiles(path, searchPattern, searchOption);
         }
 
         public virtual IEnumerable<string> EnumerateDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateDirectories(dir, searchPattern, searchOption);
+            return Directory.EnumerateDirectories(path, searchPattern, searchOption);
         }
 
         public virtual IEnumerable<string> EnumerateFilesAndDirectories(
-            string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+            string path, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
-            return Directory.EnumerateFileSystemEntries(dir, searchPattern, searchOption);
+            return Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
         }
 
-        public virtual void Copy(string source, string dest, bool overwrite)
+        public virtual void CopyFile(string source, string dest, bool overwrite)
         {
             File.Copy(source, dest, overwrite);
         }
@@ -103,7 +103,7 @@ namespace ScriptCs
             return File.GetLastWriteTime(file);
         }
 
-        public virtual void Move(string source, string dest)
+        public virtual void MoveFile(string source, string dest)
         {
             File.Move(source, dest);
         }
@@ -118,7 +118,7 @@ namespace ScriptCs
             return File.Exists(path);
         }
 
-        public virtual void FileDelete(string path)
+        public virtual void DeleteFile(string path)
         {
             File.Delete(path);
         }
@@ -135,14 +135,14 @@ namespace ScriptCs
             File.WriteAllText(path, text);
         }
 
-        public virtual Stream CreateFileStream(string filePath, FileMode mode)
+        public virtual Stream CreateFileStream(string path, FileMode mode)
         {
-            return new FileStream(filePath, mode);
+            return new FileStream(path, mode);
         }
 
-        public virtual void WriteAllBytes(string filePath, byte[] bytes)
+        public virtual void WriteToFile(string path, byte[] bytes)
         {
-            File.WriteAllBytes(filePath, bytes);
+            File.WriteAllBytes(path, bytes);
         }
 
         public virtual string GlobalFolder
