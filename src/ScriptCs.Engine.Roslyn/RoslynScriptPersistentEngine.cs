@@ -37,7 +37,7 @@ namespace ScriptCs.Engine.Roslyn
             }
 
             var dllPath = GetDllTargetPath();
-            _fileSystem.WriteAllBytes(dllPath, exeBytes);
+            _fileSystem.WriteToFile(dllPath, exeBytes);
 
             Logger.DebugFormat("Loading assembly {0}.", dllPath);
 

@@ -25,7 +25,7 @@ namespace ScriptCs
             return Directory.EnumerateFileSystemEntries(dir, searchPattern, searchOption);
         }
 
-        public virtual void Copy(string source, string dest, bool overwrite)
+        public virtual void CopyFile(string source, string dest, bool overwrite)
         {
             File.Copy(source, dest, overwrite);
         }
@@ -103,7 +103,7 @@ namespace ScriptCs
             return File.GetLastWriteTime(file);
         }
 
-        public virtual void Move(string source, string dest)
+        public virtual void MoveFile(string source, string dest)
         {
             File.Move(source, dest);
         }
@@ -118,7 +118,7 @@ namespace ScriptCs
             return File.Exists(path);
         }
 
-        public virtual void FileDelete(string path)
+        public virtual void DeleteFile(string path)
         {
             File.Delete(path);
         }
@@ -140,7 +140,7 @@ namespace ScriptCs
             return new FileStream(path, mode);
         }
 
-        public virtual void WriteAllBytes(string path, byte[] bytes)
+        public virtual void WriteToFile(string path, byte[] bytes)
         {
             File.WriteAllBytes(path, bytes);
         }

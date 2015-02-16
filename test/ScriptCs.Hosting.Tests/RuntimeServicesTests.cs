@@ -414,7 +414,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void Copy(string source, string dest, bool overwrite)
+                public void CopyFile(string source, string dest, bool overwrite)
                 {
                     throw new NotImplementedException();
                 }
@@ -480,7 +480,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void Move(string source, string dest)
+                public void MoveFile(string source, string dest)
                 {
                     throw new NotImplementedException();
                 }
@@ -495,7 +495,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void FileDelete(string path)
+                public void DeleteFile(string path)
                 {
                     throw new NotImplementedException();
                 }
@@ -515,7 +515,7 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public void WriteAllBytes(string path, byte[] bytes)
+                public void WriteToFile(string path, byte[] bytes)
                 {
                     throw new NotImplementedException();
                 }

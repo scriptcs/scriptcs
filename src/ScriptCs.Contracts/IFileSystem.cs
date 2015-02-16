@@ -15,7 +15,7 @@ namespace ScriptCs.Contracts
         IEnumerable<string> EnumerateFilesAndDirectories(
             string dir, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories);
 
-        void Copy(string source, string dest, bool overwrite);
+        void CopyFile(string source, string dest, bool overwrite);
 
         void CopyDirectory(string source, string dest, bool overwrite);
 
@@ -41,13 +41,13 @@ namespace ScriptCs.Contracts
 
         string GetWorkingDirectory(string path);
 
-        void Move(string source, string dest);
+        void MoveFile(string source, string dest);
 
         void MoveDirectory(string source, string dest);
 
         bool FileExists(string path);
 
-        void FileDelete(string path);
+        void DeleteFile(string path);
 
         IEnumerable<string> SplitLines(string value);
 
@@ -55,7 +55,7 @@ namespace ScriptCs.Contracts
 
         Stream CreateFileStream(string path, FileMode mode);
 
-        void WriteAllBytes(string path, byte[] bytes);
+        void WriteToFile(string path, byte[] bytes);
 
         string GlobalFolder { get; }
 

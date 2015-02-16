@@ -68,10 +68,10 @@ namespace ScriptCs.Tests
                     f.MoveDirectory(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
                 fileSystem.Verify(f =>
-                    f.Copy(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+                    f.CopyFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 
                 fileSystem.Verify(f =>
-                    f.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                    f.MoveFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
         }
     }
