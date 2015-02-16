@@ -135,14 +135,14 @@ namespace ScriptCs
             File.WriteAllText(path, text);
         }
 
-        public virtual Stream CreateFileStream(string filePath, FileMode mode)
+        public virtual Stream CreateFileStream(string path, FileMode mode)
         {
-            return new FileStream(filePath, mode);
+            return new FileStream(path, mode);
         }
 
-        public virtual void WriteAllBytes(string filePath, byte[] bytes)
+        public virtual void WriteAllBytes(string path, byte[] bytes)
         {
-            File.WriteAllBytes(filePath, bytes);
+            File.WriteAllBytes(path, bytes);
         }
 
         public virtual string GlobalFolder

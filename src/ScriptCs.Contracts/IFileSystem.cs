@@ -53,9 +53,9 @@ namespace ScriptCs.Contracts
 
         void WriteToFile(string path, string text);
 
-        Stream CreateFileStream(string filePath, FileMode mode);
+        Stream CreateFileStream(string path, FileMode mode);
 
-        void WriteAllBytes(string filePath, byte[] bytes);
+        void WriteAllBytes(string path, byte[] bytes);
 
         string GlobalFolder { get; }
 

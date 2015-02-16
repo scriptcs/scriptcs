@@ -510,12 +510,12 @@ namespace ScriptCs.Hosting.Tests
                     throw new NotImplementedException();
                 }
 
-                public Stream CreateFileStream(string filePath, FileMode mode)
+                public Stream CreateFileStream(string path, FileMode mode)
                 {
                     throw new NotImplementedException();
                 }
 
-                public void WriteAllBytes(string filePath, byte[] bytes)
+                public void WriteAllBytes(string path, byte[] bytes)
                 {
                     throw new NotImplementedException();
                 }
