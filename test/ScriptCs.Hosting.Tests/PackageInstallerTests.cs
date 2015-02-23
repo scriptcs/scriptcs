@@ -17,7 +17,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldThrowArgumentNullExWhenNoPackageIdsPassed()
             {
-                var installer = new PackageInstaller(new Mock<IInstallationProvider>().Object, new Mock<ILog>().Object, new Mock<IPackageScriptsComposer>().Object);
+                var installer = new PackageInstaller(new Mock<IInstallationProvider>().Object, new Mock<ILog>().Object);
                 Assert.Throws<ArgumentNullException>(() => installer.InstallPackages(null));
             }
 
@@ -34,7 +34,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object, new Mock<IPackageScriptsComposer>().Object);
+                var installer = new PackageInstaller(provider.Object, logger.Object);
                 installer.InstallPackages(references);
 
                 provider.Verify(i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()), Times.Exactly(3));
@@ -56,7 +56,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object, new Mock<IPackageScriptsComposer>().Object);
+                var installer = new PackageInstaller(provider.Object, logger.Object);
                 var exception = Record.Exception(() => installer.InstallPackages(references, true));
 
                 provider.Verify(i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()), Times.Exactly(3));
@@ -80,7 +80,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object, new Mock<IPackageScriptsComposer>().Object);
+                var installer = new PackageInstaller(provider.Object, logger.Object);
                 installer.InstallPackages(references);
 
                 provider.Verify(i => i.InstallPackage(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()), Times.Never());

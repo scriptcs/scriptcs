@@ -13,38 +13,54 @@ namespace ScriptCs
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _preProcessor;
         private readonly IPackageContainer _packageContainer;
+        private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
-        public PackageScriptsComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer)
+        public PackageScriptsComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("preProcessor", preProcessor);
             Guard.AgainstNullArgument("packageContainer", packageContainer);
+            Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
 
             _fileSystem = fileSystem;
             _preProcessor = preProcessor;
             _packageContainer = packageContainer;
+            _packageAssemblyResolver = packageAssemblyResolver;
         }
 
         internal static string GetPackageScript(IPackageObject package)
         {
             var script =
                 package.GetContentFiles()
-                    .SingleOrDefault(f => f.EndsWith("pack.csx", StringComparison.InvariantCultureIgnoreCase));
+                    .SingleOrDefault(f => f.EndsWith("main.csx", StringComparison.InvariantCultureIgnoreCase));
 
             return script;
         }
 
-        public void Compose(IEnumerable<IPackageReference> packageReferences, StringBuilder builder = null)
+        public virtual string PackageScriptsFile
+        {
+            get { return "PackageScripts.csx"; }
+        }
+
+        public void Compose(StringBuilder builder = null)
         {
             var namespaces = new List<string>();
             var references = new List<string>();
+
+            var packagesPath = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
+            var packageReferences = _packageAssemblyResolver.GetPackages(_fileSystem.CurrentDirectory);
+            var packageScriptsPath = Path.Combine(packagesPath, PackageScriptsFile);
+
+            if (!_fileSystem.DirectoryExists(packagesPath) || _fileSystem.FileExists(packageScriptsPath))
+            {
+                return;
+            }
 
             if (builder == null)
             {
                 builder = new StringBuilder();
             }
 
-            var packagesPath = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             foreach (var reference in packageReferences)
             {
                 ProcessPackage(packagesPath, reference, builder, references, namespaces);
@@ -59,11 +75,10 @@ namespace ScriptCs
             {
                 builder.Insert(0, String.Format("#r {0}{1}", reference, Environment.NewLine));
             }
-            var outputPath = Path.Combine(packagesPath, _fileSystem.PackageScriptsFile);
-            _fileSystem.WriteToFile(outputPath, builder.ToString());
+            _fileSystem.WriteToFile(packageScriptsPath, builder.ToString());
         }
 
-        internal protected virtual void ProcessPackage(string packagesPath, IPackageReference reference, StringBuilder builder, List<string> references,
+        protected internal virtual void ProcessPackage(string packagesPath, IPackageReference reference, StringBuilder builder, List<string> references,
             List<string> namespaces)
         {
             var package = _packageContainer.FindPackage(packagesPath, reference);

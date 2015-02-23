@@ -72,7 +72,5 @@ namespace ScriptCs.Contracts
         string NugetFile { get; }
 
         string GlobalOptsFile { get; }
-
-        string PackageScriptsFile { get; }
     }
 }

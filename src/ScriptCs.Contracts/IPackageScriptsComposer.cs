@@ -5,6 +5,7 @@ namespace ScriptCs.Contracts
 {
     public interface IPackageScriptsComposer
     {
-        void Compose(IEnumerable<IPackageReference> packageReferences, StringBuilder builder = null);
+        void Compose(StringBuilder builder = null);
+        string PackageScriptsFile { get; }
     }
 }

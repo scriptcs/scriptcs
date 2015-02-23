@@ -20,10 +20,11 @@ namespace ScriptCs.Tests
                 FileSystem.SetupGet(x => x.CurrentDirectory).Returns("");
                 FileSystem.SetupGet(x => x.BinFolder).Returns("bin");
                 FileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
-                FileSystem.SetupGet(x => x.PackageScriptsFile).Returns("PackageScripts.csx");
                 FileSystem.SetupGet(x => x.PackagesFolder).Returns("scriptcs_packages");
                 ScriptEngine = new Mock<IScriptEngine>();
                 Logger = new Mock<ILog>();
+                PackageScriptsComposer = new Mock<IPackageScriptsComposer>();
+                PackageScriptsComposer.SetupGet(p => p.PackageScriptsFile).Returns("PackageScripts.csx");
                 Console = new Mock<IConsole>();
                 ScriptPack = new Mock<IScriptPack>();
                 FilePreProcessor = new Mock<IFilePreProcessor>();
@@ -45,6 +46,8 @@ namespace ScriptCs.Tests
 
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
 
+            public Mock<IPackageScriptsComposer> PackageScriptsComposer { get; private set; }
+
             public Mock<IReplCommand>[] ReplCommands { get; set; }
         }
 
@@ -56,6 +59,7 @@ namespace ScriptCs.Tests
                 mocks.ScriptEngine.Object,
                 mocks.ObjectSerializer.Object,
                 mocks.Logger.Object,
+                mocks.PackageScriptsComposer.Object,
                 mocks.Console.Object,
                 mocks.FilePreProcessor.Object,
                 mocks.ReplCommands.Select(x => x.Object));

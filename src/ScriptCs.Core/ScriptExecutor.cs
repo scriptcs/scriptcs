@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -14,8 +15,8 @@ namespace ScriptCs
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
         private const string PackageScriptsInjected = "PackageScriptsInjected";
-        
-        protected FilePreProcessorResult _packageScriptsPreProcessorResult = null;
+
+        protected FilePreProcessorResult PackageScriptsPreProcessorResult { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 
@@ -30,13 +31,15 @@ namespace ScriptCs
         public ICollection<string> Namespaces { get; private set; }
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
+
+        public IPackageScriptsComposer PackageScriptsComposer { get; protected set; }
  
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IPackageScriptsComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
-
+ 
             References = new AssemblyReferences();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
@@ -45,6 +48,7 @@ namespace ScriptCs
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             Logger = logger;
+            PackageScriptsComposer = composer;
         }
 
         public void ImportNamespaces(params string[] namespaces)
@@ -120,12 +124,12 @@ namespace ScriptCs
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
             scriptPackSession.InitializePacks();
             var packageScriptsPath = Path.Combine(FileSystem.CurrentDirectory, FileSystem.PackagesFolder,
-                FileSystem.PackageScriptsFile);
+                PackageScriptsComposer.PackageScriptsFile);
             
             if (FileSystem.FileExists(packageScriptsPath))
             {
                 Logger.DebugFormat("Found Package Script File at {0}", packageScriptsPath);
-                _packageScriptsPreProcessorResult = FilePreProcessor.ProcessFile(packageScriptsPath);                
+                PackageScriptsPreProcessorResult = FilePreProcessor.ProcessFile(packageScriptsPath);
             }
 
             ScriptPackSession = scriptPackSession;
@@ -158,7 +162,7 @@ namespace ScriptCs
 
             Logger.Debug("Starting execution in engine");   
             
-            InjectPackageScripts(result, _packageScriptsPreProcessorResult, ScriptPackSession.State);
+            InjectPackageScripts(result, PackageScriptsPreProcessorResult, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
@@ -170,7 +174,7 @@ namespace ScriptCs
 
             Logger.Debug("Starting execution in engine");
 
-            InjectPackageScripts(result, _packageScriptsPreProcessorResult, ScriptPackSession.State); 
+            InjectPackageScripts(result, PackageScriptsPreProcessorResult, ScriptPackSession.State); 
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 

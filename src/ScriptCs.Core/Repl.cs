@@ -20,10 +20,11 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             IObjectSerializer serializer,
             ILog logger,
+            IPackageScriptsComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger, composer)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;
@@ -105,7 +106,7 @@ namespace ScriptCs
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 
-                InjectPackageScripts(preProcessResult, _packageScriptsPreProcessorResult, ScriptPackSession.State);
+                InjectPackageScripts(preProcessResult, PackageScriptsPreProcessorResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code

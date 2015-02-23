@@ -193,7 +193,8 @@ namespace ScriptCs.Command
                     scriptServices.ScriptPackResolver,
                     scriptServices.Logger,
                     scriptServices.AssemblyResolver,
-                    scriptServices.FileSystemMigrator);
+                    scriptServices.FileSystemMigrator,
+                    scriptServices.PackageScriptsComposer);
         }
     }
 }

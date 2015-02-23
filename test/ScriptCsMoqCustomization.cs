@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.IO;
+using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
@@ -20,9 +21,16 @@ namespace ScriptCs.Tests
                     fileSystem.SetupGet(f => f.DllCacheFolder).Returns(".scriptcs_cache");
                     fileSystem.SetupGet(f => f.NugetFile).Returns("scriptcs_nuget.config");
                     fileSystem.SetupGet(f => f.CurrentDirectory).Returns("workingdirectory");
-                    fileSystem.SetupGet(f => f.PackageScriptsFile).Returns("PackageScripts.csx");
+                    fileSystem.Setup(f => f.FileExists(@"workingdirectory\scriptcs_packages\PackageScripts.csx")).Returns(false);
+                    fileSystem.Setup(f => f.DirectoryExists(@"workingdirectory\scriptcs_packages")).Returns(true);
                     fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
+                });
+            fixture.Register<Mock<IPackageScriptsComposer>>(() =>
+                {
+                    var composer = new Mock<IPackageScriptsComposer>();
+                    composer.SetupGet(c => c.PackageScriptsFile).Returns("PackageScripts.csx");
+                    return composer;
                 });
         }
     }
