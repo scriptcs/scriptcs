@@ -35,12 +35,12 @@
         # https://github.com/chocolatey/chocolatey/issues/97
         $envPath = $env:PATH
         if ($envPath.ToLower().Contains($_.ToLower())) {
-            $userPath = Get-EnvironmentVariable -Name 'Path' -Scope "User"
+            $userPath = [Environment]::GetEnvironmentVariable("Path","User")
             if($userPath) {
                 $actualPath = [System.Collections.ArrayList]($userPath).Split(";")
                 $actualPath.Remove($_)
                 $newPath =  $actualPath -Join ";"
-                Set-EnvironmentVariable -Name 'Path' -Value $newPath -Scope "User"
+                [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
             }
         }
 
