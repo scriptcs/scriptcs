@@ -14,9 +14,9 @@ namespace ScriptCs
     {
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
-        private const string PackageScriptsInjected = "PackageScriptsInjected";
+        private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
 
-        protected FilePreProcessorResult PackageScriptsPreProcessorResult { get; private set; }
+        protected FilePreProcessorResult ScriptLibrariesPreProcessorResult { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 
@@ -123,13 +123,13 @@ namespace ScriptCs
             Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
             scriptPackSession.InitializePacks();
-            var packageScriptsPath = Path.Combine(FileSystem.CurrentDirectory, FileSystem.PackagesFolder,
+            var scriptLibrariesPath = Path.Combine(FileSystem.CurrentDirectory, FileSystem.PackagesFolder,
                 ScriptLibraryComposer.ScriptLibrariesFile);
             
-            if (FileSystem.FileExists(packageScriptsPath))
+            if (FileSystem.FileExists(scriptLibrariesPath))
             {
-                Logger.DebugFormat("Found Package Script File at {0}", packageScriptsPath);
-                PackageScriptsPreProcessorResult = FilePreProcessor.ProcessFile(packageScriptsPath);
+                Logger.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
+                ScriptLibrariesPreProcessorResult = FilePreProcessor.ProcessFile(scriptLibrariesPath);
             }
 
             ScriptPackSession = scriptPackSession;
@@ -162,7 +162,7 @@ namespace ScriptCs
 
             Logger.Debug("Starting execution in engine");   
             
-            InjectPackageScripts(result, PackageScriptsPreProcessorResult, ScriptPackSession.State);
+            InjectScriptLibraries(result, ScriptLibrariesPreProcessorResult, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
@@ -174,23 +174,23 @@ namespace ScriptCs
 
             Logger.Debug("Starting execution in engine");
 
-            InjectPackageScripts(result, PackageScriptsPreProcessorResult, ScriptPackSession.State); 
+            InjectScriptLibraries(result, ScriptLibrariesPreProcessorResult, ScriptPackSession.State); 
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
-        protected internal virtual void InjectPackageScripts(
+        protected internal virtual void InjectScriptLibraries(
             FilePreProcessorResult result, 
-            FilePreProcessorResult packageScriptsPreProcessorResult, 
+            FilePreProcessorResult scriptLibrariesPreProcessorResult, 
             IDictionary<string,object> state 
         )
         {
-            if ((packageScriptsPreProcessorResult != null) &&
-                !state.ContainsKey(PackageScriptsInjected))
+            if ((scriptLibrariesPreProcessorResult != null) &&
+                !state.ContainsKey(ScriptLibrariesInjected))
             {
-                result.Code += Environment.NewLine + packageScriptsPreProcessorResult.Code;
-                result.References.AddRange(packageScriptsPreProcessorResult.References);
-                result.Namespaces.AddRange(packageScriptsPreProcessorResult.Namespaces);
-                state.Add(PackageScriptsInjected, null);
+                result.Code += Environment.NewLine + scriptLibrariesPreProcessorResult.Code;
+                result.References.AddRange(scriptLibrariesPreProcessorResult.References);
+                result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
+                state.Add(ScriptLibrariesInjected, null);
             }
         }
     }

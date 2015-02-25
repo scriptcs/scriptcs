@@ -327,7 +327,7 @@ namespace ScriptCs.Engine.Mono.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldInitializePackageScriptWrapperHost(
+            public void ShouldInitializeScriptLibraryWrapperHost(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 Mock<IScriptPackManager> manager,
                 [NoAutoProperties] MonoScriptEngine engine,

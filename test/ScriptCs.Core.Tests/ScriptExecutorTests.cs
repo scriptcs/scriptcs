@@ -432,71 +432,71 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldInvokeInjectPackageScripts(Mock<ScriptExecutor> executor)
+            public void ShouldInvokeInjectScriptLibraries(Mock<ScriptExecutor> executor)
             {
                 executor.Protected();
                 executor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), "");
-                executor.Setup(e => e.InjectPackageScripts(It.IsAny<FilePreProcessorResult>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+                executor.Setup(e => e.InjectScriptLibraries(It.IsAny<FilePreProcessorResult>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
                 executor.Object.Execute("");
-                executor.Verify(e=>e.InjectPackageScripts(It.IsAny<FilePreProcessorResult>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+                executor.Verify(e=>e.InjectScriptLibraries(It.IsAny<FilePreProcessorResult>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
             }
         }
 
-        public class TheInjectPackageScriptsMethod
+        public class TheInjectScriptLibrariesMethod
         {
             private IDictionary<string, object> _state = new Dictionary<string, object>();
             private FilePreProcessorResult _result = new FilePreProcessorResult();
-            private FilePreProcessorResult _packageScriptPreProcessorResult = new FilePreProcessorResult();
+            private FilePreProcessorResult _scriptLibrariesPreProcessorResult = new FilePreProcessorResult();
 
-            public TheInjectPackageScriptsMethod()
+            public TheInjectScriptLibrariesMethod()
             {
-                _packageScriptPreProcessorResult.Code = "Test";
+                _scriptLibrariesPreProcessorResult.Code = "Test";
                 _result.Code = "";
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldExitIfPreProcessorResultIsNull(ScriptExecutor executor)
             {
-                executor.InjectPackageScripts(_result, null, null);
+                executor.InjectScriptLibraries(_result, null, null);
                 _result.Code.ShouldBeEmpty();
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldExitIfSessionPackageScriptsInjectedIsSet(ScriptExecutor executor)
             {
-                _state["PackageScriptsInjected"] = null;
-                executor.InjectPackageScripts(_result, _packageScriptPreProcessorResult, _state);
+                _state["ScriptLibrariesInjected"] = null;
+                executor.InjectScriptLibraries(_result, _scriptLibrariesPreProcessorResult, _state);
                 _result.Code.ShouldBeEmpty();
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldInjectResultCode(ScriptExecutor executor)
             {
-                executor.InjectPackageScripts(_result, _packageScriptPreProcessorResult, _state);
+                executor.InjectScriptLibraries(_result, _scriptLibrariesPreProcessorResult, _state);
                 _result.Code.ShouldEqual(Environment.NewLine + "Test");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddResultReferences(ScriptExecutor executor)
             {
-                _packageScriptPreProcessorResult.References.Add("ref1");
-                executor.InjectPackageScripts(_result, _packageScriptPreProcessorResult, _state);
+                _scriptLibrariesPreProcessorResult.References.Add("ref1");
+                executor.InjectScriptLibraries(_result, _scriptLibrariesPreProcessorResult, _state);
                 _result.References.ShouldContain("ref1");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddResultNamespaces(ScriptExecutor executor)
             {
-                _packageScriptPreProcessorResult.Namespaces.Add("ns1");
-                executor.InjectPackageScripts(_result, _packageScriptPreProcessorResult, _state);
+                _scriptLibrariesPreProcessorResult.Namespaces.Add("ns1");
+                executor.InjectScriptLibraries(_result, _scriptLibrariesPreProcessorResult, _state);
                 _result.Namespaces.ShouldContain("ns1");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetPackageScriptsInjectedInSession(ScriptExecutor executor)
             {
-                executor.InjectPackageScripts(_result, _packageScriptPreProcessorResult, _state);
-                _state.ContainsKey("PackageScriptsInjected");
+                executor.InjectScriptLibraries(_result, _scriptLibrariesPreProcessorResult, _state);
+                _state.ContainsKey("ScriptLibrariesInjected");
             }
         }
 

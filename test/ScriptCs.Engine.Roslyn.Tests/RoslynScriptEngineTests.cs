@@ -342,7 +342,7 @@ namespace ScriptCs.Tests
 
 
         [Theory, ScriptCsAutoData]
-        public void ShouldInitializePackageScriptWrapperHost(
+        public void ShouldInitializeScriptLibraryWrapperHost(
             [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
             Mock<IScriptPackManager> manager,
             [NoAutoProperties] RoslynScriptEngine engine,
