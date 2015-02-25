@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
 using ScriptCs.Contracts;
 using System.IO;
 
@@ -14,26 +15,34 @@ namespace ScriptCs
         private readonly IFilePreProcessor _preProcessor;
         private readonly IPackageContainer _packageContainer;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
+        private readonly ILog _logger;
 
-        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver)
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("preProcessor", preProcessor);
             Guard.AgainstNullArgument("packageContainer", packageContainer);
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
+            Guard.AgainstNullArgument("logger", logger);
 
             _fileSystem = fileSystem;
             _preProcessor = preProcessor;
             _packageContainer = packageContainer;
             _packageAssemblyResolver = packageAssemblyResolver;
+            _logger = logger;
         }
 
-        internal static string GetMainScript(IPackageObject package)
+        internal string GetMainScript(IPackageObject package)
         {
             var script =
                 package.GetContentFiles()
                     .SingleOrDefault(f => f.EndsWith("main.csx", StringComparison.InvariantCultureIgnoreCase));
-
+            
+            if (script != null)
+            {
+                _logger.DebugFormat("Found main script: {0}", script);    
+            }
+            
             return script;
         }
 
@@ -81,17 +90,25 @@ namespace ScriptCs
         protected internal virtual void ProcessPackage(string packagesPath, IPackageReference reference, StringBuilder builder, List<string> references,
             List<string> namespaces)
         {
+            _logger.DebugFormat("Finding package:{0}", reference.PackageId);
             var package = _packageContainer.FindPackage(packagesPath, reference);
+            _logger.Debug("Package found");
             var script = GetMainScript(package);
             if (script != null)
             {
                 script = Path.Combine(packagesPath, string.Format("{0}.{1}", package.Id, package.TextVersion), script);
+                _logger.Debug("Pre-processing script");
                 var result = _preProcessor.ProcessFile(script);
                 var fileWithoutExtension = Path.GetFileNameWithoutExtension(script);
                 var classname = fileWithoutExtension.Substring(0, fileWithoutExtension.Length - 4);
-                builder.AppendFormat("public class {0} : ScriptCs.ScriptLibraryWrapper {{{1}", classname, Environment.NewLine);
-                builder.AppendLine(result.Code);
-                builder.Append("}");
+                _logger.DebugFormat("Created Script Libary class: {0}", classname);
+                var classBuilder = new StringBuilder();
+                classBuilder.AppendFormat("public class {0} : ScriptCs.ScriptLibraryWrapper {{{1}", classname, Environment.NewLine);
+                classBuilder.AppendLine(result.Code);
+                classBuilder.AppendLine("}");
+                var classDefinition = classBuilder.ToString();
+                _logger.TraceFormat("Class definition:{0}{0}{1}", Environment.NewLine, classDefinition);
+                builder.Append(classDefinition);
                 references.AddRange(result.References);
                 namespaces.AddRange(result.Namespaces);
             }

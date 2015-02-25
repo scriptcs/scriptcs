@@ -13,7 +13,6 @@ namespace ScriptCs.Command
 
         public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger)
         {
-            Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
 

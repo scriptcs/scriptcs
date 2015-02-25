@@ -97,6 +97,7 @@ namespace ScriptCs.Command
                         _fileSystem,
                         _initializationServices.GetPackageAssemblyResolver(),
                         _initializationServices.GetPackageInstaller(),
+                        scriptServices.ScriptLibraryComposer,
                         _initializationServices.Logger);
 
                     var executeCommand = new DeferredCreationCommand<IScriptCommand>(() =>
@@ -152,6 +153,7 @@ namespace ScriptCs.Command
                     _fileSystem,
                     packageAssemblyResolver,
                     _initializationServices.GetPackageInstaller(),
+                    scriptServices.ScriptLibraryComposer,
                     _initializationServices.Logger);
 
                 var saveCommand = new SaveCommand(packageAssemblyResolver, _fileSystem, _initializationServices.Logger);

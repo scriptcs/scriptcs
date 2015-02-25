@@ -18,11 +18,11 @@ namespace ScriptCs.Tests
         public class TheGetMainScriptMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnTheScript(Mock<IPackageObject> package)
+            public void ShouldReturnTheScript(Mock<IPackageObject> package, ScriptLibraryComposer composer)
             {
                 var files = new[] {"file.csx", "fileMain.csx", "file"};
                 package.Setup(p => p.GetContentFiles()).Returns(files);
-                var script = ScriptLibraryComposer.GetMainScript(package.Object);
+                var script = composer.GetMainScript(package.Object);
                 script.ShouldEqual("fileMain.csx");
             }
         }

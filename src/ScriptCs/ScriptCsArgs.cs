@@ -56,6 +56,10 @@ namespace ScriptCs
         [ArgDescription("Allows installation of packages' prelease versions")]
         public bool AllowPreRelease { get; set; }
 
+        [ArgShortcut("rsl")]
+        [ArgDescription("Refresh the cache of script libraries")]
+        public bool RefreshScriptLibraries { get; set; }
+
         [ArgDescription("Outputs version information")]
         public bool Version { get; set; }
 
