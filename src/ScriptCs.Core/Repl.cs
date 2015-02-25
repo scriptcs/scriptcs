@@ -20,7 +20,7 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             IObjectSerializer serializer,
             ILog logger,
-            IPackageScriptsComposer composer,
+            IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands)

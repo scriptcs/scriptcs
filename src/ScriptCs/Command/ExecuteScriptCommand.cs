@@ -15,7 +15,7 @@ namespace ScriptCs.Command
         private readonly ILog _logger;
         private readonly IAssemblyResolver _assemblyResolver;
         private readonly IFileSystemMigrator _fileSystemMigrator;
-        private readonly IPackageScriptsComposer _composer;
+        private readonly IScriptLibraryComposer _composer;
 
         public ExecuteScriptCommand(
             string script,
@@ -26,7 +26,7 @@ namespace ScriptCs.Command
             ILog logger,
             IAssemblyResolver assemblyResolver,
             IFileSystemMigrator fileSystemMigrator,
-            IPackageScriptsComposer composer
+            IScriptLibraryComposer composer
             )
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);

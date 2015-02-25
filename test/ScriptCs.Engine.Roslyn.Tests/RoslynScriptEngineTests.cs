@@ -362,7 +362,7 @@ namespace ScriptCs.Tests
             engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
             // Assert
-            PackageScriptWrapper.ScriptHost.ShouldNotEqual(null);
+            ScriptLibraryWrapper.ScriptHost.ShouldNotEqual(null);
         }
 
         public class RoslynTestScriptEngine : RoslynScriptEngine

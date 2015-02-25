@@ -10,10 +10,10 @@ using Xbehave;
 
 namespace ScriptCs.Tests.Acceptance
 {
-    public class PackageScripts
+    public class ScriptLibraries
     {
         [Scenario]
-        public static void UsingAMethodInAPackageScript(ScenarioDirectory directory, string output)
+        public static void UsingAMethodInAScriptLibrary(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
             var args = new string[] {"-loglevel","info"};
@@ -36,7 +36,7 @@ namespace ScriptCs.Tests.Acceptance
         }
 
         [Scenario]
-        public static void UsingALoadedMethodInAPackageScript(ScenarioDirectory directory, string output)
+        public static void UsingALoadedMethodInAScriptLibrary(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 

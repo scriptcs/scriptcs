@@ -98,8 +98,8 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IFileSystemMigrator>(
                 builder, b => b.RegisterType<FileSystemMigrator>().As<IFileSystemMigrator>().SingleInstance());
 
-            RegisterOverrideOrDefault<IPackageScriptsComposer>(
-                builder, b => b.RegisterType<PackageScriptsComposer>().As<IPackageScriptsComposer>().SingleInstance());
+            RegisterOverrideOrDefault<IScriptLibraryComposer>(
+                builder, b => b.RegisterType<ScriptLibraryComposer>().As<IScriptLibraryComposer>().SingleInstance());
 
             if (_initDirectoryCatalog)
             {

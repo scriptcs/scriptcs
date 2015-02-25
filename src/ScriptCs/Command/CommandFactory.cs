@@ -194,7 +194,7 @@ namespace ScriptCs.Command
                     scriptServices.Logger,
                     scriptServices.AssemblyResolver,
                     scriptServices.FileSystemMigrator,
-                    scriptServices.PackageScriptsComposer);
+                    scriptServices.ScriptLibraryComposer);
         }
     }
 }

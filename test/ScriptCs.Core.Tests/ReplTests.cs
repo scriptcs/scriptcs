@@ -23,8 +23,8 @@ namespace ScriptCs.Tests
                 FileSystem.SetupGet(x => x.PackagesFolder).Returns("scriptcs_packages");
                 ScriptEngine = new Mock<IScriptEngine>();
                 Logger = new Mock<ILog>();
-                PackageScriptsComposer = new Mock<IPackageScriptsComposer>();
-                PackageScriptsComposer.SetupGet(p => p.PackageScriptsFile).Returns("PackageScripts.csx");
+                PackageScriptsComposer = new Mock<IScriptLibraryComposer>();
+                PackageScriptsComposer.SetupGet(p => p.ScriptLibrariesFile).Returns("PackageScripts.csx");
                 Console = new Mock<IConsole>();
                 ScriptPack = new Mock<IScriptPack>();
                 FilePreProcessor = new Mock<IFilePreProcessor>();
@@ -46,7 +46,7 @@ namespace ScriptCs.Tests
 
             public Mock<IFilePreProcessor> FilePreProcessor { get; private set; }
 
-            public Mock<IPackageScriptsComposer> PackageScriptsComposer { get; private set; }
+            public Mock<IScriptLibraryComposer> PackageScriptsComposer { get; private set; }
 
             public Mock<IReplCommand>[] ReplCommands { get; set; }
         }

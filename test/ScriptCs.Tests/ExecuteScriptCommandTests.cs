@@ -208,7 +208,7 @@ namespace ScriptCs.Tests
                     new Mock<ILog>().Object,
                     new Mock<IAssemblyResolver>().Object,
                     fileSystemMigrator.Object,
-                    new Mock<IPackageScriptsComposer>().Object);
+                    new Mock<IScriptLibraryComposer>().Object);
 
                 // act
                 sut.Execute();
@@ -218,7 +218,7 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldComposeScripts([Frozen] Mock<IFileSystem> fileSystem, Mock<IPackageScriptsComposer> composer)
+            public void ShouldComposeScripts([Frozen] Mock<IFileSystem> fileSystem, Mock<IScriptLibraryComposer> composer)
             {
                 var cmd = new ExecuteScriptCommand(
                     null,

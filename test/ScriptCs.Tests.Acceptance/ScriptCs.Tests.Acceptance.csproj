@@ -46,7 +46,7 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="ImplicitInstallation.cs" />
     <Compile Include="Packages.cs" />
-    <Compile Include="PackageScripts.cs" />
+    <Compile Include="ScriptLibraries.cs" />
     <Compile Include="Support\ScriptCsException.cs" />
     <Compile Include="DirectoryCleaning.cs" />
     <Compile Include="PackageSaving.cs" />

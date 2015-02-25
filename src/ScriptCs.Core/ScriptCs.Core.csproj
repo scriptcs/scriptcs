@@ -52,8 +52,8 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="FileSystemMigrator.cs" />
-    <Compile Include="PackageScriptsComposer.cs" />
-    <Compile Include="PackageScriptWrapper.cs" />
+    <Compile Include="ScriptLibraryComposer.cs" />
+    <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />
     <Compile Include="ReplCommands\CdCommand.cs" />
     <Compile Include="ReplCommands\ClearCommand.cs" />

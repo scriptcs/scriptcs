@@ -7,7 +7,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public abstract class PackageScriptWrapper
+    public abstract class ScriptLibraryWrapper
     {
         private static IScriptHost _scriptHost;
 

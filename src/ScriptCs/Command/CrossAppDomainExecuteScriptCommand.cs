@@ -26,7 +26,7 @@ namespace ScriptCs.Command
                 services.Logger,
                 services.AssemblyResolver,
                 services.FileSystemMigrator,
-                services.PackageScriptsComposer);
+                services.ScriptLibraryComposer);
 
             this.Result = command.Execute();
         }

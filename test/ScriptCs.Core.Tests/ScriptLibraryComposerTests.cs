@@ -13,16 +13,16 @@ using Should;
 
 namespace ScriptCs.Tests
 {
-    public class PackageScriptsComposerTests
+    public class ScriptLibraryComposerTests
     {
-        public class TheGetPackageScriptMethod
+        public class TheGetMainScriptMethod
         {
             [Theory, ScriptCsAutoData]
             public void ShouldReturnTheScript(Mock<IPackageObject> package)
             {
                 var files = new[] {"file.csx", "fileMain.csx", "file"};
                 package.Setup(p => p.GetContentFiles()).Returns(files);
-                var script = PackageScriptsComposer.GetPackageScript(package.Object);
+                var script = ScriptLibraryComposer.GetMainScript(package.Object);
                 script.ShouldEqual("fileMain.csx");
             }
         }
@@ -32,7 +32,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldFindThePackage(
                 [Frozen] Mock<IPackageContainer> packageContainer, 
-                PackageScriptsComposer composer, 
+                ScriptLibraryComposer composer, 
                 Mock<IPackageReference> reference, 
                 Mock<IPackageObject> package)
             {
@@ -44,10 +44,10 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldPreProcesseTheScriptFile(
+            public void ShouldPreProcessTheScriptFile(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                PackageScriptsComposer composer,
+                ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
             {
@@ -63,7 +63,7 @@ namespace ScriptCs.Tests
             public void ShouldAppendTheClassWrapper(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                PackageScriptsComposer composer,
+                ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
             {
@@ -73,14 +73,14 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
                 var builder = new StringBuilder();
                 composer.ProcessPackage(@"c:\packages", reference.Object, builder, new List<string>(), new List<string>());
-                builder.ToString().ShouldContain("public class Test : ScriptCs.PackageScriptWrapper {");
+                builder.ToString().ShouldContain("public class Test : ScriptCs.ScriptLibraryWrapper {");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldAppendThePreProcessedCode(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                PackageScriptsComposer composer,
+                ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
             {
@@ -97,7 +97,7 @@ namespace ScriptCs.Tests
             public void ShouldAddsReferences(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                PackageScriptsComposer composer,
+                ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
             {
@@ -115,7 +115,7 @@ namespace ScriptCs.Tests
             public void ShouldAddNamespaces(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                PackageScriptsComposer composer,
+                ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
             {
@@ -135,7 +135,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldProcessesEachPackage(
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                Mock<PackageScriptsComposer> composer,
+                Mock<ScriptLibraryComposer> composer,
                 Mock<IPackageReference> reference1,
                 Mock<IPackageReference> reference2)
             {
@@ -149,7 +149,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldAddEachNamespace(
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                Mock<PackageScriptsComposer> composer,
+                Mock<ScriptLibraryComposer> composer,
                 Mock<IPackageReference> reference1
             )
             {
@@ -174,7 +174,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldAddEachReference(
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                Mock<PackageScriptsComposer> composer,
+                Mock<ScriptLibraryComposer> composer,
                 Mock<IPackageReference> reference1
             )
             {
@@ -197,10 +197,10 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldWriteThePackageScript(
+            public void ShouldWriteTheScriptLibrariesFile(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
-                PackageScriptsComposer composer
+                ScriptLibraryComposer composer
             )
             {
                 var builder = new StringBuilder("Test");

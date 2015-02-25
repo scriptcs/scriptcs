@@ -8,14 +8,14 @@ using System.IO;
 
 namespace ScriptCs
 {
-    public class PackageScriptsComposer : IPackageScriptsComposer
+    public class ScriptLibraryComposer : IScriptLibraryComposer
     {
         private readonly IFileSystem _fileSystem;
         private readonly IFilePreProcessor _preProcessor;
         private readonly IPackageContainer _packageContainer;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
 
-        public PackageScriptsComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver)
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("preProcessor", preProcessor);
@@ -28,7 +28,7 @@ namespace ScriptCs
             _packageAssemblyResolver = packageAssemblyResolver;
         }
 
-        internal static string GetPackageScript(IPackageObject package)
+        internal static string GetMainScript(IPackageObject package)
         {
             var script =
                 package.GetContentFiles()
@@ -37,9 +37,9 @@ namespace ScriptCs
             return script;
         }
 
-        public virtual string PackageScriptsFile
+        public virtual string ScriptLibrariesFile
         {
-            get { return "PackageScripts.csx"; }
+            get { return "ScriptLibraries.csx"; }
         }
 
         public void Compose(StringBuilder builder = null)
@@ -49,7 +49,7 @@ namespace ScriptCs
 
             var packagesPath = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             var packageReferences = _packageAssemblyResolver.GetPackages(_fileSystem.CurrentDirectory);
-            var packageScriptsPath = Path.Combine(packagesPath, PackageScriptsFile);
+            var packageScriptsPath = Path.Combine(packagesPath, ScriptLibrariesFile);
 
             if (!_fileSystem.DirectoryExists(packagesPath) || _fileSystem.FileExists(packageScriptsPath))
             {
@@ -82,14 +82,14 @@ namespace ScriptCs
             List<string> namespaces)
         {
             var package = _packageContainer.FindPackage(packagesPath, reference);
-            var script = GetPackageScript(package);
+            var script = GetMainScript(package);
             if (script != null)
             {
                 script = Path.Combine(packagesPath, string.Format("{0}.{1}", package.Id, package.TextVersion), script);
                 var result = _preProcessor.ProcessFile(script);
                 var fileWithoutExtension = Path.GetFileNameWithoutExtension(script);
                 var classname = fileWithoutExtension.Substring(0, fileWithoutExtension.Length - 4);
-                builder.AppendFormat("public class {0} : ScriptCs.PackageScriptWrapper {{{1}", classname, Environment.NewLine);
+                builder.AppendFormat("public class {0} : ScriptCs.ScriptLibraryWrapper {{{1}", classname, Environment.NewLine);
                 builder.AppendLine(result.Code);
                 builder.Append("}");
                 references.AddRange(result.References);

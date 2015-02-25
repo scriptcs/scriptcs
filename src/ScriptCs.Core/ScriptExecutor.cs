@@ -32,9 +32,9 @@ namespace ScriptCs
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
-        public IPackageScriptsComposer PackageScriptsComposer { get; protected set; }
+        public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
  
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IPackageScriptsComposer composer)
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IScriptLibraryComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
@@ -48,7 +48,7 @@ namespace ScriptCs
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             Logger = logger;
-            PackageScriptsComposer = composer;
+            ScriptLibraryComposer = composer;
         }
 
         public void ImportNamespaces(params string[] namespaces)
@@ -124,7 +124,7 @@ namespace ScriptCs
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
             scriptPackSession.InitializePacks();
             var packageScriptsPath = Path.Combine(FileSystem.CurrentDirectory, FileSystem.PackagesFolder,
-                PackageScriptsComposer.PackageScriptsFile);
+                ScriptLibraryComposer.ScriptLibrariesFile);
             
             if (FileSystem.FileExists(packageScriptsPath))
             {

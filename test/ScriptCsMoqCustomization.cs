@@ -26,10 +26,10 @@ namespace ScriptCs.Tests
                     fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
                 });
-            fixture.Register<Mock<IPackageScriptsComposer>>(() =>
+            fixture.Register<Mock<IScriptLibraryComposer>>(() =>
                 {
-                    var composer = new Mock<IPackageScriptsComposer>();
-                    composer.SetupGet(c => c.PackageScriptsFile).Returns("PackageScripts.csx");
+                    var composer = new Mock<IScriptLibraryComposer>();
+                    composer.SetupGet(c => c.ScriptLibrariesFile).Returns("PackageScripts.csx");
                     return composer;
                 });
         }

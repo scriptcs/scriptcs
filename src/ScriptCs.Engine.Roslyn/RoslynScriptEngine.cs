@@ -58,7 +58,7 @@ namespace ScriptCs.Engine.Roslyn
             {
                 code = code.DefineTrace();
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
-                PackageScriptWrapper.SetHost(host);
+                ScriptLibraryWrapper.SetHost(host);
                 Logger.Debug("Creating session");
 
                 var hostType = host.GetType();

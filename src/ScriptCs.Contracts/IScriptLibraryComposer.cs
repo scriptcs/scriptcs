@@ -3,9 +3,9 @@ using System.Text;
 
 namespace ScriptCs.Contracts
 {
-    public interface IPackageScriptsComposer
+    public interface IScriptLibraryComposer
     {
         void Compose(StringBuilder builder = null);
-        string PackageScriptsFile { get; }
+        string ScriptLibrariesFile { get; }
     }
 }
