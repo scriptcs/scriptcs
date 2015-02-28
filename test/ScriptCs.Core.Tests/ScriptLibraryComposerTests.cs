@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
 using ScriptCs.Contracts;
 using Moq;
 using Moq.Protected;
@@ -58,6 +59,26 @@ namespace ScriptCs.Tests
                 composer.ProcessPackage(@"c:\packages", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
                 preProcessor.Verify(p=> p.ProcessFile(It.IsAny<string>()));                
             }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldWarnIfMultipleMainFilesArePresent(
+                [Frozen] Mock<IPackageContainer> packageContainer,
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                [Frozen] Mock<ILog> logger,
+                ScriptLibraryComposer composer,
+                Mock<IPackageReference> reference,
+                Mock<IPackageObject> package)
+            {
+                packageContainer.Setup(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
+                    .Returns(package.Object);
+                package.SetupGet(p => p.FullName).Returns("Test");
+                package.Setup(p => p.GetContentFiles()).Returns(new List<string> { "Test1Main.csx", "Test2Main.csx" });
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                composer.ProcessPackage(@"c:\packages", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
+                logger.Verify(l => l.WarnFormat(It.Is<string>(s => s.Equals("Script Libraries in '{0}' ignored due to multiple Main files being present")), It.IsAny<object[]>()));
+            }
+
+
 
             [Theory, ScriptCsAutoData]
             public void ShouldAppendTheClassWrapper(
@@ -133,7 +154,7 @@ namespace ScriptCs.Tests
         public class TheComposeMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldProcessesEachPackage(
+            public void ShouldProcessEachPackage(
                 [Frozen] Mock<IPackageAssemblyResolver> resolver,
                 Mock<ScriptLibraryComposer> composer,
                 Mock<IPackageReference> reference1,

@@ -34,10 +34,22 @@ namespace ScriptCs
 
         internal string GetMainScript(IPackageObject package)
         {
-            var script =
-                package.GetContentFiles()
-                    .SingleOrDefault(f => f.EndsWith("main.csx", StringComparison.InvariantCultureIgnoreCase));
-            
+            var content = package.GetContentFiles()
+                .Where(f => f.EndsWith("main.csx", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+
+            string script = null;
+            var count = content.Length;
+
+            if (count == 1)
+            {
+                script = content[0];
+            } 
+            else if (content.Count() > 1)
+            {
+                _logger.WarnFormat("Script Libraries in '{0}' ignored due to multiple Main files being present", package.FullName);
+                return null;
+            }
+           
             if (script != null)
             {
                 _logger.DebugFormat("Found main script: {0}", script);    

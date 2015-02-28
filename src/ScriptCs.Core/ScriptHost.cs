@@ -14,7 +14,7 @@ namespace ScriptCs
             Env = environment;
         }
 
-        public ScriptEnvironment Env { get; private set; }
+        public IScriptEnvironment Env { get; private set; }
 
         public T Require<T>() where T : IScriptPackContext
         {

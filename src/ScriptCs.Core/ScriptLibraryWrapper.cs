@@ -7,7 +7,7 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public abstract class ScriptLibraryWrapper
+    public abstract class ScriptLibraryWrapper 
     {
         private static IScriptHost _scriptHost;
 
@@ -27,6 +27,11 @@ namespace ScriptCs
         public static T Require<T>() where T:IScriptPackContext
         {
             return _scriptHost.Require<T>();
+        }
+
+        public IScriptEnvironment Env
+        {
+            get { return _scriptHost.Env; }
         }
     }
 }

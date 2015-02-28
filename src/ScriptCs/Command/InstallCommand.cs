@@ -48,6 +48,7 @@ namespace ScriptCs.Command
             if (_fileSystem.DirectoryExists(packagesFolder))
             {
                 _logger.DebugFormat("Deleting: {0}", scriptLibrariesFile);
+                _fileSystem.FileDelete(scriptLibrariesFile);
             }
 
             var packages = GetPackages(_fileSystem.CurrentDirectory);
