@@ -63,13 +63,13 @@ namespace ScriptCs
             get { return "ScriptLibraries.csx"; }
         }
 
-        public void Compose(StringBuilder builder = null)
+        public void Compose(string workingDirectory, StringBuilder builder = null)
         {
             var namespaces = new List<string>();
             var references = new List<string>();
 
-            var packagesPath = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
-            var packageReferences = _packageAssemblyResolver.GetPackages(_fileSystem.CurrentDirectory);
+            var packagesPath = Path.Combine(workingDirectory, _fileSystem.PackagesFolder);
+            var packageReferences = _packageAssemblyResolver.GetPackages(workingDirectory);
             var packageScriptsPath = Path.Combine(packagesPath, ScriptLibrariesFile);
 
             if (!_fileSystem.DirectoryExists(packagesPath) || _fileSystem.FileExists(packageScriptsPath))

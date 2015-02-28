@@ -63,7 +63,7 @@ namespace ScriptCs.Command
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
 
-                _composer.Compose();
+                _composer.Compose(workingDirectory);
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
                 var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);

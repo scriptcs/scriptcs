@@ -5,7 +5,7 @@ namespace ScriptCs.Contracts
 {
     public interface IScriptLibraryComposer
     {
-        void Compose(StringBuilder builder = null);
+        void Compose(string workingDirectory, StringBuilder builder = null);
         string ScriptLibrariesFile { get; }
     }
 }

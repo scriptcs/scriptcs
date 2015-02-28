@@ -143,7 +143,6 @@
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-
             var result = info.Run(Path.GetFileName(directory.Name) + ".log");
             if (result.Item1 != 0)
             {

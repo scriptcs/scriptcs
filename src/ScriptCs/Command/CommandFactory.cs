@@ -77,7 +77,8 @@ namespace ScriptCs.Command
                     scriptServices.Logger,
                     scriptServices.Console,
                     scriptServices.AssemblyResolver,
-                    scriptServices.FileSystemMigrator);
+                    scriptServices.FileSystemMigrator,
+                    scriptServices.ScriptLibraryComposer);
 
                 return explicitReplCommand;
             }
@@ -171,7 +172,8 @@ namespace ScriptCs.Command
                 scriptServices.Logger,
                 scriptServices.Console,
                 scriptServices.AssemblyResolver,
-                scriptServices.FileSystemMigrator);
+                scriptServices.FileSystemMigrator,
+                scriptServices.ScriptLibraryComposer);
 
             return replCommand;
         }

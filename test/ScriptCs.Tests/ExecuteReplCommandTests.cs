@@ -119,7 +119,8 @@ namespace ScriptCs.Tests
             public void MigratesTheFileSystem(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IConsole> console,
-                [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator)
+                [Frozen] Mock<IFileSystemMigrator> fileSystemMigrator,
+                IScriptLibraryComposer composer)
             {
                 // arrange
                 console.Setup(c => c.ReadLine()).Throws(new Exception());
@@ -132,7 +133,9 @@ namespace ScriptCs.Tests
                     new Mock<ILog>().Object,
                     console.Object,
                     new Mock<IAssemblyResolver>().Object,
-                    fileSystemMigrator.Object);
+                    fileSystemMigrator.Object,
+                    composer
+                    );
 
                 // act
                 sut.Execute();
@@ -157,7 +160,7 @@ namespace ScriptCs.Tests
 
                 cmd.Execute();
 
-                composer.Verify(c => c.Compose(null));
+                composer.Verify(c => c.Compose(It.IsAny<string>(),null));
             }
         }
     }

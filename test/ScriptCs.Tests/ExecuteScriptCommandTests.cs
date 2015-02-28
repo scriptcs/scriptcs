@@ -233,7 +233,7 @@ namespace ScriptCs.Tests
 
                 cmd.Execute();
 
-                composer.Verify(c=>c.Compose(null));
+                composer.Verify(c=>c.Compose(It.IsAny<string>(),null));
             }
 
             

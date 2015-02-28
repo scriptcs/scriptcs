@@ -163,7 +163,7 @@ namespace ScriptCs.Tests
                 composer.Protected();
                 resolver.Setup(r=>r.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference> { reference1.Object, reference2.Object });
                 composer.Setup(c=>c.ProcessPackage(It.IsAny<string>(), It.IsAny<IPackageReference>(), It.IsAny<StringBuilder>(), It.IsAny<List<string>>(), It.IsAny<List<string>>()));
-                composer.Object.Compose();
+                composer.Object.Compose("workingdirectory");
                 composer.Verify(c=>c.ProcessPackage(It.IsAny<string>(),reference1.Object, It.IsAny<StringBuilder>(), It.IsAny<List<string>>(), It.IsAny<List<string>>()));
             }
 
@@ -186,7 +186,7 @@ namespace ScriptCs.Tests
                         ns.Add("ns2");
                     });
                 resolver.Setup(r=>r.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference> { reference1.Object });
-                composer.Object.Compose(builder);
+                composer.Object.Compose("workingdirectory", builder);
                 var code = builder.ToString();
                 code.ShouldContain(string.Format("using ns1;{0}", Environment.NewLine));
                 code.ShouldContain(string.Format("using ns2;{0}", Environment.NewLine));
@@ -211,7 +211,7 @@ namespace ScriptCs.Tests
                         refs.Add("ref2");
                     });
                 resolver.Setup(r => r.GetPackages(It.IsAny<string>())).Returns(new List<IPackageReference> { reference1.Object });
-                composer.Object.Compose(builder);
+                composer.Object.Compose("workingdirectory", builder);
                 var code = builder.ToString();
                 code.ShouldContain(string.Format("#r ref1{0}", Environment.NewLine));
                 code.ShouldContain(string.Format("#r ref2{0}", Environment.NewLine));
@@ -227,7 +227,7 @@ namespace ScriptCs.Tests
                 var builder = new StringBuilder("Test");
                 fileSystem.Setup(fs => fs.WriteToFile(It.IsAny<string>(), It.IsAny<string>()));
                 resolver.Setup(r => r.GetPackages(It.IsAny<string>())).Returns(Enumerable.Empty<IPackageReference>());
-                composer.Compose(builder);
+                composer.Compose("workingdirectory", builder);
                 fileSystem.Verify(fs => fs.WriteToFile(It.IsAny<string>(), It.Is<string>(v=>v.Equals("Test"))));   
             }
         }

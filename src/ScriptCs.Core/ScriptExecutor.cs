@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml.XPath;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -15,9 +16,7 @@ namespace ScriptCs
         public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
         private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
-
-        protected FilePreProcessorResult ScriptLibrariesPreProcessorResult { get; private set; }
-
+        
         public IFileSystem FileSystem { get; private set; }
 
         public IFilePreProcessor FilePreProcessor { get; private set; }
@@ -122,17 +121,8 @@ namespace ScriptCs
 
             Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
-            scriptPackSession.InitializePacks();
-            var scriptLibrariesPath = Path.Combine(FileSystem.CurrentDirectory, FileSystem.PackagesFolder,
-                ScriptLibraryComposer.ScriptLibrariesFile);
-            
-            if (FileSystem.FileExists(scriptLibrariesPath))
-            {
-                Logger.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
-                ScriptLibrariesPreProcessorResult = FilePreProcessor.ProcessFile(scriptLibrariesPath);
-            }
-
             ScriptPackSession = scriptPackSession;
+            scriptPackSession.InitializePacks();
         }
 
         public virtual void Reset()
@@ -160,9 +150,9 @@ namespace ScriptCs
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
 
-            Logger.Debug("Starting execution in engine");   
-            
-            InjectScriptLibraries(result, ScriptLibrariesPreProcessorResult, ScriptPackSession.State);
+            Logger.Debug("Starting execution in engine");
+
+            InjectScriptLibraries(Path.GetDirectoryName(path), result, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
@@ -173,25 +163,45 @@ namespace ScriptCs
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
-
-            InjectScriptLibraries(result, ScriptLibrariesPreProcessorResult, ScriptPackSession.State); 
+            
+            InjectScriptLibraries(FileSystem.CurrentDirectory, result, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
         protected internal virtual void InjectScriptLibraries(
-            FilePreProcessorResult result, 
-            FilePreProcessorResult scriptLibrariesPreProcessorResult, 
-            IDictionary<string,object> state 
+            string workingDirectory, 
+            FilePreProcessorResult result,
+            IDictionary<string, object> state 
         )
         {
-            if ((scriptLibrariesPreProcessorResult != null) &&
-                !state.ContainsKey(ScriptLibrariesInjected))
+            if (state.ContainsKey(ScriptLibrariesInjected))
+            {
+                return;
+            }
+
+            var scriptLibrariesPreProcessorResult = LoadScriptLibraries(workingDirectory);
+
+            if (scriptLibrariesPreProcessorResult != null)
             {
                 result.Code += Environment.NewLine + scriptLibrariesPreProcessorResult.Code;
                 result.References.AddRange(scriptLibrariesPreProcessorResult.References);
                 result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
-                state.Add(ScriptLibrariesInjected, null);
             }
+            state.Add(ScriptLibrariesInjected, null);
+        }
+
+        protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
+        {
+            var scriptLibrariesPath = Path.Combine(workingDirectory, FileSystem.PackagesFolder,
+                ScriptLibraryComposer.ScriptLibrariesFile);
+
+            if (FileSystem.FileExists(scriptLibrariesPath))
+            {
+                Logger.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
+                return FilePreProcessor.ProcessFile(scriptLibrariesPath);
+            }
+
+            return null;
         }
     }
 }

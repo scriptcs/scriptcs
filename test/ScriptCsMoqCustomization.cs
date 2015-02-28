@@ -29,7 +29,7 @@ namespace ScriptCs.Tests
             fixture.Register<Mock<IScriptLibraryComposer>>(() =>
                 {
                     var composer = new Mock<IScriptLibraryComposer>();
-                    composer.SetupGet(c => c.ScriptLibrariesFile).Returns("PackageScripts.csx");
+                    composer.SetupGet(c => c.ScriptLibrariesFile).Returns("ScriptLibraries.csx");
                     return composer;
                 });
         }
