@@ -36,16 +36,6 @@ namespace ScriptCs.Command
         {
             Guard.AgainstNullArgument("args", args);
 
-            if (args.Help)
-            {
-                return new ShowUsageCommand(_initializationServices.Logger);
-            }
-
-            if (args.Version)
-            {
-                return new VersionCommand(_scriptServicesBuilder.ConsoleInstance);
-            }
-
             var scriptServices = _scriptServicesBuilder.Build();
 
             // HACK (Adam): This should not be the responsbility of the command factory

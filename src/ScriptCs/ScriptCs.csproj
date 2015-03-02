@@ -93,11 +93,9 @@
     <Compile Include="Command\DeferredCreationCommand.cs" />
     <Compile Include="Command\WatchScriptCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
-    <Compile Include="Command\ShowUsageCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\SaveCommand.cs" />
-    <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
     <Compile Include="ScriptServicesBuilderFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

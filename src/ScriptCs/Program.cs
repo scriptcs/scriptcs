@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using ScriptCs.Argument;
@@ -27,6 +28,18 @@ namespace ScriptCs
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ScriptCsArgs.GetUsage());
                 return 1;
+            }
+
+            if (commandArgs.Help)
+            {
+                Console.WriteLine(ScriptCsArgs.GetUsage());
+                return 0;
+            }
+
+            if (commandArgs.Version)
+            {
+                VersionWriter.Write(FileVersionInfo.GetVersionInfo(typeof(Program).Assembly.Location).ProductVersion);
+                return 0;
             }
 
             var parser = new ArgumentHandler(new ConfigFileParser(new ScriptConsole()), new FileSystem());

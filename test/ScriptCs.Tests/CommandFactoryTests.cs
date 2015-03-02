@@ -178,20 +178,6 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldReturnHelpCommandWhenHelpIsPassed()
-            {
-                // Arrange
-                var args = new ScriptCsArgs { Help = true };
-
-                // Act
-                var factory = new CommandFactory(CreateBuilder());
-                var result = factory.CreateCommand(args, new string[0]);
-
-                // Assert
-                result.ShouldImplement<IHelpCommand>();
-            }
-
-            [Fact]
             public void ShouldPassScriptArgsToExecuteCommandConstructor()
             {
                 // Arrange
