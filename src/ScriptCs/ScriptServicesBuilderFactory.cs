@@ -9,57 +9,35 @@ namespace ScriptCs
 {
     public static class ScriptServicesBuilderFactory
     {
-        public static IScriptServicesBuilder Create(ScriptCsArgs commandArgs, string[] scriptArgs)
+        public static IScriptServicesBuilder Create(Config config, string[] scriptArgs)
         {
-            Guard.AgainstNullArgument("commandArgs", commandArgs);
+            Guard.AgainstNullArgument("commandArgs", config);
             Guard.AgainstNullArgument("scriptArgs", scriptArgs);
 
             IConsole console = new ScriptConsole();
-            if (!string.IsNullOrWhiteSpace(commandArgs.Output))
+            if (!string.IsNullOrWhiteSpace(config.Output))
             {
-                console = new FileConsole(commandArgs.Output, console);
+                console = new FileConsole(config.Output, console);
             }
-            var logLevel = commandArgs.LogLevel ?? LogLevel.Info;
-            var configurator = new LoggerConfigurator(logLevel);
+
+            var configurator = new LoggerConfigurator(config.LogLevel);
             configurator.Configure(console, new NoOpLogger());
             var logger = configurator.GetLogger();
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
-                .Cache(commandArgs.Cache)
-                .Debug(commandArgs.Debug)
-                .LogLevel(logLevel)
-                .ScriptName(commandArgs.ScriptName)
-                .Repl(commandArgs.Repl);
+                .Cache(config.Cache)
+                .Debug(config.Debug)
+                .LogLevel(config.LogLevel)
+                .ScriptName(config.ScriptName)
+                .Repl(config.Repl);
 
-            var modules = commandArgs.Modules == null
+            var modules = config.Modules == null
                 ? new string[0]
-                : commandArgs.Modules.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                : config.Modules.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-            var extension = Path.GetExtension(commandArgs.ScriptName);
-
-            if (string.IsNullOrWhiteSpace(extension) && !commandArgs.Repl)
-            {
-                // No extension was given, i.e we might have something like
-                // "scriptcs foo" to deal with. We activate the default extension,
-                // to make sure it's given to the LoadModules below.
-                extension = ".csx";
-
-                if (!string.IsNullOrWhiteSpace(commandArgs.ScriptName))
-                {
-                    // If the was in fact a script specified, we'll extend it
-                    // with the default extension, assuming the user giving
-                    // "scriptcs foo" actually meant "scriptcs foo.csx". We
-                    // perform no validation here thought; let it be done by
-                    // the activated command. If the file don't exist, it's
-                    // up to the command to detect and report.
-
-                    commandArgs.ScriptName += extension;
-                }
-            }
-
-            return scriptServicesBuilder.LoadModules(extension, modules);
+            return scriptServicesBuilder.LoadModules(Path.GetExtension(config.ScriptName) ?? ".csx", modules);
         }
 
         private class NoOpLogger : ILog

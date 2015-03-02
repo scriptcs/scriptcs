@@ -6,8 +6,6 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    // NOTE (Adam): passed across app domains as a property of CrossAppDomainExecuteScriptCommand 
-    [Serializable]
     [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
@@ -60,7 +58,6 @@ namespace ScriptCs
         [ArgDescription("Specify modules to load")]
         public string Modules { get; set; }
 
-        [DefaultValue(Constants.ConfigFilename)]
         [ArgDescription("Defines config file name")]
         public string Config { get; set; }
 

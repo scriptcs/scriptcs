@@ -26,7 +26,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
@@ -62,7 +62,7 @@ namespace ScriptCs.Tests
                 // arrange
                 const string NonManaged = "non-managed.dll";
 
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
 
                 fileSystem.Setup(
                         x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
@@ -102,7 +102,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
                     Install = "",
@@ -137,7 +137,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
                     Install = "",
@@ -172,7 +172,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { ScriptName = "test.csx" };
+                var args = new Config { ScriptName = "test.csx" };
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
                     .Returns(ScriptResult.Incomplete);

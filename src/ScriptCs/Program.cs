@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using ScriptCs.Argument;
 using ScriptCs.Command;
-using ScriptCs.Hosting;
 
 namespace ScriptCs
 {
@@ -42,12 +41,20 @@ namespace ScriptCs
                 return 0;
             }
 
-            var parser = new ArgumentHandler(new ConfigFileParser(new ScriptConsole()), new FileSystem());
-            commandArgs = parser.Parse(commandArgs, args);
+            if (commandArgs.Config != null && !File.Exists(commandArgs.Config))
+            {
+                Console.WriteLine("The specified config file does not exist.");
+                return 1;
+            }
 
-            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(commandArgs, scriptArgs);
+            var config = new Config()
+                .Apply(ConfigMask.ReadOrDefault(new FileSystem().GlobalOptsFile))
+                .Apply(ConfigMask.ReadOrDefault(commandArgs.Config ?? Constants.ConfigFilename))
+                .Apply(ConfigMask.Create(commandArgs));
+
+            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(config, scriptArgs);
             var factory = new CommandFactory(scriptServicesBuilder);
-            var command = factory.CreateCommand(commandArgs, scriptArgs);
+            var command = factory.CreateCommand(config, scriptArgs);
             return (int)command.Execute();
         }
 
