@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using PowerArgs;
 using ScriptCs.Argument;
@@ -14,12 +15,15 @@ namespace ScriptCs
         {
             SetProfile();
             
-            ArgumentParseResult arguments;
+            var nonScriptArgs = args.TakeWhile(arg => arg != "--").ToArray();
+            var scriptArgs = args.Skip(nonScriptArgs.Length + 1).ToArray();
+
+            ScriptCsArgs commandArgs;
             var console = new ScriptConsole();
             try
             {
                 var parser = new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(console), new FileSystem());
-                arguments = parser.Parse(args);
+                commandArgs = parser.Parse(nonScriptArgs);
             }
             catch(Exception ex)
             {
@@ -30,9 +34,9 @@ namespace ScriptCs
                 return 1;
             }
 
-            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(arguments.CommandArguments, arguments.ScriptArguments);
+            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(commandArgs, scriptArgs);
             var factory = new CommandFactory(scriptServicesBuilder);
-            var command = factory.CreateCommand(arguments.CommandArguments, arguments.ScriptArguments);
+            var command = factory.CreateCommand(commandArgs, scriptArgs);
             return (int)command.Execute();
         }
 

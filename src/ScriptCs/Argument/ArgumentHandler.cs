@@ -23,23 +23,21 @@ namespace ScriptCs.Argument
             _configFileParser = configFileParser;
         }
 
-        public ArgumentParseResult Parse(string[] args)
+        public ScriptCsArgs Parse(string[] args)
         {
-            var sr = SplitScriptArgs(args);
-
-            var scriptCsArgs = _argumentParser.Parse(sr.CommandArguments);
+            var scriptCsArgs = _argumentParser.Parse(args);
             var localConfigFile = scriptCsArgs.Config;
             var localConfigPath = string.Format("{0}\\{1}", _fileSystem.CurrentDirectory, localConfigFile);
             var localConfigArgs = _configFileParser.Parse(GetFileContent(localConfigPath));
             var globalConfigArgs = _configFileParser.Parse(GetFileContent(_fileSystem.GlobalOptsFile));
-            var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, scriptCsArgs, sr);
+            var finalArguments = ReconcileArguments(globalConfigArgs, localConfigArgs, scriptCsArgs, args);
 
             if (finalArguments.LogLevel == null)
             {
                 finalArguments.LogLevel = finalArguments.Debug ? LogLevel.Debug : LogLevel.Info;
             }
 
-            return new ArgumentParseResult(args, finalArguments, sr.ScriptArguments);
+            return finalArguments;
         }
 
         private string GetFileContent(string filePath)
@@ -52,27 +50,7 @@ namespace ScriptCs.Argument
             return null;
         }
 
-        public static SplitResult SplitScriptArgs(string[] args)
-        {
-            Guard.AgainstNullArgument("args", args);
-
-            var result = new SplitResult() { CommandArguments = args };
-
-            // Split the arguments list on "--".
-            // The arguments before the "--" (or all arguments if there is no "--") are
-            // for ScriptCs.exe, and the arguments after that are for the csx script.
-            int separatorLocation = Array.IndexOf(args, "--");
-            int scriptArgsCount = separatorLocation == -1 ? 0 : args.Length - separatorLocation - 1;
-            result.ScriptArguments = new string[scriptArgsCount];
-            Array.Copy(args, separatorLocation + 1, result.ScriptArguments, 0, scriptArgsCount);
-
-            if (separatorLocation != -1)
-                result.CommandArguments = args.Take(separatorLocation).ToArray();
-
-            return result;
-        }
-
-        private static ScriptCsArgs ReconcileArguments(ScriptCsArgs globalConfigArgs, ScriptCsArgs localConfigArgs, ScriptCsArgs commandArgs, SplitResult splitResult)
+        private static ScriptCsArgs ReconcileArguments(ScriptCsArgs globalConfigArgs, ScriptCsArgs localConfigArgs, ScriptCsArgs commandArgs, string[] args)
         {
             if (globalConfigArgs == null && localConfigArgs == null)
                 return commandArgs;
@@ -97,7 +75,7 @@ namespace ScriptCs.Argument
                         property.SetValue(reconciledArgs, commandValue);
                         continue;
                     }
-                    if (IsCommandLinePresent(splitResult.CommandArguments, property))
+                    if (IsCommandLinePresent(args, property))
                     {
                         property.SetValue(reconciledArgs, commandValue);
                         continue;
@@ -147,18 +125,6 @@ namespace ScriptCs.Argument
             return defaultAttribute != null
                        ? ((PowerArgs.DefaultValueAttribute)defaultAttribute).Value
                        : property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null;
-        }
-
-        public class SplitResult
-        {
-            public SplitResult()
-            {
-                CommandArguments = new string[0];
-                ScriptArguments = new string[0];
-            }
-
-            public string[] CommandArguments { get; set; }
-            public string[] ScriptArguments { get; set; }
         }
     }
 }

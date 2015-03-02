@@ -81,7 +81,6 @@
     </Compile>
     <Compile Include="Argument\ArgumentHandler.cs" />
     <Compile Include="Argument\ArgumentParser.cs" />
-    <Compile Include="Argument\ArgumentParseResult.cs" />
     <Compile Include="Argument\ConfigFileParser.cs" />
     <Compile Include="Argument\IArgumentHandler.cs" />
     <Compile Include="Argument\IArgumentParser.cs" />

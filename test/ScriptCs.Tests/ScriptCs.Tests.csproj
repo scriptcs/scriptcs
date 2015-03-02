@@ -54,7 +54,6 @@
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="ConfigFileParserTests.cs" />
     <Compile Include="ExecuteReplCommandTests.cs" />
-    <Compile Include="ScriptArgsTests.cs" />
     <Compile Include="ArgumentHandlerTests.cs" />
     <Compile Include="VersionCommandTests.cs" />
     <Compile Include="InstallCommandTests.cs" />

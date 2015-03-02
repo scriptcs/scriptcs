@@ -37,34 +37,30 @@ namespace ScriptCs.Tests
             public void ShouldHandleConfigFileAndCommandLineArguments()
             {
                 const string file = "{\"Install\": \"install test value\" }";
-                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-log", "error" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.CommandArguments.Install.ShouldEqual("install test value");
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
+                result.Install.ShouldEqual("install test value");
             }
 
             [Fact]
             public void ShouldHandleGlobalConfigAndCommandLineArguments()
             {
                 const string file = "{\"Install\": \"install test value\" }";
-                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-log", "error" };
 
                 var argumentHandler = Setup(null, globalFileContent: file);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.CommandArguments.Install.ShouldEqual("install test value");
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
+                result.Install.ShouldEqual("install test value");
             }
 
             [Fact]
@@ -78,10 +74,8 @@ namespace ScriptCs.Tests
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.Install.ShouldEqual("install test value");
-                result.CommandArguments.Modules.ShouldEqual("modules test value");
-                result.ScriptArguments.ShouldEqual(new string[] { });
+                result.Install.ShouldEqual("install test value");
+                result.Modules.ShouldEqual("modules test value");
             }
 
             [Fact]
@@ -89,64 +83,56 @@ namespace ScriptCs.Tests
             {
                 const string localFile = "{\"Install\": \"local install test value\" }";
                 const string globalFile = "{\"Install\": \"global install test value\" }";
-                string[] args = { "server.csx", "-cache", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-cache" };
 
                 var argumentHandler = Setup(localFile, globalFileContent: globalFile);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.Install.ShouldEqual("local install test value");
-                result.CommandArguments.Cache.ShouldEqual(true);
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("local install test value");
+                result.Cache.ShouldEqual(true);
             }
 
             [Fact]
             public void ShouldHandleCommandLineArgumentsOverConfigFile()
             {
                 const string file = "{\"Install\": \"config file arg\", \"debug\": \"true\" }";
-                string[] args = { "server.csx", "-Install", "command line arg", "-cache", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-Install", "command line arg", "-cache" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.Install.ShouldEqual("command line arg");
-                result.CommandArguments.Cache.ShouldEqual(true);
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
+                result.Install.ShouldEqual("command line arg");
+                result.Cache.ShouldEqual(true);
             }
 
             [Fact]
             public void ShouldHandleCommandLineArgumentsOverConfigFileWithPropertyName()
             {
                 const string file = "{\"LogLevel\": \"info\", }";
-                string[] args = { "server.csx", "-log", "error", "--", "-port", "8080" };
+                string[] args = { "server.csx", "-log", "error" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
             public void ShouldHandleOnlyCommandLineArguments()
             {
-                string[] args = { "server.csx", "--", "-port", "8080" };
+                string[] args = { "server.csx" };
 
                 var argumentHandler = Setup(null, "test.txt", false);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("server.csx");
             }
 
             [Fact]
@@ -158,9 +144,8 @@ namespace ScriptCs.Tests
                 var result = argumentHandler.Parse(new string[0]);
 
                 result.ShouldNotBeNull();
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.ScriptArguments.ShouldEqual(new string[0]);
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -172,9 +157,8 @@ namespace ScriptCs.Tests
                 var result = argumentHandler.Parse(new string[0]);
 
                 result.ShouldNotBeNull();
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.ScriptArguments.ShouldEqual(new string[0]);
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -182,17 +166,15 @@ namespace ScriptCs.Tests
             {
                 const string fileName = "text.txt";
                 const string file = "{\"Install\": \"install test value\" }";
-                string[] args = { "server.csx", "-log", "error", "-config", fileName, "--", "-port", "8080" };
+                string[] args = { "server.csx", "-log", "error", "-config", fileName };
 
                 var argumentHandler = Setup(file, fileName);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("server.csx");
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
-                result.CommandArguments.Install.ShouldEqual("install test value");
+                result.ScriptName.ShouldEqual("server.csx");
+                result.LogLevel.ShouldEqual(LogLevel.Error);
+                result.Install.ShouldEqual("install test value");
             }
 
             [Fact]
@@ -204,25 +186,22 @@ namespace ScriptCs.Tests
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldBeNull();
-                result.CommandArguments.Help.ShouldBeTrue();
+                result.ScriptName.ShouldBeNull();
+                result.Help.ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldHandleScriptNameStartingWithRepl()
             {
                 const string file = "{\"repl\": true}";
-                string[] args = { "replication.csx", "--", "-port", "8080" };
+                string[] args = { "replication.csx" };
 
                 var argumentHandler = Setup(file);
                 var result = argumentHandler.Parse(args);
 
                 result.ShouldNotBeNull();
-                result.Arguments.ShouldEqual(args);
-                result.CommandArguments.ScriptName.ShouldEqual("replication.csx");
-                result.CommandArguments.Repl.ShouldBeTrue();
-                result.ScriptArguments.ShouldEqual(new string[] { "-port", "8080" });
+                result.ScriptName.ShouldEqual("replication.csx");
+                result.Repl.ShouldBeTrue();
             }
 
             [Fact]
@@ -249,8 +228,8 @@ namespace ScriptCs.Tests
 
                 var result = argumentHandler.Parse(args);
 
-                result.CommandArguments.Debug.ShouldBeTrue();
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
+                result.Debug.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Debug);
             }
 
             [Fact]
@@ -261,8 +240,8 @@ namespace ScriptCs.Tests
 
                 var result = argumentHandler.Parse(args);
 
-                result.CommandArguments.Debug.ShouldBeTrue();
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Debug);
+                result.Debug.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Debug);
             }
 
             [Fact]
@@ -273,8 +252,8 @@ namespace ScriptCs.Tests
 
                 var result = argumentHandler.Parse(args);
 
-                result.CommandArguments.Debug.ShouldBeTrue();
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.Debug.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -285,8 +264,8 @@ namespace ScriptCs.Tests
 
                 var result = argumentHandler.Parse(args);
 
-                result.CommandArguments.Debug.ShouldBeTrue();
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Error);
+                result.Debug.ShouldBeTrue();
+                result.LogLevel.ShouldEqual(LogLevel.Error);
             }
 
             [Fact]
@@ -297,7 +276,7 @@ namespace ScriptCs.Tests
 
                 var result = argumentHandler.Parse(args);
 
-                result.CommandArguments.LogLevel.ShouldEqual(LogLevel.Info);
+                result.LogLevel.ShouldEqual(LogLevel.Info);
             }
         }
     }

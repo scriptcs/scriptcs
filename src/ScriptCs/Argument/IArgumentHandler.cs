@@ -2,6 +2,6 @@
 {
     public interface IArgumentHandler
     {
-        ArgumentParseResult Parse(string[] args);
+        ScriptCsArgs Parse(string[] args);
     }
 }
