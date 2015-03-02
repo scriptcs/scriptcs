@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using PowerArgs;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
+    // NOTE (Adam): passed across app domains as a property of CrossAppDomainExecuteScriptCommand 
     [Serializable]
     [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
-        public ScriptCsArgs()
-        {
-            Config = Constants.ConfigFilename;
-        }
-
-        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply use 'scriptcs' without any args.")]
+        [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply omit the 'script' argument.")]
         public bool Repl { get; set; }
 
         [ArgPosition(0)]
@@ -28,15 +23,12 @@ namespace ScriptCs
         [ArgDescription("Displays help")]
         public bool Help { get; set; }
 
-        [DefaultValue(false)]
         [ArgDescription("Emits PDB symbols allowing for attaching a Visual Studio debugger")]
         public bool Debug { get; set; }
 
-        [DefaultValue(false)]
         [ArgDescription("Flag which determines whether to run in memory or from a .dll")]
         public bool Cache { get; set; }
 
-        [ArgIgnoreCase]
         [ArgShortcut("log")]
         [ArgDescription("Flag which defines the log level used.")]
         public LogLevel? LogLevel { get; set; }
