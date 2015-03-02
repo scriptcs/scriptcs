@@ -112,5 +112,11 @@ namespace ScriptCs
 
             return scriptCsArgs;
         }
+
+        public static string GetUsage()
+        {
+            return ArgUsage.GetUsage<ScriptCsArgs>(
+                null, new ArgUsageOptions { ShowPosition = false, ShowType = false, });
+        }
     }
 }

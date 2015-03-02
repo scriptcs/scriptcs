@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using PowerArgs;
 using ScriptCs.Argument;
 using ScriptCs.Command;
 using ScriptCs.Hosting;
@@ -14,26 +13,23 @@ namespace ScriptCs
         private static int Main(string[] args)
         {
             SetProfile();
-            
+
             var nonScriptArgs = args.TakeWhile(arg => arg != "--").ToArray();
             var scriptArgs = args.Skip(nonScriptArgs.Length + 1).ToArray();
 
             ScriptCsArgs commandArgs;
-            var console = new ScriptConsole();
             try
             {
                 commandArgs = ScriptCsArgs.Parse(nonScriptArgs);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                console.WriteLine(ex.Message);
-                var options = new ArgUsageOptions { ShowPosition = false, ShowType = false };
-                var usage = ArgUsage.GetUsage<ScriptCsArgs>(options: options);
-                console.WriteLine(usage);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ScriptCsArgs.GetUsage());
                 return 1;
             }
 
-            var parser = new ArgumentHandler(new ConfigFileParser(console), new FileSystem());
+            var parser = new ArgumentHandler(new ConfigFileParser(new ScriptConsole()), new FileSystem());
             commandArgs = parser.Parse(commandArgs, args);
 
             var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(commandArgs, scriptArgs);
