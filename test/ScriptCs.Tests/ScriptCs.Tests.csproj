@@ -49,7 +49,7 @@
     <Compile Include="..\TestLogger.cs">
       <Link>TestLogger.cs</Link>
     </Compile>
-    <Compile Include="ArgumentParserTests.cs" />
+    <Compile Include="ScriptCsArgsTests.cs" />
     <Compile Include="CleanCommandTests.cs" />
     <Compile Include="CommandFactoryTests.cs" />
     <Compile Include="ConfigFileParserTests.cs" />

@@ -22,8 +22,7 @@ namespace ScriptCs
             var console = new ScriptConsole();
             try
             {
-                var parser = new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(console), new FileSystem());
-                commandArgs = parser.Parse(nonScriptArgs);
+                commandArgs = ScriptCsArgs.Parse(nonScriptArgs);
             }
             catch(Exception ex)
             {
@@ -33,6 +32,9 @@ namespace ScriptCs
                 console.WriteLine(usage);
                 return 1;
             }
+
+            var parser = new ArgumentHandler(new ConfigFileParser(console), new FileSystem());
+            commandArgs = parser.Parse(commandArgs, args);
 
             var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(commandArgs, scriptArgs);
             var factory = new CommandFactory(scriptServicesBuilder);

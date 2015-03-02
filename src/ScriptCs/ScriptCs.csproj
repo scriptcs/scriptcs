@@ -80,10 +80,8 @@
       <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="Argument\ArgumentHandler.cs" />
-    <Compile Include="Argument\ArgumentParser.cs" />
     <Compile Include="Argument\ConfigFileParser.cs" />
     <Compile Include="Argument\IArgumentHandler.cs" />
-    <Compile Include="Argument\IArgumentParser.cs" />
     <Compile Include="Argument\IConfigFileParser.cs" />
     <Compile Include="VersionWriter.cs" />
     <Compile Include="Command\CleanCommand.cs" />

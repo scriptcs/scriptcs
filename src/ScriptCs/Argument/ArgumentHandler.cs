@@ -8,24 +8,20 @@ namespace ScriptCs.Argument
 {
     public class ArgumentHandler : IArgumentHandler
     {
-        private readonly IArgumentParser _argumentParser;
         private readonly IConfigFileParser _configFileParser;
         private readonly IFileSystem _fileSystem;
 
-        public ArgumentHandler(IArgumentParser argumentParser, IConfigFileParser configFileParser, IFileSystem fileSystem)
+        public ArgumentHandler(IConfigFileParser configFileParser, IFileSystem fileSystem)
         {
-            Guard.AgainstNullArgument("argumentParser", argumentParser);
             Guard.AgainstNullArgument("configFileParser", configFileParser);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
 
             _fileSystem = fileSystem;
-            _argumentParser = argumentParser;
             _configFileParser = configFileParser;
         }
 
-        public ScriptCsArgs Parse(string[] args)
+        public ScriptCsArgs Parse(ScriptCsArgs scriptCsArgs, string[] args)
         {
-            var scriptCsArgs = _argumentParser.Parse(args);
             var localConfigFile = scriptCsArgs.Config;
             var localConfigPath = string.Format("{0}\\{1}", _fileSystem.CurrentDirectory, localConfigFile);
             var localConfigArgs = _configFileParser.Parse(GetFileContent(localConfigPath));

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PowerArgs;
 
 using ScriptCs.Contracts;
@@ -40,6 +42,7 @@ namespace ScriptCs
         public LogLevel? LogLevel { get; set; }
 
         [ArgDescription("Installs and restores packages which are specified in packages.config")]
+        [ArgShortcut("i")]
         public string Install { get; set; }
 
         [ArgShortcut("g")]
@@ -74,5 +77,40 @@ namespace ScriptCs
 
         [ArgDescription("Write all console output to the specified file")]
         public string Output { get; set; }
+
+        public static ScriptCsArgs Parse(string[] args)
+        {
+            Guard.AgainstNullArgument("args", args);
+
+            var list = args.ToList();
+            var curatedList = new List<string>();
+            string packageVersion = null;
+            for (var index = 0; index < list.Count; ++index)
+            {
+                if (index < list.Count - 2 &&
+                    (string.Equals(list[index], "-install", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(list[index], "-i", StringComparison.OrdinalIgnoreCase)) &&
+                    !list[index + 1].StartsWith("-", StringComparison.Ordinal) &&
+                    !list[index + 2].StartsWith("-", StringComparison.Ordinal))
+                {
+                    curatedList.Add(list[index]);
+                    curatedList.Add(list[index + 1]);
+                    packageVersion = list[index + 2];
+                    index += 2;
+                }
+                else
+                {
+                    curatedList.Add(list[index]);
+                }
+            }
+
+            var scriptCsArgs = Args.Parse<ScriptCsArgs>(curatedList.ToArray());
+            if (!string.IsNullOrWhiteSpace(packageVersion))
+            {
+                scriptCsArgs.PackageVersion = packageVersion;
+            }
+
+            return scriptCsArgs;
+        }
     }
 }
