@@ -48,7 +48,6 @@ namespace ScriptCs
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             Guard.AgainstNullArgument("script", script);
-
             try
             {
                 if (script.StartsWith(":"))

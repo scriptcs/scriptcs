@@ -465,7 +465,7 @@ namespace ScriptCs.Tests
                 executor.Protected();
                 executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
                 executor.Object.InjectScriptLibraries("", _result, _state);
-                _result.Code.ShouldEqual(Environment.NewLine + "Test");
+                _result.Code.ShouldEqual("Test" + Environment.NewLine);
             }
 
             [Theory, ScriptCsAutoData]

@@ -29,7 +29,7 @@ namespace ScriptCs
             return _scriptHost.Require<T>();
         }
 
-        public IScriptEnvironment Env
+        public static IScriptEnvironment Env
         {
             get { return _scriptHost.Env; }
         }

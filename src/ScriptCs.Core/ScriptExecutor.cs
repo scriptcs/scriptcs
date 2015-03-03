@@ -13,10 +13,10 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
-        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location };
+        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location, typeof(IScriptEnvironment).Assembly.Location };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
         private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
-        
+
         public IFileSystem FileSystem { get; private set; }
 
         public IFilePreProcessor FilePreProcessor { get; private set; }
@@ -38,7 +38,6 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
- 
             References = new AssemblyReferences();
             AddReferences(DefaultReferences);
             Namespaces = new Collection<string>();
@@ -129,7 +128,6 @@ namespace ScriptCs
         {
             References = new AssemblyReferences();
             AddReferences(DefaultReferences);
-
             Namespaces.Clear();
             ImportNamespaces(DefaultNamespaces);
 
@@ -153,8 +151,21 @@ namespace ScriptCs
             Logger.Debug("Starting execution in engine");
 
             InjectScriptLibraries(Path.GetDirectoryName(path), result, ScriptPackSession.State);
+            //AddContractsIfNotPresent(References.PathReferences);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
+        
+        /*
+        protected internal void AddContractsIfNotPresent(HashSet<string> references )
+        {
+            var contracts = references.SingleOrDefault(p=>p.EndsWith("ScriptCs.Contracts.dll", StringComparison.InvariantCultureIgnoreCase));
+            if (contracts != null)
+            {
+                references.Remove(contracts);
+            }
+            references.Add(typeof(IScriptEnvironment).Assembly.Location);
+        }
+         */
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
@@ -183,7 +194,7 @@ namespace ScriptCs
 
             if (scriptLibrariesPreProcessorResult != null)
             {
-                result.Code += Environment.NewLine + scriptLibrariesPreProcessorResult.Code;
+                result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine + result.Code;
                 result.References.AddRange(scriptLibrariesPreProcessorResult.References);
                 result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
             }
