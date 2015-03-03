@@ -47,5 +47,24 @@
             "And I see the exception message"
                 .f(() => exception.Message.ShouldContain("BOOM!"));
         }
+
+        [Scenario]
+        public static void ScriptCanAccessEnv(ScenarioDirectory directory, string output )
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which access Env"
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", "Console.WriteLine(Env)"));
+
+            "When I execute the script"
+                .f(()=> output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then the Env object is displayed"
+                .f(() =>
+                {
+                    output.ShouldContain("ScriptCs.ScriptEnvironment");
+                });
+        }
     }
 }

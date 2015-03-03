@@ -41,7 +41,7 @@ namespace ScriptCs.Tests.Acceptance
         public static void UsingAMethodInAScriptLibraryInTheRepl(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
-            var args = new[] {"r"};
+            var args = new[] {"-r"};
 
             "Given a script which uses ScriptCs.Calculator"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
@@ -51,7 +51,7 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
             "When executing the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), args, directory));
+                .f(() => output = ScriptCsExe.Run("foo.csx", false, args, Enumerable.Empty<string>(), directory));
 
             "Then the ScriptCs.Calculator instance is created"
                 .f(() => output.ShouldContain("Type:Calculator"));
