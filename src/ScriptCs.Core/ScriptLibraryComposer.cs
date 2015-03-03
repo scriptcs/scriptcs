@@ -104,6 +104,13 @@ namespace ScriptCs
         {
             _logger.DebugFormat("Finding package:{0}", reference.PackageId);
             var package = _packageContainer.FindPackage(packagesPath, reference);
+            
+            if (package == null)
+            {
+                _logger.Warn("Package missing, ignoring");
+                return;
+            }
+
             _logger.Debug("Package found");
             var script = GetMainScript(package);
             if (script != null)

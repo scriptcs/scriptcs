@@ -45,6 +45,23 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
+            public void ShouldLogAWarningIfThePackageIsMissing(
+                [Frozen] Mock<ILog> logger,
+                [Frozen] Mock<IPackageContainer> packageContainer,
+                ScriptLibraryComposer composer,
+                Mock<IPackageReference> reference,
+                Mock<IPackageObject> package)
+            {
+                packageContainer.Setup(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
+                    .Returns((IPackageObject)null);
+                composer.ProcessPackage("", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
+                packageContainer.Verify(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()));
+                logger.Verify(l => l.Warn("Package missing, ignoring"));
+            }
+
+            
+
+            [Theory, ScriptCsAutoData]
             public void ShouldPreProcessTheScriptFile(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
