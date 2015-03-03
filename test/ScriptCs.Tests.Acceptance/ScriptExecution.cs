@@ -61,10 +61,7 @@
                 .f(()=> output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the Env object is displayed"
-                .f(() =>
-                {
-                    output.ShouldContain("ScriptCs.ScriptEnvironment");
-                });
+                .f(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
         }
     }
 }
