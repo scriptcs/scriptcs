@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using Newtonsoft.Json;
 using ScriptCs.Contracts;
 
@@ -63,7 +65,17 @@ namespace ScriptCs
 
         public static ConfigMask ReadOrDefault(string path)
         {
-            return File.Exists(path) ? JsonConvert.DeserializeObject<ConfigMask>(File.ReadAllText(path)) : null;
+            try
+            {
+                return File.Exists(path) ? JsonConvert.DeserializeObject<ConfigMask>(File.ReadAllText(path)) : null;
+            }
+            catch (Exception ex)
+            {
+                var message = string.Format(
+                    CultureInfo.InvariantCulture, "Error reading JSON config from '{0}'.", path);
+
+                throw new InvalidOperationException(message, ex);
+            }
         }
     }
 }
