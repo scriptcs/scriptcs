@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using PowerArgs;
 using ScriptCs.Contracts;
 
@@ -71,34 +70,29 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("args", args);
 
-            var list = args.ToList();
-            var curatedList = new List<string>();
-            string packageVersion = null;
-            for (var index = 0; index < list.Count; ++index)
+            var curatedArgs = new List<string>();
+            string implicitPackageVersion = null;
+            for (var index = 0; index < args.Length; ++index)
             {
-                if (index < list.Count - 2 &&
-                    (string.Equals(list[index], "-install", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(list[index], "-i", StringComparison.OrdinalIgnoreCase)) &&
-                    !list[index + 1].StartsWith("-", StringComparison.Ordinal) &&
-                    !list[index + 2].StartsWith("-", StringComparison.Ordinal))
+                if (index < args.Length - 2 &&
+                    (string.Equals(args[index], "-install", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(args[index], "-i", StringComparison.OrdinalIgnoreCase)) &&
+                    !args[index + 1].StartsWith("-", StringComparison.Ordinal) &&
+                    !args[index + 2].StartsWith("-", StringComparison.Ordinal))
                 {
-                    curatedList.Add(list[index]);
-                    curatedList.Add(list[index + 1]);
-                    packageVersion = list[index + 2];
+                    curatedArgs.Add(args[index]);
+                    curatedArgs.Add(args[index + 1]);
+                    implicitPackageVersion = args[index + 2];
                     index += 2;
                 }
                 else
                 {
-                    curatedList.Add(list[index]);
+                    curatedArgs.Add(args[index]);
                 }
             }
 
-            var scriptCsArgs = Args.Parse<ScriptCsArgs>(curatedList.ToArray());
-            if (!string.IsNullOrWhiteSpace(packageVersion))
-            {
-                scriptCsArgs.PackageVersion = packageVersion;
-            }
-
+            var scriptCsArgs = Args.Parse<ScriptCsArgs>(curatedArgs.ToArray());
+            scriptCsArgs.PackageVersion = scriptCsArgs.PackageVersion ?? implicitPackageVersion;
             return scriptCsArgs;
         }
 
