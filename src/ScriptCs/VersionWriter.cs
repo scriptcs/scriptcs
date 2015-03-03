@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -6,10 +7,13 @@ namespace ScriptCs
 {
     public static class VersionWriter
     {
+        private static readonly string version =
+            FileVersionInfo.GetVersionInfo(typeof(VersionWriter).Assembly.Location).ProductVersion;
+
         private static readonly Regex colorRegex = new Regex(
             @"\+(?<color>\w*)(?<ascii>(.*(?=\+))|.*)", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        public static void Write(string version)
+        public static void Write()
         {
             var lines = new[]
             {

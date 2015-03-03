@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -37,7 +36,7 @@ namespace ScriptCs
 
             if (commandArgs.Version)
             {
-                VersionWriter.Write(FileVersionInfo.GetVersionInfo(typeof(Program).Assembly.Location).ProductVersion);
+                VersionWriter.Write();
                 return 0;
             }
 
