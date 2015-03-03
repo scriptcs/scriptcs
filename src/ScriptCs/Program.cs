@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using ScriptCs.Command;
 
 namespace ScriptCs
@@ -11,7 +10,8 @@ namespace ScriptCs
         [LoaderOptimizationAttribute(LoaderOptimization.MultiDomain)]
         private static int Main(string[] args)
         {
-            SetProfile();
+            ProfileOptimizationShim.SetProfileRoot(Path.GetDirectoryName(typeof(Program).Assembly.Location));
+            ProfileOptimizationShim.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
 
             var nonScriptArgs = args.TakeWhile(arg => arg != "--").ToArray();
             var scriptArgs = args.Skip(nonScriptArgs.Length + 1).ToArray();
@@ -55,19 +55,6 @@ namespace ScriptCs
             var factory = new CommandFactory(scriptServicesBuilder);
             var command = factory.CreateCommand(config, scriptArgs);
             return (int)command.Execute();
-        }
-
-        private static void SetProfile()
-        {
-            var profileOptimizationType = Type.GetType("System.Runtime.ProfileOptimization");
-            if (profileOptimizationType != null)
-            {
-                var setProfileRoot = profileOptimizationType.GetMethod("SetProfileRoot", BindingFlags.Public | BindingFlags.Static);
-                setProfileRoot.Invoke(null, new object[] { typeof(Program).Assembly.Location });
-
-                var startProfile = profileOptimizationType.GetMethod("StartProfile", BindingFlags.Public | BindingFlags.Static);
-                startProfile.Invoke(null, new object[] { typeof(Program).Assembly.GetName().Name + ".profile" });
-            }
         }
     }
 }

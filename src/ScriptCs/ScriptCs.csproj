@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="ConfigMask.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ProfileOptimizationShim.cs" />
     <Compile Include="VersionWriter.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
