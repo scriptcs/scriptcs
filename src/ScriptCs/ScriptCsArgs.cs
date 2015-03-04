@@ -5,7 +5,9 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    [ArgExample("scriptcs server.csx -logLevel debug", "Shows how to run the script and display detailed log messages. Useful for debugging.")]
+    [ArgExample(
+        "scriptcs server.csx -logLevel debug",
+        "Executes the 'server.csx' script and displays detailed log messages. Useful for debugging.")]
     public class ScriptCsArgs
     {
         [ArgDescription("Launch REPL mode when running script. To just launch REPL, simply omit the 'script' argument.")]
