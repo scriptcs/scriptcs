@@ -42,7 +42,7 @@ namespace ScriptCs
             List<string> assemblies;
             if (!_assemblyPathCache.TryGetValue(path, out assemblies))
             {
-                assemblies = GetPackageAssemblyNames(path).Union(GetBinAssemblyPaths(path)).Where(a=>!a.Contains("ScriptCs.Contracts")).ToList();    
+                assemblies = GetPackageAssemblyNames(path).Union(GetBinAssemblyPaths(path)).ToList();
                 _assemblyPathCache.Add(path, assemblies);
             }
            

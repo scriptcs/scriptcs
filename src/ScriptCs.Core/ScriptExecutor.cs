@@ -38,8 +38,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
-            References = new AssemblyReferences();
-            AddReferences(DefaultReferences);
+            References = new AssemblyReferences(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);
             FileSystem = fileSystem;
@@ -63,7 +62,9 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            foreach (var assembly in assemblies)
+            foreach (var assembly in assemblies
+                .Where(assembly =>
+                    assembly != typeof(ScriptExecutor).Assembly && assembly != typeof(IScriptEnvironment).Assembly))
             {
                 References.Assemblies.Add(assembly);
             }
@@ -83,7 +84,16 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach (var path in paths)
+            foreach (var path in paths
+                .Where(path =>
+                    !string.Equals(
+                        Path.GetFileName(path),
+                        Path.GetFileName(typeof(ScriptExecutor).Assembly.Location),
+                        StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(
+                        Path.GetFileName(path),
+                        Path.GetFileName(typeof(IScriptEnvironment).Assembly.Location),
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 References.PathReferences.Add(path);
             }
@@ -126,8 +136,7 @@ namespace ScriptCs
 
         public virtual void Reset()
         {
-            References = new AssemblyReferences();
-            AddReferences(DefaultReferences);
+            References = new AssemblyReferences(DefaultReferences);
             Namespaces.Clear();
             ImportNamespaces(DefaultNamespaces);
 

@@ -7,7 +7,12 @@ namespace ScriptCs.Contracts
     public class AssemblyReferences
     {
         public AssemblyReferences()
-            : this(Enumerable.Empty<string>(), Enumerable.Empty<Assembly>())
+            : this(Enumerable.Empty<string>())
+        {
+        }
+
+        public AssemblyReferences(IEnumerable<string> pathReferences)
+            : this(pathReferences, Enumerable.Empty<Assembly>())
         {
         }
 
