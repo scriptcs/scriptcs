@@ -107,7 +107,7 @@ namespace ScriptCs
             
             if (package == null)
             {
-                _logger.Warn("Package missing, ignoring");
+                _logger.WarnFormat("Package missing: {0}", reference.PackageId);
                 return;
             }
 

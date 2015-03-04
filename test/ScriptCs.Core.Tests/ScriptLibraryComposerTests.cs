@@ -54,9 +54,10 @@ namespace ScriptCs.Tests
             {
                 packageContainer.Setup(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                     .Returns((IPackageObject)null);
+                reference.SetupGet(r => r.PackageId).Returns("test");
                 composer.ProcessPackage("", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
                 packageContainer.Verify(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()));
-                logger.Verify(l => l.Warn("Package missing, ignoring"));
+                logger.Verify(l => l.WarnFormat("Package missing: {0}", "test"));
             }
 
             
