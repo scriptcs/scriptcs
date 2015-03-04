@@ -30,7 +30,7 @@ namespace ScriptCs.Tests.Acceptance
             "When executing the script"
                 .f(() => output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), args, directory));
 
-            "Then I see 7"
+            "Then I see 42"
                 .f(() => output.ShouldContain("42"));
 
             "Then I see INFO outputted from the required Logger script pack"
@@ -97,7 +97,7 @@ namespace ScriptCs.Tests.Acceptance
             "When executing the script"
                 .f(() => output = ScriptCsExe.Run("foo.csx", directory));
 
-            "Then I see 10"
+            "Then I see 42"
                 .f(() => output.ShouldContain("42"));
         }
     }
