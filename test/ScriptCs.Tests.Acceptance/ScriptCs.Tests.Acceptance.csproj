@@ -46,6 +46,7 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="ImplicitInstallation.cs" />
     <Compile Include="Packages.cs" />
+    <Compile Include="ScriptLibraries.cs" />
     <Compile Include="Support\ScriptCsException.cs" />
     <Compile Include="DirectoryCleaning.cs" />
     <Compile Include="PackageSaving.cs" />
@@ -80,6 +81,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Support\Gallery\ScriptCs.Adder.Local.0.1.1.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Support\Gallery\ScriptCs.Calculator.0.1.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Support\Gallery\ScriptCs.Contracts.0.9.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Support\Gallery\ScriptCs.Logger.ScriptPack.0.1.0.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

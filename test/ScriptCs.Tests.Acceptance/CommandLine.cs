@@ -26,7 +26,10 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => exception.ShouldBeType<ScriptCsException>());
 
             "And I see an error message regarding the unknown option"
-                .f(() => exception.Message.ShouldContain("unknownoption"));
+                .f(() =>
+                {
+                    exception.Message.ShouldContain("unknownoption");
+                });
 
             "And I see scriptcs usage details"
                 .f(() => exception.Message.ShouldContain("Usage:"));

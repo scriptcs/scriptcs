@@ -45,7 +45,7 @@ namespace ScriptCs
                 assemblies = GetPackageAssemblyNames(path).Union(GetBinAssemblyPaths(path)).ToList();
                 _assemblyPathCache.Add(path, assemblies);
             }
-
+           
             return binariesOnly
                 ? assemblies.Where(m =>
                     m.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) ||

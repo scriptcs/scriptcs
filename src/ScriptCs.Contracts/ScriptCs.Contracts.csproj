@@ -74,6 +74,8 @@
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IPackageObject.cs" />
     <Compile Include="IPackageReference.cs" />
+    <Compile Include="IScriptEnvironment.cs" />
+    <Compile Include="IScriptLibraryComposer.cs" />
     <Compile Include="IReplCommand.cs" />
     <Compile Include="IReplEngine.cs" />
     <Compile Include="IScriptEngine.cs" />

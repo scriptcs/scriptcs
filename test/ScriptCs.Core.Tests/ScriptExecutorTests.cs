@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Moq;
+using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using Should;
@@ -121,7 +122,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(Path.Combine(_tempPath, "my_script"));
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>()))
                     .Returns(Path.Combine(_tempPath, "my_script"));
-
+                
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
@@ -416,6 +417,99 @@ namespace ScriptCs.Tests
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
                     Times.Exactly(1));
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldInvokeInjectScriptLibraries(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), "");
+                executor.Setup(e => e.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+                executor.Object.Execute("");
+                executor.Verify(e=>e.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+            }
+        }
+
+        public class TheInjectScriptLibrariesMethod
+        {
+            private IDictionary<string, object> _state = new Dictionary<string, object>();
+            private FilePreProcessorResult _result = new FilePreProcessorResult();
+            private FilePreProcessorResult _scriptLibrariesPreProcessorResult = new FilePreProcessorResult();
+
+            public TheInjectScriptLibrariesMethod()
+            {
+                _scriptLibrariesPreProcessorResult.Code = "Test";
+                _result.Code = "";
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExitIfPreProcessorResultIsNull(ScriptExecutor executor)
+            {
+                executor.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldBeEmpty();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExitIfSessionPackageScriptsInjectedIsSet(Mock<ScriptExecutor> executor)
+            {
+                _state["ScriptLibrariesInjected"] = null;
+                executor.Protected();
+                executor.Setup(e=>e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldBeEmpty();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldInjectResultCode(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldEqual("Test" + Environment.NewLine);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddResultReferences(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                _scriptLibrariesPreProcessorResult.References.Add("ref1");
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.References.ShouldContain("ref1");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddResultNamespaces(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                _scriptLibrariesPreProcessorResult.Namespaces.Add("ns1");
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Namespaces.ShouldContain("ns1");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldSetPackageScriptsInjectedInSession(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _state.ContainsKey("ScriptLibrariesInjected");
+            }
+        }
+
+        public class TheLoadScriptLibrariesMethod
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldPreProcessTheScriptLibrariesFileIfPresent(
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                [Frozen] Mock<IFileSystem> fileSystem,
+                ScriptExecutor executor)
+            {
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+                executor.LoadScriptLibraries("");
+                preProcessor.Verify(p => p.ProcessFile(It.IsAny<string>()));
             }
         }
 

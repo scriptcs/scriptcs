@@ -75,6 +75,7 @@ namespace ScriptCs.Engine.Mono
                     new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
 
                 MonoHost.SetHost((ScriptHost)host);
+                ScriptLibraryWrapper.SetHost(host);
 
                 evaluator.ReferenceAssembly(typeof(MonoHost).Assembly);
                 evaluator.InteractiveBaseClass = typeof(MonoHost);

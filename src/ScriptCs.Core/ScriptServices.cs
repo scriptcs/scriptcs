@@ -21,7 +21,9 @@ namespace ScriptCs
             IEnumerable<IReplCommand> replCommands,
             IFileSystemMigrator fileSystemMigrator,
             IConsole console = null,
-            IInstallationProvider installationProvider = null)
+            IInstallationProvider installationProvider = null,
+            IScriptLibraryComposer scriptLibraryComposer = null
+            )
         {
             FileSystem = fileSystem;
             PackageAssemblyResolver = packageAssemblyResolver;
@@ -38,6 +40,7 @@ namespace ScriptCs
             InstallationProvider = installationProvider;
             ReplCommands = replCommands;
             FileSystemMigrator = fileSystemMigrator;
+            ScriptLibraryComposer = scriptLibraryComposer;
         }
 
         public IFileSystem FileSystem { get; private set; }
@@ -55,5 +58,6 @@ namespace ScriptCs
         public IInstallationProvider InstallationProvider { get; private set; }
         public IEnumerable<IReplCommand> ReplCommands { get; private set; }
         public IFileSystemMigrator FileSystemMigrator { get; private set; }
+        public IScriptLibraryComposer ScriptLibraryComposer { get; private set; }
     }
 }

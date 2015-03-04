@@ -15,6 +15,7 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly IPackageInstaller _packageInstaller;
+        private readonly IScriptLibraryComposer _composer;
         private readonly ILog _logger;
 
         public InstallCommand(
@@ -24,6 +25,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IPackageInstaller packageInstaller,
+            IScriptLibraryComposer composer,
             ILog logger)
         {
             _name = name;
@@ -32,12 +34,23 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
             _packageInstaller = packageInstaller;
+            _composer = composer;
             _logger = logger;
         }
 
         public CommandResult Execute()
         {
             _logger.Info("Installing packages...");
+
+            var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
+            var scriptLibrariesFile = Path.Combine(packagesFolder, _composer.ScriptLibrariesFile);
+
+            if (_fileSystem.DirectoryExists(packagesFolder))
+            {
+                _logger.DebugFormat("Deleting: {0}", scriptLibrariesFile);
+                _fileSystem.FileDelete(scriptLibrariesFile);
+            }
+
             var packages = GetPackages(_fileSystem.CurrentDirectory);
             try
             {

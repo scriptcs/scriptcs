@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Xml.XPath;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -10,8 +13,9 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
-        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http" };
+        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location, typeof(IScriptEnvironment).Assembly.Location };
         public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
+        private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
 
         public IFileSystem FileSystem { get; private set; }
 
@@ -27,20 +31,21 @@ namespace ScriptCs
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+        public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
+ 
+        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IScriptLibraryComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
-
-            References = new AssemblyReferences();
-            AddReferences(DefaultReferences);
+            References = new AssemblyReferences(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             Logger = logger;
+            ScriptLibraryComposer = composer;
         }
 
         public void ImportNamespaces(params string[] namespaces)
@@ -57,7 +62,9 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            foreach (var assembly in assemblies)
+            foreach (var assembly in assemblies
+                .Where(assembly =>
+                    assembly != typeof(ScriptExecutor).Assembly && assembly != typeof(IScriptEnvironment).Assembly))
             {
                 References.Assemblies.Add(assembly);
             }
@@ -77,7 +84,16 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach (var path in paths)
+            foreach (var path in paths
+                .Where(path =>
+                    !string.Equals(
+                        Path.GetFileName(path),
+                        Path.GetFileName(typeof(ScriptExecutor).Assembly.Location),
+                        StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(
+                        Path.GetFileName(path),
+                        Path.GetFileName(typeof(IScriptEnvironment).Assembly.Location),
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 References.PathReferences.Add(path);
             }
@@ -114,16 +130,13 @@ namespace ScriptCs
 
             Logger.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
-
-            scriptPackSession.InitializePacks();
             ScriptPackSession = scriptPackSession;
+            scriptPackSession.InitializePacks();
         }
 
         public virtual void Reset()
         {
-            References = new AssemblyReferences();
-            AddReferences(DefaultReferences);
-
+            References = new AssemblyReferences(DefaultReferences);
             Namespaces.Clear();
             ImportNamespaces(DefaultNamespaces);
 
@@ -145,8 +158,23 @@ namespace ScriptCs
             ScriptEngine.FileName = Path.GetFileName(path);
 
             Logger.Debug("Starting execution in engine");
+
+            InjectScriptLibraries(Path.GetDirectoryName(path), result, ScriptPackSession.State);
+            //AddContractsIfNotPresent(References.PathReferences);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
+        
+        /*
+        protected internal void AddContractsIfNotPresent(HashSet<string> references )
+        {
+            var contracts = references.SingleOrDefault(p=>p.EndsWith("ScriptCs.Contracts.dll", StringComparison.InvariantCultureIgnoreCase));
+            if (contracts != null)
+            {
+                references.Remove(contracts);
+            }
+            references.Add(typeof(IScriptEnvironment).Assembly.Location);
+        }
+         */
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
@@ -155,7 +183,45 @@ namespace ScriptCs
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
+            
+            InjectScriptLibraries(FileSystem.CurrentDirectory, result, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
+        }
+
+        protected internal virtual void InjectScriptLibraries(
+            string workingDirectory, 
+            FilePreProcessorResult result,
+            IDictionary<string, object> state 
+        )
+        {
+            if (state.ContainsKey(ScriptLibrariesInjected))
+            {
+                return;
+            }
+
+            var scriptLibrariesPreProcessorResult = LoadScriptLibraries(workingDirectory);
+
+            if (scriptLibrariesPreProcessorResult != null)
+            {
+                result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine + result.Code;
+                result.References.AddRange(scriptLibrariesPreProcessorResult.References);
+                result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
+            }
+            state.Add(ScriptLibrariesInjected, null);
+        }
+
+        protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
+        {
+            var scriptLibrariesPath = Path.Combine(workingDirectory, FileSystem.PackagesFolder,
+                ScriptLibraryComposer.ScriptLibrariesFile);
+
+            if (FileSystem.FileExists(scriptLibrariesPath))
+            {
+                Logger.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
+                return FilePreProcessor.ProcessFile(scriptLibrariesPath);
+            }
+
+            return null;
         }
     }
 }

@@ -20,10 +20,11 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             IObjectSerializer serializer,
             ILog logger,
+            IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger)
+            : base(fileSystem, filePreProcessor, scriptEngine, logger, composer)
         {
             _scriptArgs = scriptArgs;
             _serializer = serializer;
@@ -47,7 +48,6 @@ namespace ScriptCs
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             Guard.AgainstNullArgument("script", script);
-
             try
             {
                 if (script.StartsWith(":"))
@@ -104,6 +104,8 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
+                
+                InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code

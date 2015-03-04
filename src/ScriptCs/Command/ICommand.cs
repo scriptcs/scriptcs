@@ -59,5 +59,5 @@ namespace ScriptCs.Command
     public interface ICrossAppDomainScriptCommand : ICrossAppDomainCommand
     {
         string[] ScriptArgs { get; }
-    }
+    } 
 }

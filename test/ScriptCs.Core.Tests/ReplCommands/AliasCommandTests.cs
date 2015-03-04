@@ -38,7 +38,7 @@ namespace ScriptCs.Tests.ReplCommands
                 fs.Setup(x => x.DllCacheFolder).Returns(Path.Combine(currentDir, "cache"));
 
                 var console = new Mock<IConsole>();
-                var executor = new Repl(null, fs.Object, null, null, null, null, null, new List<IReplCommand> { dummyCommand.Object });
+                var executor = new Repl(null, fs.Object, null, null, null, null, null, null, new List<IReplCommand> { dummyCommand.Object });
 
                 var cmd = new AliasCommand(console.Object);
 

@@ -23,7 +23,6 @@ namespace ScriptCs.Engine.Roslyn
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
             ScriptEngine = new ScriptEngine();
-            ScriptEngine.AddReference(typeof(ScriptExecutor).Assembly);
             _scriptHostFactory = scriptHostFactory;
             Logger = logger;
         }
@@ -59,6 +58,7 @@ namespace ScriptCs.Engine.Roslyn
             {
                 code = code.DefineTrace();
                 var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+                ScriptLibraryWrapper.SetHost(host);
                 Logger.Debug("Creating session");
 
                 var hostType = host.GetType();
