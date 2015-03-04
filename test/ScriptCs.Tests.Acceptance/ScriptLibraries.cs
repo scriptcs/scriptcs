@@ -20,9 +20,9 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
             var args = new string[] {"-loglevel","info"};
             
-            "Given a script which uses ScriptCs.Calculator to print the sum of 5 and 2"
+            "Given a script which uses ScriptCs.Calculator to print the sum of 40 and 2"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
-                    .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Add(5, 2));"));
+                    .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Add(40, 2));"));
 
             "And ScriptCs.Calculator is installed"
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
@@ -31,7 +31,7 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), args, directory));
 
             "Then I see 7"
-                .f(() => output.ShouldContain("7"));
+                .f(() => output.ShouldContain("42"));
 
             "Then I see INFO outputted from the required Logger script pack"
                 .f(() => output.ShouldContain("INFO"));
@@ -87,9 +87,9 @@ namespace ScriptCs.Tests.Acceptance
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
-            "Given a script which uses ScriptCs.Calculator to print the product of 5 and 2"
+            "Given a script which uses ScriptCs.Calculator to print the product of 7 and 6"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
-                    .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Multiply(5, 2));"));
+                    .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Multiply(7, 6));"));
 
             "And ScriptCs.Calculator is installed"
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
@@ -98,7 +98,7 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then I see 10"
-                .f(() => output.ShouldContain("10"));
+                .f(() => output.ShouldContain("42"));
         }
     }
 }
