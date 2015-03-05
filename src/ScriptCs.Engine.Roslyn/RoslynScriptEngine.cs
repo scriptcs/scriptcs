@@ -47,8 +47,7 @@ namespace ScriptCs.Engine.Roslyn
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
 
-            var executionReferences = new AssemblyReferences(references.Assemblies, references.Paths)
-                .Union(scriptPackSession.References);
+            var executionReferences = references.Union(scriptPackSession.References);
 
             SessionState<Session> sessionState;
 

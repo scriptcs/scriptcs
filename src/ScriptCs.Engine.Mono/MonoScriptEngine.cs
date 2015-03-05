@@ -82,7 +82,7 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState = new SessionState<Evaluator>
                 {
-                    References = new AssemblyReferences(references.Assemblies, references.Paths),
+                    References = references,
                     Namespaces = new HashSet<string>(),
                     Session = evaluator,
                 };
@@ -105,7 +105,7 @@ namespace ScriptCs.Engine.Mono
                     sessionState.Session.LoadAssembly(reference);
                 }
 
-                sessionState.References = new AssemblyReferences(references.Assemblies, references.Paths);
+                sessionState.References = references;
 
                 var newNamespaces = sessionState.Namespaces == null
                     ? namespaces
