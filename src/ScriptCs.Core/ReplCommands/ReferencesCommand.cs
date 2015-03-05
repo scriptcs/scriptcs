@@ -20,7 +20,7 @@ namespace ScriptCs.ReplCommands
             Guard.AgainstNullArgument("repl", repl);
 
             return repl.References != null
-                ? repl.References.Assemblies.Select(x => x.FullName).Union(repl.References.PathReferences)
+                ? repl.References.Assemblies.Select(x => x.FullName).Union(repl.References.Paths)
                 : null;
         }
     }

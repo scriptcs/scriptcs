@@ -55,7 +55,7 @@ namespace ScriptCs.Engine.Mono
             Guard.AgainstNullArgument("references", references);
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
-            references.PathReferences.UnionWith(scriptPackSession.References);
+            references = references.Union(scriptPackSession.References);
 
             SessionState<Evaluator> sessionState;
             var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);
@@ -65,7 +65,7 @@ namespace ScriptCs.Engine.Mono
                 code = code.DefineTrace();
                 Logger.Debug("Creating session");
                 var context = new CompilerContext(
-                    new CompilerSettings { AssemblyReferences = references.PathReferences.ToList() },
+                    new CompilerSettings { AssemblyReferences = references.Paths.ToList() },
                     new ConsoleReportPrinter());
 
                 var evaluator = new Evaluator(context);
@@ -82,7 +82,7 @@ namespace ScriptCs.Engine.Mono
 
                 sessionState = new SessionState<Evaluator>
                 {
-                    References = new AssemblyReferences(references.PathReferences, references.Assemblies),
+                    References = references,
                     Namespaces = new HashSet<string>(),
                     Session = evaluator,
                 };
@@ -99,13 +99,13 @@ namespace ScriptCs.Engine.Mono
                     ? references
                     : references.Except(sessionState.References);
 
-                foreach (var reference in newReferences.PathReferences)
+                foreach (var reference in newReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.LoadAssembly(reference);
                 }
 
-                sessionState.References = new AssemblyReferences(references.PathReferences, references.Assemblies);
+                sessionState.References = references;
 
                 var newNamespaces = sessionState.Namespaces == null
                     ? namespaces

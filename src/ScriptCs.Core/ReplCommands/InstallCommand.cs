@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Runtime.Versioning;
-using System.Security.Cryptography.X509Certificates;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -68,7 +67,7 @@ namespace ScriptCs.ReplCommands
             _packageAssemblyResolver.SavePackages();
 
             var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory)
-                .Except(repl.References.PathReferences).ToArray();
+                .Except(repl.References.Paths).ToArray();
 
             repl.AddReferences(dlls);
 

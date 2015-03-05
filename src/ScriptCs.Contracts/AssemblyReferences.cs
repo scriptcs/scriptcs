@@ -1,46 +1,116 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace ScriptCs.Contracts
+﻿namespace ScriptCs.Contracts
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System;
+    using System.IO;
+
     public class AssemblyReferences
     {
+        private readonly Dictionary<string, Assembly> _assemblies = new Dictionary<string, Assembly>();
+        private readonly Dictionary<string, string> _paths = new Dictionary<string, string>();
+
         public AssemblyReferences()
             : this(Enumerable.Empty<string>())
         {
         }
 
-        public AssemblyReferences(IEnumerable<string> pathReferences)
-            : this(pathReferences, Enumerable.Empty<Assembly>())
+        public AssemblyReferences(IEnumerable<Assembly> assemblies)
+            : this(assemblies, Enumerable.Empty<string>())
         {
         }
 
-        public AssemblyReferences(IEnumerable<string> pathReferences, IEnumerable<Assembly> assemblies)
+        public AssemblyReferences(IEnumerable<string> paths)
+            : this(Enumerable.Empty<Assembly>(), paths)
         {
-            Guard.AgainstNullArgument("pathReferences", pathReferences);
+        }
+
+        public AssemblyReferences(IEnumerable<Assembly> assemblies, IEnumerable<string> paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            PathReferences = new HashSet<string>(pathReferences);
-            Assemblies = new HashSet<Assembly>(assemblies);
+            foreach (var assembly in assemblies.Where(assembly => assembly != null))
+            {
+                var name = assembly.GetName().Name;
+                if (!_assemblies.ContainsKey(name))
+                {
+                    _assemblies.Add(name, assembly);
+                }
+            }
+
+            foreach (var path in paths)
+            {
+                var name = Path.GetFileName(path);
+                if (name == null)
+                {
+                    continue;
+                }
+
+                if (name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ||
+                    name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    name = Path.GetFileNameWithoutExtension(name);
+                }
+
+                if (!_paths.ContainsKey(name) && !_assemblies.ContainsKey(name))
+                {
+                    _paths.Add(name, path);
+                }
+            }
         }
 
-        public HashSet<string> PathReferences { get; private set; }
-        public HashSet<Assembly> Assemblies { get; private set; }
-
-        public AssemblyReferences Except(AssemblyReferences obj)
+        public IEnumerable<Assembly> Assemblies
         {
-            Guard.AgainstNullArgument("obj", obj);
-
-            return new AssemblyReferences(PathReferences.Except(obj.PathReferences), Assemblies.Except(obj.Assemblies));
+            get { return _assemblies.Values.ToArray(); }
         }
 
-        public void Union(AssemblyReferences obj)
+        public IEnumerable<string> Paths
         {
-            Guard.AgainstNullArgument("obj", obj);
+            get { return _paths.Values.ToArray(); }
+        }
 
-            PathReferences.UnionWith(obj.PathReferences);
-            Assemblies.UnionWith(obj.Assemblies);
+        public AssemblyReferences Union(AssemblyReferences references)
+        {
+            Guard.AgainstNullArgument("references", references);
+
+            return new AssemblyReferences(Assemblies.Union(references.Assemblies), Paths.Union(references.Paths));
+        }
+
+        public AssemblyReferences Union(IEnumerable<Assembly> assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            return new AssemblyReferences(Assemblies.Union(assemblies), Paths);
+        }
+
+        public AssemblyReferences Union(IEnumerable<string> paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+
+            return new AssemblyReferences(Assemblies, Paths.Union(paths));
+        }
+
+        public AssemblyReferences Except(AssemblyReferences references)
+        {
+            Guard.AgainstNullArgument("references", references);
+
+            return new AssemblyReferences(Assemblies.Except(references.Assemblies), Paths.Except(references.Paths));
+        }
+
+        public AssemblyReferences Except(IEnumerable<Assembly> assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            return new AssemblyReferences(Assemblies.Except(assemblies), Paths);
+        }
+
+        public AssemblyReferences Except(IEnumerable<string> paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+
+            return new AssemblyReferences(Assemblies, Paths.Except(paths));
         }
     }
 }

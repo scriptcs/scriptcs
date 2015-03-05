@@ -92,7 +92,7 @@ namespace ScriptCs.Tests
                 _mocks = new Mocks();
                 _repl = GetRepl(_mocks);
                 _mocks.FileSystem.Setup(x => x.CurrentDirectory).Returns(_tempPath);
-                var paths = new[] { Path.Combine(_tempPath, "path" ) };
+                var paths = new[] { Path.Combine(_tempPath, "path") };
                 _repl.Initialize(paths, new[] { _mocks.ScriptPack.Object });
             }
 
@@ -101,10 +101,10 @@ namespace ScriptCs.Tests
             {
                 foreach (var reference in Repl.DefaultReferences)
                 {
-                    _repl.References.PathReferences.ShouldContain(reference);
+                    _repl.References.Paths.ShouldContain(reference);
                 }
 
-                _repl.References.PathReferences.ShouldContain(Path.Combine(_tempPath, "path"));
+                _repl.References.Paths.ShouldContain(Path.Combine(_tempPath, "path"));
             }
 
             [Fact]
@@ -222,7 +222,7 @@ namespace ScriptCs.Tests
                             It.IsAny<string[]>(),
                             It.IsAny<AssemblyReferences>(),
                             It.IsAny<IEnumerable<string>>(),
-                            It.IsAny<ScriptPackSession>())).Returns(new ScriptResult(invalidNamespaces: new string[] {"Foo"}));
+                            It.IsAny<ScriptPackSession>())).Returns(new ScriptResult(invalidNamespaces: new string[] { "Foo" }));
 
                 _repl.Execute("#load foo.csx");
                 _repl.Namespaces.Count().ShouldEqual(ScriptExecutor.DefaultNamespaces.Count() + 1);
@@ -320,7 +320,7 @@ namespace ScriptCs.Tests
                 _repl.Execute("#r \"my.dll\"");
 
                 //default references = 9, + 1 we just added
-                _repl.References.PathReferences.Count().ShouldEqual(10);
+                _repl.References.Paths.Count().ShouldEqual(10);
             }
 
             [Fact]
@@ -352,7 +352,7 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"PresentationCore\"");
 
-                _repl.References.PathReferences.Contains("PresentationCore").ShouldBeTrue();
+                _repl.References.Paths.Contains("PresentationCore").ShouldBeTrue();
             }
 
             [Fact]
@@ -369,7 +369,7 @@ namespace ScriptCs.Tests
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
 
-                _repl.References.PathReferences.Contains("my.dll").ShouldBeTrue();
+                _repl.References.Paths.Contains("my.dll").ShouldBeTrue();
             }
 
             [Fact]
@@ -390,7 +390,7 @@ namespace ScriptCs.Tests
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
                 _repl.Execute("#r \"my.dll\"");
-                _repl.References.PathReferences.Contains("my.dll").ShouldBeFalse();
+                _repl.References.Paths.Contains("my.dll").ShouldBeFalse();
             }
 
             [Fact]
