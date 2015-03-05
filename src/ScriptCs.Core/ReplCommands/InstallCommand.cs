@@ -68,7 +68,7 @@ namespace ScriptCs.ReplCommands
             _packageAssemblyResolver.SavePackages();
 
             var dlls = _packageAssemblyResolver.GetAssemblyNames(repl.FileSystem.CurrentDirectory)
-                .Except(repl.References.PathReferences).ToArray();
+                .Except(repl.References.Paths).ToArray();
 
             repl.AddReferences(dlls);
 

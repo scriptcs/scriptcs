@@ -293,7 +293,7 @@ namespace ScriptCs.Tests
                     e => e.Execute(
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
-                        It.Is<AssemblyReferences>(x => x.PathReferences
+                        It.Is<AssemblyReferences>(x => x.Paths
                             .SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
@@ -413,7 +413,7 @@ namespace ScriptCs.Tests
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
                         It.Is<AssemblyReferences>(x =>
-                            !x.PathReferences.Except(ScriptExecutor.DefaultReferences).Any()),
+                            !x.Paths.Except(ScriptExecutor.DefaultReferences).Any()),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
                     Times.Exactly(1));

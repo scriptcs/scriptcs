@@ -16,12 +16,17 @@
         {
         }
 
-        public AssemblyReferences(IEnumerable<string> paths)
-            : this(paths, Enumerable.Empty<Assembly>())
+        public AssemblyReferences(IEnumerable<Assembly> assemblies)
+            : this(assemblies, Enumerable.Empty<string>())
         {
         }
 
-        public AssemblyReferences(IEnumerable<string> paths, IEnumerable<Assembly> assemblies)
+        public AssemblyReferences(IEnumerable<string> paths)
+            : this(Enumerable.Empty<Assembly>(), paths)
+        {
+        }
+
+        public AssemblyReferences(IEnumerable<Assembly> assemblies, IEnumerable<string> paths)
         {
             Guard.AgainstNullArgument("paths", paths);
             Guard.AgainstNullArgument("assemblies", assemblies);
@@ -61,7 +66,7 @@
             get { return _assemblies.Values.ToArray(); }
         }
 
-        public IEnumerable<string> PathReferences
+        public IEnumerable<string> Paths
         {
             get { return _paths.Values.ToArray(); }
         }
@@ -70,42 +75,42 @@
         {
             Guard.AgainstNullArgument("references", references);
 
-            return new AssemblyReferences(PathReferences.Union(references.PathReferences), Assemblies.Union(references.Assemblies));
+            return new AssemblyReferences(Assemblies.Union(references.Assemblies), Paths.Union(references.Paths));
         }
 
         public AssemblyReferences Union(IEnumerable<Assembly> assemblies)
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            return new AssemblyReferences(PathReferences, Assemblies.Union(assemblies));
+            return new AssemblyReferences(Assemblies.Union(assemblies), Paths);
         }
 
         public AssemblyReferences Union(IEnumerable<string> paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            return new AssemblyReferences(PathReferences.Union(paths), Assemblies);
+            return new AssemblyReferences(Assemblies, Paths.Union(paths));
         }
 
         public AssemblyReferences Except(AssemblyReferences references)
         {
             Guard.AgainstNullArgument("references", references);
 
-            return new AssemblyReferences(PathReferences.Except(references.PathReferences), Assemblies.Except(references.Assemblies));
+            return new AssemblyReferences(Assemblies.Except(references.Assemblies), Paths.Except(references.Paths));
         }
 
         public AssemblyReferences Except(IEnumerable<Assembly> assemblies)
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            return new AssemblyReferences(PathReferences, Assemblies.Except(assemblies));
+            return new AssemblyReferences(Assemblies.Except(assemblies), Paths);
         }
 
         public AssemblyReferences Except(IEnumerable<string> paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            return new AssemblyReferences(PathReferences.Except(paths), Assemblies);
+            return new AssemblyReferences(Assemblies, Paths.Except(paths));
         }
     }
 }

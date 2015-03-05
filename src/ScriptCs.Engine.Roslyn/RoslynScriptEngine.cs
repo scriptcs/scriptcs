@@ -47,7 +47,7 @@ namespace ScriptCs.Engine.Roslyn
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
 
-            var executionReferences = new AssemblyReferences(references.PathReferences, references.Assemblies)
+            var executionReferences = new AssemblyReferences(references.Assemblies, references.Paths)
                 .Union(scriptPackSession.References);
 
             SessionState<Session> sessionState;
@@ -66,7 +66,7 @@ namespace ScriptCs.Engine.Roslyn
                 var session = ScriptEngine.CreateSession(host, hostType);
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
-                foreach (var reference in executionReferences.PathReferences)
+                foreach (var reference in executionReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     session.AddReference(reference);
@@ -104,7 +104,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 var newReferences = executionReferences.Except(sessionState.References);
 
-                foreach (var reference in newReferences.PathReferences)
+                foreach (var reference in newReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.AddReference(reference);

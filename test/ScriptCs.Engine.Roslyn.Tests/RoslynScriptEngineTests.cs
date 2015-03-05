@@ -99,7 +99,7 @@ namespace ScriptCs.Tests
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.PathReferences.Count().ShouldEqual(1);
+                ((SessionState<Session>)scriptPackSession.State[RoslynScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]
@@ -319,7 +319,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" }, new[] { Assembly.GetExecutingAssembly() });
+                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);

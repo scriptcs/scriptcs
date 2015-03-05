@@ -145,7 +145,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                ((SessionState<Evaluator>)scriptPackSession.State[MonoScriptEngine.SessionKey]).References.PathReferences.Count().ShouldEqual(1);
+                ((SessionState<Evaluator>)scriptPackSession.State[MonoScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]

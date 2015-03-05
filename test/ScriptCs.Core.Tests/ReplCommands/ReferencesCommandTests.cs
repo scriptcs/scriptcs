@@ -36,8 +36,8 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ShouldReturnAssembliesFromExecutor()
             {
-                var assemblies = new AssemblyReferences(new List<string> {"path1", "path2"},
-                    new List<Assembly> {typeof(string).Assembly});
+                var assemblies = new AssemblyReferences(new List<Assembly> { typeof(string).Assembly },
+                    new List<string> { "path1", "path2" });
                 _repl.SetupGet(x => x.References).Returns(assemblies);
 
                 var cmd = new ReferencesCommand();
