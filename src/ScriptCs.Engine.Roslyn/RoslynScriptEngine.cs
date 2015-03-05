@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Common.Logging;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
-
 using ScriptCs.Contracts;
-using System.Text.RegularExpressions;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -39,7 +38,12 @@ namespace ScriptCs.Engine.Roslyn
 
         public string FileName { get; set; }
 
-        public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+        public ScriptResult Execute(
+            string code,
+            string[] scriptArgs,
+            AssemblyReferences references,
+            IEnumerable<string> namespaces,
+            ScriptPackSession scriptPackSession)
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
             Guard.AgainstNullArgument("references", references);
@@ -56,7 +60,9 @@ namespace ScriptCs.Engine.Roslyn
             if (isFirstExecution)
             {
                 code = code.DefineTrace();
-                var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+                var host = _scriptHostFactory.CreateScriptHost(
+                    new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+
                 ScriptLibraryWrapper.SetHost(host);
                 Logger.Debug("Creating session");
 
@@ -83,7 +89,13 @@ namespace ScriptCs.Engine.Roslyn
                     session.ImportNamespace(@namespace);
                 }
 
-                sessionState = new SessionState<Session> { References = executionReferences, Session = session, Namespaces = new HashSet<string>(allNamespaces) };
+                sessionState = new SessionState<Session>
+                {
+                    References = executionReferences,
+                    Session = session,
+                    Namespaces = new HashSet<string>(allNamespaces)
+                };
+                
                 scriptPackSession.State[SessionKey] = sessionState;
             }
             else
@@ -133,13 +145,16 @@ namespace ScriptCs.Engine.Roslyn
 
             if (result.InvalidNamespaces.Any())
             {
-                var pendingNamespacesField = sessionState.Session.GetType().GetField("pendingNamespaces", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var pendingNamespacesField = sessionState.Session.GetType().GetField(
+                    "pendingNamespaces",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
                 if (pendingNamespacesField != null)
                 {
-                    var pendingNamespacesValue = (ReadOnlyArray<string>)pendingNamespacesField.GetValue(sessionState.Session);
-                    //no need to check this for null as ReadOnlyArray is a value type
+                    var pendingNamespacesValue = (ReadOnlyArray<string>)pendingNamespacesField
+                        .GetValue(sessionState.Session);
 
+                    //no need to check this for null as ReadOnlyArray is a value type
                     if (pendingNamespacesValue.Any())
                     {
                         var fixedNamespaces = pendingNamespacesValue.ToList();
@@ -149,7 +164,8 @@ namespace ScriptCs.Engine.Roslyn
                             sessionState.Namespaces.Remove(@namespace);
                             fixedNamespaces.Remove(@namespace);
                         }
-                        pendingNamespacesField.SetValue(sessionState.Session, ReadOnlyArray<string>.CreateFrom<string>(fixedNamespaces));
+                        pendingNamespacesField.SetValue(
+                            sessionState.Session, ReadOnlyArray<string>.CreateFrom(fixedNamespaces));
                     }
                 }
             }
@@ -168,7 +184,7 @@ namespace ScriptCs.Engine.Roslyn
 
                 try
                 {
-                    return new ScriptResult(returnValue: submission.Execute());
+                    return new ScriptResult(submission.Execute());
                 }
                 catch (AggregateException ex)
                 {
@@ -184,9 +200,10 @@ namespace ScriptCs.Engine.Roslyn
                 if (ex.Message.StartsWith(InvalidNamespaceError))
                 {
                     var offendingNamespace = Regex.Match(ex.Message, @"\'([^']*)\'").Groups[1].Value;
-                    return new ScriptResult(compilationException: ex, invalidNamespaces: new string[1] {offendingNamespace});
+                    return new ScriptResult(
+                        compilationException: ex, invalidNamespaces: new string[1] { offendingNamespace });
                 }
-           
+
                 return new ScriptResult(compilationException: ex);
             }
         }
@@ -197,8 +214,7 @@ namespace ScriptCs.Engine.Roslyn
                 CompatibilityMode.None,
                 LanguageVersion.CSharp4,
                 true,
-                SourceCodeKind.Interactive,
-                default(ReadOnlyArray<string>));
+                SourceCodeKind.Interactive);
 
             var syntaxTree = SyntaxTree.ParseText(code, options: options);
 

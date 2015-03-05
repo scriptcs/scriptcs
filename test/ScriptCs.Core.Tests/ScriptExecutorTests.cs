@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Moq;
 using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
@@ -122,7 +121,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(f => f.CurrentDirectory).Returns(Path.Combine(_tempPath, "my_script"));
                 fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>()))
                     .Returns(Path.Combine(_tempPath, "my_script"));
-                
+
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "var a = 0;" });
 
@@ -424,9 +423,12 @@ namespace ScriptCs.Tests
             {
                 executor.Protected();
                 executor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), "");
-                executor.Setup(e => e.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+                executor.Setup(e => e.InjectScriptLibraries(
+                    It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()));
+                
                 executor.Object.Execute("");
-                executor.Verify(e=>e.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string,object>>()));
+                executor.Verify(e => e.InjectScriptLibraries(
+                    It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()));
             }
         }
 
@@ -454,7 +456,7 @@ namespace ScriptCs.Tests
             {
                 _state["ScriptLibrariesInjected"] = null;
                 executor.Protected();
-                executor.Setup(e=>e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
                 executor.Object.InjectScriptLibraries("", _result, _state);
                 _result.Code.ShouldBeEmpty();
             }

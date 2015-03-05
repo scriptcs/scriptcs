@@ -36,15 +36,16 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ShouldReturnAssembliesFromExecutor()
             {
-                var assemblies = new AssemblyReferences(new List<Assembly> { typeof(string).Assembly },
-                    new List<string> { "path1", "path2" });
+                var assemblies = new AssemblyReferences(
+                    new List<Assembly> { typeof(string).Assembly }, new List<string> { "path1", "path2" });
+
                 _repl.SetupGet(x => x.References).Returns(assemblies);
 
                 var cmd = new ReferencesCommand();
                 var result = cmd.Execute(_repl.Object, null);
 
-                var expected = new List<string> {typeof (string).Assembly.FullName, "path1", "path2"};
-                    
+                var expected = new List<string> { typeof(string).Assembly.FullName, "path1", "path2" };
+
                 ((IEnumerable<string>)result).ToList().ShouldEqual(expected);
             }
         }

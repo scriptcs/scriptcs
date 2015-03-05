@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml.XPath;
 using Common.Logging;
 using ScriptCs.Contracts;
 
@@ -13,8 +11,30 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
-        public static readonly string[] DefaultReferences = new[] { "System", "System.Core", "System.Data", "System.Data.DataSetExtensions", "System.Xml", "System.Xml.Linq", "System.Net.Http", typeof(ScriptExecutor).Assembly.Location, typeof(IScriptEnvironment).Assembly.Location };
-        public static readonly string[] DefaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq", "System.Text", "System.Threading.Tasks", "System.IO", "System.Net.Http" };
+        public static readonly string[] DefaultReferences =
+        {
+            "System", 
+            "System.Core", 
+            "System.Data", 
+            "System.Data.DataSetExtensions", 
+            "System.Xml", 
+            "System.Xml.Linq", 
+            "System.Net.Http",
+            typeof(ScriptExecutor).Assembly.Location,
+            typeof(IScriptEnvironment).Assembly.Location
+        };
+
+        public static readonly string[] DefaultNamespaces =
+        {
+            "System",
+            "System.Collections.Generic",
+            "System.Linq", 
+            "System.Text", 
+            "System.Threading.Tasks",
+            "System.IO",
+            "System.Net.Http"
+        };
+
         private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
 
         public IFileSystem FileSystem { get; private set; }
@@ -32,8 +52,13 @@ namespace ScriptCs
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
- 
-        public ScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IScriptLibraryComposer composer)
+
+        public ScriptExecutor(
+            IFileSystem fileSystem,
+            IFilePreProcessor filePreProcessor,
+            IScriptEngine scriptEngine,
+            ILog logger,
+            IScriptLibraryComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
@@ -96,7 +121,8 @@ namespace ScriptCs
             }
         }
 
-        public virtual void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
+        public virtual void Initialize(
+            IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
         {
             AddReferences(paths.ToArray());
             var bin = Path.Combine(FileSystem.CurrentDirectory, FileSystem.BinFolder);
@@ -137,21 +163,8 @@ namespace ScriptCs
             Logger.Debug("Starting execution in engine");
 
             InjectScriptLibraries(Path.GetDirectoryName(path), result, ScriptPackSession.State);
-            //AddContractsIfNotPresent(References.PathReferences);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
-        
-        /*
-        protected internal void AddContractsIfNotPresent(HashSet<string> references )
-        {
-            var contracts = references.SingleOrDefault(p=>p.EndsWith("ScriptCs.Contracts.dll", StringComparison.InvariantCultureIgnoreCase));
-            if (contracts != null)
-            {
-                references.Remove(contracts);
-            }
-            references.Add(typeof(IScriptEnvironment).Assembly.Location);
-        }
-         */
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
@@ -160,15 +173,15 @@ namespace ScriptCs
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
-            
+
             InjectScriptLibraries(FileSystem.CurrentDirectory, result, ScriptPackSession.State);
             return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
         }
 
         protected internal virtual void InjectScriptLibraries(
-            string workingDirectory, 
+            string workingDirectory,
             FilePreProcessorResult result,
-            IDictionary<string, object> state 
+            IDictionary<string, object> state
         )
         {
             if (state.ContainsKey(ScriptLibrariesInjected))

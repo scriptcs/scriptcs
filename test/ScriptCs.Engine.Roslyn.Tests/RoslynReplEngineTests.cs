@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
                 engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
     scriptPackSession);
 
-                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { @"System.String y = www", "System.Int32 x = 1"});
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { @"System.String y = www", "System.Int32 x = 1" });
             }
 
             [Theory, ScriptCsAutoData]

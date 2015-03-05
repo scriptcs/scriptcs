@@ -1,12 +1,13 @@
 ﻿extern alias MonoCSharp;
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using Common.Logging;
-using Moq;
 using MonoCSharp::Mono.CSharp;
+using Moq;
 using Ploeh.AutoFixture.Xunit;
-using ScriptCs.Tests;
 using ScriptCs.Contracts;
+using ScriptCs.Tests;
 using Should;
 using Xunit.Extensions;
 
@@ -96,7 +97,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
 
                 // Act
@@ -137,7 +138,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -160,7 +161,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -213,7 +214,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -238,7 +239,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -261,7 +262,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -285,7 +286,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -308,7 +309,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
-                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
+                var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 

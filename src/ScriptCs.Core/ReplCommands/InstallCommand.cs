@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Runtime.Versioning;
-using System.Security.Cryptography.X509Certificates;
 using Common.Logging;
 using ScriptCs.Contracts;
 
