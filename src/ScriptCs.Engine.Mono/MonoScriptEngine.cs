@@ -55,7 +55,7 @@ namespace ScriptCs.Engine.Mono
             Guard.AgainstNullArgument("references", references);
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
-            references.PathReferences.UnionWith(scriptPackSession.References);
+            references = references.Union(scriptPackSession.References);
 
             SessionState<Evaluator> sessionState;
             var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);

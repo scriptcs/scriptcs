@@ -93,8 +93,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -114,8 +113,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -135,8 +133,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -194,8 +191,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -215,8 +211,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -236,8 +231,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -256,8 +250,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -277,8 +270,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -300,8 +292,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
                 engine.FileName = "test.csx";
 
                 // Act
@@ -328,9 +319,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
-                refs.Assemblies.Add(Assembly.GetExecutingAssembly());
+                var refs = new AssemblyReferences(new[] { "System" }, new[] { Assembly.GetExecutingAssembly() });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -352,8 +341,7 @@ namespace ScriptCs.Tests
             // Arrange
             const string Code = "var theNumber = 42; //this should compile";
 
-            var refs = new AssemblyReferences();
-            refs.PathReferences.Add("System");
+            var refs = new AssemblyReferences(new[] { "System" });
 
             scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                 .Returns(new ScriptHost(manager.Object, null));

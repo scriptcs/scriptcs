@@ -62,51 +62,28 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            foreach (var assembly in assemblies
-                .Where(assembly =>
-                    assembly != typeof(ScriptExecutor).Assembly && assembly != typeof(IScriptEnvironment).Assembly))
-            {
-                References.Assemblies.Add(assembly);
-            }
+            References = References.Union(assemblies);
         }
 
         public void RemoveReferences(params Assembly[] assemblies)
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            foreach (var assembly in assemblies)
-            {
-                References.Assemblies.Remove(assembly);
-            }
+            References = References.Except(assemblies);
         }
 
         public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach (var path in paths
-                .Where(path =>
-                    !string.Equals(
-                        Path.GetFileName(path),
-                        Path.GetFileName(typeof(ScriptExecutor).Assembly.Location),
-                        StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(
-                        Path.GetFileName(path),
-                        Path.GetFileName(typeof(IScriptEnvironment).Assembly.Location),
-                        StringComparison.OrdinalIgnoreCase)))
-            {
-                References.PathReferences.Add(path);
-            }
+            References = References.Union(paths);
         }
 
         public void RemoveReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            foreach (var path in paths)
-            {
-                References.PathReferences.Remove(path);
-            }
+            References = References.Except(paths);
         }
 
         public void RemoveNamespaces(params string[] namespaces)
@@ -153,7 +130,7 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-            References.PathReferences.UnionWith(result.References);
+            References = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
 
@@ -179,7 +156,7 @@ namespace ScriptCs
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessScript(script);
-            References.PathReferences.UnionWith(result.References);
+            References = References.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");

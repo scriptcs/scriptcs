@@ -139,8 +139,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -163,8 +162,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -217,8 +215,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -243,8 +240,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -267,8 +263,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -292,8 +287,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -316,8 +310,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext( new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -337,8 +330,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 // Arrange
                 const string Code = "var theNumber = 42; //this should compile";
 
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns(new ScriptHost(manager.Object, null));

@@ -519,18 +519,18 @@ namespace ScriptCs.Tests
             public void ShouldAddReferenceToEachAssembly(ScriptExecutor executor)
             {
                 // arrange
-                var calling = Assembly.GetCallingAssembly();
-                var executing = Assembly.GetExecutingAssembly();
-                var entry = Assembly.GetEntryAssembly();
+                var assembly1 = typeof(Mock).Assembly;
+                var assembly2 = typeof(FrozenAttribute).Assembly;
+                var assembly3 = typeof(Assert).Assembly;
 
                 // act
-                executor.AddReferences(calling, executing, entry, entry);
+                executor.AddReferences(assembly1, assembly2, assembly3, assembly3);
 
                 // assert
-                executor.References.Assemblies.ShouldContain(calling);
-                executor.References.Assemblies.ShouldContain(executing);
-                executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(3);
+                executor.References.Assemblies.ShouldContain(assembly1);
+                executor.References.Assemblies.ShouldContain(assembly2);
+                executor.References.Assemblies.ShouldContain(assembly3);
+                executor.References.Assemblies.Count().ShouldEqual(3);
             }
         }
 
@@ -540,19 +540,19 @@ namespace ScriptCs.Tests
             public void ShouldRemoveReferenceToEachAssembly(ScriptExecutor executor)
             {
                 // arrange
-                var calling = Assembly.GetCallingAssembly();
-                var executing = Assembly.GetExecutingAssembly();
-                var entry = Assembly.GetEntryAssembly();
-                executor.AddReferences(calling, executing, entry);
+                var assembly1 = typeof(Mock).Assembly;
+                var assembly2 = typeof(FrozenAttribute).Assembly;
+                var assembly3 = typeof(Assert).Assembly;
+                executor.AddReferences(assembly1, assembly2, assembly3);
 
                 // act
-                executor.RemoveReferences(calling, executing);
+                executor.RemoveReferences(assembly1, assembly2);
 
                 // assert
-                executor.References.Assemblies.ShouldNotContain(calling);
-                executor.References.Assemblies.ShouldNotContain(executing);
-                executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(1);
+                executor.References.Assemblies.ShouldNotContain(assembly1);
+                executor.References.Assemblies.ShouldNotContain(assembly2);
+                executor.References.Assemblies.ShouldContain(assembly3);
+                executor.References.Assemblies.Count().ShouldEqual(1);
             }
         }
     }
