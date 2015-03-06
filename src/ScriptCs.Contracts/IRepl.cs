@@ -7,7 +7,5 @@
         Dictionary<string, IReplCommand> Commands { get; }
 
         string Buffer { get; }
-
-        void Quit();
     }
 }

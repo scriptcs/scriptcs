@@ -29,10 +29,6 @@ namespace ScriptCs
                 console.WriteLine(usage);
                 return 1;
             }
-            finally
-            {
-                console.Exit();
-            }
 
             var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(arguments.CommandArguments, arguments.ScriptArguments);
             var factory = new CommandFactory(scriptServicesBuilder);

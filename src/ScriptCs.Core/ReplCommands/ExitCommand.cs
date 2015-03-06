@@ -29,13 +29,13 @@ namespace ScriptCs.ReplCommands
             while (!responseIsValid)
             {
                 _console.Write("Are you sure you wish to exit? (y/n): ");
-                response = _console.ReadLine() ?? string.Empty;
+                response = (_console.ReadLine() ?? string.Empty).ToLowerInvariant();
                 responseIsValid = response == "y" || response == "n";
             }
 
             if (response == "y")
             {
-                repl.Quit();
+                repl.Terminate();
             }
 
             return null;

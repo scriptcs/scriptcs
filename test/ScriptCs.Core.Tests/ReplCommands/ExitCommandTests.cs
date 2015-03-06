@@ -53,7 +53,7 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(executor.Object, null);
 
                 // assert
-                executor.Verify(x => x.Quit());
+                executor.Verify(x => x.Terminate());
             }
 
             [Fact]
@@ -70,7 +70,7 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(executor.Object, null);
 
                 // assert
-                executor.Verify(x => x.Quit(), Times.Never);
+                executor.Verify(x => x.Terminate(), Times.Never);
             }
         }
     }
