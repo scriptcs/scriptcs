@@ -39,6 +39,7 @@ namespace ScriptCs.Hosting
         {
             ResetColor();
             Console.CancelKeyPress -= HandleCancelKeyPress;
+            Environment.Exit(0);
         }
 
         public void ResetColor()
