@@ -12,7 +12,7 @@ namespace ScriptCs.Hosting
 {
     public class ModuleLoader : IModuleLoader
     {
-        private static Dictionary<string, string> defaultCSharpModules = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> DefaultCSharpModules = new Dictionary<string, string>
         {
             {"roslyn", "ScriptCs.Engine.Roslyn.dll"},
             {"mono", "ScriptCs.Engine.Mono.dll"}
@@ -69,9 +69,10 @@ namespace ScriptCs.Hosting
         {
             if (modulePackagesPaths == null) return;
 
-            if (moduleNames.Length == 1) // only CSharp module needed
+            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0])) // only CSharp module needed
             {
-                var csharpModuleAssembly = defaultCSharpModules[moduleNames[0]];
+                _logger.Debug("Only CSharp module is needed - will skip module lookup");
+                var csharpModuleAssembly = DefaultCSharpModules[moduleNames[0]];
                 var module = _assemblyUtility.LoadFile(Path.Combine(hostBin, csharpModuleAssembly));
 
                 if (module != null)
