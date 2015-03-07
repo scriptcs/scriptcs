@@ -12,7 +12,7 @@ namespace ScriptCs.Hosting
 {
     public class ModuleLoader : IModuleLoader
     {
-        private static readonly Dictionary<string, string> DefaultCSharpModules = new Dictionary<string, string>
+        internal static readonly Dictionary<string, string> DefaultCSharpModules = new Dictionary<string, string>
         {
             {"roslyn", "ScriptCs.Engine.Roslyn.dll"},
             {"mono", "ScriptCs.Engine.Mono.dll"}
