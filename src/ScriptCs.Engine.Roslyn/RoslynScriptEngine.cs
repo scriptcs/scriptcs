@@ -41,8 +41,15 @@ namespace ScriptCs.Engine.Roslyn
 
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
-            Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
-            Guard.AgainstNullArgument("references", references);
+            if (scriptPackSession == null)
+            {
+                throw new ArgumentNullException("scriptPackSession");
+            }
+
+            if (references == null)
+            {
+                throw new ArgumentNullException("references");
+            }
 
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");

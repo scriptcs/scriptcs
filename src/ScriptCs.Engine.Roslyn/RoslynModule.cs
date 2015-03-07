@@ -1,4 +1,5 @@
-﻿using ScriptCs.Contracts;
+﻿using System;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -7,15 +8,13 @@ namespace ScriptCs.Engine.Roslyn
     {
         public void Initialize(IModuleConfiguration config)
         {
-            Guard.AgainstNullArgument("config", config);
+            if (config == null)
+            {
+                throw new ArgumentNullException("config");
+            }
 
-            //if (!config.Overrides.ContainsKey(typeof(IScriptEngine)))
-            //{
-                //var engineType = config.Cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
-                //engineType = config.Debug ? typeof(RoslynScriptInMemoryEngine) : engineType;
-                var engineType = config.IsRepl ? typeof(RoslynReplEngine) : typeof(RoslynScriptEngine);
-                config.Overrides[typeof(IScriptEngine)] = engineType;
-            //}
+            var engineType = config.IsRepl ? typeof (RoslynReplEngine) : typeof (RoslynScriptEngine);
+            config.Overrides[typeof (IScriptEngine)] = engineType;
         }
     }
 }
