@@ -9,6 +9,7 @@ using Moq;
 using ScriptCs.Contracts;
 using Should;
 using Xunit;
+using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting.Tests
 {
@@ -110,6 +111,30 @@ namespace ScriptCs.Hosting.Tests
                 _mockModule1.Verify(m => m.Initialize(It.IsAny<IModuleConfiguration>()), Times.Never());
             }
 
+            [Fact]
+            public void ShouldLoadEngineAssemblyByHandIfItsTheOnlyModule()
+            {
+                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
+                _mockAssemblyUtility.Setup(x => x.LoadFile(path));
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
+                loader.Load(null, new string[0], "c:\\foo", null, "roslyn");
+
+                _mockAssemblyUtility.Verify(x => x.LoadFile(path), Times.Once());
+            }
+
+            [Fact]
+            public void ShouldLoadEngineModuleFromFile()
+            {
+                _mockAssemblyUtility.Setup(x => x.LoadFile(It.IsAny<string>())).Returns(typeof (DummyModule).Assembly);
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
+
+                var config = new ModuleConfiguration(true, string.Empty, false, LogLevel.Debug, true,
+                    new Dictionary<Type, object> {{typeof (string), "not loaded"}});
+                loader.Load(config, new string[0], "c:\\foo", null, "roslyn");
+
+                config.Overrides[typeof(string)].ShouldEqual("module loaded");
+            }
+
             public class ModuleMetadata : IModuleMetadata
             {
                 public string Name { get; set; }
@@ -117,6 +142,14 @@ namespace ScriptCs.Hosting.Tests
                 public string Extensions { get; set; }
 
                 public bool Autoload { get; set; }
+            }
+
+            public class DummyModule : IModule
+            {
+                public void Initialize(IModuleConfiguration config)
+                {
+                    config.Overrides[typeof (string)] = "module loaded";
+                }
             }
         }
     }
