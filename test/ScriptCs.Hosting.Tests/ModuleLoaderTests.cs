@@ -125,7 +125,6 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldLoadEngineModuleFromFile()
             {
-                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
                 _mockAssemblyUtility.Setup(x => x.LoadFile(It.IsAny<string>())).Returns(typeof (DummyModule).Assembly);
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
 
