@@ -4,11 +4,11 @@ using Common.Logging;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs.CSharp
 {
-    public class RoslynReplEngine : RoslynScriptEngine, IReplEngine
+    public class CSharpReplEngine : CSharpScriptEngine, IReplEngine
     {
-        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public CSharpReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
             : base(scriptHostFactory, logger)
         {
         }

@@ -9,9 +9,9 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs.CSharp
 {
-    public class RoslynScriptEngine : IScriptEngine
+    public class CSharpScriptEngine : IScriptEngine
     {
         private ScriptOptions _scriptOptions;
         private readonly IScriptHostFactory _scriptHostFactory;
@@ -19,7 +19,7 @@ namespace ScriptCs.Engine.Roslyn
         public const string SessionKey = "Session";
         private const string InvalidNamespaceError = "error CS0246";
 
-        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public CSharpScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
         {
             _scriptOptions = new ScriptOptions().WithReferences(typeof(ScriptExecutor).Assembly, typeof(Object).Assembly);
             _scriptHostFactory = scriptHostFactory;
@@ -154,31 +154,8 @@ namespace ScriptCs.Engine.Roslyn
 
             return scriptResult;
 
-            //if (result.InvalidNamespaces.Any())
-            //{
-            //    var pendingNamespacesField = sessionState.Session.GetType().GetField("pendingNamespaces", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
-            //    if (pendingNamespacesField != null)
-            //    {
-            //        var pendingNamespacesValue = (ReadOnlyArray<string>)pendingNamespacesField.GetValue(sessionState.Session);
-            //        //no need to check this for null as ReadOnlyArray is a value type
-
-            //        if (pendingNamespacesValue.Any())
-            //        {
-            //            var fixedNamespaces = pendingNamespacesValue.ToList();
-
-            //            foreach (var @namespace in result.InvalidNamespaces)
-            //            {
-            //                sessionState.Namespaces.Remove(@namespace);
-            //                fixedNamespaces.Remove(@namespace);
-            //            }
-            //            pendingNamespacesField.SetValue(sessionState.Session, ReadOnlyArray<string>.CreateFrom<string>(fixedNamespaces));
-            //        }
-            //    }
-            //}
-
-            //
-            //return result;
+            //todo handle namespace failures
+            //https://github.com/dotnet/roslyn/issues/1012
         }
 
         protected virtual ScriptResult Execute(string code, object globals, SessionState<ScriptState> sessionState)
@@ -204,39 +181,6 @@ namespace ScriptCs.Engine.Roslyn
                 return new ScriptResult(executionException: ex);
             }
         }
-
-        //protected virtual ScriptResult Execute(string code, Session session)
-        //{
-        //    Guard.AgainstNullArgument("session", session);
-
-        //    try
-        //    {
-        //        var submission = session.CompileSubmission<object>(code);
-
-        //        try
-        //        {
-        //            return new ScriptResult(returnValue: submission.Execute());
-        //        }
-        //        catch (AggregateException ex)
-        //        {
-        //            return new ScriptResult(executionException: ex.InnerException);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return new ScriptResult(executionException: ex);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        if (ex.Message.StartsWith(InvalidNamespaceError))
-        //        {
-        //            var offendingNamespace = Regex.Match(ex.Message, @"\'([^']*)\'").Groups[1].Value;
-        //            return new ScriptResult(compilationException: ex, invalidNamespaces: new string[1] {offendingNamespace});
-        //        }
-           
-        //        return new ScriptResult(compilationException: ex);
-        //    }
-        //}
 
         protected static bool IsCompleteSubmission(string code)
         {

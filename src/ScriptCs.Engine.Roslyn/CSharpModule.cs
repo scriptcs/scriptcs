@@ -1,10 +1,10 @@
 ﻿using System;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Roslyn
+namespace ScriptCs.CSharp
 {
-    [Module("roslyn")]
-    public class RoslynModule : IModule
+    [Module("csharp")]
+    public class CSharpModule : IModule
     {
         public void Initialize(IModuleConfiguration config)
         {
@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
                 throw new ArgumentNullException("config");
             }
 
-            var engineType = config.IsRepl ? typeof (RoslynReplEngine) : typeof (RoslynScriptEngine);
+            var engineType = config.IsRepl ? typeof (CSharpReplEngine) : typeof (CSharpScriptEngine);
             config.Overrides[typeof (IScriptEngine)] = engineType;
         }
     }

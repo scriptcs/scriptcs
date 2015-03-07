@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E79EC231-E27D-4057-91C9-2D001A3A8C3B}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ScriptCs.Engine.Roslyn</RootNamespace>
-    <AssemblyName>ScriptCs.Engine.Roslyn</AssemblyName>
+    <RootNamespace>ScriptCs.CSharp</RootNamespace>
+    <AssemblyName>ScriptCs.CSharp</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -80,10 +80,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RoslynModule.cs" />
+    <Compile Include="CSharpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoslynReplEngine.cs" />
-    <Compile Include="RoslynScriptEngine.cs" />
+    <Compile Include="CSharpReplEngine.cs" />
+    <Compile Include="CSharpScriptEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
