@@ -12,6 +12,12 @@ namespace ScriptCs.Hosting
 {
     public class ModuleLoader : IModuleLoader
     {
+        private static Dictionary<string, string> defaultCSharpModules = new Dictionary<string, string>
+        {
+            {"roslyn", "ScriptCs.Engine.Roslyn.dll"},
+            {"mono", "ScriptCs.Engine.Mono.dll"}
+        };
+
         private readonly IAssemblyResolver _resolver;
         private readonly ILog _logger;
         private readonly Action<Assembly, AggregateCatalog> _addToCatalog;
@@ -58,11 +64,35 @@ namespace ScriptCs.Hosting
             _assemblyUtility = assemblyUtility;
         }
 
-        public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string hostBin, string extension, params string[] moduleNames)
+        public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string hostBin, string extension,
+            params string[] moduleNames)
         {
             if (modulePackagesPaths == null) return;
 
-            _logger.Debug("Loading modules from: " + string.Join(", ", modulePackagesPaths.Select(i => i)));
+            if (moduleNames.Length == 1) // only CSharp module needed
+            {
+                var csharpModuleAssembly = defaultCSharpModules[moduleNames[0]];
+                var module = _assemblyUtility.LoadFile(Path.Combine(hostBin, csharpModuleAssembly));
+
+                if (module != null)
+                {
+                    var moduleType = module.GetExportedTypes().FirstOrDefault(f => typeof (IModule).IsAssignableFrom(f));
+
+                    if (moduleType != null)
+                    {
+                        var moduleInstance = Activator.CreateInstance(moduleType) as IModule;
+
+                        if (moduleInstance != null)
+                        {
+                            _logger.Debug(String.Format("Initializing module: {0}", module.GetType().FullName));
+                            moduleInstance.Initialize(config);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            _logger.Debug("Loading modules from: " + String.Join(", ", modulePackagesPaths.Select(i => i)));
             var paths = new List<string>();
 
             AddPaths(modulePackagesPaths, hostBin, paths);
@@ -91,7 +121,7 @@ namespace ScriptCs.Hosting
 
             foreach (var module in modules)
             {
-                _logger.Debug(string.Format("Initializing module: {0}", module.GetType().FullName));
+                _logger.Debug(String.Format("Initializing module: {0}", module.GetType().FullName));
                 module.Initialize(config);
             }
 
