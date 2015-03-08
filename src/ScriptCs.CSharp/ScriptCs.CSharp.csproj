@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{29A08357-6C45-49C9-B93E-35FCEE5571BE}</ProjectGuid>
+    <ProjectGuid>{E79EC231-E27D-4057-91C9-2D001A3A8C3B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ScriptCs.CSharp</RootNamespace>
     <AssemblyName>ScriptCs.CSharp</AssemblyName>
@@ -80,7 +80,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Properties\ScriptCs.Engine.Roslyn.nuspec" />
+    <None Include="Properties\ScriptCs.CSharp.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\scriptcs\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
