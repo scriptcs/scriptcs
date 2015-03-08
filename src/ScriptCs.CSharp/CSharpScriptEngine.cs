@@ -138,17 +138,7 @@ namespace ScriptCs.CSharp
                     sessionState.Namespaces.Add(@namespace);
                 }
 
-                var makemethod = typeof (CSharpScript).GetMethod("Make",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
 
-                if (sessionState.Session != null)
-                {
-                    makemethod.Invoke(sessionState.Session.Script,
-                        new object[]
-                        {code, null, _scriptOptions, host.GetType(), typeof (object), null, sessionState.Session.Script});
-                }
-                //result = CSharpScript.Run(code, _scriptOptions, sessionState.Session);
-                //sessionState.Session = result;
                 scriptResult = Execute(code, sessionState.Session, sessionState);
             }
 
@@ -184,10 +174,17 @@ namespace ScriptCs.CSharp
 
         protected static bool IsCompleteSubmission(string code)
         {
+            //invalid REPL command
+            if (code.StartsWith(":"))
+            {
+                return true;
+            }
+
             var options = new CSharpParseOptions(LanguageVersion.CSharp6, DocumentationMode.Parse,
                 SourceCodeKind.Interactive, null);
 
-            return SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(code, options: options));
+            var syntaxTree = SyntaxFactory.ParseSyntaxTree(code, options: options);
+            return SyntaxFactory.IsCompleteSubmission(syntaxTree);
         }
     }
 }
