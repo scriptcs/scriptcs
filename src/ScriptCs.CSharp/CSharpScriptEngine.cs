@@ -31,8 +31,7 @@ namespace ScriptCs.CSharp
         public string BaseDirectory
         {
             get { return _scriptOptions.BaseDirectory; }
-            set { }
-            //          set { _scriptOptions.BaseDirectory = value; }
+            set { _scriptOptions = _scriptOptions.WithBaseDirectory(value); }
         }
 
         public string CacheDirectory { get; set; }
