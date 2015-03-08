@@ -54,8 +54,8 @@ namespace ScriptCs.CSharp
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
 
-            var executionReferences = new AssemblyReferences(references.PathReferences, references.Assemblies);
-            executionReferences.PathReferences.UnionWith(scriptPackSession.References);
+            var executionReferences = new AssemblyReferences(references.Assemblies, references.Paths);
+            executionReferences.Union(scriptPackSession.References);
 
             ScriptResult scriptResult;
             SessionState<ScriptState> sessionState;
@@ -74,7 +74,7 @@ namespace ScriptCs.CSharp
                 
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
-                foreach (var reference in executionReferences.PathReferences)
+                foreach (var reference in executionReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     _scriptOptions = _scriptOptions.AddReferences(reference);
@@ -115,18 +115,18 @@ namespace ScriptCs.CSharp
 
                 var newReferences = executionReferences.Except(sessionState.References);
 
-                foreach (var reference in newReferences.PathReferences)
+                foreach (var reference in newReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     _scriptOptions.AddReferences(reference);
-                    sessionState.References.PathReferences.Add(reference);
+                    sessionState.References = sessionState.References.Union(new[] { reference });
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     _scriptOptions.AddReferences(assembly);
-                    sessionState.References.Assemblies.Add(assembly);
+                    sessionState.References = sessionState.References.Union(new[] { assembly });
                 }
 
                 var newNamespaces = namespaces.Except(sessionState.Namespaces);
