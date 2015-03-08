@@ -7,3 +7,11 @@
     git submodule update --init --recursive
 
     build.bat
+    
+### Build Prerequisites
+
+Install [scriptcs](http://scriptcs.net/).
+
+### Artifacts
+
+Located in `/artifacts/`.
