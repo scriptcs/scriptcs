@@ -1,0 +1,4 @@
+[submodule "scriptcs"]
+	path = scriptcs
+	url = https://github.com/scriptcs/scriptcs.git
+	branch = dev
