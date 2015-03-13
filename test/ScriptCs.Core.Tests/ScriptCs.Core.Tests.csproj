@@ -74,6 +74,7 @@
     <Compile Include="ScriptHostTests.cs" />
     <Compile Include="ScriptPackResolverTests.cs" />
     <Compile Include="ScriptPackSessionTests.cs" />
+    <Compile Include="ShebangLineProcessorTests.cs" />
     <Compile Include="UsingLineProcessorTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -156,6 +156,7 @@ namespace ScriptCs.Hosting.Tests
                 processors.Where(p => p is IUsingLineProcessor).ShouldNotBeEmpty();
                 processors.Where(p => p is IReferenceLineProcessor).ShouldNotBeEmpty();
                 processors.Where(p => p is ILoadLineProcessor).ShouldNotBeEmpty();
+                processors.Where(p => p is IShebangLineProcessor).ShouldNotBeEmpty();
             }
 
             [Fact]

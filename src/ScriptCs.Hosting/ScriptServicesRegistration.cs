@@ -62,7 +62,11 @@ namespace ScriptCs.Hosting
                 .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
                 ?? typeof(ReferenceLineProcessor);
 
-            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }
+            var shebangProcessorType = processorList
+                .FirstOrDefault(x => typeof(IShebangLineProcessor).IsAssignableFrom(x))
+                ?? typeof(ShebangLineProcessor);
+
+            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType, shebangProcessorType }
                 .Union(processorList).ToArray();
 
             builder.RegisterTypes(processorArray).As<ILineProcessor>();
