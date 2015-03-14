@@ -137,6 +137,10 @@ namespace ScriptCs.CSharp
                     sessionState.Namespaces.Add(@namespace);
                 }
 
+                if (string.IsNullOrWhiteSpace(code))
+                {
+                    return ScriptResult.Empty;
+                }
 
                 scriptResult = Execute(code, sessionState.Session, sessionState);
             }
