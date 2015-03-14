@@ -55,6 +55,15 @@
     <Reference Include="Microsoft.CodeAnalysis.Scripting.CSharp">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.CSharp.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.Scripting.CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting.VisualBasic">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.VisualBasic.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.Scripting.VisualBasic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Desktop">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.1.33.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -72,10 +81,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonScriptEngine.cs" />
     <Compile Include="CSharpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpReplEngine.cs" />
     <Compile Include="CSharpScriptEngine.cs" />
+    <Compile Include="VisualBasicModule.cs" />
+    <Compile Include="VisualBasicReplEngine.cs" />
+    <Compile Include="VisualBasicScriptEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

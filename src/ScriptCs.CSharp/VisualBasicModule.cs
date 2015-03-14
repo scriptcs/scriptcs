@@ -3,8 +3,8 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.CSharp
 {
-    [Module("csharp")]
-    public class CSharpModule : IModule
+    [Module("vb")]
+    public class VisualBasicModule : IModule
     {
         public void Initialize(IModuleConfiguration config)
         {
@@ -13,8 +13,8 @@ namespace ScriptCs.CSharp
                 throw new ArgumentNullException("config");
             }
 
-            var engineType = config.IsRepl ? typeof (CSharpReplEngine) : typeof (CSharpScriptEngine);
-            config.Overrides[typeof(IScriptEngine)] = engineType;
+            var engineType = config.IsRepl ? typeof(VisualBasicReplEngine) : typeof(VisualBasicScriptEngine);
+            config.Overrides[typeof (IScriptEngine)] = engineType;
         }
     }
 }
