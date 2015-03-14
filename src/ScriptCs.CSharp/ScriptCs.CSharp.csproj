@@ -38,22 +38,22 @@
       <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Desktop">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.CSharp.Desktop.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.CSharp.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Desktop">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.Desktop.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Scripting">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Scripting.CSharp">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.CSharp.1.0.0-rc2-20150306-06\lib\net45\Microsoft.CodeAnalysis.Scripting.CSharp.dll</HintPath>
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.CSharp.1.0.0-rc2-20150313-04\lib\net45\Microsoft.CodeAnalysis.Scripting.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.1.33.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
