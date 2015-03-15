@@ -15,6 +15,7 @@ namespace ScriptCs.CSharp
 
             var engineType = config.IsRepl ? typeof(VisualBasicReplEngine) : typeof(VisualBasicScriptEngine);
             config.Overrides[typeof (IScriptEngine)] = engineType;
+            config.LineProcessor<VisualBasicNamespaceLineProcessor>();
         }
     }
 }

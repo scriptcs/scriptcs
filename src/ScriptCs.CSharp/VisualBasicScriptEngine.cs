@@ -30,7 +30,8 @@ namespace ScriptCs.CSharp
 
             var options = new VisualBasicParseOptions(LanguageVersion.VisualBasic14, DocumentationMode.Parse, SourceCodeKind.Interactive, null);
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(code, options);
-            return !syntaxTree.GetDiagnostics().Any();
+            var diagnostics = syntaxTree.GetDiagnostics();
+            return !diagnostics.Any();
         }
     }
 }
