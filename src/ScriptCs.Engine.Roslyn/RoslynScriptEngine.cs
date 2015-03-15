@@ -38,12 +38,14 @@ namespace ScriptCs.Engine.Roslyn
 
         public string FileName { get; set; }
 
+#pragma warning disable 618
         public ScriptResult Execute(
             string code,
             string[] scriptArgs,
             AssemblyReferences references,
             IEnumerable<string> namespaces,
             ScriptPackSession scriptPackSession)
+#pragma warning restore 618
         {
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
             Guard.AgainstNullArgument("references", references);
@@ -51,7 +53,8 @@ namespace ScriptCs.Engine.Roslyn
             Logger.Debug("Starting to create execution components");
             Logger.Debug("Creating script host");
 
-            var executionReferences = references.Union(scriptPackSession.References);
+            var executionReferences = new References(references.Assemblies, references.PathReferences)
+                .Union(scriptPackSession.References);
 
             SessionState<Session> sessionState;
 
@@ -91,7 +94,9 @@ namespace ScriptCs.Engine.Roslyn
 
                 sessionState = new SessionState<Session>
                 {
-                    References = executionReferences,
+#pragma warning disable 618
+                    References = new AssemblyReferences(executionReferences.Paths, executionReferences.Assemblies),
+#pragma warning restore 618
                     Session = session,
                     Namespaces = new HashSet<string>(allNamespaces)
                 };
@@ -105,7 +110,9 @@ namespace ScriptCs.Engine.Roslyn
 
                 if (sessionState.References == null)
                 {
+#pragma warning disable 618
                     sessionState.References = new AssemblyReferences();
+#pragma warning restore 618
                 }
 
                 if (sessionState.Namespaces == null)
@@ -113,20 +120,26 @@ namespace ScriptCs.Engine.Roslyn
                     sessionState.Namespaces = new HashSet<string>();
                 }
 
-                var newReferences = executionReferences.Except(sessionState.References);
+                var newReferences = executionReferences
+                    .Except(sessionState.References.Assemblies)
+                    .Except(sessionState.References.PathReferences);
 
                 foreach (var reference in newReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.AddReference(reference);
-                    sessionState.References = sessionState.References.Union(new[] { reference });
+#pragma warning disable 618
+                    sessionState.References.Union(new AssemblyReferences(new[] { reference }));
+#pragma warning restore 618
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
                     sessionState.Session.AddReference(assembly);
-                    sessionState.References = sessionState.References.Union(new[] { assembly });
+#pragma warning disable 618
+                    sessionState.References.Union(new AssemblyReferences(new[] { assembly }));
+#pragma warning restore 618
                 }
 
                 var newNamespaces = namespaces.Except(sessionState.Namespaces);

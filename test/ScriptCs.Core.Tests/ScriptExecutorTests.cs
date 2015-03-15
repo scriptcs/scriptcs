@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 618
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -292,7 +293,7 @@ namespace ScriptCs.Tests
                     e => e.Execute(
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
-                        It.Is<AssemblyReferences>(x => x.Paths
+                        It.Is<AssemblyReferences>(x => x.PathReferences
                             .SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
@@ -412,7 +413,7 @@ namespace ScriptCs.Tests
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
                         It.Is<AssemblyReferences>(x =>
-                            !x.Paths.Except(ScriptExecutor.DefaultReferences).Any()),
+                            !x.PathReferences.Except(ScriptExecutor.DefaultReferences).Any()),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
                     Times.Exactly(1));

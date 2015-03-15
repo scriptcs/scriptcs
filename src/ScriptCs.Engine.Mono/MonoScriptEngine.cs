@@ -45,17 +45,20 @@ namespace ScriptCs.Engine.Mono
             return new Collection<string>();
         }
 
+#pragma warning disable 618
         public ScriptResult Execute(
             string code,
             string[] scriptArgs,
             AssemblyReferences references,
             IEnumerable<string> namespaces,
             ScriptPackSession scriptPackSession)
+#pragma warning restore 618
         {
             Guard.AgainstNullArgument("references", references);
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
 
-            references = references.Union(scriptPackSession.References);
+            var sensibleReferences = new References(references.Assemblies, references.PathReferences)
+                .Union(scriptPackSession.References);
 
             SessionState<Evaluator> sessionState;
             var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);
@@ -65,7 +68,7 @@ namespace ScriptCs.Engine.Mono
                 code = code.DefineTrace();
                 Logger.Debug("Creating session");
                 var context = new CompilerContext(
-                    new CompilerSettings { AssemblyReferences = references.Paths.ToList() },
+                    new CompilerSettings { AssemblyReferences = sensibleReferences.Paths.ToList() },
                     new ConsoleReportPrinter());
 
                 var evaluator = new Evaluator(context);
@@ -96,8 +99,10 @@ namespace ScriptCs.Engine.Mono
                 sessionState = (SessionState<Evaluator>)scriptPackSession.State[SessionKey];
 
                 var newReferences = sessionState.References == null
-                    ? references
-                    : references.Except(sessionState.References);
+                    ? sensibleReferences
+                    : sensibleReferences
+                        .Except(sessionState.References.Assemblies)
+                        .Except(sessionState.References.PathReferences);
 
                 foreach (var reference in newReferences.Paths)
                 {
