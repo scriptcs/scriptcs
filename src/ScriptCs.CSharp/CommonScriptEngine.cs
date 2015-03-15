@@ -63,7 +63,6 @@ namespace ScriptCs.CSharp
 
             if (isFirstExecution)
             {
-                code = code.DefineTrace();
                 ScriptOptions = ScriptOptions.AddReferences(hostType.Assembly);
                 
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
