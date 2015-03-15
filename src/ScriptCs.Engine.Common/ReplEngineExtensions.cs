@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Common
 {
     public static class ReplEngineExtensions
     {

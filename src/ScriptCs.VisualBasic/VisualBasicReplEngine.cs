@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using Common.Logging;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
+using ScriptCs.Engine.Common;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.VisualBasic
 {
     public class VisualBasicReplEngine : VisualBasicScriptEngine, IReplEngine
     {

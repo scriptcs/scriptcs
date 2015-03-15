@@ -5,7 +5,7 @@ using Common.Logging;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Common
 {
     public abstract class CommonScriptEngine : IScriptEngine
     {

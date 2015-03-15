@@ -5,8 +5,9 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.VisualBasic;
 using Microsoft.CodeAnalysis.VisualBasic;
 using ScriptCs.Contracts;
+using ScriptCs.Engine.Common;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.VisualBasic
 {
     public class VisualBasicScriptEngine : CommonScriptEngine
     {

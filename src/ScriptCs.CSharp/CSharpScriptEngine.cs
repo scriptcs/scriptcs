@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
+using ScriptCs.Engine.Common;
 
 namespace ScriptCs.CSharp
 {

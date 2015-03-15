@@ -1,7 +1,7 @@
 ﻿using System;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.VisualBasic
 {
     [Module("vb")]
     public class VisualBasicModule : IModule

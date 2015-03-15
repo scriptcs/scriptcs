@@ -1,7 +1,7 @@
 using System;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.VisualBasic
 {
     public class VisualBasicNamespaceLineProcessor : IUsingLineProcessor
     {
