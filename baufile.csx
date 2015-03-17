@@ -29,8 +29,7 @@ bau
 
 .Task("clobber").DependsOn("clean").Do(() => DeleteDirectory(output))
 
-.Exec("restore").Do(exec => exec
-    .Run(nugetCommand).With("restore", solution))
+.Exec("restore").Do(exec => exec.Run(nugetCommand).With("restore", solution))
 
 .MSBuild("build").DependsOn("clean", "restore", "logs").Do(msb => Configure(msb, "Build"))
 
