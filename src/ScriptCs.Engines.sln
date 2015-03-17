@@ -22,6 +22,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Common", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.VisualBasic", "ScriptCs.VisualBasic\ScriptCs.VisualBasic.csproj", "{4C68DC34-60AB-405B-878F-377CF6C4336C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC4B1FD2-A3F5-4A0B-9A08-1993AC1E83CC}"
+	ProjectSection(SolutionItems) = preProject
+		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

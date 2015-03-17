@@ -5,12 +5,17 @@ var msBuildFileVerbosity = (Verbosity)Enum.Parse(typeof(Verbosity), Environment.
 var nugetVerbosity = Environment.GetEnvironmentVariable("NUGET_VERBOSITY") ?? "quiet";
 
 // solution specific variables
-var version = File.ReadAllText("src/ScriptCs.CSharp/Properties/AssemblyInfo.cs").Split(new[] { "AssemblyInformationalVersion(\"" }, 2, StringSplitOptions.None).ElementAt(1).Split(new[] { '"' }).First();
+var version = File.ReadAllText("src/CommonAssemblyInfo.cs").Split(new[] { "AssemblyInformationalVersion(\"" }, 2, StringSplitOptions.None).ElementAt(1).Split(new[] { '"' }).First();
 var nugetCommand = "scriptcs_packages/NuGet.CommandLine.2.8.3/tools/NuGet.exe";
-var solution = "src/ScriptCs.CSharp.sln";
+var solution = "src/ScriptCs.Engines.sln";
 var output = "artifacts/output";
 var logs = "artifacts/logs";
-var pack = "src/ScriptCs.CSharp/ScriptCs.CSharp.csproj";
+var packs = new[]
+{
+    "src/ScriptCs.Engine.Common/ScriptCs.Engine.Common",
+    "src/ScriptCs.CSharp/ScriptCs.CSharp",
+    "src/ScriptCs.VisualBasic/ScriptCs.VisualBasic",
+};
 
 // solution agnostic tasks
 var bau = Require<Bau>();
@@ -73,15 +78,42 @@ bau
 
 .Task("output").Do(() => CreateDirectory(output))
 
-.Exec("pack").DependsOn("build", "clobber", "output").Do(exec => exec
-    .Run(nugetCommand)
-    .With(
-        "pack", pack,
-        "-OutputDirectory", output,
-        "-Properties", "Configuration=Release",
-        //"-IncludeReferencedProjects",
-        "-Verbosity " + nugetVerbosity,
-        "-Version", version + versionSuffix))
+.Task("pack").DependsOn("build", "clobber", "output").Do(() =>
+    {
+        foreach (var pack in packs)
+        {
+            File.Copy(pack + ".nuspec", pack + ".nuspec.original", true);
+        }
+
+        try
+        {
+            foreach (var pack in packs)
+            {
+                File.WriteAllText(pack + ".nuspec", File.ReadAllText(pack + ".nuspec").Replace("0.0.0", version + versionSuffix));
+
+                var project = pack + ".csproj";
+                bau.CurrentTask.LogInfo("Packing '" + project + "'...");
+                
+                new Exec { Name = "pack " + project }
+                    .Run(nugetCommand)
+                    .With(
+                        "pack", project,
+                        "-OutputDirectory", output,
+                        "-Properties", "Configuration=Release",
+                        "-IncludeReferencedProjects",
+                        "-Verbosity " + nugetVerbosity)
+                    .Execute();
+            }
+        }
+        finally
+        {
+            foreach (var pack in packs)
+            {
+                File.Copy(pack + ".nuspec.original", pack + ".nuspec", true);
+                File.Delete(pack + ".nuspec.original");
+            }
+        }
+    })
 
 .Run();
 
