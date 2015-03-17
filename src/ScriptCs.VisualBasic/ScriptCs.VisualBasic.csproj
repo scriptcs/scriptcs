@@ -71,6 +71,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualBasicModule.cs" />
     <Compile Include="VisualBasicNamespaceLineProcessor.cs" />
@@ -80,6 +83,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="ScriptCs.VisualBasic.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\scriptcs\src\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
