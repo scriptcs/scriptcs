@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+## Make sure to chmod +x this file!
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+mono "$DIR/scriptcs.exe" $@

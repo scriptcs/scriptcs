@@ -94,6 +94,7 @@
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptServices.cs" />
     <Compile Include="SessionState.cs" />
+    <Compile Include="ShebangLineProcessor.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="UsingLineProcessor.cs" />
   </ItemGroup>
