@@ -25,56 +25,14 @@ bau
 
 .Task("logs").Do(() => CreateDirectory(logs))
 
-.MSBuild("clean").DependsOn("logs").Do(msb =>
-    {
-        msb.MSBuildVersion = "net45";
-        msb.Solution = solution;
-        msb.Targets = new[] { "Clean", };
-        msb.Properties = new { Configuration = "Release" };
-        msb.MaxCpuCount = -1;
-        msb.NodeReuse = false;
-        msb.Verbosity = Verbosity.Minimal;
-        msb.NoLogo = true;
-        msb.FileLoggers.Add(
-            new FileLogger
-            {
-                FileLoggerParameters = new FileLoggerParameters
-                {
-                    PerformanceSummary = true,
-                    Summary = true,
-                    Verbosity = msBuildFileVerbosity,
-                    LogFile = logs + "/clean.log",
-                }
-            });
-    })
+.MSBuild("clean").DependsOn("logs").Do(msb => Configure(msb, "Clean"))
 
 .Task("clobber").DependsOn("clean").Do(() => DeleteDirectory(output))
 
 .Exec("restore").Do(exec => exec
     .Run(nugetCommand).With("restore", solution))
 
-.MSBuild("build").DependsOn("clean", "restore", "logs").Do(msb =>
-    {
-        msb.MSBuildVersion = "net45";
-        msb.Solution = solution;
-        msb.Targets = new[] { "Build", };
-        msb.Properties = new { Configuration = "Release" };
-        msb.MaxCpuCount = -1;
-        msb.NodeReuse = false;
-        msb.Verbosity = Verbosity.Minimal;
-        msb.NoLogo = true;
-        msb.FileLoggers.Add(
-            new FileLogger
-            {
-                FileLoggerParameters = new FileLoggerParameters
-                {
-                    PerformanceSummary = true,
-                    Summary = true,
-                    Verbosity = msBuildFileVerbosity,
-                    LogFile = logs + "/build.log",
-                }
-            });
-    })
+.MSBuild("build").DependsOn("clean", "restore", "logs").Do(msb => Configure(msb, "Build"))
 
 .Task("output").Do(() => CreateDirectory(output))
 
@@ -116,6 +74,29 @@ bau
     })
 
 .Run();
+
+void Configure(MSBuild msb, string target)
+{
+    msb.MSBuildVersion = "net45";
+    msb.Solution = solution;
+    msb.Targets = new[] { target, };
+    msb.Properties = new { Configuration = "Release" };
+    msb.MaxCpuCount = -1;
+    msb.NodeReuse = false;
+    msb.Verbosity = Verbosity.Minimal;
+    msb.NoLogo = true;
+    msb.FileLoggers.Add(
+        new FileLogger
+        {
+            FileLoggerParameters = new FileLoggerParameters
+            {
+                PerformanceSummary = true,
+                Summary = true,
+                Verbosity = msBuildFileVerbosity,
+                LogFile = logs + "/" + target + ".log",
+            }
+        });
+}
 
 void CreateDirectory(string name)
 {
