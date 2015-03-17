@@ -1,9 +1,9 @@
-# scriptcs-csharp
+# scriptcs-engines
 
 ## Build
 
-    git clone https://github.com/scriptcs/scriptcs-csharp.git
-    cd scriptcs-csharp
+    git clone https://github.com/scriptcs/scriptcs-engines.git
+    cd scriptcs-engines
     git submodule update --init --recursive
 
     build.bat
