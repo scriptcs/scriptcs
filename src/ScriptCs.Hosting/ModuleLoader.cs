@@ -72,7 +72,7 @@ namespace ScriptCs.Hosting
             if (modulePackagesPaths == null) return;
 
             // only CSharp module needed - use fast path
-            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0]) && (extension == DefaultCSharpExtension || string.IsNullOrWhiteSpace(extension))) 
+            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0]) && (string.IsNullOrWhiteSpace(extension) || extension.Equals(DefaultCSharpExtension, StringComparison.InvariantCultureIgnoreCase))) 
             {
                 _logger.Debug("Only CSharp module is needed - will skip module lookup");
                 var csharpModuleAssembly = DefaultCSharpModules[moduleNames[0]];
