@@ -17,9 +17,9 @@
     <AssemblyVersion>$(MajorVersion).$(MinorVersion).0</AssemblyVersion>
     <AssemblyInformationalVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)</AssemblyInformationalVersion>
     <AssemblyInformationalVersion Condition=" '$(BuildQuality)' != '' ">$(AssemblyInformationalVersion)-$(BuildQuality)</AssemblyInformationalVersion>
+    <AssemblyInformationalVersion Condition=" '$(IsNightlyBuild)' != '' ">$(AssemblyInformationalVersion)-nightly-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</AssemblyInformationalVersion>
 
     <PackageVersion>$(AssemblyInformationalVersion)</PackageVersion>
-    <PackageVersion Condition=" '$(IsNightlyBuild)' != '' ">$(PackageVersion)-nightly-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
