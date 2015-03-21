@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\scriptcs\src\Scriptcs\bin\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -75,8 +75,11 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CSharpModule.cs" />
+    <Compile Include="CSharpPersistentEngine.cs" />
     <Compile Include="CSharpReplEngine.cs" />
+    <Compile Include="CSharpScriptCompilerEngine.cs" />
     <Compile Include="CSharpScriptEngine.cs" />
+    <Compile Include="CSharpScriptInMemoryEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

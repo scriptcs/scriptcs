@@ -13,7 +13,9 @@ namespace ScriptCs.CSharp
                 throw new ArgumentNullException("config");
             }
 
-            var engineType = config.IsRepl ? typeof (CSharpReplEngine) : typeof (CSharpScriptEngine);
+            var engineType = config.Cache ? typeof(CSharpPersistentEngine) : typeof(CSharpScriptEngine);
+            engineType = config.Debug ? typeof(CSharpScriptInMemoryEngine) : engineType;
+            engineType = config.IsRepl ? typeof(CSharpReplEngine) : engineType;
             config.Overrides[typeof(IScriptEngine)] = engineType;
         }
     }
