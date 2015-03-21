@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputPath Condition=" '$(OutputPath)' == '' ">bin\$(Configuration)\</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>

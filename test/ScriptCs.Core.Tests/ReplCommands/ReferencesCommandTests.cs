@@ -1,3 +1,4 @@
+#pragma warning disable 618
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -37,7 +38,7 @@ namespace ScriptCs.Tests.ReplCommands
             public void ShouldReturnAssembliesFromExecutor()
             {
                 var assemblies = new AssemblyReferences(
-                    new List<Assembly> { typeof(string).Assembly }, new List<string> { "path1", "path2" });
+                    new List<string> { "path1", "path2" }, new List<Assembly> { typeof(string).Assembly });
 
                 _repl.SetupGet(x => x.References).Returns(assemblies);
 

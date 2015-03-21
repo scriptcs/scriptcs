@@ -1,3 +1,4 @@
+#pragma warning disable 618
 using System.Collections.ObjectModel;
 using System.Linq;
 using Ploeh.AutoFixture.Xunit;

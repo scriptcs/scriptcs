@@ -37,6 +37,8 @@ namespace ScriptCs
 
         private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";
 
+        private References _references;
+
         public IFileSystem FileSystem { get; private set; }
 
         public IFilePreProcessor FilePreProcessor { get; private set; }
@@ -45,7 +47,12 @@ namespace ScriptCs
 
         public ILog Logger { get; private set; }
 
-        public AssemblyReferences References { get; private set; }
+#pragma warning disable 618
+        public AssemblyReferences References
+        {
+            get { return new AssemblyReferences(_references.Paths, _references.Assemblies); }
+        }
+#pragma warning restore 618
 
         public ICollection<string> Namespaces { get; private set; }
 
@@ -63,7 +70,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
-            References = new AssemblyReferences(DefaultReferences);
+            _references = new References(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);
             FileSystem = fileSystem;
@@ -87,28 +94,28 @@ namespace ScriptCs
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            References = References.Union(assemblies);
+            _references = _references.Union(assemblies);
         }
 
         public void RemoveReferences(params Assembly[] assemblies)
         {
             Guard.AgainstNullArgument("assemblies", assemblies);
 
-            References = References.Except(assemblies);
+            _references = _references.Except(assemblies);
         }
 
         public void AddReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            References = References.Union(paths);
+            _references = _references.Union(paths);
         }
 
         public void RemoveReferences(params string[] paths)
         {
             Guard.AgainstNullArgument("paths", paths);
 
-            References = References.Except(paths);
+            _references = _references.Except(paths);
         }
 
         public void RemoveNamespaces(params string[] namespaces)
@@ -139,7 +146,7 @@ namespace ScriptCs
 
         public virtual void Reset()
         {
-            References = new AssemblyReferences(DefaultReferences);
+            _references = new References(DefaultReferences);
             Namespaces.Clear();
             ImportNamespaces(DefaultNamespaces);
 
@@ -156,7 +163,7 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-            References = References.Union(result.References);
+            _references = _references.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
 
@@ -169,7 +176,7 @@ namespace ScriptCs
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessScript(script);
-            References = References.Union(result.References);
+            _references = _references.Union(result.References);
             var namespaces = Namespaces.Union(result.Namespaces);
 
             Logger.Debug("Starting execution in engine");
