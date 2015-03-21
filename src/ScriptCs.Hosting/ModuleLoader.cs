@@ -18,6 +18,8 @@ namespace ScriptCs.Hosting
             {"mono", "ScriptCs.Engine.Mono.dll"}
         };
 
+        internal static readonly string DefaultCSharpExtension = ".csx";
+
         private readonly IAssemblyResolver _resolver;
         private readonly ILog _logger;
         private readonly Action<Assembly, AggregateCatalog> _addToCatalog;
@@ -69,7 +71,8 @@ namespace ScriptCs.Hosting
         {
             if (modulePackagesPaths == null) return;
 
-            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0])) // only CSharp module needed
+            // only CSharp module needed - use fast path
+            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0]) && (string.IsNullOrWhiteSpace(extension) || extension.Equals(DefaultCSharpExtension, StringComparison.InvariantCultureIgnoreCase))) 
             {
                 _logger.Debug("Only CSharp module is needed - will skip module lookup");
                 var csharpModuleAssembly = DefaultCSharpModules[moduleNames[0]];

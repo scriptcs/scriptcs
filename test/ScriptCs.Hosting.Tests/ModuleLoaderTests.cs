@@ -117,7 +117,7 @@ namespace ScriptCs.Hosting.Tests
                 var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
                 _mockAssemblyUtility.Setup(x => x.LoadFile(path));
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
-                loader.Load(null, new string[0], "c:\\foo", null, "roslyn");
+                loader.Load(null, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "roslyn");
 
                 _mockAssemblyUtility.Verify(x => x.LoadFile(path), Times.Once());
             }
@@ -130,9 +130,20 @@ namespace ScriptCs.Hosting.Tests
 
                 var config = new ModuleConfiguration(true, string.Empty, false, LogLevel.Debug, true,
                     new Dictionary<Type, object> {{typeof (string), "not loaded"}});
-                loader.Load(config, new string[0], "c:\\foo", null, "roslyn");
+                loader.Load(config, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "roslyn");
 
                 config.Overrides[typeof(string)].ShouldEqual("module loaded");
+            }
+
+            [Fact]
+            public void ShouldNotLoadEngineAssemblyByHandIfItsTheOnlyModuleButExtensionIsNotDefault()
+            {
+                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
+                _mockAssemblyUtility.Setup(x => x.LoadFile(path));
+                var loader = new ModuleLoader(_mockAssemblyResolver.Object, _mockLogger.Object, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
+                
+                loader.Load(null, new string[0], "c:\\foo", ".fsx", "roslyn");
+                _mockAssemblyUtility.Verify(x => x.LoadFile(It.IsAny<string>()), Times.Never);
             }
 
             public class ModuleMetadata : IModuleMetadata
