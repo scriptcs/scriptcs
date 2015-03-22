@@ -69,6 +69,11 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
+            Guard.AgainstNullArgument("filePreProcessor", filePreProcessor);
+            Guard.AgainstNullArgument("scriptEngine", scriptEngine);
+            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("composer", composer);
+
             References = new AssemblyReferences(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);

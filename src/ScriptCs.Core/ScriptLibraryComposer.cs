@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Common.Logging;
 using ScriptCs.Contracts;
 using System.IO;
@@ -43,18 +42,18 @@ namespace ScriptCs
             if (count == 1)
             {
                 script = content[0];
-            } 
+            }
             else if (content.Count() > 1)
             {
                 _logger.WarnFormat("Script Libraries in '{0}' ignored due to multiple Main files being present", package.FullName);
                 return null;
             }
-           
+
             if (script != null)
             {
-                _logger.DebugFormat("Found main script: {0}", script);    
+                _logger.DebugFormat("Found main script: {0}", script);
             }
-            
+
             return script;
         }
 
@@ -70,13 +69,8 @@ namespace ScriptCs
                 return;
             }
 
-            var namespaces = new List<string>();
-            var references = new List<string>();
-
             var packagesPath = Path.Combine(workingDirectory, _fileSystem.PackagesFolder);
-            var packageReferences = _packageAssemblyResolver.GetPackages(workingDirectory);
             var packageScriptsPath = Path.Combine(packagesPath, ScriptLibrariesFile);
-
             if (!_fileSystem.DirectoryExists(packagesPath) || _fileSystem.FileExists(packageScriptsPath))
             {
                 return;
@@ -87,6 +81,9 @@ namespace ScriptCs
                 builder = new StringBuilder();
             }
 
+            var namespaces = new List<string>();
+            var references = new List<string>();
+            var packageReferences = _packageAssemblyResolver.GetPackages(workingDirectory);
             foreach (var reference in packageReferences)
             {
                 ProcessPackage(packagesPath, reference, builder, references, namespaces);
@@ -101,15 +98,20 @@ namespace ScriptCs
             {
                 builder.Insert(0, String.Format("#r {0}{1}", reference, Environment.NewLine));
             }
+
             _fileSystem.WriteToFile(packageScriptsPath, builder.ToString());
         }
 
-        protected internal virtual void ProcessPackage(string packagesPath, IPackageReference reference, StringBuilder builder, List<string> references,
+        protected internal virtual void ProcessPackage(
+            string packagesPath,
+            IPackageReference reference,
+            StringBuilder builder,
+            List<string> references,
             List<string> namespaces)
         {
             _logger.DebugFormat("Finding package:{0}", reference.PackageId);
             var package = _packageContainer.FindPackage(packagesPath, reference);
-            
+
             if (package == null)
             {
                 _logger.WarnFormat("Package missing: {0}", reference.PackageId);
