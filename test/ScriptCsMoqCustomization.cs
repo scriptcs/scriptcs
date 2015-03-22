@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Moq;
+﻿using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
@@ -12,7 +11,7 @@ namespace ScriptCs.Tests
         {
             this.Customize(fixture);
 
-            fixture.Register<Mock<IFileSystem>>(() =>
+            fixture.Register(() =>
                 {
                     var fileSystem = new Mock<IFileSystem>();
                     fileSystem.SetupGet(f => f.PackagesFile).Returns("scriptcs_packages.config");
@@ -26,7 +25,8 @@ namespace ScriptCs.Tests
                     fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
                 });
-            fixture.Register<Mock<IScriptLibraryComposer>>(() =>
+
+            fixture.Register(() =>
                 {
                     var composer = new Mock<IScriptLibraryComposer>();
                     composer.SetupGet(c => c.ScriptLibrariesFile).Returns("ScriptLibraries.csx");

@@ -54,6 +54,12 @@ namespace ScriptCs
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
 
         public ScriptExecutor(
+            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+            : this(fileSystem, filePreProcessor, scriptEngine, logger, new NullScriptLibraryComposer())
+        {
+        }
+
+        public ScriptExecutor(
             IFileSystem fileSystem,
             IFilePreProcessor filePreProcessor,
             IScriptEngine scriptEngine,
@@ -63,6 +69,11 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
+            Guard.AgainstNullArgument("filePreProcessor", filePreProcessor);
+            Guard.AgainstNullArgument("scriptEngine", scriptEngine);
+            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("composer", composer);
+
             References = new AssemblyReferences(DefaultReferences);
             Namespaces = new Collection<string>();
             ImportNamespaces(DefaultNamespaces);
@@ -202,6 +213,11 @@ namespace ScriptCs
 
         protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
         {
+            if (string.IsNullOrWhiteSpace(ScriptLibraryComposer.ScriptLibrariesFile))
+            {
+                return null;
+            }
+
             var scriptLibrariesPath = Path.Combine(workingDirectory, FileSystem.PackagesFolder,
                 ScriptLibraryComposer.ScriptLibrariesFile);
 

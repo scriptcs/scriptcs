@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
+using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
 using Should;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests.ReplCommands
 {
@@ -25,20 +27,34 @@ namespace ScriptCs.Tests.ReplCommands
 
         public class ExecuteMethod
         {
-            [Fact]
-            public void ShouldAliasCommandWithNewName()
+            [Theory, ScriptCsAutoData]
+            public void ShouldAliasCommandWithNewName(
+                Mock<IFileSystem> fileSystem,
+                Mock<IScriptEngine> engine,
+                Mock<IObjectSerializer> serializer,
+                Mock<ILog> logger,
+                Mock<IScriptLibraryComposer> composer,
+                Mock<IConsole> console,
+                Mock<IFilePreProcessor> filePreProcessor)
             {
                 // arrange
                 var currentDir = @"C:\";
                 var dummyCommand = new Mock<IReplCommand>();
                 dummyCommand.Setup(x => x.CommandName).Returns("foo");
 
-                var fs = new Mock<IFileSystem>();
-                fs.Setup(x => x.BinFolder).Returns(Path.Combine(currentDir, "bin"));
-                fs.Setup(x => x.DllCacheFolder).Returns(Path.Combine(currentDir, "cache"));
+                fileSystem.Setup(x => x.BinFolder).Returns(Path.Combine(currentDir, "bin"));
+                fileSystem.Setup(x => x.DllCacheFolder).Returns(Path.Combine(currentDir, "cache"));
 
-                var console = new Mock<IConsole>();
-                var executor = new Repl(null, fs.Object, null, null, null, null, null, null, new List<IReplCommand> { dummyCommand.Object });
+                var executor = new Repl(
+                    new string[0],
+                    fileSystem.Object,
+                    engine.Object,
+                    serializer.Object,
+                    logger.Object,
+                    composer.Object,
+                    console.Object,
+                    filePreProcessor.Object,
+                    new List<IReplCommand> { dummyCommand.Object });
 
                 var cmd = new AliasCommand(console.Object);
 
