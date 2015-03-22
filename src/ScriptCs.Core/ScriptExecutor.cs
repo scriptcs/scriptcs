@@ -54,6 +54,12 @@ namespace ScriptCs
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
 
         public ScriptExecutor(
+            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
+            : this(fileSystem, filePreProcessor, scriptEngine, logger, new NullScriptLibraryComposer())
+        {
+        }
+
+        public ScriptExecutor(
             IFileSystem fileSystem,
             IFilePreProcessor filePreProcessor,
             IScriptEngine scriptEngine,
@@ -202,6 +208,11 @@ namespace ScriptCs
 
         protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
         {
+            if (string.IsNullOrWhiteSpace(ScriptLibraryComposer.ScriptLibrariesFile))
+            {
+                return null;
+            }
+
             var scriptLibrariesPath = Path.Combine(workingDirectory, FileSystem.PackagesFolder,
                 ScriptLibraryComposer.ScriptLibrariesFile);
 

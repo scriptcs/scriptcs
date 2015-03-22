@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Common.Logging;
 using Moq;
 using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
@@ -504,13 +505,21 @@ namespace ScriptCs.Tests
         {
             [Theory, ScriptCsAutoData]
             public void ShouldPreProcessTheScriptLibrariesFileIfPresent(
-                [Frozen] Mock<IFilePreProcessor> preProcessor,
                 [Frozen] Mock<IFileSystem> fileSystem,
-                ScriptExecutor executor)
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                [Frozen] Mock<IScriptEngine> engine,
+                [Frozen] Mock<ILog> logger,
+                [Frozen] Mock<IScriptLibraryComposer> composer)
             {
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
+                // arrange
                 fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+                var executor = new ScriptExecutor(
+                    fileSystem.Object, preProcessor.Object, engine.Object, logger.Object,composer.Object);
+
+                // act
                 executor.LoadScriptLibraries("");
+                
+                // assert
                 preProcessor.Verify(p => p.ProcessFile(It.IsAny<string>()));
             }
         }

@@ -43,12 +43,15 @@ namespace ScriptCs.Command
             _logger.Info("Installing packages...");
 
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
-            var scriptLibrariesFile = Path.Combine(packagesFolder, _composer.ScriptLibrariesFile);
-
-            if (_fileSystem.DirectoryExists(packagesFolder))
+            if (!string.IsNullOrWhiteSpace(_composer.ScriptLibrariesFile))
             {
-                _logger.DebugFormat("Deleting: {0}", scriptLibrariesFile);
-                _fileSystem.FileDelete(scriptLibrariesFile);
+                var scriptLibrariesFile = Path.Combine(packagesFolder, _composer.ScriptLibrariesFile);
+
+                if (_fileSystem.FileExists(scriptLibrariesFile))
+                {
+                    _logger.DebugFormat("Deleting: {0}", scriptLibrariesFile);
+                    _fileSystem.FileDelete(scriptLibrariesFile);
+                }
             }
 
             var packages = GetPackages(_fileSystem.CurrentDirectory);

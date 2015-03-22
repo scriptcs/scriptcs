@@ -65,6 +65,11 @@ namespace ScriptCs
 
         public void Compose(string workingDirectory, StringBuilder builder = null)
         {
+            if (string.IsNullOrWhiteSpace(ScriptLibrariesFile))
+            {
+                return;
+            }
+
             var namespaces = new List<string>();
             var references = new List<string>();
 
