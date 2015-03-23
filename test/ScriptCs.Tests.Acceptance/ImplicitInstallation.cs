@@ -44,7 +44,7 @@
                 });
 
             "When execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .f(() => output = ScriptCsExe.Run("foo.csx", true, directory));
 
             "Then I see 6912"
                 .f(() => output.ShouldContain("6912"));
