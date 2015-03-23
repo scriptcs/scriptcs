@@ -52,6 +52,9 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="FileSystemMigrator.cs" />
+    <Compile Include="NullScriptLibraryComposer.cs" />
+    <Compile Include="ScriptLibraryComposer.cs" />
+    <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />
     <Compile Include="ReplCommands\CdCommand.cs" />
     <Compile Include="ReplCommands\ClearCommand.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Guard.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="ReplCommands\HelpCommand.cs" />
+    <Compile Include="ReplCommands\ExitCommand.cs" />
     <Compile Include="ReplCommands\InstallCommand.cs" />
     <Compile Include="LoadLineProcessor.cs" />
     <Compile Include="PackageAssemblyResolver.cs" />
@@ -91,6 +95,7 @@
     <Compile Include="ScriptExecutor.cs" />
     <Compile Include="ScriptServices.cs" />
     <Compile Include="SessionState.cs" />
+    <Compile Include="ShebangLineProcessor.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="UsingLineProcessor.cs" />
   </ItemGroup>

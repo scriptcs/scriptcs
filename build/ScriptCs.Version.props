@@ -4,8 +4,8 @@
   <!-- Use the properties below to control the version of the assemblies created. -->
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
-    <MinorVersion>13</MinorVersion>
-    <PatchVersion>3</PatchVersion>
+    <MinorVersion>14</MinorVersion>
+    <PatchVersion>0</PatchVersion>
 
     <!-- Change this to set the build quality of the project. Use values like "alpha", "beta", "rc1", "rtm", etc. -->
     <!-- These values are used in SemVer, so make sure to always increase these alphabetically. -->
@@ -17,9 +17,9 @@
     <AssemblyVersion>$(MajorVersion).$(MinorVersion).0</AssemblyVersion>
     <AssemblyInformationalVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)</AssemblyInformationalVersion>
     <AssemblyInformationalVersion Condition=" '$(BuildQuality)' != '' ">$(AssemblyInformationalVersion)-$(BuildQuality)</AssemblyInformationalVersion>
+    <AssemblyInformationalVersion Condition=" '$(IsNightlyBuild)' != '' ">$(AssemblyInformationalVersion)-nightly-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</AssemblyInformationalVersion>
 
     <PackageVersion>$(AssemblyInformationalVersion)</PackageVersion>
-    <PackageVersion Condition=" '$(IsNightlyBuild)' != '' ">$(PackageVersion)-nightly-$([System.DateTime]::UtcNow.ToString("yyMMdd"))</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

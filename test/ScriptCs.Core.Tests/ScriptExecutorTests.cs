@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using Common.Logging;
 using Moq;
+using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using Should;
@@ -292,7 +293,7 @@ namespace ScriptCs.Tests
                     e => e.Execute(
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
-                        It.Is<AssemblyReferences>(x => x.PathReferences
+                        It.Is<AssemblyReferences>(x => x.Paths
                             .SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
@@ -412,10 +413,114 @@ namespace ScriptCs.Tests
                         It.IsAny<string>(),
                         It.IsAny<string[]>(),
                         It.Is<AssemblyReferences>(x =>
-                            !x.PathReferences.Except(ScriptExecutor.DefaultReferences).Any()),
+                            !x.Paths.Except(ScriptExecutor.DefaultReferences).Any()),
                         It.IsAny<IEnumerable<string>>(),
                         It.IsAny<ScriptPackSession>()),
                     Times.Exactly(1));
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldInvokeInjectScriptLibraries(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>(), "");
+                executor.Setup(e => e.InjectScriptLibraries(
+                    It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()));
+                
+                executor.Object.Execute("");
+                executor.Verify(e => e.InjectScriptLibraries(
+                    It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()));
+            }
+        }
+
+        public class TheInjectScriptLibrariesMethod
+        {
+            private IDictionary<string, object> _state = new Dictionary<string, object>();
+            private FilePreProcessorResult _result = new FilePreProcessorResult();
+            private FilePreProcessorResult _scriptLibrariesPreProcessorResult = new FilePreProcessorResult();
+
+            public TheInjectScriptLibrariesMethod()
+            {
+                _scriptLibrariesPreProcessorResult.Code = "Test";
+                _result.Code = "";
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExitIfPreProcessorResultIsNull(ScriptExecutor executor)
+            {
+                executor.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldBeEmpty();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldExitIfSessionPackageScriptsInjectedIsSet(Mock<ScriptExecutor> executor)
+            {
+                _state["ScriptLibrariesInjected"] = null;
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldBeEmpty();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldInjectResultCode(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Code.ShouldEqual("Test" + Environment.NewLine);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddResultReferences(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                _scriptLibrariesPreProcessorResult.References.Add("ref1");
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.References.ShouldContain("ref1");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddResultNamespaces(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                _scriptLibrariesPreProcessorResult.Namespaces.Add("ns1");
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _result.Namespaces.ShouldContain("ns1");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldSetPackageScriptsInjectedInSession(Mock<ScriptExecutor> executor)
+            {
+                executor.Protected();
+                executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
+                executor.Object.InjectScriptLibraries("", _result, _state);
+                _state.ContainsKey("ScriptLibrariesInjected");
+            }
+        }
+
+        public class TheLoadScriptLibrariesMethod
+        {
+            [Theory, ScriptCsAutoData]
+            public void ShouldPreProcessTheScriptLibrariesFileIfPresent(
+                [Frozen] Mock<IFileSystem> fileSystem,
+                [Frozen] Mock<IFilePreProcessor> preProcessor,
+                [Frozen] Mock<IScriptEngine> engine,
+                [Frozen] Mock<ILog> logger,
+                [Frozen] Mock<IScriptLibraryComposer> composer)
+            {
+                // arrange
+                fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+                var executor = new ScriptExecutor(
+                    fileSystem.Object, preProcessor.Object, engine.Object, logger.Object,composer.Object);
+
+                // act
+                executor.LoadScriptLibraries("");
+                
+                // assert
+                preProcessor.Verify(p => p.ProcessFile(It.IsAny<string>()));
             }
         }
 
@@ -425,18 +530,18 @@ namespace ScriptCs.Tests
             public void ShouldAddReferenceToEachAssembly(ScriptExecutor executor)
             {
                 // arrange
-                var calling = Assembly.GetCallingAssembly();
-                var executing = Assembly.GetExecutingAssembly();
-                var entry = Assembly.GetEntryAssembly();
+                var assembly1 = typeof(Mock).Assembly;
+                var assembly2 = typeof(FrozenAttribute).Assembly;
+                var assembly3 = typeof(Assert).Assembly;
 
                 // act
-                executor.AddReferences(calling, executing, entry, entry);
+                executor.AddReferences(assembly1, assembly2, assembly3, assembly3);
 
                 // assert
-                executor.References.Assemblies.ShouldContain(calling);
-                executor.References.Assemblies.ShouldContain(executing);
-                executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(3);
+                executor.References.Assemblies.ShouldContain(assembly1);
+                executor.References.Assemblies.ShouldContain(assembly2);
+                executor.References.Assemblies.ShouldContain(assembly3);
+                executor.References.Assemblies.Count().ShouldEqual(3);
             }
         }
 
@@ -446,19 +551,19 @@ namespace ScriptCs.Tests
             public void ShouldRemoveReferenceToEachAssembly(ScriptExecutor executor)
             {
                 // arrange
-                var calling = Assembly.GetCallingAssembly();
-                var executing = Assembly.GetExecutingAssembly();
-                var entry = Assembly.GetEntryAssembly();
-                executor.AddReferences(calling, executing, entry);
+                var assembly1 = typeof(Mock).Assembly;
+                var assembly2 = typeof(FrozenAttribute).Assembly;
+                var assembly3 = typeof(Assert).Assembly;
+                executor.AddReferences(assembly1, assembly2, assembly3);
 
                 // act
-                executor.RemoveReferences(calling, executing);
+                executor.RemoveReferences(assembly1, assembly2);
 
                 // assert
-                executor.References.Assemblies.ShouldNotContain(calling);
-                executor.References.Assemblies.ShouldNotContain(executing);
-                executor.References.Assemblies.ShouldContain(entry);
-                executor.References.Assemblies.Count.ShouldEqual(1);
+                executor.References.Assemblies.ShouldNotContain(assembly1);
+                executor.References.Assemblies.ShouldNotContain(assembly2);
+                executor.References.Assemblies.ShouldContain(assembly3);
+                executor.References.Assemblies.Count().ShouldEqual(1);
             }
         }
     }

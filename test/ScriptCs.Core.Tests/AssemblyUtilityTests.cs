@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ScriptCs.Contracts;
+using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using System.IO;
-    using Contracts;
-    using Xunit;
-    using Should;
-
     public class AssemblyUtilityTests
     {
         public class TheIsManagedAssemblyMethod
@@ -18,9 +12,9 @@ namespace ScriptCs.Tests
             private readonly IAssemblyUtility _assemblyUtility = new AssemblyUtility();
 
             [Fact]
-            public void ShouldReturnTrueWhenThePathIsNotRootedAndDoesNotHaveADllOrExeExtension()
+            public void ShouldReturnFalseWhenThePathDoesNotPointToAManagedAssembly()
             {
-                _assemblyUtility.IsManagedAssembly("System.Data").ShouldBeTrue();
+                _assemblyUtility.IsManagedAssembly("ScriptCs.Core.Tests.dll.config").ShouldBeFalse();
             }
 
             [Fact]

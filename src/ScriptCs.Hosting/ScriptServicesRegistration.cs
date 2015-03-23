@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ScriptCs.Contracts;
 using Autofac;
 using Common.Logging;
 
@@ -40,6 +42,34 @@ namespace ScriptCs.Hosting
                 this.Logger.Debug(string.Format("Registering default: {0}", typeof(T)));
                 registrationAction(builder);
             }
+        }
+
+        protected void RegisterLineProcessors(ContainerBuilder builder)
+        {
+            object processors;
+            this.Overrides.TryGetValue(typeof(ILineProcessor), out processors);
+            var processorList = (processors as IEnumerable<Type> ?? Enumerable.Empty<Type>()).ToArray();
+
+            var loadProcessorType = processorList
+                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
+                ?? typeof(LoadLineProcessor);
+
+            var usingProcessorType = processorList
+                .FirstOrDefault(x => typeof(IUsingLineProcessor).IsAssignableFrom(x))
+                ?? typeof(UsingLineProcessor);
+
+            var referenceProcessorType = processorList
+                .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
+                ?? typeof(ReferenceLineProcessor);
+
+            var shebangProcessorType = processorList
+                .FirstOrDefault(x => typeof(IShebangLineProcessor).IsAssignableFrom(x))
+                ?? typeof(ShebangLineProcessor);
+
+            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType, shebangProcessorType }
+                .Union(processorList).ToArray();
+
+            builder.RegisterTypes(processorArray).As<ILineProcessor>();
         }
 
         private IContainer _container;

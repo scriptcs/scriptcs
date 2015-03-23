@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
                 engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
     scriptPackSession);
 
-                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { @"System.String y = www", "System.Int32 x = 1"});
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { @"System.String y = www", "System.Int32 x = 1" });
             }
 
             [Theory, ScriptCsAutoData]
@@ -68,8 +68,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(
@@ -89,8 +88,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -109,8 +107,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
                 scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences();
-                refs.PathReferences.Add("System");
+                var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);

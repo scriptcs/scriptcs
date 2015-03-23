@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Should;
 using Xunit;
 
 namespace ScriptCs.Hosting.Tests
@@ -16,36 +16,104 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Fact]
+            public void ShouldSerialize()
+            {
+                // arrange
+                var obj = new Foo
+                {
+                    Bar = new Bar
+                    {
+                        Baz = true,
+                        Bazz = 123.4,
+                        Bazzz = "hello",
+                    },
+                };
+
+                // act
+                var result = _serializer.Serialize(obj);
+
+                // assert
+                result.ShouldEqual(
+@"{
+  ""Bar"": {
+    ""Baz"": true,
+    ""Bazz"": 123.4,
+    ""Bazzz"": ""hello""
+  }
+}");
+            }
+
+            [Fact]
             public void ShouldSerializeTypeMethods()
             {
-                Assert.DoesNotThrow(() => _serializer.Serialize(typeof(Type).GetMethods()));
+                // arrange
+                var obj = typeof(Type).GetMethods();
+
+                // act
+                var exception = Record.Exception(() => _serializer.Serialize(obj));
+
+                // assert
+                exception.ShouldBeNull();
             }
 
             [Fact]
             public void ShouldSerializeDelegates()
             {
-                Assert.DoesNotThrow(() => _serializer.Serialize(new Action(() => { })));
-                Assert.DoesNotThrow(() => _serializer.Serialize(new Foo
+                // arrange
+                var obj = new FuncAndAction
                 {
                     Action = () => { },
-                    Func = () => "Hello World"
-                }));
+                    Func = () => "Hello World",
+                };
+
+                // act
+                var exception = Record.Exception(() => _serializer.Serialize(obj));
+
+                // assert
+                exception.ShouldBeNull();
             }
 
             [Fact]
             public void ShouldSerializeWithCircularReferences()
             {
-                var foo = new Foo();
-                foo.Parent = foo;
+                // arrange
+                var obj = new Circular();
+                obj.Parent = obj;
 
-                Assert.DoesNotThrow(() => _serializer.Serialize(foo));
+                // act
+                var result = _serializer.Serialize(obj);
+
+                // assert
+                result.ShouldEqual(
+@"{
+  ""$id"": ""1"",
+  ""Parent"": {
+    ""$ref"": ""1""
+  }
+}");
             }
 
             private class Foo
             {
+                public Bar Bar { get; set; }
+            }
+
+            private class Bar
+            {
+                public bool Baz { get; set; }
+                public double Bazz { get; set; }
+                public string Bazzz { get; set; }
+            }
+
+            private class FuncAndAction
+            {
                 public Action Action { get; set; }
                 public Func<string> Func { get; set; }
-                public Foo Parent { get; set; }
+            }
+
+            private class Circular
+            {
+                public Circular Parent { get; set; }
             }
         }
     }

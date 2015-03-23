@@ -89,7 +89,7 @@
             return Execute(new[] { "-clean" }, Enumerable.Empty<string>(), directory);
         }
 
-        private static string Run(
+        public static string Run(
             string scriptName,
             bool debug,
             IEnumerable<string> args,
@@ -143,7 +143,6 @@
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-
             var result = info.Run(Path.GetFileName(directory.Name) + ".log");
             if (result.Item1 != 0)
             {

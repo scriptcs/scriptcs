@@ -15,6 +15,7 @@ namespace ScriptCs.Command
         private readonly IConsole _console;
         private readonly IAssemblyResolver _assemblyResolver;
         private readonly IFileSystemMigrator _fileSystemMigrator;
+        private readonly IScriptLibraryComposer _composer;
 
         public ExecuteReplCommand(
             string scriptName,
@@ -25,7 +26,8 @@ namespace ScriptCs.Command
             ILog logger,
             IConsole console,
             IAssemblyResolver assemblyResolver,
-            IFileSystemMigrator fileSystemMigrator)
+            IFileSystemMigrator fileSystemMigrator,
+            IScriptLibraryComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("scriptPackResolver", scriptPackResolver);
@@ -34,6 +36,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("console", console);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
+            Guard.AgainstNullArgument("composer", composer);
 
             _scriptName = scriptName;
             _scriptArgs = scriptArgs;
@@ -44,6 +47,7 @@ namespace ScriptCs.Command
             _console = console;
             _assemblyResolver = assemblyResolver;
             _fileSystemMigrator = fileSystemMigrator;
+            _composer = composer;
         }
 
         public string[] ScriptArgs
@@ -55,11 +59,13 @@ namespace ScriptCs.Command
         {
             _fileSystemMigrator.Migrate();
 
-            _console.WriteLine("scriptcs (ctrl-c to exit)" + Environment.NewLine);
+            _console.WriteLine("scriptcs (ctrl-c to exit or :help for help)" + Environment.NewLine);
 
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
             var scriptPacks = _scriptPackResolver.GetPacks();
+            
+            _composer.Compose(workingDirectory);
 
             _repl.Initialize(assemblies, scriptPacks, ScriptArgs);
 

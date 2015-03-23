@@ -9,3 +9,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("4c4ebd22-f4b0-47de-a417-f0a2a127508c")]
 
 [assembly: InternalsVisibleTo("ScriptCs.Core.Tests")]
+[assembly: InternalsVisibleTo("ScriptCs.Engine.Roslyn.Tests")]
+[assembly: InternalsVisibleTo("ScriptCs.Engine.Mono.Tests")]

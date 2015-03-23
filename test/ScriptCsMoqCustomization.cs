@@ -11,7 +11,7 @@ namespace ScriptCs.Tests
         {
             this.Customize(fixture);
 
-            fixture.Register<Mock<IFileSystem>>(() =>
+            fixture.Register(() =>
                 {
                     var fileSystem = new Mock<IFileSystem>();
                     fileSystem.SetupGet(f => f.PackagesFile).Returns("scriptcs_packages.config");
@@ -20,8 +20,17 @@ namespace ScriptCs.Tests
                     fileSystem.SetupGet(f => f.DllCacheFolder).Returns(".scriptcs_cache");
                     fileSystem.SetupGet(f => f.NugetFile).Returns("scriptcs_nuget.config");
                     fileSystem.SetupGet(f => f.CurrentDirectory).Returns("workingdirectory");
+                    fileSystem.Setup(f => f.FileExists(@"workingdirectory\scriptcs_packages\PackageScripts.csx")).Returns(false);
+                    fileSystem.Setup(f => f.DirectoryExists(@"workingdirectory\scriptcs_packages")).Returns(true);
                     fileSystem.Setup(f => f.GetWorkingDirectory(It.IsAny<string>())).Returns("workingdirectory");
                     return fileSystem;
+                });
+
+            fixture.Register(() =>
+                {
+                    var composer = new Mock<IScriptLibraryComposer>();
+                    composer.SetupGet(c => c.ScriptLibrariesFile).Returns("ScriptLibraries.csx");
+                    return composer;
                 });
         }
     }

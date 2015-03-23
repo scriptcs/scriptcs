@@ -52,6 +52,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
+            builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
 
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);
@@ -97,6 +98,9 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IFileSystemMigrator>(
                 builder, b => b.RegisterType<FileSystemMigrator>().As<IFileSystemMigrator>().SingleInstance());
+
+            RegisterOverrideOrDefault<IScriptLibraryComposer>(
+                builder, b => b.RegisterType<ScriptLibraryComposer>().As<IScriptLibraryComposer>().SingleInstance());
 
             if (_initDirectoryCatalog)
             {
@@ -152,30 +156,6 @@ namespace ScriptCs.Hosting
         private static bool ShouldLoadAssembly(IFileSystem fileSystem, IAssemblyUtility assemblyUtility, string assembly)
         {
             return fileSystem.IsPathRooted(assembly) && assemblyUtility.IsManagedAssembly(assembly);
-        }
-
-        private void RegisterLineProcessors(ContainerBuilder builder)
-        {
-            object processors;
-            this.Overrides.TryGetValue(typeof(ILineProcessor), out processors);
-            var processorList = (processors as IEnumerable<Type> ?? Enumerable.Empty<Type>()).ToArray();
-
-            var loadProcessorType = processorList
-                .FirstOrDefault(x => typeof(ILoadLineProcessor).IsAssignableFrom(x))
-                ?? typeof(LoadLineProcessor);
-
-            var usingProcessorType = processorList
-                .FirstOrDefault(x => typeof(IUsingLineProcessor).IsAssignableFrom(x))
-                ?? typeof(UsingLineProcessor);
-
-            var referenceProcessorType = processorList
-                .FirstOrDefault(x => typeof(IReferenceLineProcessor).IsAssignableFrom(x))
-                ?? typeof(ReferenceLineProcessor);
-
-            var processorArray = new[] { loadProcessorType, usingProcessorType, referenceProcessorType }
-                .Union(processorList).ToArray();
-
-            builder.RegisterTypes(processorArray).As<ILineProcessor>();
         }
 
         private static void RegisterReplCommands(ContainerBuilder builder)

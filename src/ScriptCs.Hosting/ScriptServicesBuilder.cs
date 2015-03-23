@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Logging;
 using ScriptCs.Contracts;
@@ -71,16 +72,17 @@ namespace ScriptCs.Hosting
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
             var engineModule = _typeResolver.ResolveType("Mono.Runtime") != null || moduleNames.Contains("mono")
-                ? "mono" 
+                ? "mono"
                 : "roslyn";
-            
-            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
+
+            moduleNames = moduleNames.Union(new[] {engineModule}).ToArray();
+
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
 
-            var folders = new[] { fs.GlobalFolder };
+            var folders = new[] {fs.GlobalFolder};
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }

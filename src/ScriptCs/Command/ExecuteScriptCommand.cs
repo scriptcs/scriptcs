@@ -15,6 +15,7 @@ namespace ScriptCs.Command
         private readonly ILog _logger;
         private readonly IAssemblyResolver _assemblyResolver;
         private readonly IFileSystemMigrator _fileSystemMigrator;
+        private readonly IScriptLibraryComposer _composer;
 
         public ExecuteScriptCommand(
             string script,
@@ -24,7 +25,9 @@ namespace ScriptCs.Command
             IScriptPackResolver scriptPackResolver,
             ILog logger,
             IAssemblyResolver assemblyResolver,
-            IFileSystemMigrator fileSystemMigrator)
+            IFileSystemMigrator fileSystemMigrator,
+            IScriptLibraryComposer composer
+            )
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("scriptExecutor", scriptExecutor);
@@ -32,6 +35,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("logger", logger);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
+            Guard.AgainstNullArgument("composer", composer);
 
             _script = script;
             ScriptArgs = scriptArgs;
@@ -41,6 +45,7 @@ namespace ScriptCs.Command
             _logger = logger;
             _assemblyResolver = assemblyResolver;
             _fileSystemMigrator = fileSystemMigrator;
+            _composer = composer;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -57,6 +62,8 @@ namespace ScriptCs.Command
                 {
                     assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
+
+                _composer.Compose(workingDirectory);
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
                 var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);

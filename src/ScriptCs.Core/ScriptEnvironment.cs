@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
-    public class ScriptEnvironment
+    public class ScriptEnvironment : IScriptEnvironment
     {
         public ScriptEnvironment(string[] scriptArgs)
         {
