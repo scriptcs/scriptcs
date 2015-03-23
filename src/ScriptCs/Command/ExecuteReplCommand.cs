@@ -1,6 +1,6 @@
 ﻿using System;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Command
 {
@@ -64,19 +64,27 @@ namespace ScriptCs.Command
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
             var scriptPacks = _scriptPackResolver.GetPacks();
-            
+
             _composer.Compose(workingDirectory);
 
             _repl.Initialize(assemblies, scriptPacks, ScriptArgs);
 
-            try
+            if (!string.IsNullOrWhiteSpace(_scriptName))
             {
-                if (!string.IsNullOrWhiteSpace(_scriptName))
+                _logger.InfoFormat("Executing script '{0}'", _scriptName);
+                try
                 {
-                    _logger.Info(string.Format("Loading script: {0}", _scriptName));
                     _repl.Execute(string.Format("#load {0}", _scriptName));
                 }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Error executing script '{0}'", ex, _scriptName);
+                    return CommandResult.Error;
+                }
+            }
 
+            try
+            {
                 while (ExecuteLine(_repl))
                 {
                 }
@@ -85,7 +93,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.ErrorException("Error executing REPL", ex);
                 return CommandResult.Error;
             }
 

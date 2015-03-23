@@ -2,9 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {

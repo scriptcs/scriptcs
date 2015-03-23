@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
+using ScriptCs.Logging;
 using Should;
 using Xunit.Extensions;
 

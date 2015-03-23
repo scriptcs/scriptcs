@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
+using ScriptCs.Logging;
 using Should;
 using Xunit.Extensions;
 
@@ -96,7 +96,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnErrorIfThereIsCompileException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] ILog log,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -124,15 +124,14 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(
-                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
+                ((TestLogger)log).Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfThereIsExecutionException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] ILog log,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -160,15 +159,14 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(
-                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
+                ((TestLogger)log).Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfTheScriptIsIncomplete(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] ILog log,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -191,7 +189,7 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+                ((TestLogger)log).Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]

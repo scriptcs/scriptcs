@@ -46,6 +46,9 @@
     <Compile Include="..\ScriptCsMoqCustomization.cs">
       <Link>ScriptCsMoqCustomization.cs</Link>
     </Compile>
+    <Compile Include="..\TestLogger.cs">
+      <Link>TestLogger.cs</Link>
+    </Compile>
     <Compile Include="ArgumentParserTests.cs" />
     <Compile Include="CleanCommandTests.cs" />
     <Compile Include="CommandFactoryTests.cs" />
@@ -66,9 +69,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
-    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
     </Reference>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Command
 {
@@ -78,7 +78,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.ErrorException("Error executing script '{0}'", ex, _script);
                 return CommandResult.Error;
             }
         }
@@ -93,14 +93,14 @@ namespace ScriptCs.Command
             if (result.CompileExceptionInfo != null)
             {
                 var ex = result.CompileExceptionInfo.SourceException;
-                _logger.ErrorFormat("Script compilation failed: {0}.", ex, ex.Message);
+                _logger.ErrorException("Script compilation failed.", ex);
                 return CommandResult.Error;
             }
 
             if (result.ExecuteExceptionInfo != null)
             {
                 var ex = result.ExecuteExceptionInfo.SourceException;
-                _logger.ErrorFormat("Script execution failed: {0}.", ex, ex.Message);
+                _logger.ErrorException("Script execution failed.", ex);
                 return CommandResult.Error;
             }
 

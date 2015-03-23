@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting.Package
 {
@@ -42,7 +41,7 @@ namespace ScriptCs.Hosting.Package
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex.Message, ex);
+                    _logger.ErrorException("Error installing package.", ex);
                     exceptions.Add(ex);
                 }
             }

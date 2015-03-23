@@ -1,5 +1,5 @@
-﻿using Common.Logging;
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting
 {

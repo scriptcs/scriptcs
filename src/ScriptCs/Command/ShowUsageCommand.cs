@@ -1,5 +1,5 @@
-﻿using Common.Logging;
-using PowerArgs;
+﻿using PowerArgs;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Command
 {

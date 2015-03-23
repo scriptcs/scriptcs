@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;
@@ -155,21 +155,21 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldLogWhenTheAssemblyIsMapped(
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
-                [Frozen] Mock<ILog> loggerMock,
+                [Frozen] ILog log,
                 AppDomainAssemblyResolver resolver)
             {
                 assemblyUtilityMock.Setup(u => u.IsManagedAssembly(It.IsAny<string>())).Returns(true);
                 assemblyUtilityMock.Setup(u => u.GetAssemblyName(_info.Path)).Returns(_assemblyName);
                 resolver.AddAssemblyPaths(new[] { _info.Path });
-                loggerMock.Verify(
-                    l => l.DebugFormat("Mapping Assembly {0} to version:{1}", _assemblyName.Name, _assemblyName.Version));
+                ((TestLogger)log).Output.ShouldContain(
+                    "DEBUG: Mapping Assembly " + _assemblyName.Name + " to version:" + _assemblyName.Version);
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldWarnIfTheAssemblyVersionIsGreaterThanTheMappedAssemblyAndItWasLoaded(
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
-                [Frozen] Mock<ILog> loggerMock,
+                [Frozen] ILog log,
                 AppDomainAssemblyResolver resolver)
             {
                 _info.Version = new Version(0, 0);
@@ -178,9 +178,9 @@ namespace ScriptCs.Tests
                 _info.Assembly = typeof(Mock).Assembly;
                 assemblyInfoMap[_assemblyName.Name] = _info;
                 resolver.AddAssemblyPaths(new[] { _info.Path });
-
-                loggerMock.Verify(
-                    l => l.WarnFormat("Conflict: Assembly {0} with version {1} cannot be added as it has already been resolved", _info.Path, _assemblyName.Version));
+                ((TestLogger)log).Output.ShouldContain(
+                    "WARN: Conflict: Assembly " + _info.Path + " with version " + _assemblyName.Version +
+                    " cannot be added as it has already been resolved");
             }
 
             [Theory, ScriptCsAutoData]
@@ -253,7 +253,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldLogTheAssemblyThatIsBeingResolved(
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
-                [Frozen] Mock<ILog> loggerMock,
+                [Frozen] ILog log,
                 [Frozen] IDictionary<string, AssemblyInfo> assemblyInfoMap,
                 AppDomainAssemblyResolver resolver)
             {
@@ -262,8 +262,8 @@ namespace ScriptCs.Tests
                 assemblyInfoMap[_assemblyName.Name] = _info;
 
                 resolver.AssemblyResolve(this, new ResolveEventArgs(_assemblyName.Name));
-                loggerMock.Verify(
-                    l => l.DebugFormat("Resolving from: {0} to: {1}", _assemblyName.Name, It.Is<AssemblyName>(n => n.ToString().Equals(_assemblyName.ToString()))));
+                ((TestLogger)log).Output.ShouldContain(
+                    "DEBUG: Resolving from: " + _assemblyName.Name + " to: " + _assemblyName.ToString());
             }
 
             [Theory, ScriptCsAutoData]

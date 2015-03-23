@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs
 {
@@ -80,7 +79,6 @@ namespace ScriptCs
                 if (packageObject == null)
                 {
                     _logger.WarnFormat(
-                        CultureInfo.InvariantCulture,
                         "Cannot find: {0} {1}",
                         packageReference.PackageId,
                         packageReference.Version);
@@ -92,7 +90,6 @@ namespace ScriptCs
                 if (compatibleDlls == null)
                 {
                     _logger.WarnFormat(
-                        CultureInfo.InvariantCulture,
                         "Cannot find compatible binaries for {0} in: {1} {2}",
                         packageReference.FrameworkName,
                         packageReference.PackageId,

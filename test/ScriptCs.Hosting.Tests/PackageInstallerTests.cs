@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Logging;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
+using ScriptCs.Logging;
 using Should;
 using Xunit;
 

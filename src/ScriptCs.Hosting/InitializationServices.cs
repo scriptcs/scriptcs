@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting
 {

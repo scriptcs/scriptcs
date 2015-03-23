@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using Common.Logging;
 using ScriptCs.Contracts;
-using System.IO;
+using ScriptCs.Logging;
 
 namespace ScriptCs
 {

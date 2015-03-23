@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Common.Logging;
 using Moq;
-using Ploeh.AutoFixture.Xunit;
 using Roslyn.Compilers;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
+using ScriptCs.Logging;
 using Xunit;
-using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {

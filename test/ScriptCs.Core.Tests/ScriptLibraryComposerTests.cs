@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using Moq;
 using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
-using Xunit;
 using Xunit.Extensions;
 using Should;
 
@@ -46,7 +44,7 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldLogAWarningIfThePackageIsMissing(
-                [Frozen] Mock<ILog> logger,
+                [Frozen] ILog log,
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
@@ -57,7 +55,7 @@ namespace ScriptCs.Tests
                 reference.SetupGet(r => r.PackageId).Returns("test");
                 composer.ProcessPackage("", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
                 packageContainer.Verify(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()));
-                logger.Verify(l => l.WarnFormat("Package missing: {0}", "test"));
+                ((TestLogger)log).Output.ShouldContain("WARN: Package missing: test");
             }
 
             
@@ -82,7 +80,7 @@ namespace ScriptCs.Tests
             public void ShouldWarnIfMultipleMainFilesArePresent(
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] ILog log,
                 ScriptLibraryComposer composer,
                 Mock<IPackageReference> reference,
                 Mock<IPackageObject> package)
@@ -93,7 +91,8 @@ namespace ScriptCs.Tests
                 package.Setup(p => p.GetContentFiles()).Returns(new List<string> { "Test1Main.csx", "Test2Main.csx" });
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
                 composer.ProcessPackage(@"c:\packages", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
-                logger.Verify(l => l.WarnFormat(It.Is<string>(s => s.Equals("Script Libraries in '{0}' ignored due to multiple Main files being present")), It.IsAny<object[]>()));
+                ((TestLogger) log).Output.ShouldContain(
+                    "Script Libraries in 'Test' ignored due to multiple Main files being present");
             }
 
 

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using Roslyn.Compilers;
@@ -8,6 +7,7 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
+using ScriptCs.Logging;
 using Should;
 using Xunit.Extensions;
 
