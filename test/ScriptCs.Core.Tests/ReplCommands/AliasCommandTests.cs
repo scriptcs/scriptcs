@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
-using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
+using ScriptCs.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;

@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <WarningsNotAsErrors>414</WarningsNotAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,9 +35,6 @@
     <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -48,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAssemblyResolver.cs" />
+    <Compile Include="App_Packages\LibLog.3.1\LibLog.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />

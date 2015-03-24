@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
+using ScriptCs.Logging;
 using Xunit;
 using Xunit.Extensions;
 

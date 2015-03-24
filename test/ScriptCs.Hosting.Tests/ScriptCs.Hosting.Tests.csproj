@@ -47,6 +47,9 @@
     <Compile Include="..\ScriptCsMoqCustomization.cs">
       <Link>ScriptCsMoqCustomization.cs</Link>
     </Compile>
+    <Compile Include="..\TestLogger.cs">
+      <Link>TestLogger.cs</Link>
+    </Compile>
     <Compile Include="ModuleConfigurationTests.cs" />
     <Compile Include="ModuleLoaderTests.cs" />
     <Compile Include="ObjectSerializerTests.cs" />
@@ -65,9 +68,6 @@
   <ItemGroup>
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.3.3.1\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Common.Logging">
-      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.XmlTransform">
       <HintPath>..\..\packages\Microsoft.Web.Xdt.2.1.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>

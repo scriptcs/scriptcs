@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using NuGet;
-
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
 namespace ScriptCs.Hosting.Package

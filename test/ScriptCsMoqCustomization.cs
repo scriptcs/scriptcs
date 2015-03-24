@@ -2,6 +2,7 @@
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Tests
 {
@@ -32,6 +33,8 @@ namespace ScriptCs.Tests
                     composer.SetupGet(c => c.ScriptLibrariesFile).Returns("ScriptLibraries.csx");
                     return composer;
                 });
+
+            fixture.Register<ILog>(fixture.Create<TestLogger>);
         }
     }
 }

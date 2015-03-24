@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using Moq;
+﻿using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;

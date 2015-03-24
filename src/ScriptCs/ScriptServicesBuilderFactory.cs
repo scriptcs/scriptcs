@@ -2,6 +2,8 @@
 using System.IO;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
+using ScriptCs.Logging;
+using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs
 {
@@ -19,7 +21,7 @@ namespace ScriptCs
             }
             var logLevel = commandArgs.LogLevel ?? LogLevel.Info;
             var configurator = new LoggerConfigurator(logLevel);
-            configurator.Configure(console);
+            configurator.Configure(console, new NoOpLogger());
             var logger = configurator.GetLogger();
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
@@ -58,6 +60,15 @@ namespace ScriptCs
             }
 
             return scriptServicesBuilder.LoadModules(extension, modules);
+        }
+
+        private class NoOpLogger : ILog
+        {
+            public bool Log(
+                Logging.LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
+            {
+                return false;
+            }
         }
     }
 }

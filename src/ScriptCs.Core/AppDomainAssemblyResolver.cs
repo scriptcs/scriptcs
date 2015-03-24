@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿using ScriptCs.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

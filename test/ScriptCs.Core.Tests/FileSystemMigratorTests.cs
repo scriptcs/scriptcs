@@ -1,7 +1,7 @@
-﻿using Common.Logging;
-using Moq;
+﻿using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests

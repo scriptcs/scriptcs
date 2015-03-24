@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 
 namespace ScriptCs
 {
@@ -46,7 +45,6 @@ namespace ScriptCs
                 .Where(copy => _fileSystem.FileExists(copy.Value)))
             {
                 _logger.DebugFormat(
-                    CultureInfo.InvariantCulture,
                     "Not performing migration since file '{0}' already exists.",
                     copy.Value);
 
@@ -57,7 +55,6 @@ namespace ScriptCs
                 .Where(action => _fileSystem.DirectoryExists(action.Value)))
             {
                 _logger.DebugFormat(
-                    CultureInfo.InvariantCulture,
                     "Not performing migration since directory '{0}' already exists.",
                     action.Value);
 
@@ -68,7 +65,7 @@ namespace ScriptCs
                 .Where(copy => _fileSystem.FileExists(copy.Key)))
             {
                 _logger.InfoFormat(
-                    CultureInfo.InvariantCulture, "Copying file '{0}' to '{1}'...", copy.Key, copy.Value);
+                    "Copying file '{0}' to '{1}'...", copy.Key, copy.Value);
 
                 _fileSystem.Copy(copy.Key, copy.Value, false);
             }
@@ -77,7 +74,7 @@ namespace ScriptCs
                 .Where(move => _fileSystem.DirectoryExists(move.Key)))
             {
                 _logger.InfoFormat(
-                    CultureInfo.InvariantCulture, "Moving directory '{0}' to '{1}'...", move.Key, move.Value);
+                    "Moving directory '{0}' to '{1}'...", move.Key, move.Value);
 
                 _fileSystem.MoveDirectory(move.Key, move.Value);
             }
@@ -86,7 +83,7 @@ namespace ScriptCs
                 .Where(copy => _fileSystem.DirectoryExists(copy.Key)))
             {
                 _logger.InfoFormat(
-                    CultureInfo.InvariantCulture, "Copying directory '{0}' to '{1}'...", copy.Key, copy.Value);
+                    "Copying directory '{0}' to '{1}'...", copy.Key, copy.Value);
 
                 _fileSystem.CopyDirectory(copy.Key, copy.Value, false);
             }

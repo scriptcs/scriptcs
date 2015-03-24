@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common.Logging;
 using Mono.Collections.Generic;
 using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Mono.Segmenter;
+using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Mono
 {

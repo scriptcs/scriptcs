@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using Should;
 using Xunit;
 

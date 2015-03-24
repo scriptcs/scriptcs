@@ -1,6 +1,5 @@
-﻿using Common.Logging;
-using ScriptCs.Contracts;
-using ILog = Common.Logging.ILog;
+﻿using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
@@ -20,7 +19,12 @@ namespace ScriptCs.Hosting
 
         public void Configure(IConsole console)
         {
-            _logger = new ScriptConsoleLogger(_logLevel, console, LogManager.GetLogger(LoggerName));
+            _logger = new ScriptConsoleLogger(_logLevel, console, LogProvider.GetLogger(LoggerName));
+        }
+
+        public void Configure(IConsole console, ILog log)
+        {
+            _logger = new ScriptConsoleLogger(_logLevel, console, log);
         }
 
         public ILog GetLogger()
