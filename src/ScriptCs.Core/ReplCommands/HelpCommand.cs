@@ -27,9 +27,9 @@ namespace ScriptCs.ReplCommands
             Guard.AgainstNullArgument("repl", repl);
 
             _console.WriteLine("The following commands are available in the REPL:");
-            foreach (var command in repl.Commands.Values.OrderBy(x => x.CommandName))
+            foreach (var command in repl.Commands.OrderBy(x => x.Key))
             {
-                _console.WriteLine(string.Format(":{0,-15}{1,10}", command.CommandName, command.Description));
+                _console.WriteLine(string.Format(":{0,-15}{1,10}", command.Key, command.Value.Description));
             }
 
             return null;
