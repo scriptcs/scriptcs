@@ -26,12 +26,20 @@ namespace ScriptCs
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
+            // NOTE (adamralph): this is a hideous assumption about what happens inside the CommandFactory.
+            // It is a result of the ScriptServicesBuilderFactory also having to know what is going to happen inside the
+            // Command Factory so that it builds the builder(:-p) correctly in advance.
+            // This demonstrates the technical debt that exists with the ScriptServicesBuilderFactory and CommandFactory
+            // in their current form. We have a separate refactoring task raised to address this.
+            var repl = config.Repl ||
+                (!config.Clean && config.Install == null && !config.Save && config.ScriptName == null);
+
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
                 .Cache(config.Cache)
                 .Debug(config.Debug)
                 .LogLevel(config.LogLevel)
                 .ScriptName(config.ScriptName)
-                .Repl(config.Repl);
+                .Repl(repl);
 
             var modules = config.Modules == null
                 ? new string[0]

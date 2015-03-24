@@ -47,8 +47,8 @@ namespace ScriptCs
             }
 
             var config = new Config()
-                .Apply(ConfigMask.ReadOrDefault(new FileSystem().GlobalOptsFile))
-                .Apply(ConfigMask.ReadOrDefault(commandArgs.Config ?? Constants.ConfigFilename))
+                .Apply(ConfigMask.ReadGlobalOrDefault())
+                .Apply(commandArgs.Config == null ? ConfigMask.ReadLocalOrDefault() : ConfigMask.Read(commandArgs.Config))
                 .Apply(ConfigMask.Create(commandArgs));
 
             var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(config, scriptArgs);
