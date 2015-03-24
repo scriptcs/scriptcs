@@ -37,7 +37,7 @@ namespace ScriptCs
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
-                _logger.Info("Packages directory does not exist!");
+                _logger.Warn("Packages directory does not exist!");
                 return;
             }
 

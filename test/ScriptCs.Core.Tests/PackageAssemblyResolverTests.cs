@@ -370,7 +370,7 @@ namespace ScriptCs.Tests
                 resolver.SavePackages();
 
                 _pc.Verify(i => i.CreatePackageFile(), Times.Never());
-                _log.Output.ShouldContain("Packages directory does not exist!");
+                _log.Output.ShouldContain("WARN: Packages directory does not exist!");
             }
 
             [Fact]
