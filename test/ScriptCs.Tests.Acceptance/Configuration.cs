@@ -16,10 +16,10 @@
                 .f(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
-            "And a local config file specfying to run as debug"
-                .f(() => directory.WriteLine("scriptcs.opts", "{ debug: true }"));
+            "And a local config file specfying the log level as debug"
+                .f(() => directory.WriteLine("scriptcs.opts", @"{ logLevel: ""debug"" }"));
 
-            "When I execute the script without the debug option"
+            "When I execute the script without the log level option"
                 .f(() => output = ScriptCsExe.Run("foo.csx", false, directory));
 
             "Then I see debug messages"
@@ -36,13 +36,13 @@
                     .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
             "And a local config file specfying to run as debug"
-                .f(() => directory.WriteLine("custom.opts", "{ debug: true }"));
+                .f(() => directory.WriteLine("custom.opts", @"{ logLevel: ""debug"" }"));
 
-            "When I execute the script without the debug option but specifying the custom config"
+            "When I execute the script without the log level option but specifying the custom config"
                 .f(() =>
                 {
                     var args = new[] { "-config", "custom.opts", };
-                    output = ScriptCsExe.Run("foo.csx", false, args, new string[0], directory);
+                    output = ScriptCsExe.Run("foo.csx", false, args, directory);
                 });
 
             "Then I see debug messages"
