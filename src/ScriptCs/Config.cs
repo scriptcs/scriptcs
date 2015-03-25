@@ -8,6 +8,8 @@ namespace ScriptCs
     [Serializable]
     public class Config
     {
+        private string[] _modules;
+
         public Config()
         {
             LogLevel = LogLevel.Info;
@@ -16,7 +18,11 @@ namespace ScriptCs
         // global
         public LogLevel LogLevel { get; set; }
 
-        public string Modules { get; set; }
+        public string[] Modules
+        {   
+            get { return _modules ?? new string[0]; }
+            set { _modules = value; }
+        }
 
         public string OutputFile { get; set; }
 
@@ -65,6 +71,10 @@ namespace ScriptCs
                 ? LogLevel.Debug
                 : mask.LogLevel;
 
+            var modules = mask.Modules == null
+                ? null
+                : mask.Modules.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+
             var scriptName = mask.ScriptName != null && !Path.GetFileName(mask.ScriptName).Contains(".")
                 ? Path.ChangeExtension(mask.ScriptName, "csx")
                 : mask.ScriptName;
@@ -72,7 +82,7 @@ namespace ScriptCs
             return new Config
             {
                 LogLevel = logLevel ?? LogLevel,
-                Modules = mask.Modules ?? Modules,
+                _modules = modules ?? _modules,
                 OutputFile = mask.Output ?? OutputFile,
                 Clean = mask.Clean ?? Clean,
                 AllowPreRelease = mask.AllowPreRelease ?? AllowPreRelease,

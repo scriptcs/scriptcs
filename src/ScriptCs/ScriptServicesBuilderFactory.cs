@@ -41,11 +41,7 @@ namespace ScriptCs
                 .ScriptName(config.ScriptName)
                 .Repl(repl);
 
-            var modules = config.Modules == null
-                ? new string[0]
-                : config.Modules.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
-            return scriptServicesBuilder.LoadModules(Path.GetExtension(config.ScriptName) ?? ".csx", modules);
+            return scriptServicesBuilder.LoadModules(Path.GetExtension(config.ScriptName) ?? ".csx", config.Modules);
         }
 
         private class NoOpLogger : ILog
