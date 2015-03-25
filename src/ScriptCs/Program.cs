@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using ScriptCs.Command;
 
 namespace ScriptCs
 {
@@ -46,15 +45,7 @@ namespace ScriptCs
                 return 1;
             }
 
-            var config = new Config()
-                .Apply(ConfigMask.ReadGlobalOrDefault())
-                .Apply(commandArgs.Config == null ? ConfigMask.ReadLocalOrDefault() : ConfigMask.Read(commandArgs.Config))
-                .Apply(ConfigMask.Create(commandArgs));
-
-            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(config, scriptArgs);
-            var factory = new CommandFactory(scriptServicesBuilder);
-            var command = factory.CreateCommand(config, scriptArgs);
-            return (int)command.Execute();
+            return Application.Run(Config.Create(commandArgs), scriptArgs);
         }
     }
 }

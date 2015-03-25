@@ -46,6 +46,14 @@ namespace ScriptCs
 
         public bool Watch { get; set; }
 
+        public static Config Create(ScriptCsArgs commandArgs)
+        {
+            return new Config()
+                .Apply(ConfigMask.ReadGlobalOrDefault())
+                .Apply(commandArgs.Config == null ? ConfigMask.ReadLocalOrDefault() : ConfigMask.Read(commandArgs.Config))
+                .Apply(ConfigMask.Create(commandArgs));
+        }
+
         public Config Apply(ConfigMask mask)
         {
             if (mask == null)
