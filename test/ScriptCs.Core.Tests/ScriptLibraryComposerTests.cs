@@ -92,7 +92,7 @@ namespace ScriptCs.Tests
                 preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult());
                 composer.ProcessPackage(@"c:\packages", reference.Object, new StringBuilder(), new List<string>(), new List<string>());
                 ((TestLogger) log).Output.ShouldContain(
-                    "Script Libraries in 'Test' ignored due to multiple Main files being present");
+                    "WARN: Script Libraries in 'Test' ignored due to multiple Main files being present");
             }
 
 
