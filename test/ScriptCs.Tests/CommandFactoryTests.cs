@@ -45,7 +45,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    PackageName = string.Empty,
                     ScriptName = null
                 };
 
@@ -69,7 +69,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 
@@ -88,7 +88,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 
@@ -112,7 +112,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    PackageName = string.Empty,
                     ScriptName = "test.csx"
                 };
 
@@ -165,7 +165,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = null
                 };
 
@@ -184,7 +184,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 

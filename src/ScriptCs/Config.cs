@@ -18,7 +18,7 @@ namespace ScriptCs
 
         public string Modules { get; set; }
 
-        public string Output { get; set; }
+        public string OutputFile { get; set; }
 
         // clean command
         public bool Clean { get; set; }
@@ -28,7 +28,7 @@ namespace ScriptCs
 
         public bool Global { get; set; }
 
-        public string Install { get; set; }
+        public string PackageName { get; set; }
 
         public string PackageVersion { get; set; }
 
@@ -65,11 +65,11 @@ namespace ScriptCs
             {
                 LogLevel = logLevel ?? LogLevel,
                 Modules = mask.Modules ?? Modules,
-                Output = mask.Output ?? Output,
+                OutputFile = mask.Output ?? OutputFile,
                 Clean = mask.Clean ?? Clean,
                 AllowPreRelease = mask.AllowPreRelease ?? AllowPreRelease,
                 Global = mask.Global ?? Global,
-                Install = mask.Install ?? Install,
+                PackageName = mask.Install ?? PackageName,
                 PackageVersion = mask.PackageVersion ?? PackageVersion,
                 Save = mask.Save ?? Save,
                 Cache = mask.Cache ?? Cache,

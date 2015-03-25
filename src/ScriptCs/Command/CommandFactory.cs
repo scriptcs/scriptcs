@@ -133,12 +133,12 @@ namespace ScriptCs.Command
                     _initializationServices.Logger);
             }
 
-            if (config.Install != null)
+            if (config.PackageName != null)
             {
                 var packageAssemblyResolver = _initializationServices.GetPackageAssemblyResolver();
 
                 var installCommand = new InstallCommand(
-                    config.Install,
+                    config.PackageName,
                     config.PackageVersion,
                     config.AllowPreRelease,
                     _fileSystem,

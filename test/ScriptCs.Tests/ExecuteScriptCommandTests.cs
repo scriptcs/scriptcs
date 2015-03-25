@@ -26,7 +26,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new Config { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, PackageName = "", ScriptName = "test.csx", };
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
@@ -62,7 +62,7 @@ namespace ScriptCs.Tests
                 // arrange
                 const string NonManaged = "non-managed.dll";
 
-                var args = new Config { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, PackageName = "", ScriptName = "test.csx", };
 
                 fileSystem.Setup(
                         x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
@@ -105,7 +105,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    PackageName = "",
                     ScriptName = "test.csx",
                 };
 
@@ -140,7 +140,7 @@ namespace ScriptCs.Tests
                 var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    PackageName = "",
                     ScriptName = "test.csx"
                 };
 

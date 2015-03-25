@@ -15,9 +15,9 @@ namespace ScriptCs
             Guard.AgainstNullArgument("scriptArgs", scriptArgs);
 
             IConsole console = new ScriptConsole();
-            if (!string.IsNullOrWhiteSpace(config.Output))
+            if (!string.IsNullOrWhiteSpace(config.OutputFile))
             {
-                console = new FileConsole(config.Output, console);
+                console = new FileConsole(config.OutputFile, console);
             }
 
             var configurator = new LoggerConfigurator(config.LogLevel);
@@ -32,7 +32,7 @@ namespace ScriptCs
             // This demonstrates the technical debt that exists with the ScriptServicesBuilderFactory and CommandFactory
             // in their current form. We have a separate refactoring task raised to address this.
             var repl = config.Repl ||
-                (!config.Clean && config.Install == null && !config.Save && config.ScriptName == null);
+                (!config.Clean && config.PackageName == null && !config.Save && config.ScriptName == null);
 
             var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
                 .Cache(config.Cache)
