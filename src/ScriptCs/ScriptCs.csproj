@@ -79,13 +79,10 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
-    <Compile Include="Argument\ArgumentHandler.cs" />
-    <Compile Include="Argument\ArgumentParser.cs" />
-    <Compile Include="Argument\ArgumentParseResult.cs" />
-    <Compile Include="Argument\ConfigFileParser.cs" />
-    <Compile Include="Argument\IArgumentHandler.cs" />
-    <Compile Include="Argument\IArgumentParser.cs" />
-    <Compile Include="Argument\IConfigFileParser.cs" />
+    <Compile Include="ConfigMask.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="ProfileOptimizationShim.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="VersionWriter.cs" />
     <Compile Include="Command\CleanCommand.cs" />
     <Compile Include="Command\CommandFactory.cs" />
@@ -96,11 +93,9 @@
     <Compile Include="Command\DeferredCreationCommand.cs" />
     <Compile Include="Command\WatchScriptCommand.cs" />
     <Compile Include="Command\ExecuteReplCommand.cs" />
-    <Compile Include="Command\ShowUsageCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InstallCommand.cs" />
     <Compile Include="Command\SaveCommand.cs" />
-    <Compile Include="Command\VersionCommand.cs" />
     <Compile Include="Command\ExecuteScriptCommand.cs" />
     <Compile Include="ScriptServicesBuilderFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -122,7 +117,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="scriptcs">
-    	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

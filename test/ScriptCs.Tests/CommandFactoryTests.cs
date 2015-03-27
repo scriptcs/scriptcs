@@ -42,10 +42,10 @@ namespace ScriptCs.Tests
             public void ShouldInstallAndSaveWhenInstallFlagIsOn()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    PackageName = string.Empty,
                     ScriptName = null
                 };
 
@@ -66,10 +66,10 @@ namespace ScriptCs.Tests
             public void ShouldExecuteWhenScriptNameIsPassed()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 
@@ -85,10 +85,10 @@ namespace ScriptCs.Tests
             public void ShouldInstallAndExecuteWhenScriptNameIsPassedAndPackagesFolderDoesNotExist()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 
@@ -109,10 +109,10 @@ namespace ScriptCs.Tests
             public void ShouldExecuteWhenBothNameAndInstallArePassed()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = string.Empty,
+                    PackageName = string.Empty,
                     ScriptName = "test.csx"
                 };
 
@@ -128,7 +128,7 @@ namespace ScriptCs.Tests
             public void ShouldSaveAndCleanWhenCleanFlagIsPassed()
             {
                 // Arrange
-                var args = new ScriptCsArgs { Clean = true, ScriptName = null };
+                var args = new Config { Clean = true, ScriptName = null };
 
                 // Act
                 var factory = new CommandFactory(CreateBuilder());
@@ -147,7 +147,7 @@ namespace ScriptCs.Tests
             public void ShouldSaveWhenSaveFlagIsPassed()
             {
                 // Arrange
-                var args = new ScriptCsArgs { Save = true, ScriptName = null };
+                var args = new Config { Save = true, ScriptName = null };
 
                 // Act
                 var factory = new CommandFactory(CreateBuilder());
@@ -162,10 +162,10 @@ namespace ScriptCs.Tests
             public void ShouldReturnReplWhenNoNameOrInstallSet()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = null
                 };
 
@@ -178,27 +178,13 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldReturnHelpCommandWhenHelpIsPassed()
-            {
-                // Arrange
-                var args = new ScriptCsArgs { Help = true };
-
-                // Act
-                var factory = new CommandFactory(CreateBuilder());
-                var result = factory.CreateCommand(args, new string[0]);
-
-                // Assert
-                result.ShouldImplement<IHelpCommand>();
-            }
-
-            [Fact]
             public void ShouldPassScriptArgsToExecuteCommandConstructor()
             {
                 // Arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = null,
+                    PackageName = null,
                     ScriptName = "test.csx"
                 };
 

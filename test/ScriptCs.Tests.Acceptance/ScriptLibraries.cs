@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using Should;
 using ScriptCs.Tests.Acceptance.Support;
@@ -18,8 +14,7 @@ namespace ScriptCs.Tests.Acceptance
         public static void UsingAMethodInAScriptLibrary(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
-            var args = new string[] {"-loglevel","info"};
-            
+
             "Given a script which uses ScriptCs.Calculator to print the sum of 40 and 2"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Add(40, 2));"));
@@ -28,7 +23,11 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
             "When executing the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), args, directory));
+                .f(() =>
+                {
+                    var scriptArgs = new[] { "-loglevel", "info" };
+                    output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), scriptArgs, directory);
+                });
 
             "Then I see 42"
                 .f(() => output.ShouldContain("42"));
@@ -41,7 +40,6 @@ namespace ScriptCs.Tests.Acceptance
         public static void UsingAMethodInAScriptLibraryInTheRepl(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
-            var args = new[] {"-r"};
 
             "Given a script which uses ScriptCs.Calculator"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
@@ -50,8 +48,8 @@ namespace ScriptCs.Tests.Acceptance
             "And ScriptCs.Calculator is installed"
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
-            "When executing the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", false, args, Enumerable.Empty<string>(), directory));
+            "When executing the script into REPL"
+                .f(() => output = ScriptCsExe.Run("foo.csx", false, new[] { "-r" }, directory));
 
             "Then the ScriptCs.Calculator instance is created"
                 .f(() => output.ShouldContain("Type:Calculator"));
@@ -61,13 +59,12 @@ namespace ScriptCs.Tests.Acceptance
         public static void LoadingFromANonRootedScript(ScenarioDirectory directory, ScenarioDirectory scriptDirectory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
-            var scriptFolder = Path.Combine(scenario, "script");
 
             "Given a script which uses ScriptCs.Calculator and it is non-rooted"
                 .f(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario);
-                    scriptDirectory = ScenarioDirectory.Create(scriptFolder)
+                    scriptDirectory = ScenarioDirectory.Create(Path.Combine(scenario, "script"))
                         .WriteLine("foo.csx", @"Console.WriteLine(""Type:"" + new Calculator().GetType().Name);");
                 });
 

@@ -12,7 +12,7 @@ namespace ScriptCs.Command
             ApplicationBase = AppDomain.CurrentDomain.BaseDirectory
         };
 
-        private readonly ScriptCsArgs _commandArgs;
+        private readonly Config _config;
         private readonly string[] _scriptArgs;
         private readonly IConsole _console;
         private readonly IFileSystem _fileSystem;
@@ -21,21 +21,21 @@ namespace ScriptCs.Command
         private readonly CrossAppDomainExecuteScriptCommand _executeScriptCommand;
 
         public WatchScriptCommand(
-            ScriptCsArgs commandArgs,
+            Config config,
             string[] scriptArgs,
             IConsole console,
             IFileSystem fileSystem,
             ILog logger,
             IFileSystemMigrator fileSystemMigrator)
         {
-            Guard.AgainstNullArgument("commandArgs", commandArgs);
+            Guard.AgainstNullArgument("config", config);
             Guard.AgainstNullArgument("scriptArgs", scriptArgs);
             Guard.AgainstNullArgument("console", console);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("logger", logger);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
-            _commandArgs = commandArgs;
+            _config = config;
             _scriptArgs = scriptArgs;
             _console = console;
             _fileSystem = fileSystem;
@@ -44,7 +44,7 @@ namespace ScriptCs.Command
 
             _executeScriptCommand = new CrossAppDomainExecuteScriptCommand
             {
-                CommandArgs = _commandArgs,
+                Config = _config,
                 ScriptArgs = _scriptArgs,
             };
         }
@@ -54,26 +54,26 @@ namespace ScriptCs.Command
             _fileSystemMigrator.Migrate();
 
             _console.WriteLine("scriptcs (ctrl-c to exit)");
-            _logger.InfoFormat("Running script '{0}' and watching for changes...", _commandArgs.ScriptName);
+            _logger.InfoFormat("Running script '{0}' and watching for changes...", _config.ScriptName);
 
             while (true)
             {
                 using (var fileChanged = new ManualResetEventSlim())
-                using (var watcher = new FileWatcher(_commandArgs.ScriptName, 500, _fileSystem))
+                using (var watcher = new FileWatcher(_config.ScriptName, 500, _fileSystem))
                 {
-                    _logger.DebugFormat("Creating app domain '{0}'...", _commandArgs.ScriptName);
-                    var appDomain = AppDomain.CreateDomain(_commandArgs.ScriptName, null, _setup);
+                    _logger.DebugFormat("Creating app domain '{0}'...", _config.ScriptName);
+                    var appDomain = AppDomain.CreateDomain(_config.ScriptName, null, _setup);
                     try
                     {
                         watcher.Changed += (sender, e) =>
                         {
-                            _logger.DebugFormat("Script '{0}' changed.", _commandArgs.ScriptName);
+                            _logger.DebugFormat("Script '{0}' changed.", _config.ScriptName);
                             EnsureUnloaded(appDomain);
                             fileChanged.Set();
                         };
 
                         watcher.Start();
-                        _logger.DebugFormat("Executing script '{0}' and watching for changes...", _commandArgs.ScriptName);
+                        _logger.DebugFormat("Executing script '{0}' and watching for changes...", _config.ScriptName);
                         fileChanged.Reset();
                         try
                         {
@@ -81,7 +81,7 @@ namespace ScriptCs.Command
                         }
                         catch (AppDomainUnloadedException ex)
                         {
-                            _logger.DebugFormat("App domain '{0}' has been unloaded.", ex, _commandArgs.ScriptName);
+                            _logger.DebugFormat("App domain '{0}' has been unloaded.", ex, _config.ScriptName);
                         }
                     }
                     finally
@@ -90,7 +90,7 @@ namespace ScriptCs.Command
                     }
 
                     fileChanged.Wait();
-                    _logger.InfoFormat("Script changed. Reloading...", _commandArgs.ScriptName);
+                    _logger.InfoFormat("Script changed. Reloading...", _config.ScriptName);
                 }
             }
         }
@@ -99,12 +99,12 @@ namespace ScriptCs.Command
         {
             try
             {
-                _logger.DebugFormat("Unloading app domain '{0}'", _commandArgs.ScriptName);
+                _logger.DebugFormat("Unloading app domain '{0}'", _config.ScriptName);
                 AppDomain.Unload(domain);
             }
             catch (AppDomainUnloadedException ex)
             {
-                _logger.DebugFormat("App domain '{0}' has already been unloaded.", ex, _commandArgs.ScriptName);
+                _logger.DebugFormat("App domain '{0}' has already been unloaded.", ex, _config.ScriptName);
             }
         }
 

@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
     public static class VersionWriter
     {
+        private static readonly string version =
+            FileVersionInfo.GetVersionInfo(typeof(VersionWriter).Assembly.Location).ProductVersion;
+
         private static readonly Regex colorRegex = new Regex(
             @"\+(?<color>\w*)(?<ascii>(.*(?=\+))|.*)", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        public static void WriteVersion(this IConsole console, string version)
+        public static void Write()
         {
-            Guard.AgainstNullArgument("console", console);
-
             var lines = new[]
             {
                 @"+cyan               _       _",
@@ -31,23 +32,23 @@ namespace ScriptCs
                     ConsoleColor color;
                     if (Enum.TryParse(match.Groups["color"].Value, true, out color))
                     {
-                        console.ForegroundColor = color;
+                        Console.ForegroundColor = color;
                     }
 
                     try
                     {
-                        console.Write(match.Groups["ascii"].Value);
+                        Console.Write(match.Groups["ascii"].Value);
                     }
                     finally
                     {
-                        console.ResetColor();
+                        Console.ResetColor();
                     }
                 }
 
-                console.WriteLine();
+                Console.WriteLine();
             }
 
-            console.WriteLine();
+            Console.WriteLine();
         }
     }
 }
