@@ -17,7 +17,7 @@ namespace ScriptCs.Hosting
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
         private readonly Type _replType;
-        private readonly bool _initDirectoryCatalog;
+        internal readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 

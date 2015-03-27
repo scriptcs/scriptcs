@@ -11,7 +11,7 @@ namespace ScriptCs.Hosting
         private readonly ITypeResolver _typeResolver;
         private readonly ILog _logger;
 
-        private IRuntimeServices _runtimeServices;
+        internal IRuntimeServices _runtimeServices;
         private bool _repl;
         private bool _cache;
         private bool _debug;
@@ -20,6 +20,7 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _replType;
         private Type _scriptEngineType;
+        private Nullable<bool> _loadScriptPacks;
 
         public ScriptServicesBuilder(
             IConsole console,
@@ -48,7 +49,16 @@ namespace ScriptCs.Hosting
 
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
-            var initDirectoryCatalog = _scriptName != null || _repl;
+            bool initDirectoryCatalog;
+
+            if (_loadScriptPacks.HasValue)
+            {
+                initDirectoryCatalog = _loadScriptPacks.Value;
+            }
+            else
+            {
+                initDirectoryCatalog = _scriptName != null || _repl;
+            }
 
             if (_runtimeServices == null)
             {
@@ -82,6 +92,12 @@ namespace ScriptCs.Hosting
 
             var folders = new[] {fs.GlobalFolder};
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
+            return this;
+        }
+
+        public IScriptServicesBuilder LoadScriptPacks(bool load = true)
+        {
+            _loadScriptPacks = load;
             return this;
         }
 
