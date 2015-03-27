@@ -20,7 +20,7 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _replType;
         private Type _scriptEngineType;
-        private bool _loadScriptPacks;
+        private Nullable<bool> _loadScriptPacks;
 
         public ScriptServicesBuilder(
             IConsole console,
@@ -49,7 +49,16 @@ namespace ScriptCs.Hosting
 
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
-            var initDirectoryCatalog = _scriptName != null || _repl || _loadScriptPacks;
+            bool initDirectoryCatalog;
+
+            if (_loadScriptPacks.HasValue)
+            {
+                initDirectoryCatalog = _loadScriptPacks.Value;
+            }
+            else
+            {
+                initDirectoryCatalog = _scriptName != null || _repl;
+            }
 
             if (_runtimeServices == null)
             {

@@ -56,10 +56,11 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldNotLoadScriptPacksIfReplIsFalseAndScriptNameIsNotSetAndLoadScriptPacksIsFalse(IConsole console, ILog logger, IScriptEngine engine)
+            public void ShouldNotLoadScriptPacksIfLoadScriptPacksIsFalse(IConsole console, ILog logger, IScriptEngine engine)
             {
                 var builder = new ScriptServicesBuilder(console, logger);
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.LoadScriptPacks(false);
                 builder.Build();
                 var runtimeServices = (RuntimeServices)builder._runtimeServices;
                 runtimeServices._initDirectoryCatalog.ShouldBeFalse();
