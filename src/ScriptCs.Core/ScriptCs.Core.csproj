@@ -52,6 +52,7 @@
     <Compile Include="AssemblyUtility.cs" />
     <Compile Include="FileSystemMigrator.cs" />
     <Compile Include="NullScriptLibraryComposer.cs" />
+    <Compile Include="ReplCommands\ScriptPacksCommand.cs" />
     <Compile Include="ScriptLibraryComposer.cs" />
     <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />
