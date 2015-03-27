@@ -18,6 +18,8 @@ namespace ScriptCs.Hosting
 
         IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames);
 
+        IScriptServicesBuilder LoadScriptPacks(bool load = true);
+
         IInitializationServices InitializationServices { get; }
 
         IConsole ConsoleInstance { get; }

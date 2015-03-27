@@ -3,6 +3,7 @@ using System.Linq;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
+using ScriptCs.Logging;
 using ScriptCs.Tests;
 using Should;
 using Xunit.Extensions;
@@ -19,6 +20,49 @@ namespace ScriptCs.Hosting.Tests
                 runtimeServicesMock.Setup(r => r.GetScriptServices()).Returns(scriptServices);
                 builder.Overrides[typeof(IScriptEngine)] = null;
                 builder.Build().ShouldEqual(scriptServices);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldLoadScriptPacksIfReplIsTrue(IConsole console, ILog logger, IScriptEngine engine)
+            {
+                var builder = new ScriptServicesBuilder(console, logger);
+                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Repl();
+                builder.Build();
+                var runtimeServices = (RuntimeServices) builder._runtimeServices;
+                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldLoadScriptPacksIfScriptNameIsSet(IConsole console, ILog logger, IScriptEngine engine)
+            {
+                var builder = new ScriptServicesBuilder(console, logger);
+                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.ScriptName("");
+                builder.Build();
+                var runtimeServices = (RuntimeServices)builder._runtimeServices;
+                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShoulLoadScriptPacksIfLoadScriptPacksIsTrue(IConsole console, ILog logger, IScriptEngine engine)
+            {
+                var builder = new ScriptServicesBuilder(console, logger);
+                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.LoadScriptPacks();
+                builder.Build();
+                var runtimeServices = (RuntimeServices)builder._runtimeServices;
+                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldNotLoadScriptPacksIfReplIsFalseAndScriptNameIsNotSetAndLoadScriptPacksIsFalse(IConsole console, ILog logger, IScriptEngine engine)
+            {
+                var builder = new ScriptServicesBuilder(console, logger);
+                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Build();
+                var runtimeServices = (RuntimeServices)builder._runtimeServices;
+                runtimeServices._initDirectoryCatalog.ShouldBeFalse();
             }
         }
 
