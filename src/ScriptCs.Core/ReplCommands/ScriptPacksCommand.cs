@@ -30,20 +30,22 @@ namespace ScriptCs.ReplCommands
         public object Execute(IRepl repl, object[] args)
         {
             var packContexts = repl.ScriptPackSession.Contexts;
+            var originalColor = _console.ForegroundColor;
+            _console.ForegroundColor = ConsoleColor.Yellow;
+
             if (packContexts.IsNullOrEmpty())
             {
                 _console.WriteLine("There are no script packs available in this REPL session");
+                _console.ForegroundColor = originalColor;
                 return null;
             }
 
             var importedNamespaces = repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
-            var originalColor = _console.ForegroundColor;
 
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
-
-                _console.ForegroundColor = ConsoleColor.Yellow;
+                
                 _console.WriteLine(contextType.ToString());
                 _console.ForegroundColor = originalColor;
 

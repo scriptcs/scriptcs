@@ -56,6 +56,7 @@
     <Compile Include="FileSystemMigratorTests.cs" />
     <Compile Include="PackageReferenceTests.cs" />
     <Compile Include="ReplCommands\HelpCommandTests.cs" />
+    <Compile Include="ReplCommands\ScriptPacksCommandTests.cs" />
     <Compile Include="ScriptLibraryComposerTests.cs" />
     <Compile Include="ReferenceLineProcessorTests.cs" />
     <Compile Include="LoadLineProcessorTests.cs" />
