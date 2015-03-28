@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using ScriptCs.Contracts;
+using ScriptCs.Extensions;
 
 namespace ScriptCs.ReplCommands
 {
@@ -45,7 +45,7 @@ namespace ScriptCs.ReplCommands
                 _console.WriteLine(contextType.ToString());
 
                 var methods = contextType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).
-                    Where(m => !m.IsSpecialName).Union(GetExtensionMethods(contextType)).OrderBy(x => x.Name);
+                    Where(m => !m.IsSpecialName).Union(contextType.GetExtensionMethods()).OrderBy(x => x.Name);
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                 if (methods.Any())
@@ -53,17 +53,12 @@ namespace ScriptCs.ReplCommands
                     _console.WriteLine("** Methods **");
                     foreach (var method in methods)
                     {
-                        var methodParams =
-                            method.GetParameters().Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
-
-                        if (method.IsDefined(typeof(ExtensionAttribute), false))
-                        {
-                            methodParams = methodParams.Skip(1);
-                        }
-
-                        var signature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
+                        var methodParams = method.GetParametersWithoutExtensions()
+                            .Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
+                        var methodSignature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
                             string.Join(", ", methodParams));
-                        _console.WriteLine(signature);
+
+                        _console.WriteLine(methodSignature);
                     }
                     _console.WriteLine();
                 }
@@ -138,9 +133,7 @@ namespace ScriptCs.ReplCommands
                 case TypeCode.UInt64:
                     return "UInt64";
                 default:
-                    return string.IsNullOrEmpty(type.FullName) || importedNamespaces.Contains(type.Namespace)
-                        ? type.Name
-                        : type.FullName;
+                    return string.IsNullOrEmpty(type.FullName) || importedNamespaces.Contains(type.Namespace) ? type.Name : type.FullName;
             }
         }
 
@@ -160,13 +153,6 @@ namespace ScriptCs.ReplCommands
             }
             genericDefinition.Append(">");
             return genericDefinition.ToString();
-        }
-
-        private static IEnumerable<MethodInfo> GetExtensionMethods(Type type)
-        {
-            return type.Assembly.GetExportedTypes().Where(x => !x.IsGenericType && !x.IsNested && x.IsSealed).
-                SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public)).Where(x => x.IsDefined(typeof(ExtensionAttribute), false)).
-                Where(x => x.GetParameters()[0].ParameterType == type);
         }
     }
 }
