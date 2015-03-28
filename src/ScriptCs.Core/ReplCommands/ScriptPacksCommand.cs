@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -30,8 +31,7 @@ namespace ScriptCs.ReplCommands
         public object Execute(IRepl repl, object[] args)
         {
             var packContexts = repl.ScriptPackSession.Contexts;
-
-            if (packContexts == null || !packContexts.Any())
+            if (packContexts.IsNullOrEmpty())
             {
                 _console.WriteLine("There are no script packs available in this REPL session");
                 return null;
@@ -48,35 +48,44 @@ namespace ScriptCs.ReplCommands
                     Where(m => !m.IsSpecialName).Union(contextType.GetExtensionMethods()).OrderBy(x => x.Name);
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
-                if (methods.Any())
-                {
-                    _console.WriteLine("** Methods **");
-                    foreach (var method in methods)
-                    {
-                        var methodParams = method.GetParametersWithoutExtensions()
-                            .Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
-                        var methodSignature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
-                            string.Join(", ", methodParams));
-
-                        _console.WriteLine(methodSignature);
-                    }
-                    _console.WriteLine();
-                }
-
-                if (properties.Any())
-                {
-                    _console.WriteLine("** Properties **");
-                    foreach (var property in properties)
-                    {
-                        var signature = string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name);
-                        _console.WriteLine(signature);
-                    }
-                }
+                PrintMethods(methods, importedNamespaces);
+                PrintProperties(properties, importedNamespaces);
 
                 _console.WriteLine();
             }
 
             return null;
+        }
+
+        private void PrintMethods(IEnumerable<MethodInfo> methods, string[] importedNamespaces)
+        {
+            if (methods.Any())
+            {
+                _console.WriteLine("** Methods **");
+                foreach (var method in methods)
+                {
+                    var methodParams = method.GetParametersWithoutExtensions()
+                        .Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
+                    var methodSignature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
+                        string.Join(", ", methodParams));
+
+                    _console.WriteLine(methodSignature);
+                }
+                _console.WriteLine();
+            }
+        }
+
+        private void PrintProperties(IEnumerable<PropertyInfo> properties, string[] importedNamespaces)
+        {
+            if (properties.Any())
+            {
+                _console.WriteLine("** Properties **");
+                foreach (var property in properties)
+                {
+                    var signature = string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name);
+                    _console.WriteLine(signature);
+                }
+            }
         }
 
         private string GetPrintableType(Type type, string[] importedNamespaces)
