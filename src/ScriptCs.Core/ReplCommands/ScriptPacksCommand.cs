@@ -44,8 +44,7 @@ namespace ScriptCs.ReplCommands
                 var contextType = packContext.GetType();
                 _console.WriteLine(contextType.ToString());
 
-                var methods = contextType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).
-                    Where(m => !m.IsSpecialName).Union(contextType.GetExtensionMethods()).OrderBy(x => x.Name);
+                var methods = contextType.GetAllMethods();
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                 PrintMethods(methods, importedNamespaces);
@@ -59,7 +58,7 @@ namespace ScriptCs.ReplCommands
 
         private void PrintMethods(IEnumerable<MethodInfo> methods, string[] importedNamespaces)
         {
-            if (methods.Any())
+            if (!methods.IsNullOrEmpty())
             {
                 _console.WriteLine("** Methods **");
                 foreach (var method in methods)
@@ -77,7 +76,7 @@ namespace ScriptCs.ReplCommands
 
         private void PrintProperties(IEnumerable<PropertyInfo> properties, string[] importedNamespaces)
         {
-            if (properties.Any())
+            if (!properties.IsNullOrEmpty())
             {
                 _console.WriteLine("** Properties **");
                 foreach (var property in properties)
