@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using ScriptCs.Contracts;
 using ScriptCs.Extensions;
@@ -38,11 +37,15 @@ namespace ScriptCs.ReplCommands
             }
 
             var importedNamespaces = repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
+            var originalColor = _console.ForegroundColor;
 
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
+
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine(contextType.ToString());
+                _console.ForegroundColor = originalColor;
 
                 var methods = contextType.GetAllMethods();
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
