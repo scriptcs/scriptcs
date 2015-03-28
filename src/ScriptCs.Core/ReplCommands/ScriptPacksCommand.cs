@@ -40,7 +40,7 @@ namespace ScriptCs.ReplCommands
                 return null;
             }
 
-            var importedNamespaces = repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
+            var importedNamespaces = repl.ScriptPackSession.Namespaces.IsNullOrEmpty() ? repl.Namespaces.ToArray() : repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
 
             foreach (var packContext in packContexts)
             {
@@ -86,8 +86,22 @@ namespace ScriptCs.ReplCommands
                 _console.WriteLine("** Properties **");
                 foreach (var property in properties)
                 {
-                    var signature = string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name);
-                    _console.WriteLine(signature);
+                    var propertyBuilder = new StringBuilder(string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name));
+                    propertyBuilder.Append(" {");
+
+                    if (property.GetGetMethod() != null)
+                    {
+                        propertyBuilder.Append(" get;");
+                    }
+
+                    if (property.GetSetMethod() != null)
+                    {
+                        propertyBuilder.Append(" set;");
+                    }
+
+                    propertyBuilder.Append(" }");
+
+                    _console.WriteLine(propertyBuilder.ToString());
                 }
             }
         }
