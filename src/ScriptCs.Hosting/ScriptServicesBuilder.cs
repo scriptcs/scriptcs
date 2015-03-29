@@ -11,7 +11,7 @@ namespace ScriptCs.Hosting
         private readonly ITypeResolver _typeResolver;
         private readonly ILog _logger;
 
-        internal IRuntimeServices _runtimeServices;
+        private IRuntimeServices _runtimeServices;
         private bool _repl;
         private bool _cache;
         private bool _debug;
@@ -20,7 +20,7 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _replType;
         private Type _scriptEngineType;
-        private Nullable<bool> _loadScriptPacks;
+        private bool? _loadScriptPacks;
 
         public ScriptServicesBuilder(
             IConsole console,
@@ -134,5 +134,10 @@ namespace ScriptCs.Hosting
         public IInitializationServices InitializationServices { get; private set; }
 
         public IConsole ConsoleInstance { get; private set; }
+
+        internal IRuntimeServices RuntimeServices
+        {
+            get { return _runtimeServices; }
+        }
     }
 }
