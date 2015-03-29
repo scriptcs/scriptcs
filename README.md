@@ -4,6 +4,8 @@
 
 [![*nix Build Status](http://img.shields.io/travis/scriptcs/scriptcs/dev.svg?style=flat-square&label=linux-build)](https://travis-ci.org/scriptcs/scriptcs) [![Windows Build Status](http://img.shields.io/teamcity/codebetter/Scriptcs_Ci.svg?style=flat-square&label=windows-build)](http://ci.scriptcs.net) [![Coverity Scan Build Status](https://img.shields.io/badge/coverity-passed-brightgreen.svg?style=flat-square)](https://scan.coverity.com/projects/2356)
 
+[![Issue Stats](http://issuestats.com/github/scriptcs/scriptcs/badge/pr?style=flat-square)](http://issuestats.com/github/scriptcs/scriptcs) [![Issue Stats](http://issuestats.com/github/scriptcs/scriptcs/badge/issue?style=flat-square)](http://issuestats.com/github/scriptcs/scriptcs)
+
 ## What is it?
 
 scriptcs makes it easy to write and execute C# with a simple text editor.
