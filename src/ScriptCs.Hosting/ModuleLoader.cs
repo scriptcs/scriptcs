@@ -69,6 +69,8 @@ namespace ScriptCs.Hosting
         public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string hostBin, string extension,
             params string[] moduleNames)
         {
+            Guard.AgainstNullArgument("moduleNames", moduleNames);
+
             if (modulePackagesPaths == null) return;
 
             // only CSharp module needed - use fast path

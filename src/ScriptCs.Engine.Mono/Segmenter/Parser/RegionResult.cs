@@ -10,6 +10,8 @@
 
         public RegionResult Combine(RegionResult region)
         {
+            Guard.AgainstNullArgument("region", region);
+
             return new RegionResult
             {
                 Length = Length + region.Length + (region.Offset - (Offset + Length)),

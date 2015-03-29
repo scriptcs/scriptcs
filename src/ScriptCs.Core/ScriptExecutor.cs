@@ -195,6 +195,9 @@ namespace ScriptCs
             IDictionary<string, object> state
         )
         {
+            Guard.AgainstNullArgument("result", result);
+            Guard.AgainstNullArgument("state", state);
+
             if (state.ContainsKey(ScriptLibrariesInjected))
             {
                 return;

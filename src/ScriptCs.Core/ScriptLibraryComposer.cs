@@ -109,6 +109,11 @@ namespace ScriptCs
             List<string> references,
             List<string> namespaces)
         {
+            Guard.AgainstNullArgument("reference", reference);
+            Guard.AgainstNullArgument("builder", builder);
+            Guard.AgainstNullArgument("references", references);
+            Guard.AgainstNullArgument("namespaces", namespaces);
+
             _logger.DebugFormat("Finding package:{0}", reference.PackageId);
             var package = _packageContainer.FindPackage(packagesPath, reference);
 

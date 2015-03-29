@@ -21,54 +21,56 @@ namespace ScriptCs.Engine.Mono.Segmenter
 
             var analyser = new CodeAnalyzer();
             var result = new List<SegmentResult>();
-            var parser = new RegionParser();
-            foreach (var region in parser.Parse(code))
+            using (var parser = new RegionParser())
             {
-                // Calculate region linenumber
-                var lineNr = code.Substring(0, region.Offset).Count(x => x.Equals('\n'));
-
-                var segment = code.Substring(region.Offset, region.Length);
-
-                if (analyser.IsClass(segment))
+                foreach (var region in parser.Parse(code))
                 {
-                    result.Add(new SegmentResult
-                    {
-                        Type = SegmentType.Class,
-                        BeginLine = lineNr,
-                        Code = segment
-                    });
-                }
-                else
-                {
-                    var isMethod = analyser.IsMethod(segment);
+                    // Calculate region linenumber
+                    var lineNr = code.Substring(0, region.Offset).Count(x => x.Equals('\n'));
 
-                    if (isMethod)
-                    {
-                        // method ok
-                        var method = analyser.ExtractPrototypeAndMethod(segment);
+                    var segment = code.Substring(region.Offset, region.Length);
 
+                    if (analyser.IsClass(segment))
+                    {
                         result.Add(new SegmentResult
                         {
-                            Type = SegmentType.Prototype,
+                            Type = SegmentType.Class,
                             BeginLine = lineNr,
-                            Code = method.ProtoType
-                        });
-
-                        result.Add(new SegmentResult
-                        {
-                            Type = SegmentType.Method,
-                            BeginLine = lineNr,
-                            Code = method.MethodExpression
+                            Code = segment
                         });
                     }
                     else
                     {
-                        result.Add(new SegmentResult
+                        var isMethod = analyser.IsMethod(segment);
+
+                        if (isMethod)
                         {
-                            Type = SegmentType.Evaluation,
-                            BeginLine = lineNr,
-                            Code = segment
-                        });
+                            // method ok
+                            var method = analyser.ExtractPrototypeAndMethod(segment);
+
+                            result.Add(new SegmentResult
+                            {
+                                Type = SegmentType.Prototype,
+                                BeginLine = lineNr,
+                                Code = method.ProtoType
+                            });
+
+                            result.Add(new SegmentResult
+                            {
+                                Type = SegmentType.Method,
+                                BeginLine = lineNr,
+                                Code = method.MethodExpression
+                            });
+                        }
+                        else
+                        {
+                            result.Add(new SegmentResult
+                            {
+                                Type = SegmentType.Evaluation,
+                                BeginLine = lineNr,
+                                Code = segment
+                            });
+                        }
                     }
                 }
             }

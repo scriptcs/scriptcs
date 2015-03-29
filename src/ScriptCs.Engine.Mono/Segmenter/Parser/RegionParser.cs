@@ -5,7 +5,7 @@ using ScriptCs.Engine.Mono.Segmenter.Lexer;
 
 namespace ScriptCs.Engine.Mono.Segmenter.Parser
 {
-    public class RegionParser
+    public sealed class RegionParser : IDisposable
     {
         private ScriptLexer _lexer;
         private LexerResult _current;
@@ -15,6 +15,11 @@ namespace ScriptCs.Engine.Mono.Segmenter.Parser
             _lexer = new ScriptLexer(code);
             _current = _lexer.GetToken();
             return GetRegionBlocks();
+        }
+
+        public void Dispose()
+        {
+            _lexer.Dispose();
         }
 
         private List<RegionResult> GetRegionBlocks()
