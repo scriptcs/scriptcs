@@ -22,6 +22,8 @@ namespace ScriptCs.Engine.Mono.Segmenter.Analyser
 
         public bool IsMethod(string code)
         {
+            Guard.AgainstNullArgument("code", code);
+
             var @class = "class A { " + code + " } ";
             var visitor = new MethodVisitor();
             var parser = new CSharpParser();
@@ -34,6 +36,8 @@ namespace ScriptCs.Engine.Mono.Segmenter.Analyser
 
         public MethodResult ExtractPrototypeAndMethod(string code)
         {
+            Guard.AgainstNullArgument("code", code);
+
             var @class = "class A { " + code + " } ";
             var visitor = new MethodVisitor();
             var parser = new CSharpParser();

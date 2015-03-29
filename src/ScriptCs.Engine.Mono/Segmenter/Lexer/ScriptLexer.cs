@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ScriptCs.Engine.Mono.Segmenter.Lexer
 {
-    public class ScriptLexer
+    public sealed class ScriptLexer : IDisposable
     {
         private int _lastChar = ' ';
         private int _position;
@@ -179,6 +180,11 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
                 || token == Token.NewLine
                 || token == Token.LineFeed
                 || token == Token.Tab;
+        }
+
+        public void Dispose()
+        {
+            _sr.Dispose();
         }
 
         private static bool IsAlphaNumeric(int token)

@@ -17,7 +17,7 @@ namespace ScriptCs.Hosting
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
         private readonly Type _replType;
-        internal readonly bool _initDirectoryCatalog;
+        private readonly bool _initDirectoryCatalog;
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
@@ -40,6 +40,11 @@ namespace ScriptCs.Hosting
             _initDirectoryCatalog = initDirectoryCatalog;
             _initializationServices = initializationServices;
             _scriptName = scriptName;
+        }
+
+        internal bool InitDirectoryCatalog
+        {
+            get { return _initDirectoryCatalog; }
         }
 
         protected override IContainer CreateContainer()

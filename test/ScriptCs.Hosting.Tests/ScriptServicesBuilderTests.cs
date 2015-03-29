@@ -29,8 +29,8 @@ namespace ScriptCs.Hosting.Tests
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.Repl();
                 builder.Build();
-                var runtimeServices = (RuntimeServices) builder._runtimeServices;
-                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+                var runtimeServices = (RuntimeServices) builder.RuntimeServices;
+                runtimeServices.InitDirectoryCatalog.ShouldBeTrue();
             }
 
             [Theory, ScriptCsAutoData]
@@ -40,8 +40,8 @@ namespace ScriptCs.Hosting.Tests
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.ScriptName("");
                 builder.Build();
-                var runtimeServices = (RuntimeServices)builder._runtimeServices;
-                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+                var runtimeServices = (RuntimeServices)builder.RuntimeServices;
+                runtimeServices.InitDirectoryCatalog.ShouldBeTrue();
             }
 
             [Theory, ScriptCsAutoData]
@@ -51,8 +51,8 @@ namespace ScriptCs.Hosting.Tests
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.LoadScriptPacks();
                 builder.Build();
-                var runtimeServices = (RuntimeServices)builder._runtimeServices;
-                runtimeServices._initDirectoryCatalog.ShouldBeTrue();
+                var runtimeServices = (RuntimeServices)builder.RuntimeServices;
+                runtimeServices.InitDirectoryCatalog.ShouldBeTrue();
             }
 
             [Theory, ScriptCsAutoData]
@@ -62,8 +62,8 @@ namespace ScriptCs.Hosting.Tests
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.LoadScriptPacks(false);
                 builder.Build();
-                var runtimeServices = (RuntimeServices)builder._runtimeServices;
-                runtimeServices._initDirectoryCatalog.ShouldBeFalse();
+                var runtimeServices = (RuntimeServices)builder.RuntimeServices;
+                runtimeServices.InitDirectoryCatalog.ShouldBeFalse();
             }
         }
 

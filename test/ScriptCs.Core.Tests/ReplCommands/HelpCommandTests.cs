@@ -47,8 +47,8 @@ namespace ScriptCs.Tests.ReplCommands
 
                 // assert
                 console.Verify(x => x.WriteLine(It.IsAny<string>()), Times.Exactly(3));
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":"+clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":"+exitCommand.CommandName) && f.Contains(exitCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + exitCommand.CommandName) && f.Contains(exitCommand.Description))), Times.Once);
             }
 
             [Fact]
@@ -69,7 +69,7 @@ namespace ScriptCs.Tests.ReplCommands
                 repl.Setup(x => x.Commands).Returns(commands);
                 var cmd = new HelpCommand(console.Object);
 
-                aliasCommand.Execute(repl.Object, new [] {"clear", "clr"});
+                aliasCommand.Execute(repl.Object, new[] { "clear", "clr" });
 
                 // act
                 cmd.Execute(repl.Object, null);
