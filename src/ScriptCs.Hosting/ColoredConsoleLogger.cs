@@ -6,7 +6,7 @@ using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {
-    public class ScriptConsoleLogger : ILog
+    public class ColoredConsoleLogger : ILog
     {
         private static readonly Dictionary<LogLevel, ConsoleColor> colors =
             new Dictionary<LogLevel, ConsoleColor>
@@ -22,7 +22,7 @@ namespace ScriptCs.Hosting
         private readonly LogLevel _logLevel;
         private readonly IConsole _console;
 
-        public ScriptConsoleLogger(LogLevel logLevel, IConsole console)
+        public ColoredConsoleLogger(LogLevel logLevel, IConsole console)
         {
             Guard.AgainstNullArgument("console", console);
 

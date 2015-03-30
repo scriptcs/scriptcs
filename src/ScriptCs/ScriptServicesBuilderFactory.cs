@@ -17,7 +17,7 @@ namespace ScriptCs
                 console = new FileConsole(config.OutputFile, console);
             }
 
-            var logger = new ScriptConsoleLogger(config.LogLevel, console);
+            var logger = new ColoredConsoleLogger(config.LogLevel, console);
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 

@@ -73,7 +73,7 @@
     </Compile>
     <Compile Include="ITypeResolver.cs" />
     <Compile Include="FileConsole.cs" />
-    <Compile Include="ScriptConsoleLogger.cs" />
+    <Compile Include="ColoredConsoleLogger.cs" />
     <Compile Include="IInitializationServices.cs" />
     <Compile Include="IModuleLoader.cs" />
     <Compile Include="InitializationServices.cs" />
