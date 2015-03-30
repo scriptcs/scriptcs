@@ -10,7 +10,6 @@ namespace ScriptCs.Hosting
     {
         private readonly LogLevel _consoleLogLevel;
         private readonly IConsole _console;
-        private readonly ILog _log;
         private readonly Dictionary<LogLevel, ConsoleColor> _colors =
             new Dictionary<LogLevel, ConsoleColor>
             {
@@ -22,20 +21,17 @@ namespace ScriptCs.Hosting
                 { LogLevel.Trace, ConsoleColor.DarkMagenta },
             };
 
-        public ScriptConsoleLogger(LogLevel consoleLogLevel, IConsole console, ILog log)
+        public ScriptConsoleLogger(LogLevel consoleLogLevel, IConsole console)
         {
             Guard.AgainstNullArgument("console", console);
-            Guard.AgainstNullArgument("log", log);
 
             _consoleLogLevel = consoleLogLevel;
             _console = console;
-            _log = log;
         }
 
         public bool Log(
             LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
         {
-            var logged = _log.Log(logLevel, messageFunc, exception, formatParameters);
             var consoleLog = false;
             switch (logLevel)
             {
@@ -132,7 +128,7 @@ namespace ScriptCs.Hosting
                 }
             }
 
-            return logged || consoleLog;
+            return consoleLog;
         }
     }
 }

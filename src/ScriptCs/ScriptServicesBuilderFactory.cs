@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {
@@ -19,7 +17,7 @@ namespace ScriptCs
                 console = new FileConsole(config.OutputFile, console);
             }
 
-            var logger = new ScriptConsoleLogger(config.LogLevel, console, new NoOpLogger());
+            var logger = new ScriptConsoleLogger(config.LogLevel, console);
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
@@ -39,15 +37,6 @@ namespace ScriptCs
                 .Repl(repl);
 
             return scriptServicesBuilder.LoadModules(Path.GetExtension(config.ScriptName) ?? ".csx", config.Modules);
-        }
-
-        private class NoOpLogger : ILog
-        {
-            public bool Log(
-                LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
-            {
-                return false;
-            }
         }
     }
 }
