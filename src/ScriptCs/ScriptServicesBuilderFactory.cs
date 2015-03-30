@@ -19,9 +19,7 @@ namespace ScriptCs
                 console = new FileConsole(config.OutputFile, console);
             }
 
-            var configurator = new LoggerConfigurator(config.LogLevel);
-            configurator.Configure(console, new NoOpLogger());
-            var logger = configurator.GetLogger();
+            var logger = new ScriptConsoleLogger(config.LogLevel, console, new NoOpLogger());
             var initializationServices = new InitializationServices(logger);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 

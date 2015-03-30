@@ -73,7 +73,6 @@
     <Compile Include="FilePreProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Guard.cs" />
-    <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="ReplCommands\HelpCommand.cs" />
     <Compile Include="ReplCommands\ExitCommand.cs" />
     <Compile Include="ReplCommands\InstallCommand.cs" />

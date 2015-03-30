@@ -79,7 +79,6 @@
     <Compile Include="InitializationServices.cs" />
     <Compile Include="IRuntimeServices.cs" />
     <Compile Include="IScriptServicesBuilder.cs" />
-    <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Package\NugetInstallationProvider.cs" />
