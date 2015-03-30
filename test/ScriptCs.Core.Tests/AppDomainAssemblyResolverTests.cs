@@ -6,7 +6,7 @@ using System.Reflection;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;

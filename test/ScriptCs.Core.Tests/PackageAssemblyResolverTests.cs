@@ -6,7 +6,7 @@ using System.Runtime.Versioning;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;

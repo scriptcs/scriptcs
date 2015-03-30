@@ -2,7 +2,7 @@
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Tests
 {

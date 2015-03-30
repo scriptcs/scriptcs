@@ -4,7 +4,7 @@ using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Contracts.Exceptions;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 

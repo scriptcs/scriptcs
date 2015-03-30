@@ -7,7 +7,7 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit.Extensions;
 

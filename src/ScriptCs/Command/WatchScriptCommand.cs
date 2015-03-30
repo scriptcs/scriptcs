@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Command
 {

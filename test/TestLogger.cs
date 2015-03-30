@@ -1,5 +1,5 @@
 ﻿using System;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Tests
 {

@@ -30,10 +30,10 @@
 
 #pragma warning disable 1591
 
-namespace ScriptCs.Logging
+namespace ScriptCs.Contracts.Logging
 {
     using System.Collections.Generic;
-    using ScriptCs.Logging.LogProviders;
+    using ScriptCs.Contracts.Logging.LogProviders;
     using System;
     using System.Diagnostics;
 
@@ -518,7 +518,7 @@ namespace ScriptCs.Logging
     }
 }
 
-namespace ScriptCs.Logging.LogProviders
+namespace ScriptCs.Contracts.Logging.LogProviders
 {
     using System;
     using System.Collections.Generic;

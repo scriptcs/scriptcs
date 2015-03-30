@@ -2,8 +2,7 @@
 using System.IO;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using ScriptCs.Logging;
-using LogLevel = ScriptCs.Contracts.LogLevel;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {
@@ -47,7 +46,7 @@ namespace ScriptCs
         private class NoOpLogger : ILog
         {
             public bool Log(
-                Logging.LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
+                LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
             {
                 return false;
             }

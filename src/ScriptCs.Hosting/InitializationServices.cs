@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Autofac;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {

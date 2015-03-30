@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {

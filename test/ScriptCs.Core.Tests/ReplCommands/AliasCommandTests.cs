@@ -3,7 +3,7 @@ using System.IO;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;

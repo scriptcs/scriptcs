@@ -4,7 +4,7 @@ using System.Runtime.Versioning;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Xunit;
 using Xunit.Extensions;
 

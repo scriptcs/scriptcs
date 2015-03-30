@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
-using LogLevel = ScriptCs.Contracts.LogLevel;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {

@@ -6,10 +6,9 @@ using System.Linq;
 using System.Reflection;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
-using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting.Tests
 {

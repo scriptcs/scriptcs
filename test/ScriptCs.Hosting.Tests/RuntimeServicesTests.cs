@@ -5,7 +5,7 @@ using System.Linq;
 using Autofac;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
+using ScriptCs.Contracts.Logging;
 using ScriptCs.Tests;
 using Should;
 using Xunit;

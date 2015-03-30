@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
-using LogLevel = ScriptCs.Contracts.LogLevel;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {
@@ -12,15 +11,15 @@ namespace ScriptCs.Hosting
         private readonly LogLevel _consoleLogLevel;
         private readonly IConsole _console;
         private readonly ILog _log;
-        private readonly Dictionary<Logging.LogLevel, ConsoleColor> _colors =
-            new Dictionary<Logging.LogLevel, ConsoleColor>
+        private readonly Dictionary<LogLevel, ConsoleColor> _colors =
+            new Dictionary<LogLevel, ConsoleColor>
             {
-                { Logging.LogLevel.Fatal, ConsoleColor.Red },
-                { Logging.LogLevel.Error, ConsoleColor.DarkRed },
-                { Logging.LogLevel.Warn, ConsoleColor.DarkYellow },
-                { Logging.LogLevel.Info, ConsoleColor.Gray },
-                { Logging.LogLevel.Debug, ConsoleColor.DarkGray },
-                { Logging.LogLevel.Trace, ConsoleColor.DarkMagenta },
+                { LogLevel.Fatal, ConsoleColor.Red },
+                { LogLevel.Error, ConsoleColor.DarkRed },
+                { LogLevel.Warn, ConsoleColor.DarkYellow },
+                { LogLevel.Info, ConsoleColor.Gray },
+                { LogLevel.Debug, ConsoleColor.DarkGray },
+                { LogLevel.Trace, ConsoleColor.DarkMagenta },
             };
 
         public ScriptConsoleLogger(LogLevel consoleLogLevel, IConsole console, ILog log)
@@ -34,35 +33,50 @@ namespace ScriptCs.Hosting
         }
 
         public bool Log(
-            Logging.LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
+            LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
         {
             var logged = _log.Log(logLevel, messageFunc, exception, formatParameters);
             var consoleLog = false;
             switch (logLevel)
             {
-                case Logging.LogLevel.Fatal:
+                case LogLevel.Fatal:
                     consoleLog = true;
                     break;
-                case Logging.LogLevel.Error:
-                    consoleLog = true;
+                case LogLevel.Error:
+                    consoleLog =
+                        _consoleLogLevel == LogLevel.Error ||
+                        _consoleLogLevel == LogLevel.Warn ||
+                        _consoleLogLevel == LogLevel.Info ||
+                        _consoleLogLevel == LogLevel.Debug ||
+                        _consoleLogLevel == LogLevel.Trace;
                     break;
-                case Logging.LogLevel.Warn:
-                    consoleLog = true;
+                case LogLevel.Warn:
+                    consoleLog =
+                        _consoleLogLevel == LogLevel.Warn ||
+                        _consoleLogLevel == LogLevel.Info ||
+                        _consoleLogLevel == LogLevel.Debug ||
+                        _consoleLogLevel == LogLevel.Trace;
                     break;
-                case Logging.LogLevel.Info:
-                    consoleLog = _consoleLogLevel != LogLevel.Error;
+                case LogLevel.Info:
+                    consoleLog =
+                        _consoleLogLevel == LogLevel.Info ||
+                        _consoleLogLevel == LogLevel.Debug ||
+                        _consoleLogLevel == LogLevel.Trace;
                     break;
-                case Logging.LogLevel.Debug:
-                    consoleLog = _consoleLogLevel == LogLevel.Debug || _consoleLogLevel == LogLevel.Trace;
+                case LogLevel.Debug:
+                    consoleLog =
+                        _consoleLogLevel == LogLevel.Debug ||
+                        _consoleLogLevel == LogLevel.Trace;
                     break;
-                case Logging.LogLevel.Trace:
-                    consoleLog = _consoleLogLevel == LogLevel.Trace;
+                case LogLevel.Trace:
+                    consoleLog =
+                        _consoleLogLevel == LogLevel.Trace;
                     break;
             }
 
             if (consoleLog && messageFunc != null)
             {
-                var prefix = logLevel == Logging.LogLevel.Info
+                var prefix = logLevel == LogLevel.Info
                     ? null
                     : string.Concat(logLevel.ToString().ToUpperInvariant(), ": ");
 

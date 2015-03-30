@@ -1,6 +1,5 @@
 ﻿using ScriptCs.Contracts;
-using ScriptCs.Logging;
-using LogLevel = ScriptCs.Contracts.LogLevel;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {

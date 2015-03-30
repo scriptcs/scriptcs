@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ScriptCs.Logging;
 using ScriptCs.Contracts;
+using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {
