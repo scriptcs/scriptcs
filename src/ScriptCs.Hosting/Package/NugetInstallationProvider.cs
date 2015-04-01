@@ -18,12 +18,13 @@ namespace ScriptCs.Hosting.Package
 
         private static readonly Version EmptyVersion = new Version();
 
-        public NugetInstallationProvider(IFileSystem fileSystem, ILog logger)
+        public NugetInstallationProvider(IFileSystem fileSystem, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public void Initialize()

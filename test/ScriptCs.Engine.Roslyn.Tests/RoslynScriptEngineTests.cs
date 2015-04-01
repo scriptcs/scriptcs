@@ -354,8 +354,8 @@ namespace ScriptCs.Tests
 
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {
-            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

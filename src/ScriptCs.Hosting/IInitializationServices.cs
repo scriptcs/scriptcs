@@ -17,7 +17,7 @@ namespace ScriptCs.Hosting
 
         IPackageInstaller GetPackageInstaller();
 
-        ILog Logger { get; }
+        ILogProvider LogProvider { get; }
 
         IAppDomainAssemblyResolver GetAppDomainAssemblyResolver();
 

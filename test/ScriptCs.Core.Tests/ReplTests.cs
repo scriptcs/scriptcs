@@ -25,7 +25,7 @@ namespace ScriptCs.Tests
                 FileSystem.SetupGet(x => x.DllCacheFolder).Returns(".cache");
                 FileSystem.SetupGet(x => x.PackagesFolder).Returns("scriptcs_packages");
                 ScriptEngine = new Mock<IScriptEngine>();
-                Logger = new Mock<ILog>();
+                LogProvider = new TestLogProvider();
                 ScriptLibraryComposer = new Mock<IScriptLibraryComposer>();
                 ScriptLibraryComposer.SetupGet(p => p.ScriptLibrariesFile).Returns("PackageScripts.csx");
                 Console = new Mock<IConsole>();
@@ -41,7 +41,7 @@ namespace ScriptCs.Tests
 
             public Mock<IScriptEngine> ScriptEngine { get; private set; }
 
-            public Mock<ILog> Logger { get; private set; }
+            public TestLogProvider LogProvider { get; private set; }
 
             public Mock<IConsole> Console { get; private set; }
 
@@ -61,7 +61,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Object,
                 mocks.ScriptEngine.Object,
                 mocks.ObjectSerializer.Object,
-                mocks.Logger.Object,
+                mocks.LogProvider,
                 mocks.ScriptLibraryComposer.Object,
                 mocks.Console.Object,
                 mocks.FilePreProcessor.Object,
@@ -77,7 +77,6 @@ namespace ScriptCs.Tests
                 var repl = GetRepl(mocks);
                 repl.FileSystem.ShouldEqual(mocks.FileSystem.Object);
                 repl.ScriptEngine.ShouldEqual(mocks.ScriptEngine.Object);
-                repl.Logger.ShouldEqual(mocks.Logger.Object);
                 repl.Console.ShouldEqual(mocks.Console.Object);
             }
         }

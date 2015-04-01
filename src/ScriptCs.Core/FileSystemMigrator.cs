@@ -13,13 +13,13 @@ namespace ScriptCs
         private readonly Dictionary<string, string> _directoryMoves;
         private readonly Dictionary<string, string> _directoryCopies;
 
-        public FileSystemMigrator(IFileSystem fileSystem, ILog logger)
+        public FileSystemMigrator(IFileSystem fileSystem, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
 
             _fileCopies = new Dictionary<string, string>
             {

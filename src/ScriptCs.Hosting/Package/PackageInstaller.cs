@@ -11,13 +11,13 @@ namespace ScriptCs.Hosting.Package
         private readonly IInstallationProvider _installer;
         private readonly ILog _logger;
 
-        public PackageInstaller(IInstallationProvider installer, ILog logger)
+        public PackageInstaller(IInstallationProvider installer, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("installer", installer);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _installer = installer;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false)

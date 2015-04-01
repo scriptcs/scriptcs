@@ -16,19 +16,19 @@ namespace ScriptCs
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly ILog _logger;
 
-        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("preProcessor", preProcessor);
             Guard.AgainstNullArgument("packageContainer", packageContainer);
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
             _preProcessor = preProcessor;
             _packageContainer = packageContainer;
             _packageAssemblyResolver = packageAssemblyResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         internal string GetMainScript(IPackageObject package)

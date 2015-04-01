@@ -20,7 +20,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
                 // Arrange
                 var lines = new List<string>
                 {
@@ -44,7 +44,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
 
                 // Arrange
                 var lines = new List<string>

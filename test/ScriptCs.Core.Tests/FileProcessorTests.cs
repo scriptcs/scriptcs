@@ -525,7 +525,7 @@ namespace ScriptCs.Tests
                     new ShebangLineProcessor()
                 };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
         }
 
@@ -589,7 +589,7 @@ namespace ScriptCs.Tests
                     new ShebangLineProcessor()
                 };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
         }
 
@@ -647,7 +647,7 @@ namespace ScriptCs.Tests
                         customDirectiveProcessor
                     };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
 
             public class TestableLoadLineProcessor : LoadLineProcessor

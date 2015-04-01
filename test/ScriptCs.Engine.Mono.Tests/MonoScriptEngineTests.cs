@@ -346,8 +346,8 @@ namespace ScriptCs.Engine.Mono.Tests
 
         public class MonoTestScriptEngine : MonoScriptEngine
         {
-            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

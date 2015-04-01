@@ -5,6 +5,7 @@ using NuGet;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 using ScriptCs.Contracts.Logging;
+using ScriptCs.Tests;
 using Should;
 using Xunit;
 
@@ -17,14 +18,13 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldThrowArgumentNullExWhenNoPackageIdsPassed()
             {
-                var installer = new PackageInstaller(new Mock<IInstallationProvider>().Object, new Mock<ILog>().Object);
+                var installer = new PackageInstaller(new Mock<IInstallationProvider>().Object, new TestLogProvider());
                 Assert.Throws<ArgumentNullException>(() => installer.InstallPackages(null));
             }
 
             [Fact]
             public void ShouldInstallAllPassedPackages()
             {
-                var logger = new Mock<ILog>();
                 var provider = new Mock<IInstallationProvider>();
 
                 var references = new List<IPackageReference> 
@@ -34,7 +34,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object);
+                var installer = new PackageInstaller(provider.Object, new TestLogProvider());
                 installer.InstallPackages(references);
 
                 provider.Verify(i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()), Times.Exactly(3));
@@ -43,7 +43,6 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldShowErrorIfOneOfPackagesFail()
             {
-                var logger = new Mock<ILog>();
                 var provider = new Mock<IInstallationProvider>();
                 provider.Setup(
                     i => i.InstallPackage(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()))
@@ -56,7 +55,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object);
+                var installer = new PackageInstaller(provider.Object, new TestLogProvider());
                 var exception = Record.Exception(() => installer.InstallPackages(references, true));
 
                 provider.Verify(i => i.InstallPackage(It.IsAny<IPackageReference>(), It.IsAny<bool>()), Times.Exactly(3));
@@ -67,7 +66,6 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldNotInstallExistingPackages()
             {
-                var logger = new Mock<ILog>();
                 var provider = new Mock<IInstallationProvider>();
                 provider.Setup(
                     i => i.IsInstalled(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()))
@@ -80,7 +78,7 @@ namespace ScriptCs.Hosting.Tests
                     new PackageReference("testId3", VersionUtility.ParseFrameworkName("net40"), new Version("5.0"))
                 };
 
-                var installer = new PackageInstaller(provider.Object, logger.Object);
+                var installer = new PackageInstaller(provider.Object, new TestLogProvider());
                 installer.InstallPackages(references);
 
                 provider.Verify(i => i.InstallPackage(It.Is<IPackageReference>(x => x.PackageId == "testId"), It.IsAny<bool>()), Times.Never());

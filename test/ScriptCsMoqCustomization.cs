@@ -34,7 +34,9 @@ namespace ScriptCs.Tests
                     return composer;
                 });
 
-            fixture.Register<ILog>(fixture.Create<TestLogger>);
+            var logProvider = new TestLogProvider();
+            fixture.Register(() => logProvider);
+            fixture.Register<ILogProvider>(() => logProvider);
         }
     }
 }

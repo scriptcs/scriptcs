@@ -6,8 +6,9 @@ using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {
-    public class ColoredConsoleLogger : ILog
+    public class ColoredConsoleLogProvider : ILogProvider
     {
+        private static readonly Disposable disposable = new Disposable();
         private static readonly Dictionary<LogLevel, ConsoleColor> colors =
             new Dictionary<LogLevel, ConsoleColor>
             {
@@ -22,12 +23,27 @@ namespace ScriptCs.Hosting
         private readonly LogLevel _logLevel;
         private readonly IConsole _console;
 
-        public ColoredConsoleLogger(LogLevel logLevel, IConsole console)
+        public ColoredConsoleLogProvider(LogLevel logLevel, IConsole console)
         {
             Guard.AgainstNullArgument("console", console);
 
             _logLevel = logLevel;
             _console = console;
+        }
+
+        public Logger GetLogger(string name)
+        {
+            return Log;
+        }
+
+        public IDisposable OpenNestedContext(string message)
+        {
+            return disposable;
+        }
+
+        public IDisposable OpenMappedContext(string key, string value)
+        {
+            return disposable;
         }
 
         public bool Log(
@@ -133,6 +149,13 @@ namespace ScriptCs.Hosting
             }
 
             return true;
+        }
+
+        private sealed class Disposable : IDisposable
+        {
+            public void Dispose()
+            {
+            }
         }
     }
 }

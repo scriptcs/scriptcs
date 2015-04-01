@@ -17,8 +17,8 @@ namespace ScriptCs
                 console = new FileConsole(config.OutputFile, console);
             }
 
-            var logger = new ColoredConsoleLogger(config.LogLevel, console);
-            var initializationServices = new InitializationServices(logger);
+            var logProvider = new ColoredConsoleLogProvider(config.LogLevel, console);
+            var initializationServices = new InitializationServices(logProvider);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
             // NOTE (adamralph): this is a hideous assumption about what happens inside the CommandFactory.
@@ -29,7 +29,7 @@ namespace ScriptCs
             var repl = config.Repl ||
                 (!config.Clean && config.PackageName == null && !config.Save && config.ScriptName == null);
 
-            var scriptServicesBuilder = new ScriptServicesBuilder(console, logger, null, null, initializationServices)
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logProvider, null, null, initializationServices)
                 .Cache(config.Cache)
                 .Debug(config.Debug)
                 .LogLevel(config.LogLevel)

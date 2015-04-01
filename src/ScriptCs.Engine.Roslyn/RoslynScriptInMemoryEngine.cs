@@ -7,9 +7,14 @@ namespace ScriptCs.Engine.Roslyn
 {
     public class RoslynScriptInMemoryEngine : RoslynScriptCompilerEngine
     {
-        public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        private readonly ILog _log;
+
+        public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
         }
 
         protected override bool ShouldCompile()
@@ -24,7 +29,7 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
-            this.Logger.Debug("Loading assembly from memory.");
+            _log.Debug("Loading assembly from memory.");
 
             // this is required for debugging. otherwise, the .dll is not related to the .pdb
             // there might be ways of doing this without "loading", haven't found one yet

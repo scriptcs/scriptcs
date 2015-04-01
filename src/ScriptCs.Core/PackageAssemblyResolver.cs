@@ -16,19 +16,19 @@ namespace ScriptCs
         private List<IPackageReference> _topLevelPackages;
 
         public PackageAssemblyResolver(
-            IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger, IAssemblyUtility assemblyUtility)
+            IFileSystem fileSystem, IPackageContainer packageContainer, ILogProvider logProvider, IAssemblyUtility assemblyUtility)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFile", fileSystem.PackagesFile);
 
             Guard.AgainstNullArgument("packageContainer", packageContainer);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
 
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _assemblyUtility = assemblyUtility;
         }
 

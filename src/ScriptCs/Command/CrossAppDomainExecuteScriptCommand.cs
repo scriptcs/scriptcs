@@ -23,7 +23,7 @@ namespace ScriptCs.Command
                 services.FileSystem,
                 services.Executor,
                 services.ScriptPackResolver,
-                services.Logger,
+                services.LogProvider,
                 services.AssemblyResolver,
                 services.FileSystemMigrator,
                 services.ScriptLibraryComposer);

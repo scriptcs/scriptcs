@@ -11,6 +11,8 @@ namespace ScriptCs
 {
     public class ScriptExecutor : IScriptExecutor
     {
+        private readonly ILog _log;
+
         public static readonly string[] DefaultReferences =
         {
             "System", 
@@ -43,8 +45,6 @@ namespace ScriptCs
 
         public IScriptEngine ScriptEngine { get; private set; }
 
-        public ILog Logger { get; private set; }
-
         public AssemblyReferences References { get; private set; }
 
         public ICollection<string> Namespaces { get; private set; }
@@ -54,8 +54,8 @@ namespace ScriptCs
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
 
         public ScriptExecutor(
-            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger)
-            : this(fileSystem, filePreProcessor, scriptEngine, logger, new NullScriptLibraryComposer())
+            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider)
+            : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer())
         {
         }
 
@@ -63,7 +63,7 @@ namespace ScriptCs
             IFileSystem fileSystem,
             IFilePreProcessor filePreProcessor,
             IScriptEngine scriptEngine,
-            ILog logger,
+            ILogProvider logProvider,
             IScriptLibraryComposer composer)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
@@ -71,7 +71,7 @@ namespace ScriptCs
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
             Guard.AgainstNullArgument("filePreProcessor", filePreProcessor);
             Guard.AgainstNullArgument("scriptEngine", scriptEngine);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("composer", composer);
 
             References = new AssemblyReferences(DefaultReferences);
@@ -80,7 +80,7 @@ namespace ScriptCs
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
-            Logger = logger;
+            _log = logProvider.ForCurrentType();
             ScriptLibraryComposer = composer;
         }
 
@@ -142,7 +142,7 @@ namespace ScriptCs
             ScriptEngine.BaseDirectory = bin;
             ScriptEngine.CacheDirectory = cache;
 
-            Logger.Debug("Initializing script packs");
+            _log.Debug("Initializing script packs");
             var scriptPackSession = new ScriptPackSession(scriptPacks, scriptArgs);
             ScriptPackSession = scriptPackSession;
             scriptPackSession.InitializePacks();
@@ -159,7 +159,7 @@ namespace ScriptCs
 
         public virtual void Terminate()
         {
-            Logger.Debug("Terminating packs");
+            _log.Debug("Terminating packs");
             ScriptPackSession.TerminatePacks();
         }
 
@@ -186,7 +186,7 @@ namespace ScriptCs
             InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
             var references = References.Union(result.References);
-            Logger.Debug("Starting execution in engine");
+            _log.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }
 
@@ -227,7 +227,7 @@ namespace ScriptCs
 
             if (FileSystem.FileExists(scriptLibrariesPath))
             {
-                Logger.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
+                _log.DebugFormat("Found Script Library at {0}", scriptLibrariesPath);
                 return FilePreProcessor.ProcessFile(scriptLibrariesPath);
             }
 

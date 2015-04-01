@@ -12,8 +12,8 @@ namespace ScriptCs.Engine.Roslyn
 
     public class RoslynReplEngine : RoslynScriptEngine, IReplEngine
     {
-        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
         }
 

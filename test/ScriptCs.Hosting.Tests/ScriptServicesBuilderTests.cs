@@ -24,9 +24,9 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldLoadScriptPacksIfReplIsTrue(IConsole console, ILog logger, IScriptEngine engine)
+            public void ShouldLoadScriptPacksIfReplIsTrue(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
             {
-                var builder = new ScriptServicesBuilder(console, logger);
+                var builder = new ScriptServicesBuilder(console, logProvider);
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.Repl();
                 builder.Build();
@@ -35,9 +35,9 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldLoadScriptPacksIfScriptNameIsSet(IConsole console, ILog logger, IScriptEngine engine)
+            public void ShouldLoadScriptPacksIfScriptNameIsSet(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
             {
-                var builder = new ScriptServicesBuilder(console, logger);
+                var builder = new ScriptServicesBuilder(console, logProvider);
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.ScriptName("");
                 builder.Build();
@@ -46,9 +46,9 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShoulLoadScriptPacksIfLoadScriptPacksIsTrue(IConsole console, ILog logger, IScriptEngine engine)
+            public void ShoulLoadScriptPacksIfLoadScriptPacksIsTrue(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
             {
-                var builder = new ScriptServicesBuilder(console, logger);
+                var builder = new ScriptServicesBuilder(console, logProvider);
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.LoadScriptPacks();
                 builder.Build();
@@ -57,9 +57,9 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldNotLoadScriptPacksIfLoadScriptPacksIsFalse(IConsole console, ILog logger, IScriptEngine engine)
+            public void ShouldNotLoadScriptPacksIfLoadScriptPacksIsFalse(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
             {
-                var builder = new ScriptServicesBuilder(console, logger);
+                var builder = new ScriptServicesBuilder(console, logProvider);
                 builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
                 builder.LoadScriptPacks(false);
                 builder.Build();

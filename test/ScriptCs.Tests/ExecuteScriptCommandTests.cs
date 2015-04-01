@@ -96,7 +96,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnErrorIfThereIsCompileException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] ILog log,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -124,14 +124,14 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                ((TestLogger)log).Output.ShouldContain("ERROR:");
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfThereIsExecutionException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] ILog log,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -159,14 +159,14 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                ((TestLogger)log).Output.ShouldContain("ERROR:");
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfTheScriptIsIncomplete(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] ILog log,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
@@ -189,7 +189,7 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                ((TestLogger)log).Output.ShouldContain("ERROR:");
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
@@ -203,7 +203,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     fileSystemMigrator.Object,
                     new Mock<IScriptLibraryComposer>().Object);
@@ -224,7 +224,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     new Mock<IFileSystemMigrator>().Object,
                     composer.Object);

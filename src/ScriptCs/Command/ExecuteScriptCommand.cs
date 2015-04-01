@@ -23,7 +23,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
-            ILog logger,
+            ILogProvider logProvider,
             IAssemblyResolver assemblyResolver,
             IFileSystemMigrator fileSystemMigrator,
             IScriptLibraryComposer composer
@@ -32,7 +32,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("scriptExecutor", scriptExecutor);
             Guard.AgainstNullArgument("scriptPackResolver", scriptPackResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
             Guard.AgainstNullArgument("composer", composer);
@@ -42,7 +42,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _assemblyResolver = assemblyResolver;
             _fileSystemMigrator = fileSystemMigrator;
             _composer = composer;
