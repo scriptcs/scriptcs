@@ -27,6 +27,11 @@
 // ReSharper disable PossibleNullReferenceException
 
 // Define LIBLOG_PORTABLE conditional compilation symbol for PCL compatibility
+//
+// Define LIBLOG_PUBLIC to enable ability to GET a logger (LogProvider.For<>() etc) from outside this library. NOTE:
+// this can have unintendend consequences of consumers of your library using your library to resolve a logger. If the
+// reason is because you want to open this functionality to other projects within your solution,
+// consider [InternalVisibleTo] instead.
 
 #pragma warning disable 1591
 
@@ -36,6 +41,8 @@ namespace ScriptCs.Contracts.Logging
     using ScriptCs.Contracts.Logging.LogProviders;
     using System;
     using System.Diagnostics;
+
+    public delegate bool Logger(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
 
     /// <summary>
     /// Simple interface that represent a logger.
@@ -72,7 +79,12 @@ namespace ScriptCs.Contracts.Logging
         Fatal
     }
 
-    public static class LogExtensions
+#if LIBLOG_PUBLIC
+    internal
+#else
+    public
+#endif
+    static class LogExtensions
     {
         public static bool IsDebugEnabled(this ILog logger)
         {
@@ -139,7 +151,6 @@ namespace ScriptCs.Contracts.Logging
                 logger.Log(LogLevel.Debug, message.AsFunc(), exception);
             }
         }
-
 
         public static void DebugException(this ILog logger, string message, Exception exception, params object[] formatParams)
         {
@@ -297,6 +308,7 @@ namespace ScriptCs.Contracts.Logging
             }
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private static void GuardAgainstNullLogger(ILog logger)
         {
             if (logger == null)
@@ -332,7 +344,7 @@ namespace ScriptCs.Contracts.Logging
         /// </summary>
         /// <param name="name">Name of the logger.</param>
         /// <returns>The logger reference.</returns>
-        ILog GetLogger(string name);
+        Logger GetLogger(string name);
 
         /// <summary>
         /// Opens a nested diagnostics context. Not supported in EntLib logging.
@@ -355,16 +367,56 @@ namespace ScriptCs.Contracts.Logging
     /// </summary>
     public static class LogProvider
     {
-        private static ILogProvider _currentLogProvider;
         private const string NullLogProvider = "Current Log Provider is not set. Call SetCurrentLogProvider " +
                                                "with a non-null value first.";
+        private static dynamic _currentLogProvider;
+        private static Action<ILogProvider> _onCurrentLogProviderSet;
+
+        /// <summary>
+        /// Sets the current log provider.
+        /// </summary>
+        /// <param name="logProvider">The log provider.</param>
+        public static void SetCurrentLogProvider(ILogProvider logProvider)
+        {
+            _currentLogProvider = logProvider;
+
+            RaiseOnCurrentLogProviderSet();
+        }
+
+        /// <summary>
+        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
+        /// important that hook into this if you are using child libraries (especially ilmerged ones) that are using
+        /// LibLog (or other logging abstraction) so you adapt and delegate to them.
+        /// <see cref="SetCurrentLogProvider"/> 
+        /// </summary>
+        internal static Action<ILogProvider> OnCurrentLogProviderSet
+        {
+            set
+            {
+                _onCurrentLogProviderSet = value;
+                RaiseOnCurrentLogProviderSet();
+            }
+        }
+
+        internal static ILogProvider CurrentLogProvider
+        {
+            get
+            {
+                return _currentLogProvider;
+            }
+        }
 
         /// <summary>
         /// Gets a logger for the specified type.
         /// </summary>
         /// <typeparam name="T">The type whose name will be used for the logger.</typeparam>
         /// <returns>An instance of <see cref="ILog"/></returns>
-        public static ILog For<T>()
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog For<T>()
         {
             return GetLogger(typeof(T));
         }
@@ -374,7 +426,12 @@ namespace ScriptCs.Contracts.Logging
         /// Gets a logger for the current class.
         /// </summary>
         /// <returns>An instance of <see cref="ILog"/></returns>
-        public static ILog GetCurrentClassLogger()
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetCurrentClassLogger()
         {
             var stackFrame = new StackFrame(1, false);
             return GetLogger(stackFrame.GetMethod().DeclaringType);
@@ -386,7 +443,12 @@ namespace ScriptCs.Contracts.Logging
         /// </summary>
         /// <param name="type">The type whose name will be used for the logger.</param>
         /// <returns>An instance of <see cref="ILog"/></returns>
-        public static ILog GetLogger(Type type)
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetLogger(Type type)
         {
             return GetLogger(type.FullName);
         }
@@ -396,44 +458,61 @@ namespace ScriptCs.Contracts.Logging
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>An instance of <see cref="ILog"/></returns>
-        public static ILog GetLogger(string name)
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetLogger(string name)
         {
-            ILogProvider logProvider = _currentLogProvider ?? ResolveLogProvider();
+            ILogProvider logProvider = CurrentLogProvider ?? ResolveLogProvider();
             return logProvider == null ? new NoOpLogger() : (ILog)new LoggerExecutionWrapper(logProvider.GetLogger(name));
         }
 
         /// <summary>
-        /// Sets the current log provider.
+        /// Opens a nested diagnostics context.
         /// </summary>
-        /// <param name="logProvider">The log provider.</param>
-        public static void SetCurrentLogProvider(ILogProvider logProvider)
+        /// <param name="message">A message.</param>
+        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static IDisposable OpenNestedConext(string message)
         {
-            _currentLogProvider = logProvider;
-        }
-
-        public static IDisposable OpenNestedConext(string message)
-        {
-            if(_currentLogProvider == null)
+            if(CurrentLogProvider == null)
             {
                 throw new InvalidOperationException(NullLogProvider);
             }
-            return _currentLogProvider.OpenNestedContext(message);
+            return CurrentLogProvider.OpenNestedContext(message);
         }
 
-        public static IDisposable OpenMappedContext(string key, string value)
+        /// <summary>
+        /// Opens a mapped diagnostics context.
+        /// </summary>
+        /// <param name="key">A key.</param>
+        /// <param name="value">A value.</param>
+        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static IDisposable OpenMappedContext(string key, string value)
         {
-            if (_currentLogProvider == null)
+            if (CurrentLogProvider == null)
             {
                 throw new InvalidOperationException(NullLogProvider);
             }
-            return _currentLogProvider.OpenMappedContext(key, value);
+            return CurrentLogProvider.OpenMappedContext(key, value);
         }
 
-        public delegate bool IsLoggerAvailable();
+        internal delegate bool IsLoggerAvailable();
 
-        public delegate ILogProvider CreateLogProvider();
+        internal delegate ILogProvider CreateLogProvider();
 
-        public static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
+        internal static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
             new List<Tuple<IsLoggerAvailable, CreateLogProvider>>
         {
             new Tuple<IsLoggerAvailable, CreateLogProvider>(SerilogLogProvider.IsLoggerAvailable, () => new SerilogLogProvider()),
@@ -444,7 +523,15 @@ namespace ScriptCs.Contracts.Logging
             new Tuple<IsLoggerAvailable, CreateLogProvider>(ColouredConsoleLogProvider.IsLoggerAvailable, () => new ColouredConsoleLogProvider()),
         };
 
-        private static ILogProvider ResolveLogProvider()
+        private static void RaiseOnCurrentLogProviderSet()
+        {
+            if (_onCurrentLogProviderSet != null)
+            {
+                _onCurrentLogProviderSet(_currentLogProvider);
+            }
+        }
+
+        internal static ILogProvider ResolveLogProvider()
         {
             try
             {
@@ -481,15 +568,15 @@ namespace ScriptCs.Contracts.Logging
 
     internal class LoggerExecutionWrapper : ILog
     {
-        private readonly ILog _logger;
+        private readonly Logger _logger;
         internal const string FailedToGenerateLogMessage = "Failed to generate log message";
 
-        internal LoggerExecutionWrapper(ILog logger)
+        internal LoggerExecutionWrapper(Logger logger)
         {
             _logger = logger;
         }
 
-        public ILog WrappedLogger
+        internal Logger WrappedLogger
         {
             get { return _logger; }
         }
@@ -498,7 +585,7 @@ namespace ScriptCs.Contracts.Logging
         {
             if (messageFunc == null)
             {
-                return _logger.Log(logLevel, null);
+                return _logger(logLevel, null);
             }
 
             Func<string> wrappedMessageFunc = () =>
@@ -513,7 +600,7 @@ namespace ScriptCs.Contracts.Logging
                 }
                 return null;
             };
-            return _logger.Log(logLevel, wrappedMessageFunc, exception, formatParameters);
+            return _logger(logLevel, wrappedMessageFunc, exception, formatParameters);
         }
     }
 }
@@ -545,8 +632,8 @@ namespace ScriptCs.Contracts.Logging.LogProviders
                = new Lazy<OpenMdc>(GetOpenMdcMethod);
         }
 
-        public abstract ILog GetLogger(string name);
-        
+        public abstract Logger GetLogger(string name);
+
         public IDisposable OpenNestedContext(string message)
         {
             return _lazyOpenNdcMethod.Value(message);
@@ -588,9 +675,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             set { _providerIsAvailableOverride = value; }
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new NLogLogger(_getLoggerByNameDelegate(name));
+            return new NLogLogger(_getLoggerByNameDelegate(name)).Log;
         }
 
         public static bool IsLoggerAvailable()
@@ -601,7 +688,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         protected override OpenNdc GetOpenNdcMethod()
         {
             Type ndcContextType = Type.GetType("NLog.NestedDiagnosticsContext, NLog");
-            MethodInfo pushMethod = ndcContextType.GetMethodPortable("Push", new[] { typeof(string) });
+            MethodInfo pushMethod = ndcContextType.GetMethodPortable("Push", typeof(string));
             ParameterExpression messageParam = Expression.Parameter(typeof(string), "message");
             MethodCallExpression pushMethodCall = Expression.Call(null, pushMethod, messageParam);
             return Expression.Lambda<OpenNdc>(pushMethodCall, messageParam).Compile();
@@ -611,8 +698,8 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         {
             Type mdcContextType = Type.GetType("NLog.MappedDiagnosticsContext, NLog");
 
-            MethodInfo setMethod = mdcContextType.GetMethodPortable("Set", new[] { typeof(string), typeof(string) });
-            MethodInfo removeMethod = mdcContextType.GetMethodPortable("Remove", new[] { typeof(string) });
+            MethodInfo setMethod = mdcContextType.GetMethodPortable("Set", typeof(string), typeof(string));
+            MethodInfo removeMethod = mdcContextType.GetMethodPortable("Remove", typeof(string));
             ParameterExpression keyParam = Expression.Parameter(typeof(string), "key");
             ParameterExpression valueParam = Expression.Parameter(typeof(string), "value");
 
@@ -641,13 +728,13 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         private static Func<string, object> GetGetLoggerMethodCall()
         {
             Type logManagerType = GetLogManagerType();
-            MethodInfo method = logManagerType.GetMethodPortable("GetLogger", new[] { typeof(string) });
+            MethodInfo method = logManagerType.GetMethodPortable("GetLogger", typeof(string));
             ParameterExpression nameParam = Expression.Parameter(typeof(string), "name");
             MethodCallExpression methodCall = Expression.Call(null, method, nameParam);
             return Expression.Lambda<Func<string, object>>(methodCall, nameParam).Compile();
         }
 
-        public class NLogLogger : ILog
+        internal class NLogLogger
         {
             private readonly dynamic _logger;
 
@@ -807,9 +894,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             set { _providerIsAvailableOverride = value; }
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new Log4NetLogger(_getLoggerByNameDelegate(name));
+            return new Log4NetLogger(_getLoggerByNameDelegate(name)).Log;
         }
 
         internal static bool IsLoggerAvailable()
@@ -820,7 +907,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         protected override OpenNdc GetOpenNdcMethod()
         {
             Type ndcContextType = Type.GetType("log4net.NDC, log4net");
-            MethodInfo pushMethod = ndcContextType.GetMethodPortable("Push", new[] { typeof(string) });
+            MethodInfo pushMethod = ndcContextType.GetMethodPortable("Push", typeof(string));
             ParameterExpression messageParam = Expression.Parameter(typeof(string), "message");
             MethodCallExpression pushMethodCall = Expression.Call(null, pushMethod, messageParam);
             return Expression.Lambda<OpenNdc>(pushMethodCall, messageParam).Compile();
@@ -830,8 +917,8 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         {
             Type mdcContextType = Type.GetType("log4net.MDC, log4net");
 
-            MethodInfo setMethod = mdcContextType.GetMethodPortable("Set", new[] { typeof(string), typeof(string) });
-            MethodInfo removeMethod = mdcContextType.GetMethodPortable("Remove", new[] { typeof(string) });
+            MethodInfo setMethod = mdcContextType.GetMethodPortable("Set", typeof(string), typeof(string));
+            MethodInfo removeMethod = mdcContextType.GetMethodPortable("Remove", typeof(string));
             ParameterExpression keyParam = Expression.Parameter(typeof(string), "key");
             ParameterExpression valueParam = Expression.Parameter(typeof(string), "value");
 
@@ -860,13 +947,13 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         private static Func<string, object> GetGetLoggerMethodCall()
         {
             Type logManagerType = GetLogManagerType();
-            MethodInfo method = logManagerType.GetMethodPortable("GetLogger", new[] { typeof(string) });
+            MethodInfo method = logManagerType.GetMethodPortable("GetLogger", typeof(string));
             ParameterExpression nameParam = Expression.Parameter(typeof(string), "name");
             MethodCallExpression methodCall = Expression.Call(null, method, nameParam);
             return Expression.Lambda<Func<string, object>>(methodCall, nameParam).Compile();
         }
 
-        public class Log4NetLogger : ILog
+        internal class Log4NetLogger
         {
             private readonly dynamic _logger;
 
@@ -1032,9 +1119,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             set { _providerIsAvailableOverride = value; }
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new EntLibLogger(name, WriteLogEntry, ShouldLogEntry);
+            return new EntLibLogger(name, WriteLogEntry, ShouldLogEntry).Log;
         }
 
         internal static bool IsLoggerAvailable()
@@ -1057,7 +1144,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
                 logNameParameter);
 
             //Logger.Write(new LogEntry(....));
-            MethodInfo writeLogEntryMethod = LoggerType.GetMethodPortable("Write", new[] { LogEntryType });
+            MethodInfo writeLogEntryMethod = LoggerType.GetMethodPortable("Write", LogEntryType);
             var writeLogEntryExpression = Expression.Call(writeLogEntryMethod, memberInit);
 
             return Expression.Lambda<Action<string, string, int>>(
@@ -1079,7 +1166,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
                 logNameParameter);
 
             //Logger.Write(new LogEntry(....));
-            MethodInfo writeLogEntryMethod = LoggerType.GetMethodPortable("ShouldLog", new[] { LogEntryType });
+            MethodInfo writeLogEntryMethod = LoggerType.GetMethodPortable("ShouldLog", LogEntryType);
             var writeLogEntryExpression = Expression.Call(writeLogEntryMethod, memberInit);
 
             return Expression.Lambda<Func<string, int, bool>>(
@@ -1092,22 +1179,22 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             Expression severityParameter, ParameterExpression logNameParameter)
         {
             var entryType = LogEntryType;
-            MemberInitExpression memberInit = Expression.MemberInit(Expression.New(entryType), new []
-            {
+            MemberInitExpression memberInit = Expression.MemberInit(Expression.New(entryType), 
                 Expression.Bind(entryType.GetPropertyPortable("Message"), message),
                 Expression.Bind(entryType.GetPropertyPortable("Severity"), severityParameter),
-                Expression.Bind(entryType.GetPropertyPortable("TimeStamp"),
+                Expression.Bind(
+                    entryType.GetPropertyPortable("TimeStamp"),
                     Expression.Property(null, typeof (DateTime).GetPropertyPortable("UtcNow"))),
-                Expression.Bind(entryType.GetPropertyPortable("Categories"),
+                Expression.Bind(
+                    entryType.GetPropertyPortable("Categories"),
                     Expression.ListInit(
                         Expression.New(typeof (List<string>)),
-                        typeof (List<string>).GetMethodPortable("Add", new[] {typeof (string)}),
-                        logNameParameter))
-            });
+                        typeof (List<string>).GetMethodPortable("Add", typeof (string)),
+                        logNameParameter)));
             return memberInit;
         }
 
-        public class EntLibLogger : ILog
+        internal class EntLibLogger
         {
             private readonly string _loggerName;
             private readonly Action<string, string, int> _writeLog;
@@ -1185,9 +1272,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             set { _providerIsAvailableOverride = value; }
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new SerilogLogger(_getLoggerByNameDelegate(name));
+            return new SerilogLogger(_getLoggerByNameDelegate(name)).Log;
         }
 
         internal static bool IsLoggerAvailable()
@@ -1209,13 +1296,10 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         {
             Type ndcContextType = Type.GetType("Serilog.Context.LogContext, Serilog.FullNetFx");
             MethodInfo pushPropertyMethod = ndcContextType.GetMethodPortable(
-                "PushProperty",
-                new[]
-                {
-                    typeof(string),
-                    typeof(object),
-                    typeof(bool)
-                });
+                "PushProperty", 
+                typeof(string),
+                typeof(object),
+                typeof(bool));
             ParameterExpression nameParam = Expression.Parameter(typeof(string), "name");
             ParameterExpression valueParam = Expression.Parameter(typeof(object), "value");
             ParameterExpression destructureObjectParam = Expression.Parameter(typeof(bool), "destructureObjects");
@@ -1240,7 +1324,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         private static Func<string, object> GetForContextMethodCall()
         {
             Type logManagerType = GetLogManagerType();
-            MethodInfo method = logManagerType.GetMethodPortable("ForContext", new[] { typeof(string), typeof(object), typeof(bool) });
+            MethodInfo method = logManagerType.GetMethodPortable("ForContext", typeof(string), typeof(object), typeof(bool));
             ParameterExpression propertyNameParam = Expression.Parameter(typeof(string), "propertyName");
             ParameterExpression valueParam = Expression.Parameter(typeof(object), "value");
             ParameterExpression destructureObjectsParam = Expression.Parameter(typeof(bool), "destructureObjects");
@@ -1259,7 +1343,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             return name => func("Name", name, false);
         }
 
-        public class SerilogLogger : ILog
+        internal class SerilogLogger
         {
             private readonly object _logger;
             private static readonly object DebugLevel;
@@ -1274,31 +1358,43 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
             static SerilogLogger()
             {
-                var logEventTypeType = Type.GetType("Serilog.Events.LogEventLevel, Serilog");
-                DebugLevel = Enum.Parse(logEventTypeType, "Debug", false);
-                ErrorLevel = Enum.Parse(logEventTypeType, "Error", false);
-                FatalLevel = Enum.Parse(logEventTypeType, "Fatal", false);
-                InformationLevel = Enum.Parse(logEventTypeType, "Information", false);
-                VerboseLevel = Enum.Parse(logEventTypeType, "Verbose", false);
-                WarningLevel = Enum.Parse(logEventTypeType, "Warning", false);
+                var logEventLevelType = Type.GetType("Serilog.Events.LogEventLevel, Serilog");
+                if (logEventLevelType == null)
+                {
+                    throw new InvalidOperationException("Type Serilog.Events.LogEventLevel was not found.");
+                }
+                DebugLevel = Enum.Parse(logEventLevelType, "Debug", false);
+                ErrorLevel = Enum.Parse(logEventLevelType, "Error", false);
+                FatalLevel = Enum.Parse(logEventLevelType, "Fatal", false);
+                InformationLevel = Enum.Parse(logEventLevelType, "Information", false);
+                VerboseLevel = Enum.Parse(logEventLevelType, "Verbose", false);
+                WarningLevel = Enum.Parse(logEventLevelType, "Warning", false);
 
                 // Func<object, object, bool> isEnabled = (logger, level) => { return ((SeriLog.ILogger)logger).IsEnabled(level); }
                 var loggerType = Type.GetType("Serilog.ILogger, Serilog");
-                var logEventLevelType = Type.GetType("Serilog.Events.LogEventLevel, Serilog");
+                if (loggerType == null)
+                {
+                    throw new InvalidOperationException("Type Serilog.ILogger was not found.");
+                }
                 MethodInfo isEnabledMethodInfo = loggerType.GetMethodPortable("IsEnabled", logEventLevelType);
                 ParameterExpression instanceParam = Expression.Parameter(typeof(object));
                 UnaryExpression instanceCast = Expression.Convert(instanceParam, loggerType);
                 ParameterExpression levelParam = Expression.Parameter(typeof(object));
-                UnaryExpression levelCast = Expression.Convert(levelParam, logEventTypeType);
+                UnaryExpression levelCast = Expression.Convert(levelParam, logEventLevelType);
                 MethodCallExpression isEnabledMethodCall = Expression.Call(instanceCast, isEnabledMethodInfo, levelCast);
                 IsEnabled = Expression.Lambda<Func<object, object, bool>>(isEnabledMethodCall, instanceParam, levelParam).Compile();
 
                 // Action<object, object, string> Write =
                 // (logger, level, message, params) => { ((SeriLog.ILoggerILogger)logger).Write(level, message, params); }
-                MethodInfo writeMethodInfo = loggerType.GetMethodPortable("Write", new[] { logEventTypeType, typeof(string), typeof(object[]) });
+                MethodInfo writeMethodInfo = loggerType.GetMethodPortable("Write", logEventLevelType, typeof(string), typeof(object[]));
                 ParameterExpression messageParam = Expression.Parameter(typeof(string));
                 ParameterExpression propertyValuesParam = Expression.Parameter(typeof(object[]));
-                MethodCallExpression writeMethodExp = Expression.Call(instanceCast, writeMethodInfo, levelCast, messageParam, propertyValuesParam);
+                MethodCallExpression writeMethodExp = Expression.Call(
+                    instanceCast,
+                    writeMethodInfo,
+                    levelCast,
+                    messageParam,
+                    propertyValuesParam);
                 var expression = Expression.Lambda<Action<object, object, string, object[]>>(
                     writeMethodExp, 
                     instanceParam,
@@ -1309,13 +1405,11 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
                 // Action<object, object, string, Exception> WriteException =
                 // (logger, level, exception, message) => { ((ILogger)logger).Write(level, exception, message, new object[]); }
-                MethodInfo writeExceptionMethodInfo = loggerType.GetMethodPortable("Write", new[]
-                {
-                    logEventTypeType,
-                    typeof(Exception), 
+                MethodInfo writeExceptionMethodInfo = loggerType.GetMethodPortable("Write", 
+                    logEventLevelType,
+                    typeof(Exception),
                     typeof(string),
-                    typeof(object[])
-                });
+                    typeof(object[]));
                 ParameterExpression exceptionParam = Expression.Parameter(typeof(Exception));
                 writeMethodExp = Expression.Call(
                     instanceCast,
@@ -1493,9 +1587,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             set { _providerIsAvailableOverride = value; }
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new LoupeLogger(name, _logWriteDelegate);
+            return new LoupeLogger(name, _logWriteDelegate).Log;
         }
 
         public static bool IsLoggerAvailable()
@@ -1516,17 +1610,14 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
             MethodInfo method = logManagerType.GetMethodPortable(
                 "Write",
-                new[]
-                {
-                    logMessageSeverityType, typeof(string), typeof(int), typeof(Exception), typeof(bool), 
-                    logWriteModeType, typeof(string), typeof(string), typeof(string), typeof(string), typeof(object[])
-                });
+                logMessageSeverityType, typeof(string), typeof(int), typeof(Exception), typeof(bool), 
+                logWriteModeType, typeof(string), typeof(string), typeof(string), typeof(string), typeof(object[]));
 
             var callDelegate = (WriteDelegate)method.CreateDelegate(typeof(WriteDelegate));
             return callDelegate;
         }
 
-        public class LoupeLogger : ILog
+        internal class LoupeLogger
         {
             private const string LogSystem = "LibLog";
 
@@ -1538,7 +1629,11 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             {
                 _category = category;
                 _logWriteDelegate = logWriteDelegate;
+#if DEBUG
+                _skipLevel = 2;
+#else
                 _skipLevel = 1;
+#endif
             }
 
             public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
@@ -1628,14 +1723,14 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
             MessageFormatter = DefaultMessageFormatter;
             Colors = new Dictionary<LogLevel, int>
-                {
-                    {LogLevel.Fatal, ConsoleColorValues.Red},
-                    {LogLevel.Error, ConsoleColorValues.Yellow},
-                    {LogLevel.Warn, ConsoleColorValues.Magenta},
-                    {LogLevel.Info, ConsoleColorValues.White},
-                    {LogLevel.Debug, ConsoleColorValues.Gray},
-                    {LogLevel.Trace, ConsoleColorValues.DarkGray},
-                };
+            {
+                {LogLevel.Fatal, ConsoleColorValues.Red},
+                {LogLevel.Error, ConsoleColorValues.Yellow},
+                {LogLevel.Warn, ConsoleColorValues.Magenta},
+                {LogLevel.Info, ConsoleColorValues.White},
+                {LogLevel.Debug, ConsoleColorValues.Gray},
+                {LogLevel.Trace, ConsoleColorValues.DarkGray},
+            };
             ConsoleWriteLine = GetConsoleWrite();
             GetConsoleForeground = GetGetConsoleForeground();
             SetConsoleForeground = GetSetConsoleForeground();
@@ -1646,9 +1741,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             return ProviderIsAvailableOverride && ConsoleType != null && ConsoleColorType != null;
         }
 
-        public override ILog GetLogger(string name)
+        public override Logger GetLogger(string name)
         {
-            return new ColouredConsoleLogger(name, ConsoleWriteLine, GetConsoleForeground, SetConsoleForeground);
+            return new ColouredConsoleLogger(name, ConsoleWriteLine, GetConsoleForeground, SetConsoleForeground).Log;
         }
 
         /// <summary>
@@ -1701,7 +1796,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         {
             var messageParameter = Expression.Parameter(typeof(string), "message");
 
-            MethodInfo writeMethod = ConsoleType.GetMethodPortable("WriteLine", new[] { typeof(string) });
+            MethodInfo writeMethod = ConsoleType.GetMethodPortable("WriteLine", typeof(string));
             var writeExpression = Expression.Call(writeMethod, messageParameter);
 
             return Expression.Lambda<Action<string>>(
@@ -1760,7 +1855,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
             protected void Write(LogLevel logLevel, string message, Exception e = null)
             {
-                var formattedMessage = MessageFormatter(this._name, logLevel, message, e);
+                var formattedMessage = MessageFormatter(_name, logLevel, message, e);
                 int color;
 
                 if (Colors.TryGetValue(logLevel, out color))
@@ -1823,7 +1918,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         /// <returns></returns>
         public static Func<string> SimulateStructuredLogging(Func<string> messageBuilder, object[] formatParameters)
         {
-            if(formatParameters == null)
+            if (formatParameters == null || formatParameters.Length == 0)
             {
                 return messageBuilder;
             }
