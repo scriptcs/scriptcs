@@ -33,7 +33,8 @@ namespace ScriptCs.Hosting
 
         public Logger GetLogger(string name)
         {
-            return Log;
+            return (logLevel, messageFunc, exception, formatParameters) =>
+                Log(name, logLevel, messageFunc, exception, formatParameters);
         }
 
         public IDisposable OpenNestedContext(string message)
@@ -47,7 +48,7 @@ namespace ScriptCs.Hosting
         }
 
         public bool Log(
-            LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
+            string name, LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
         {
             Guard.AgainstNullArgument("formatParameters", formatParameters);
 
@@ -60,6 +61,11 @@ namespace ScriptCs.Hosting
             var prefix = logLevel == LogLevel.Info
                 ? null
                 : string.Concat(logLevel.ToString().ToUpperInvariant(), ": ");
+
+            if (_logLevel == LogLevel.Debug || _logLevel == LogLevel.Trace)
+            {
+                prefix = string.Concat(prefix, "[", name, "] ");
+            }
 
             var message = string.Format(CultureInfo.InvariantCulture, messageFunc(), formatParameters);
 
