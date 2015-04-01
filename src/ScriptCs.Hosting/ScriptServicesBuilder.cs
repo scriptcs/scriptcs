@@ -9,7 +9,6 @@ namespace ScriptCs.Hosting
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly ITypeResolver _typeResolver;
-        private readonly ILog _logger;
         private readonly ILogProvider _logProvider;
 
         private IRuntimeServices _runtimeServices;
@@ -36,7 +35,6 @@ namespace ScriptCs.Hosting
             _typeResolver = typeResolver ?? new TypeResolver();
             ConsoleInstance = console;
             _logProvider = logProvider;
-            _logger = logProvider.ForCurrentType();
         }
 
         public ScriptServices Build()
