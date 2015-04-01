@@ -40,7 +40,6 @@ namespace ScriptCs.Contracts.Logging
     using System.Collections.Generic;
     using ScriptCs.Contracts.Logging.LogProviders;
     using System;
-    using System.Diagnostics;
 
     public delegate bool Logger(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
 
@@ -79,12 +78,7 @@ namespace ScriptCs.Contracts.Logging
         Fatal
     }
 
-#if LIBLOG_PUBLIC
-    internal
-#else
-    public
-#endif
-    static class LogExtensions
+    public static class LogExtensions
     {
         public static bool IsDebugEnabled(this ILog logger)
         {
@@ -365,154 +359,13 @@ namespace ScriptCs.Contracts.Logging
     /// <summary>
     /// Provides a mechanism to create instances of <see cref="ILog" /> objects.
     /// </summary>
-    public static class LogProvider
+    internal static class LogProvider
     {
-        private const string NullLogProvider = "Current Log Provider is not set. Call SetCurrentLogProvider " +
-                                               "with a non-null value first.";
-        private static dynamic _currentLogProvider;
-        private static Action<ILogProvider> _onCurrentLogProviderSet;
+        private delegate bool IsLoggerAvailable();
 
-        /// <summary>
-        /// Sets the current log provider.
-        /// </summary>
-        /// <param name="logProvider">The log provider.</param>
-        public static void SetCurrentLogProvider(ILogProvider logProvider)
-        {
-            _currentLogProvider = logProvider;
+        private delegate ILogProvider CreateLogProvider();
 
-            RaiseOnCurrentLogProviderSet();
-        }
-
-        /// <summary>
-        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
-        /// important that hook into this if you are using child libraries (especially ilmerged ones) that are using
-        /// LibLog (or other logging abstraction) so you adapt and delegate to them.
-        /// <see cref="SetCurrentLogProvider"/> 
-        /// </summary>
-        internal static Action<ILogProvider> OnCurrentLogProviderSet
-        {
-            set
-            {
-                _onCurrentLogProviderSet = value;
-                RaiseOnCurrentLogProviderSet();
-            }
-        }
-
-        internal static ILogProvider CurrentLogProvider
-        {
-            get
-            {
-                return _currentLogProvider;
-            }
-        }
-
-        /// <summary>
-        /// Gets a logger for the specified type.
-        /// </summary>
-        /// <typeparam name="T">The type whose name will be used for the logger.</typeparam>
-        /// <returns>An instance of <see cref="ILog"/></returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static ILog For<T>()
-        {
-            return GetLogger(typeof(T));
-        }
-
-#if !LIBLOG_PORTABLE
-        /// <summary>
-        /// Gets a logger for the current class.
-        /// </summary>
-        /// <returns>An instance of <see cref="ILog"/></returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static ILog GetCurrentClassLogger()
-        {
-            var stackFrame = new StackFrame(1, false);
-            return GetLogger(stackFrame.GetMethod().DeclaringType);
-        }
-#endif
-
-        /// <summary>
-        /// Gets a logger for the specified type.
-        /// </summary>
-        /// <param name="type">The type whose name will be used for the logger.</param>
-        /// <returns>An instance of <see cref="ILog"/></returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static ILog GetLogger(Type type)
-        {
-            return GetLogger(type.FullName);
-        }
-
-        /// <summary>
-        /// Gets a logger with the specified name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>An instance of <see cref="ILog"/></returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static ILog GetLogger(string name)
-        {
-            ILogProvider logProvider = CurrentLogProvider ?? ResolveLogProvider();
-            return logProvider == null ? new NoOpLogger() : (ILog)new LoggerExecutionWrapper(logProvider.GetLogger(name));
-        }
-
-        /// <summary>
-        /// Opens a nested diagnostics context.
-        /// </summary>
-        /// <param name="message">A message.</param>
-        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static IDisposable OpenNestedConext(string message)
-        {
-            if(CurrentLogProvider == null)
-            {
-                throw new InvalidOperationException(NullLogProvider);
-            }
-            return CurrentLogProvider.OpenNestedContext(message);
-        }
-
-        /// <summary>
-        /// Opens a mapped diagnostics context.
-        /// </summary>
-        /// <param name="key">A key.</param>
-        /// <param name="value">A value.</param>
-        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
-        static IDisposable OpenMappedContext(string key, string value)
-        {
-            if (CurrentLogProvider == null)
-            {
-                throw new InvalidOperationException(NullLogProvider);
-            }
-            return CurrentLogProvider.OpenMappedContext(key, value);
-        }
-
-        internal delegate bool IsLoggerAvailable();
-
-        internal delegate ILogProvider CreateLogProvider();
-
-        internal static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
+        private static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
             new List<Tuple<IsLoggerAvailable, CreateLogProvider>>
         {
             new Tuple<IsLoggerAvailable, CreateLogProvider>(SerilogLogProvider.IsLoggerAvailable, () => new SerilogLogProvider()),
@@ -522,14 +375,6 @@ namespace ScriptCs.Contracts.Logging
             new Tuple<IsLoggerAvailable, CreateLogProvider>(LoupeLogProvider.IsLoggerAvailable, () => new LoupeLogProvider()),
             new Tuple<IsLoggerAvailable, CreateLogProvider>(ColouredConsoleLogProvider.IsLoggerAvailable, () => new ColouredConsoleLogProvider()),
         };
-
-        private static void RaiseOnCurrentLogProviderSet()
-        {
-            if (_onCurrentLogProviderSet != null)
-            {
-                _onCurrentLogProviderSet(_currentLogProvider);
-            }
-        }
 
         internal static ILogProvider ResolveLogProvider()
         {
@@ -555,14 +400,6 @@ namespace ScriptCs.Contracts.Logging
                     ex);
             }
             return null;
-        }
-
-        internal class NoOpLogger : ILog
-        {
-            public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
-            {
-                return false;
-            }
         }
     }
 
