@@ -71,11 +71,6 @@ namespace ScriptCs.Command
                 _scriptExecutor.Terminate();
                 return commandResult;
             }
-            catch (FileNotFoundException ex)
-            {
-                _logger.ErrorFormat("{0} - '{1}'.", ex, ex.Message, ex.FileName);
-                return CommandResult.Error;
-            }
             catch (Exception ex)
             {
                 _logger.ErrorException("Error executing script '{0}'", ex, _script);
