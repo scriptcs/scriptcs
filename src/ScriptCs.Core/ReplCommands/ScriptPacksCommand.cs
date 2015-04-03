@@ -44,7 +44,12 @@ namespace ScriptCs.ReplCommands
                 var contextType = packContext.GetType();
                 PrintInColor(contextType.ToString());
 
-                var methods = contextType.GetAllMethods().ToArray();
+                var methods = contextType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                    .Where(m => !m.IsSpecialName)
+                    .Union(contextType.GetExtensionMethods())
+                    .ToArray();
+
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                 PrintMethods(methods, importedNamespaces);
