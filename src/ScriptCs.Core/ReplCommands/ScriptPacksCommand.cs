@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -29,22 +28,22 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IRepl repl, object[] args)
         {
-            var packContexts = repl.ScriptPackSession.Contexts;
+            var packContexts = (repl.ScriptPackSession.Contexts ?? Enumerable.Empty<IScriptPackContext>()).ToArray();
 
-            if (packContexts.IsNullOrEmpty())
+            if (!packContexts.Any())
             {
                 PrintInColor("There are no script packs available in this REPL session");
                 return null;
             }
 
-            var importedNamespaces = repl.ScriptPackSession.Namespaces.IsNullOrEmpty() ? repl.Namespaces.ToArray() : repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
+            var importedNamespaces = repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
 
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
                 PrintInColor(contextType.ToString());
 
-                var methods = contextType.GetAllMethods();
+                var methods = contextType.GetAllMethods().ToArray();
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                 PrintMethods(methods, importedNamespaces);
@@ -64,9 +63,9 @@ namespace ScriptCs.ReplCommands
             _console.ForegroundColor = originalColor;
         }
 
-        private void PrintMethods(IEnumerable<MethodInfo> methods, string[] importedNamespaces)
+        private void PrintMethods(MethodInfo[] methods, string[] importedNamespaces)
         {
-            if (!methods.IsNullOrEmpty())
+            if (methods.Any())
             {
                 _console.WriteLine("** Methods **");
                 foreach (var method in methods)
@@ -82,9 +81,9 @@ namespace ScriptCs.ReplCommands
             }
         }
 
-        private void PrintProperties(IEnumerable<PropertyInfo> properties, string[] importedNamespaces)
+        private void PrintProperties(PropertyInfo[] properties, string[] importedNamespaces)
         {
-            if (!properties.IsNullOrEmpty())
+            if (properties.Any())
             {
                 _console.WriteLine("** Properties **");
                 foreach (var property in properties)

@@ -50,7 +50,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="FileSystemMigrator.cs" />
     <Compile Include="NullScriptLibraryComposer.cs" />
