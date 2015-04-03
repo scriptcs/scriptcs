@@ -47,7 +47,7 @@ namespace ScriptCs.ReplCommands
                 var methods = contextType
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
                     .Where(m => !m.IsSpecialName)
-                    .Union(contextType.GetExtensionMethods())
+                    .Union(contextType.GetExtensionMethods(contextType.Assembly))
                     .ToArray();
 
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);

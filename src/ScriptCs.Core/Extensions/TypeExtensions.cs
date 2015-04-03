@@ -8,11 +8,16 @@ namespace ScriptCs.Extensions
 {
     internal static class TypeExtensions
     {
-        internal static IEnumerable<MethodInfo> GetExtensionMethods(this Type type)
+        public static IEnumerable<MethodInfo> GetExtensionMethods(this Type type, Assembly assembly)
         {
-            return type.Assembly.GetExportedTypes().Where(x => !x.IsGenericType && !x.IsNested && x.IsSealed).
-                SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public)).Where(x => x.IsDefined(typeof(ExtensionAttribute), false)).
-                Where(x => x.GetParameters()[0].ParameterType == type);
+            Guard.AgainstNullArgument("type", type);
+            Guard.AgainstNullArgument("assembly", assembly);
+
+            return assembly.GetExportedTypes()
+                .Where(x => !x.IsGenericType && !x.IsNested && x.IsSealed)
+                .SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public))
+                .Where(x => x.IsDefined(typeof(ExtensionAttribute), false))
+                .Where(x => x.GetParameters()[0].ParameterType == type);
         }
     }
 }
