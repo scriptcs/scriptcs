@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ScriptCs.Contracts;
 using ScriptCs.Extensions;
@@ -70,7 +71,8 @@ namespace ScriptCs.ReplCommands
                 _console.WriteLine("** Methods **");
                 foreach (var method in methods)
                 {
-                    var methodParams = method.GetParametersWithoutExtensions()
+                    var methodParams = method.GetParameters()
+                        .Skip((method.IsDefined(typeof(ExtensionAttribute), false) ? 1 : 0))
                         .Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
                     var methodSignature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
                         string.Join(", ", methodParams));
