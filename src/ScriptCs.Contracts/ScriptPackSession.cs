@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-
 namespace ScriptCs.Contracts
 {
     public class ScriptPackSession : IScriptPackSession

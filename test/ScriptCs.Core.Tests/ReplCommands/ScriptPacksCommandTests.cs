@@ -43,21 +43,27 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ShouldExitIfThereAreNoScriptPacks()
             {
+                // arrange
                 _scriptPackSession.Setup(x => x.Contexts).Returns((IEnumerable<IScriptPackContext>)null);
-
                 var cmd = new ScriptPacksCommand(_console.Object);
+
+                // act
                 cmd.Execute(_repl.Object, null);
 
+                // assert
                 _console.Verify(x => x.WriteLine("There are no script packs available in this REPL session"));
             }
 
             [Fact]
             public void ShouldPrintMethodSignatures()
             {
+                // arrange
                 var cmd = new ScriptPacksCommand(_console.Object);
 
+                // act
                 cmd.Execute(_repl.Object, null);
 
+                // assert
                 _console.Verify(x => x.WriteLine(typeof(DummyScriptPack).FullName.ToString()));
                 _console.Verify(x => x.WriteLine("** Methods **"));
                 _console.Verify(x => x.WriteLine(" - string Foo(int bar)"));
@@ -67,10 +73,13 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ShouldPrintPropertyInformation()
             {
+                // arrange
                 var cmd = new ScriptPacksCommand(_console.Object);
 
+                // act
                 cmd.Execute(_repl.Object, null);
 
+                // assert
                 _console.Verify(x => x.WriteLine(typeof(DummyScriptPack).FullName.ToString()));
                 _console.Verify(x => x.WriteLine("** Properties **"));
                 _console.Verify(x => x.WriteLine(" - double FooBar { get; set; }"));
@@ -80,18 +89,21 @@ namespace ScriptCs.Tests.ReplCommands
             [Fact]
             public void ShouldRespectNamespaces()
             {
+                // arrange
                 _repl.Setup(x => x.Namespaces).Returns(new Collection<string> { "ScriptCs.Tests.ReplCommands" });
                 var cmd = new ScriptPacksCommand(_console.Object);
 
+                // act
                 cmd.Execute(_repl.Object, null);
 
+                // assert
                 _console.Verify(x => x.WriteLine(" - DummyScriptPack Something()"));
                 _console.Verify(x => x.WriteLine(" - DummyScriptPack Xyz { get; }"));
             }
         }
     }
 
-    class DummyScriptPack : IScriptPackContext
+    internal class DummyScriptPack : IScriptPackContext
     {
         public string Foo(int bar)
         {
@@ -115,7 +127,6 @@ namespace ScriptCs.Tests.ReplCommands
     {
         public static void FooExtension(this DummyScriptPack dummyScriptPack)
         {
-
         }
     }
 }

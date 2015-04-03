@@ -50,7 +50,8 @@ namespace ScriptCs.ReplCommands
                     .Union(contextType.GetExtensionMethods(contextType.Assembly))
                     .ToArray();
 
-                var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                var properties = contextType
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                 PrintMethods(methods, importedNamespaces);
                 PrintProperties(properties, importedNamespaces);
@@ -78,12 +79,18 @@ namespace ScriptCs.ReplCommands
                 {
                     var methodParams = method.GetParameters()
                         .Skip((method.IsDefined(typeof(ExtensionAttribute), false) ? 1 : 0))
-                        .Select(p => string.Format("{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
-                    var methodSignature = string.Format(" - {0} {1}({2})", GetPrintableType(method.ReturnType, importedNamespaces), method.Name,
+                        .Select(p => string.Format(
+                            "{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
+
+                    var methodSignature = string.Format(
+                        " - {0} {1}({2})",
+                        GetPrintableType(method.ReturnType, importedNamespaces),
+                        method.Name,
                         string.Join(", ", methodParams));
 
                     _console.WriteLine(methodSignature);
                 }
+
                 _console.WriteLine();
             }
         }
@@ -95,7 +102,9 @@ namespace ScriptCs.ReplCommands
                 _console.WriteLine("** Properties **");
                 foreach (var property in properties)
                 {
-                    var propertyBuilder = new StringBuilder(string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name));
+                    var propertyBuilder = new StringBuilder(
+                        string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name));
+
                     propertyBuilder.Append(" {");
 
                     if (property.GetGetMethod() != null)
@@ -169,7 +178,9 @@ namespace ScriptCs.ReplCommands
                 case TypeCode.UInt64:
                     return "UInt64";
                 default:
-                    return string.IsNullOrEmpty(type.FullName) || importedNamespaces.Contains(type.Namespace) ? type.Name : type.FullName;
+                    return string.IsNullOrEmpty(type.FullName) || importedNamespaces.Contains(type.Namespace)
+                        ? type.Name
+                        : type.FullName;
             }
         }
 
@@ -184,9 +195,11 @@ namespace ScriptCs.ReplCommands
                 {
                     genericDefinition.Append(", ");
                 }
+
                 genericDefinition.Append(GetPrintableType(t, importedNamespaces));
                 firstArgument = false;
             }
+
             genericDefinition.Append(">");
             return genericDefinition.ToString();
         }
