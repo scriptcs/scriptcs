@@ -14,7 +14,7 @@ namespace ScriptCs.Extensions
             Guard.AgainstNullArgument("assembly", assembly);
 
             return assembly.GetExportedTypes()
-                .Where(x => !x.IsGenericType && !x.IsNested && x.IsSealed)
+                .Where(x => !x.IsGenericType && !x.IsNested && x.IsSealed && x.IsAbstract)
                 .SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public))
                 .Where(x => x.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(x => x.GetParameters()[0].ParameterType == type);
