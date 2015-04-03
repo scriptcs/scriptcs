@@ -30,13 +30,10 @@ namespace ScriptCs.ReplCommands
         public object Execute(IRepl repl, object[] args)
         {
             var packContexts = repl.ScriptPackSession.Contexts;
-            var originalColor = _console.ForegroundColor;
-            _console.ForegroundColor = ConsoleColor.Yellow;
 
             if (packContexts.IsNullOrEmpty())
             {
-                _console.WriteLine("There are no script packs available in this REPL session");
-                _console.ForegroundColor = originalColor;
+                PrintInColor("There are no script packs available in this REPL session");
                 return null;
             }
 
@@ -45,9 +42,7 @@ namespace ScriptCs.ReplCommands
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
-                
-                _console.WriteLine(contextType.ToString());
-                _console.ForegroundColor = originalColor;
+                PrintInColor(contextType.ToString());
 
                 var methods = contextType.GetAllMethods();
                 var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
@@ -59,6 +54,14 @@ namespace ScriptCs.ReplCommands
             }
 
             return null;
+        }
+
+        private void PrintInColor(string text)
+        {
+            var originalColor = _console.ForegroundColor;
+            _console.ForegroundColor = ConsoleColor.Yellow;
+            _console.WriteLine(text);
+            _console.ForegroundColor = originalColor;
         }
 
         private void PrintMethods(IEnumerable<MethodInfo> methods, string[] importedNamespaces)
