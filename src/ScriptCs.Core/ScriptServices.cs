@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {

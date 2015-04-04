@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ScriptCs.Contracts.Logging
+﻿namespace ScriptCs.Contracts
 {
+    using System;
+
     public class NullLogProvider : ILogProvider
     {
         private static readonly Logger logger = (_, __, ___, ____) => false;

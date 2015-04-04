@@ -4,7 +4,6 @@ using System.Linq;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 using ScriptCs.Tests;
 using Should;
 using Xunit.Extensions;

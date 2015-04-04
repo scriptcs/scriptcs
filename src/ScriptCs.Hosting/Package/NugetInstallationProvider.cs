@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
 namespace ScriptCs.Hosting.Package

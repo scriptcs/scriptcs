@@ -7,7 +7,6 @@ using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {

@@ -1,4 +1,4 @@
-﻿namespace ScriptCs.Contracts.Logging
+﻿namespace ScriptCs.Contracts
 {
     public enum LogLevel
     {

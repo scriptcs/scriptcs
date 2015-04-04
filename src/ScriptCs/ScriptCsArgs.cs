@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using PowerArgs;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {

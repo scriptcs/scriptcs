@@ -1,7 +1,6 @@
 ﻿using System;
 using ScriptCs.Contracts;
 using System.IO;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs
 {

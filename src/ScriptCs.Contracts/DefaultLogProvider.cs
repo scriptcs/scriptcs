@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ScriptCs.Contracts.Logging
+﻿namespace ScriptCs.Contracts
 {
+    using System;
+
     public class DefaultLogProvider : ILogProvider
     {
         private readonly ILogProvider _provider = ResolveLogProvider() ?? new NullLogProvider();

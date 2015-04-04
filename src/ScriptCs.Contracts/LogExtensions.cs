@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ScriptCs.Contracts.Logging
+﻿namespace ScriptCs.Contracts
 {
+    using System;
+
     public static class LogExtensions
     {
         public static bool IsDebugEnabled(this ILog logger)

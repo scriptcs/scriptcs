@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 

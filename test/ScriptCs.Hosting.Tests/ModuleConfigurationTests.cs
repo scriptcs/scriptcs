@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit;
 

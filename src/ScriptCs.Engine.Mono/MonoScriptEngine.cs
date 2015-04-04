@@ -8,7 +8,6 @@ using Mono.Collections.Generic;
 using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Mono.Segmenter;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Engine.Mono
 {

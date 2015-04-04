@@ -7,7 +7,6 @@ using Autofac;
 using Autofac.Integration.Mef;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {

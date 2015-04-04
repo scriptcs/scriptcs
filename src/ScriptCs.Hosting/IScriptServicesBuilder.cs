@@ -1,5 +1,4 @@
 ﻿using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Hosting
 {

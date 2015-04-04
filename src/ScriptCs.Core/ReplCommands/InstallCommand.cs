@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Runtime.Versioning;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.ReplCommands
 {

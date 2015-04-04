@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using ScriptCs.Contracts;
-using ScriptCs.Contracts.Logging;
 using System.IO;
 
 namespace ScriptCs

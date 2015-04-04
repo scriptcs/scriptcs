@@ -5,7 +5,6 @@ using System.Reflection;
 using Roslyn.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {

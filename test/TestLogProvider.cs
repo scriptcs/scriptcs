@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
-using ScriptCs.Contracts.Logging;
 
 namespace ScriptCs.Tests
 {
+    using ScriptCs.Contracts;
+
     public class TestLogProvider : ILogProvider
     {
         private static readonly Disposable disposable = new Disposable();

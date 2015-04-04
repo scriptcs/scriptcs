@@ -4,7 +4,6 @@ using Moq;
 using NuGet;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Contracts.Logging;
 using ScriptCs.Tests;
 using Should;
 using Xunit;

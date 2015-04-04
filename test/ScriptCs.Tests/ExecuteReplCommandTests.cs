@@ -6,7 +6,6 @@ using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using ScriptCs.Contracts.Logging;
 using Should;
 using Xunit.Extensions;
 

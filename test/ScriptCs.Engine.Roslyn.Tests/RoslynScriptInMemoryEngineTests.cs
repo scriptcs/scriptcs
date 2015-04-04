@@ -6,7 +6,6 @@ using Roslyn.Compilers;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
-using ScriptCs.Contracts.Logging;
 using Xunit;
 
 namespace ScriptCs.Tests

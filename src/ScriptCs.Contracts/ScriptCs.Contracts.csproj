@@ -51,7 +51,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
-    <Compile Include="Logging\DefaultLogProvider.cs" />
+    <Compile Include="DefaultLogProvider.cs" />
     <Compile Include="FileSystemExtensions.cs" />
     <Compile Include="IAppDomainAssemblyResolver.cs" />
     <Compile Include="IDirectiveLineProcessor.cs" />
@@ -98,14 +98,14 @@
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
     <Compile Include="IServiceOverrides.cs" />
-    <Compile Include="Logging\ILog.cs" />
-    <Compile Include="Logging\ILogProvider.cs" />
-    <Compile Include="Logging\LogExtensions.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\LogLevel.cs" />
-    <Compile Include="Logging\LogProviderExtensions.cs" />
+    <Compile Include="ILog.cs" />
+    <Compile Include="ILogProvider.cs" />
+    <Compile Include="LogExtensions.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="LogLevel.cs" />
+    <Compile Include="LogProviderExtensions.cs" />
     <Compile Include="ModuleAttribute.cs" />
-    <Compile Include="Logging\NullLogProvider.cs" />
+    <Compile Include="NullLogProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptPack.cs" />
     <Compile Include="ScriptPackSession.cs" />
