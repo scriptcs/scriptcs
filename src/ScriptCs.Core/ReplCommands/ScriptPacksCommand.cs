@@ -80,11 +80,11 @@ namespace ScriptCs.ReplCommands
                     var methodParams = method.GetParameters()
                         .Skip((method.IsDefined(typeof(ExtensionAttribute), false) ? 1 : 0))
                         .Select(p => string.Format(
-                            "{0} {1}", GetPrintableType(p.ParameterType, importedNamespaces), p.Name));
+                            "{0} {1}", GetDisplayName(p.ParameterType, importedNamespaces), p.Name));
 
                     var methodSignature = string.Format(
                         " - {0} {1}({2})",
-                        GetPrintableType(method.ReturnType, importedNamespaces),
+                        GetDisplayName(method.ReturnType, importedNamespaces),
                         method.Name,
                         string.Join(", ", methodParams));
 
@@ -103,7 +103,7 @@ namespace ScriptCs.ReplCommands
                 foreach (var property in properties)
                 {
                     var propertyBuilder = new StringBuilder(
-                        string.Format(" - {0} {1}", GetPrintableType(property.PropertyType, importedNamespaces), property.Name));
+                        string.Format(" - {0} {1}", GetDisplayName(property.PropertyType, importedNamespaces), property.Name));
 
                     propertyBuilder.Append(" {");
 
@@ -124,7 +124,7 @@ namespace ScriptCs.ReplCommands
             }
         }
 
-        private string GetPrintableType(Type type, string[] importedNamespaces)
+        private static string GetDisplayName(Type type, string[] importedNamespaces)
         {
             switch (type.Name)
             {
@@ -136,13 +136,21 @@ namespace ScriptCs.ReplCommands
 
             if (type.IsGenericType)
             {
-                return BuildGeneric(type, importedNamespaces);
+                var genericArguments = type.GenericTypeArguments
+                    .Select(typeArgument => GetDisplayName(typeArgument, importedNamespaces))
+                    .ToArray();
+
+                return string.Concat(
+                    type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal)),
+                    "<",
+                    string.Join(", ", genericArguments),
+                    ">");
             }
 
             var nullableType = Nullable.GetUnderlyingType(type);
             if (nullableType != null)
             {
-                return string.Format("{0}?", GetPrintableType(nullableType, importedNamespaces));
+                return string.Concat(GetDisplayName(nullableType, importedNamespaces), "?");
             }
 
             switch (Type.GetTypeCode(type))
@@ -180,26 +188,6 @@ namespace ScriptCs.ReplCommands
                         ? type.Name
                         : type.FullName;
             }
-        }
-
-        private string BuildGeneric(Type type, string[] importedNamespaces)
-        {
-            var baseName = type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal));
-            var genericDefinition = new StringBuilder(string.Format("{0}<", baseName));
-            var firstArgument = true;
-            foreach (var typeArgument in type.GetGenericArguments())
-            {
-                if (!firstArgument)
-                {
-                    genericDefinition.Append(", ");
-                }
-
-                genericDefinition.Append(GetPrintableType(typeArgument, importedNamespaces));
-                firstArgument = false;
-            }
-
-            genericDefinition.Append(">");
-            return genericDefinition.ToString();
         }
     }
 }
