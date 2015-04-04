@@ -7,6 +7,7 @@ namespace ScriptCs.Contracts.Logging
         private static readonly Logger logger = (_, __, ___, ____) => false;
         private static readonly Disposable disposable = new Disposable();
 
+        [Obsolete("Should not be called directly. Instead, call a method on LogProviderExtensions.")]
         public Logger GetLogger(string name)
         {
             return logger;

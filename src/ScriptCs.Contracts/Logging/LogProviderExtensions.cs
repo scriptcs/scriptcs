@@ -26,5 +26,42 @@
         {
             return new LoggerExecutionWrapper(provider.GetLogger(name));
         }
+
+        private class LoggerExecutionWrapper : ILog
+        {
+            private const string FailedToGenerateLogMessage = "Failed to generate log message";
+
+            private readonly Logger _logger;
+
+            internal LoggerExecutionWrapper(Logger logger)
+            {
+                _logger = logger;
+            }
+
+            public bool Log(
+                LogLevel logLevel, Func<string> createMessage, Exception exception = null, params object[] formatArgs)
+            {
+                if (createMessage == null)
+                {
+                    return _logger(logLevel, null);
+                }
+
+                Func<string> wrappedMessageFunc = () =>
+                {
+                    try
+                    {
+                        return createMessage();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log(LogLevel.Error, () => FailedToGenerateLogMessage, ex);
+                    }
+                    
+                    return null;
+                };
+
+                return _logger(logLevel, wrappedMessageFunc, exception, formatArgs);
+            }
+        }
     }
 }
