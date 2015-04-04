@@ -50,8 +50,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="FileSystemMigrator.cs" />
     <Compile Include="NullScriptLibraryComposer.cs" />
+    <Compile Include="ReplCommands\ScriptPacksCommand.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="ScriptLibraryComposer.cs" />
     <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />
