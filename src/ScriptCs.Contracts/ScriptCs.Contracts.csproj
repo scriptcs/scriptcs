@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;LIBLOG_PUBLIC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;LIBLOG_PUBLIC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Packages\LibLog.4.0\LibLog.cs" />
+    <Compile Include="App_Packages\LibLog.4.1\LibLog.cs" />
     <Compile Include="AssemblyReferences.cs" />
     <Compile Include="BehaviorAfterCode.cs" />
     <Compile Include="..\ScriptCs.Core\Guard.cs">

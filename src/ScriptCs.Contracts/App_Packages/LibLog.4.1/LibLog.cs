@@ -32,17 +32,40 @@
 // this can have unintendend consequences of consumers of your library using your library to resolve a logger. If the
 // reason is because you want to open this functionality to other projects within your solution,
 // consider [InternalVisibleTo] instead.
+// 
+// Define LIBLOG_PROVIDERS_ONLY if your library provides its own logging API and you just want to use the
+// LibLog providers internally to provide built in support for popular logging frameworks.
 
 #pragma warning disable 1591
 
+// If you copied this file manually, you need to change all "YourRootNameSpace" so not to clash with other libraries
+// that use LibLog
+#if LIBLOG_PROVIDERS_ONLY
+namespace ScriptCs.Contracts.LibLog
+#else
 namespace ScriptCs.Contracts.Logging
+#endif
 {
     using System.Collections.Generic;
+#if LIBLOG_PROVIDERS_ONLY
+    using ScriptCs.Contracts.LibLog.LogProviders;
+#else
     using ScriptCs.Contracts.Logging.LogProviders;
+#endif
     using System;
+#if !LIBLOG_PROVIDERS_ONLY
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
+#endif
 
-    public delegate bool Logger(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
+#if LIBLOG_PROVIDERS_ONLY
+    internal
+#else
+    public
+#endif
+    delegate bool Logger(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
 
+#if !LIBLOG_PROVIDERS_ONLY
     /// <summary>
     /// Simple interface that represent a logger.
     /// </summary>
@@ -64,11 +87,17 @@ namespace ScriptCs.Contracts.Logging
         /// </remarks>
         bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters );
     }
+#endif
 
     /// <summary>
     /// The log level.
     /// </summary>
-    public enum LogLevel
+#if LIBLOG_PROVIDERS_ONLY
+    internal
+#else
+    public
+#endif
+    enum LogLevel
     {
         Trace,
         Debug,
@@ -78,7 +107,13 @@ namespace ScriptCs.Contracts.Logging
         Fatal
     }
 
-    public static class LogExtensions
+#if !LIBLOG_PROVIDERS_ONLY
+#if LIBLOG_PUBLIC
+    public
+#else
+    internal
+#endif
+    static class LogExtensions
     {
         public static bool IsDebugEnabled(this ILog logger)
         {
@@ -327,11 +362,17 @@ namespace ScriptCs.Contracts.Logging
             return value;
         }
     }
+#endif
 
     /// <summary>
     /// Represents a way to get a <see cref="ILog"/>
     /// </summary>
-    public interface ILogProvider
+#if LIBLOG_PROVIDERS_ONLY
+    internal
+#else
+    public
+#endif
+    interface ILogProvider
     {
         /// <summary>
         /// Gets the specified named logger.
@@ -359,13 +400,197 @@ namespace ScriptCs.Contracts.Logging
     /// <summary>
     /// Provides a mechanism to create instances of <see cref="ILog" /> objects.
     /// </summary>
-    internal static class LogProvider
+#if LIBLOG_PROVIDERS_ONLY
+    internal
+#else
+    public
+#endif
+    static class LogProvider
     {
-        private delegate bool IsLoggerAvailable();
+#if !LIBLOG_PROVIDERS_ONLY
+        /// <summary>
+        /// The disable logging environment variable. If the environment variable is set to 'true', then logging
+        /// will be disabled.
+        /// </summary>
+        public const string DisableLoggingEnvironmentVariable = "ScriptCs.Contracts_LIBLOG_DISABLE";
+        private const string NullLogProvider = "Current Log Provider is not set. Call SetCurrentLogProvider " +
+                                               "with a non-null value first.";
+        private static dynamic _currentLogProvider;
+        private static Action<ILogProvider> _onCurrentLogProviderSet;
 
-        private delegate ILogProvider CreateLogProvider();
+        static LogProvider()
+        {
+            IsDisabled = false;
+        }
 
-        private static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
+        /// <summary>
+        /// Sets the current log provider.
+        /// </summary>
+        /// <param name="logProvider">The log provider.</param>
+        public static void SetCurrentLogProvider(ILogProvider logProvider)
+        {
+            _currentLogProvider = logProvider;
+
+            RaiseOnCurrentLogProviderSet();
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this is logging is disabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if logging is disabled; otherwise, <c>false</c>.
+        /// </value>
+        public static bool IsDisabled { get; set; }
+
+        /// <summary>
+        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
+        /// important that hook into this if you are using child libraries (especially ilmerged ones) that are using
+        /// LibLog (or other logging abstraction) so you adapt and delegate to them.
+        /// <see cref="SetCurrentLogProvider"/> 
+        /// </summary>
+        internal static Action<ILogProvider> OnCurrentLogProviderSet
+        {
+            set
+            {
+                _onCurrentLogProviderSet = value;
+                RaiseOnCurrentLogProviderSet();
+            }
+        }
+
+        internal static ILogProvider CurrentLogProvider
+        {
+            get
+            {
+                return _currentLogProvider;
+            }
+        }
+
+        /// <summary>
+        /// Gets a logger for the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type whose name will be used for the logger.</typeparam>
+        /// <returns>An instance of <see cref="ILog"/></returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog For<T>()
+        {
+            return GetLogger(typeof(T));
+        }
+
+#if !LIBLOG_PORTABLE
+        /// <summary>
+        /// Gets a logger for the current class.
+        /// </summary>
+        /// <returns>An instance of <see cref="ILog"/></returns>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetCurrentClassLogger()
+        {
+            var stackFrame = new StackFrame(1, false);
+            return GetLogger(stackFrame.GetMethod().DeclaringType);
+        }
+#endif
+
+        /// <summary>
+        /// Gets a logger for the specified type.
+        /// </summary>
+        /// <param name="type">The type whose name will be used for the logger.</param>
+        /// <returns>An instance of <see cref="ILog"/></returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetLogger(Type type)
+        {
+            return GetLogger(type.FullName);
+        }
+
+        /// <summary>
+        /// Gets a logger with the specified name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>An instance of <see cref="ILog"/></returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static ILog GetLogger(string name)
+        {
+            ILogProvider logProvider = CurrentLogProvider ?? ResolveLogProvider();
+            return logProvider == null 
+                ? NoOpLogger.Instance
+                : (ILog)new LoggerExecutionWrapper(logProvider.GetLogger(name), () => IsDisabled);
+        }
+
+        /// <summary>
+        /// Opens a nested diagnostics context.
+        /// </summary>
+        /// <param name="message">A message.</param>
+        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static IDisposable OpenNestedConext(string message)
+        {
+            if(CurrentLogProvider == null)
+            {
+                throw new InvalidOperationException(NullLogProvider);
+            }
+            return CurrentLogProvider.OpenNestedContext(message);
+        }
+
+        /// <summary>
+        /// Opens a mapped diagnostics context.
+        /// </summary>
+        /// <param name="key">A key.</param>
+        /// <param name="value">A value.</param>
+        /// <returns>An <see cref="IDisposable"/> that closes context when disposed.</returns>
+#if LIBLOG_PUBLIC
+        public
+#else
+        internal
+#endif
+        static IDisposable OpenMappedContext(string key, string value)
+        {
+            if (CurrentLogProvider == null)
+            {
+                throw new InvalidOperationException(NullLogProvider);
+            }
+            return CurrentLogProvider.OpenMappedContext(key, value);
+        }
+#endif
+
+#if LIBLOG_PROVIDERS_ONLY
+    private
+#else
+    internal
+#endif
+    delegate bool IsLoggerAvailable();
+
+#if LIBLOG_PROVIDERS_ONLY
+    private
+#else
+    internal
+#endif
+    delegate ILogProvider CreateLogProvider();
+
+#if LIBLOG_PROVIDERS_ONLY
+    private
+#else
+    internal
+#endif
+    static readonly List<Tuple<IsLoggerAvailable, CreateLogProvider>> LogProviderResolvers =
             new List<Tuple<IsLoggerAvailable, CreateLogProvider>>
         {
             new Tuple<IsLoggerAvailable, CreateLogProvider>(SerilogLogProvider.IsLoggerAvailable, () => new SerilogLogProvider()),
@@ -375,6 +600,16 @@ namespace ScriptCs.Contracts.Logging
             new Tuple<IsLoggerAvailable, CreateLogProvider>(LoupeLogProvider.IsLoggerAvailable, () => new LoupeLogProvider()),
             new Tuple<IsLoggerAvailable, CreateLogProvider>(ColouredConsoleLogProvider.IsLoggerAvailable, () => new ColouredConsoleLogProvider()),
         };
+
+#if !LIBLOG_PROVIDERS_ONLY
+        private static void RaiseOnCurrentLogProviderSet()
+        {
+            if (_onCurrentLogProviderSet != null)
+            {
+                _onCurrentLogProviderSet(_currentLogProvider);
+            }
+        }
+#endif
 
         internal static ILogProvider ResolveLogProvider()
         {
@@ -401,16 +636,31 @@ namespace ScriptCs.Contracts.Logging
             }
             return null;
         }
+
+#if !LIBLOG_PROVIDERS_ONLY
+        internal class NoOpLogger : ILog
+        {
+            internal static readonly NoOpLogger Instance = new NoOpLogger();
+
+            public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
+            {
+                return false;
+            }
+        }
+#endif
     }
 
+#if !LIBLOG_PROVIDERS_ONLY
     internal class LoggerExecutionWrapper : ILog
     {
         private readonly Logger _logger;
+        private readonly Func<bool> _getIsDisabled;
         internal const string FailedToGenerateLogMessage = "Failed to generate log message";
 
-        internal LoggerExecutionWrapper(Logger logger)
+        internal LoggerExecutionWrapper(Logger logger, Func<bool> getIsDisabled = null)
         {
             _logger = logger;
+            _getIsDisabled = getIsDisabled ?? (() => false);
         }
 
         internal Logger WrappedLogger
@@ -420,6 +670,20 @@ namespace ScriptCs.Contracts.Logging
 
         public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters)
         {
+#if LIBLOG_PORTABLE
+            if (_getIsDisabled())
+            {
+                return false;
+            }
+#else
+            var envVar = Environment.GetEnvironmentVariable(LogProvider.DisableLoggingEnvironmentVariable);
+
+            if (_getIsDisabled() || (envVar != null && envVar.Equals("true", StringComparison.OrdinalIgnoreCase)))
+            {
+                return false;
+            }
+#endif
+
             if (messageFunc == null)
             {
                 return _logger(logLevel, null);
@@ -440,9 +704,14 @@ namespace ScriptCs.Contracts.Logging
             return _logger(logLevel, wrappedMessageFunc, exception, formatParameters);
         }
     }
+#endif
 }
 
+#if LIBLOG_PROVIDERS_ONLY
+namespace ScriptCs.Contracts.LibLog.LogProviders
+#else
 namespace ScriptCs.Contracts.Logging.LogProviders
+#endif
 {
     using System;
     using System.Collections.Generic;
@@ -1660,7 +1929,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
                 setForegroundExpression, colorParameter).Compile();
         }
 
-        public class ColouredConsoleLogger : ILog
+        public class ColouredConsoleLogger
         {
             private readonly string _name;
             private readonly Action<string> _write;
