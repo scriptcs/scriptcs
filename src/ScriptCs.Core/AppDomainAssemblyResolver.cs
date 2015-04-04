@@ -23,6 +23,11 @@ namespace ScriptCs
             IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
             Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
         {
+            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("resolver", resolver);
+            Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
+
             _assemblyInfoMap = assemblyInfoMap ?? new Dictionary<string, AssemblyInfo>();
             _assemblyUtility = assemblyUtility;
             _logger = logger;
