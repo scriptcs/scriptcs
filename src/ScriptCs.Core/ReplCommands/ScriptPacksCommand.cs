@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -39,6 +40,7 @@ namespace ScriptCs.ReplCommands
 
             var importedNamespaces = repl.Namespaces.Union(repl.ScriptPackSession.Namespaces).ToArray();
 
+            var lastPackContext = packContexts.Last();
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
@@ -50,13 +52,22 @@ namespace ScriptCs.ReplCommands
                     .Union(contextType.GetExtensionMethods(contextType.Assembly))
                     .ToArray();
 
+                _console.Write(GetLines(methods, importedNamespaces));
+
                 var properties = contextType
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
-                PrintMethods(methods, importedNamespaces);
-                PrintProperties(properties, importedNamespaces);
+                var propertyText = GetLines(properties, importedNamespaces);
+                if (propertyText != null)
+                {
+                    _console.WriteLine();
+                    _console.Write(propertyText);
+                }
 
-                _console.WriteLine();
+                if (packContext != lastPackContext)
+                {
+                    _console.WriteLine();
+                }
             }
 
             return null;
@@ -70,58 +81,67 @@ namespace ScriptCs.ReplCommands
             _console.ForegroundColor = originalColor;
         }
 
-        private void PrintMethods(MethodInfo[] methods, string[] importedNamespaces)
+        private static string GetLines(MethodInfo[] methods, string[] importedNamespaces)
         {
-            if (methods.Any())
+            if (!methods.Any())
             {
-                _console.WriteLine("** Methods **");
-                foreach (var method in methods)
-                {
-                    var methodParams = method.GetParameters()
-                        .Skip((method.IsDefined(typeof(ExtensionAttribute), false) ? 1 : 0))
-                        .Select(p => string.Format(
-                            "{0} {1}", GetDisplayName(p.ParameterType, importedNamespaces), p.Name));
-
-                    var methodSignature = string.Format(
-                        " - {0} {1}({2})",
-                        GetDisplayName(method.ReturnType, importedNamespaces),
-                        method.Name,
-                        string.Join(", ", methodParams));
-
-                    _console.WriteLine(methodSignature);
-                }
-
-                _console.WriteLine();
+                return null;
             }
+
+            var methodBuilder = new StringBuilder();
+            methodBuilder.AppendLine("** Methods **");
+            foreach (var method in methods)
+            {
+                var methodParams = method.GetParameters()
+                    .Skip((method.IsDefined(typeof(ExtensionAttribute), false) ? 1 : 0))
+                    .Select(p => string.Format(
+                        "{0} {1}", GetDisplayName(p.ParameterType, importedNamespaces), p.Name));
+
+                var methodSignature = string.Format(
+                    " - {0} {1}({2})",
+                    GetDisplayName(method.ReturnType, importedNamespaces),
+                    method.Name,
+                    string.Join(", ", methodParams));
+
+                methodBuilder.AppendLine(methodSignature);
+            }
+
+            return methodBuilder.ToString();
         }
 
-        private void PrintProperties(PropertyInfo[] properties, string[] importedNamespaces)
+        private static string GetLines(PropertyInfo[] properties, string[] importedNamespaces)
         {
-            if (properties.Any())
+            if (!properties.Any())
             {
-                _console.WriteLine("** Properties **");
-                foreach (var property in properties)
-                {
-                    var propertyBuilder = new StringBuilder(
-                        string.Format(" - {0} {1}", GetDisplayName(property.PropertyType, importedNamespaces), property.Name));
-
-                    propertyBuilder.Append(" {");
-
-                    if (property.GetGetMethod() != null)
-                    {
-                        propertyBuilder.Append(" get;");
-                    }
-
-                    if (property.GetSetMethod() != null)
-                    {
-                        propertyBuilder.Append(" set;");
-                    }
-
-                    propertyBuilder.Append(" }");
-
-                    _console.WriteLine(propertyBuilder.ToString());
-                }
+                return null;
             }
+
+            var propertyBuilder = new StringBuilder();
+            propertyBuilder.AppendLine("** Properties **");
+            foreach (var property in properties)
+            {
+                propertyBuilder.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    " - {0} {1}",
+                    GetDisplayName(property.PropertyType, importedNamespaces),
+                    property.Name);
+
+                propertyBuilder.Append(" {");
+
+                if (property.GetGetMethod() != null)
+                {
+                    propertyBuilder.Append(" get;");
+                }
+
+                if (property.GetSetMethod() != null)
+                {
+                    propertyBuilder.Append(" set;");
+                }
+
+                propertyBuilder.AppendLine(" }");
+            }
+
+            return propertyBuilder.ToString();
         }
 
         private static string GetDisplayName(Type type, string[] importedNamespaces)

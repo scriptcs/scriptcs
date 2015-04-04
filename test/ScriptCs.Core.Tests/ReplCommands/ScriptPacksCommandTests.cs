@@ -65,9 +65,11 @@ namespace ScriptCs.Tests.ReplCommands
 
                 // assert
                 _console.Verify(x => x.WriteLine(typeof(DummyScriptPack).FullName.ToString()));
-                _console.Verify(x => x.WriteLine("** Methods **"));
-                _console.Verify(x => x.WriteLine(" - string Foo(int bar)"));
-                _console.Verify(x => x.WriteLine(" - ScriptCs.Tests.ReplCommands.DummyScriptPack Something()"));
+                _console.Verify(x => x.Write(
+@"** Methods **
+ - string Foo(int bar)
+ - ScriptCs.Tests.ReplCommands.DummyScriptPack Something()
+"));
             }
 
             [Fact]
@@ -81,9 +83,11 @@ namespace ScriptCs.Tests.ReplCommands
 
                 // assert
                 _console.Verify(x => x.WriteLine(typeof(DummyScriptPack).FullName.ToString()));
-                _console.Verify(x => x.WriteLine("** Properties **"));
-                _console.Verify(x => x.WriteLine(" - double FooBar { get; set; }"));
-                _console.Verify(x => x.WriteLine(" - ScriptCs.Tests.ReplCommands.DummyScriptPack Xyz { get; }"));
+                _console.Verify(x => x.Write(
+@"** Properties **
+ - double FooBar { get; set; }
+ - ScriptCs.Tests.ReplCommands.DummyScriptPack Xyz { get; }
+"));
             }
 
             [Fact]
@@ -97,8 +101,17 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(_repl.Object, null);
 
                 // assert
-                _console.Verify(x => x.WriteLine(" - DummyScriptPack Something()"));
-                _console.Verify(x => x.WriteLine(" - DummyScriptPack Xyz { get; }"));
+                _console.Verify(x => x.Write(
+@"** Methods **
+ - string Foo(int bar)
+ - DummyScriptPack Something()
+"));
+                
+                _console.Verify(x => x.Write(
+@"** Properties **
+ - double FooBar { get; set; }
+ - DummyScriptPack Xyz { get; }
+"));
             }
         }
     }
