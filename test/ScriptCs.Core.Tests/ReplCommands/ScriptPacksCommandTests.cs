@@ -25,9 +25,9 @@ namespace ScriptCs.Tests.ReplCommands
 
         public class ExecuteMethod
         {
-            private Mock<IConsole> _console;
-            private Mock<IRepl> _repl;
-            private Mock<ScriptPackSession> _scriptPackSession;
+            private readonly Mock<IConsole> _console;
+            private readonly Mock<IRepl> _repl;
+            private readonly Mock<ScriptPackSession> _scriptPackSession;
 
             public ExecuteMethod()
             {

@@ -33,7 +33,7 @@ namespace ScriptCs.ReplCommands
 
             if (!packContexts.Any())
             {
-                PrintInColor("There are no script packs available in this REPL session");
+                PrintInYellow("There are no script packs available in this REPL session");
                 return null;
             }
 
@@ -42,7 +42,7 @@ namespace ScriptCs.ReplCommands
             foreach (var packContext in packContexts)
             {
                 var contextType = packContext.GetType();
-                PrintInColor(contextType.ToString());
+                PrintInYellow(contextType.ToString());
 
                 var methods = contextType
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
@@ -62,7 +62,7 @@ namespace ScriptCs.ReplCommands
             return null;
         }
 
-        private void PrintInColor(string text)
+        private void PrintInYellow(string text)
         {
             var originalColor = _console.ForegroundColor;
             _console.ForegroundColor = ConsoleColor.Yellow;
@@ -126,14 +126,12 @@ namespace ScriptCs.ReplCommands
 
         private string GetPrintableType(Type type, string[] importedNamespaces)
         {
-            if (type.Name == "Void")
+            switch (type.Name)
             {
-                return "void";
-            }
-
-            if (type.Name == "Object")
-            {
-                return "object";
+                case "Void":
+                    return "void";
+                case "Object":
+                    return "object";
             }
 
             if (type.IsGenericType)
@@ -189,14 +187,14 @@ namespace ScriptCs.ReplCommands
             var baseName = type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal));
             var genericDefinition = new StringBuilder(string.Format("{0}<", baseName));
             var firstArgument = true;
-            foreach (var t in type.GetGenericArguments())
+            foreach (var typeArgument in type.GetGenericArguments())
             {
                 if (!firstArgument)
                 {
                     genericDefinition.Append(", ");
                 }
 
-                genericDefinition.Append(GetPrintableType(t, importedNamespaces));
+                genericDefinition.Append(GetPrintableType(typeArgument, importedNamespaces));
                 firstArgument = false;
             }
 
