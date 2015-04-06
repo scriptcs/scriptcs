@@ -9,6 +9,8 @@ namespace ScriptCs.ReplCommands
 
         public HelpCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+
             _console = console;
         }
 
