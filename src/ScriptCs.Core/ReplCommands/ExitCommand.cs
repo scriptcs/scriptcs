@@ -18,6 +18,8 @@ namespace ScriptCs.ReplCommands
 
         public ExitCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+
             _console = console;
         }
 

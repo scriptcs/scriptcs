@@ -12,6 +12,8 @@ namespace ScriptCs.ReplCommands
 
         public AliasCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+            
             _console = console;
         }
 

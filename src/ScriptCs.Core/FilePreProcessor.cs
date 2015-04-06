@@ -17,6 +17,9 @@ namespace ScriptCs
 
         public FilePreProcessor(IFileSystem fileSystem, ILog logger, IEnumerable<ILineProcessor> lineProcessors)
         {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("logger", logger);
+
             _fileSystem = fileSystem;
             _logger = logger;
             _lineProcessors = lineProcessors;
