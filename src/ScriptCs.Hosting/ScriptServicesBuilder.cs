@@ -133,15 +133,15 @@ namespace ScriptCs.Hosting
             return this;
         }
 
-        public IScriptServicesBuilder SetOverride<TKey, TValue>(TValue value) where TValue : TKey
+        public IScriptServicesBuilder SetOverride<TContract, TImpl>(TImpl value) where TImpl : TContract
         {
-            Overrides[typeof(TKey)] = value;
+            Overrides[typeof(TContract)] = value;
             return this;
         }
 
-        public IScriptServicesBuilder SetOverride<TKey, TValue>() where TValue : TKey
+        public IScriptServicesBuilder SetOverride<TContract, TImpl>() where TImpl : TContract
         {
-            Overrides[typeof(TKey)] = typeof(TValue);
+            Overrides[typeof(TContract)] = typeof(TImpl);
             return this;
         }
 
