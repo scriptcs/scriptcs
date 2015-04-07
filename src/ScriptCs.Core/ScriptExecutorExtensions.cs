@@ -21,6 +21,8 @@ namespace ScriptCs
 
         public static void ImportNamespace<T>(this IScriptExecutor executor)
         {
+            Guard.AgainstNullArgument("executor", executor);
+
             executor.ImportNamespaces(typeof(T));
         }
 
@@ -36,11 +38,15 @@ namespace ScriptCs
 
         public static void AddReference<T>(this IScriptExecutor executor)
         {
+            Guard.AgainstNullArgument("executor", executor);
+
             executor.AddReferences(typeof(T));
         }
 
         public static void AddReferenceAndImportNamespaces(this IScriptExecutor executor, Type[] types)
         {
+            Guard.AgainstNullArgument("executor", executor);
+
             executor.AddReferences(types);
             executor.ImportNamespaces(types);
         }
