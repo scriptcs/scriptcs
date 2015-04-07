@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using ScriptCs.Contracts;
 using ScriptCs.Logging;
 using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
 {
+
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly ITypeResolver _typeResolver;
@@ -128,6 +130,12 @@ namespace ScriptCs.Hosting
         public IScriptServicesBuilder Debug(bool debug = true)
         {
             _debug = debug;
+            return this;
+        }
+
+        public IScriptServicesBuilder SetOverrides(Action<IDictionary<Type, object>> applyOverrides)
+        {
+            applyOverrides(Overrides);
             return this;
         }
 
