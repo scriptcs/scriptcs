@@ -85,14 +85,14 @@ namespace ScriptCs.Hosting
                 ? "mono"
                 : "roslyn";
 
-            moduleNames = moduleNames.Union(new[] {engineModule}).ToArray();
+            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
 
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
 
-            var folders = new[] {fs.GlobalFolder};
+            var folders = new[] { fs.GlobalFolder };
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
             return this;
         }
@@ -133,9 +133,15 @@ namespace ScriptCs.Hosting
             return this;
         }
 
-        public IScriptServicesBuilder SetOverrides(Action<IDictionary<Type, object>> applyOverrides)
+        public IScriptServicesBuilder SetOverride<TKey, TValue>(TValue value) where TValue : TKey
         {
-            applyOverrides(Overrides);
+            Overrides[typeof(TKey)] = value;
+            return this;
+        }
+
+        public IScriptServicesBuilder SetOverride<TKey, TValue>() where TValue : TKey
+        {
+            Overrides[typeof(TKey)] = typeof(TValue);
             return this;
         }
 
