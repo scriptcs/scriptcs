@@ -26,6 +26,9 @@ namespace ScriptCs
             IEnumerable<IReplCommand> replCommands)
             : base(fileSystem, filePreProcessor, scriptEngine, logger, composer)
         {
+            Guard.AgainstNullArgument("console", console);
+            Guard.AgainstNullArgument("serializer", serializer);
+            
             _scriptArgs = scriptArgs;
             _serializer = serializer;
             Console = console;
