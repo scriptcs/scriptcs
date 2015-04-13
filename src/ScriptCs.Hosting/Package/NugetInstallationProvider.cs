@@ -55,6 +55,9 @@ namespace ScriptCs.Hosting.Package
             }
 
             var sourceProvider = new PackageSourceProvider(settings);
+
+            HttpClient.DefaultCredentialProvider = new SettingsCredentialProvider(NullCredentialProvider.Instance, sourceProvider);
+
             var sources = sourceProvider.LoadPackageSources().Where(i => i.IsEnabled == true);
 
             if (sources == null || !sources.Any())
