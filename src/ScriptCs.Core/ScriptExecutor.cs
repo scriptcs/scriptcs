@@ -183,7 +183,7 @@ namespace ScriptCs
             FilePreProcessorResult result
         )
         {
-            InjectScriptLibraries(FileSystem.CurrentDirectory, result, ScriptPackSession.State);
+            InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
             var references = References.Union(result.References);
             Logger.Debug("Starting execution in engine");

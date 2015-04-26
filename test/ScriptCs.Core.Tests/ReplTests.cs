@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Moq;
+using Moq.Protected;
+using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Logging;
 using Should;
 using Xunit;
+using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
@@ -188,8 +191,8 @@ namespace ScriptCs.Tests
                     x => x.Execute(
                         "foo",
                         new string[0],
-                        _repl.References,
-                        Repl.DefaultNamespaces,
+                        It.Is<AssemblyReferences>(i => i.Assemblies.SequenceEqual(_repl.References.Assemblies)),
+                        It.Is<IEnumerable<string>>(i => i.SequenceEqual(_repl.Namespaces)),
                         It.IsAny<ScriptPackSession>()));
             }
 
@@ -205,10 +208,77 @@ namespace ScriptCs.Tests
                     It.IsAny<string>(),
                     It.IsAny<string[]>(),
                     It.IsAny<AssemblyReferences>(),
-                    It.Is<IEnumerable<string>>(i => Equals(i, _repl.Namespaces)),
+                    It.Is<IEnumerable<string>>(i => i.SequenceEqual(_repl.Namespaces)),
                     It.IsAny<ScriptPackSession>()));
 
                 _repl.Namespaces.Count().ShouldEqual(ScriptExecutor.DefaultNamespaces.Count() + 2);
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddNamespacesFromScriptLibrary(
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                Mock<Repl> repl
+                )
+            {
+                repl.Protected();
+                repl.Setup(r => r.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()))
+                    .Callback((string p, FilePreProcessorResult r, IDictionary<string, object> s) =>
+                    {
+                        r.Namespaces.Add("Foo.Bar");
+                    });
+
+                scriptEngine.Setup(e => e.Execute(
+                    It.IsAny<string>(),
+                    It.IsAny<string[]>(),
+                    It.IsAny<AssemblyReferences>(),
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<ScriptPackSession>()));
+
+                repl.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                repl.Object.Execute("", new string[]{});
+
+                scriptEngine.Verify(
+                    e => e.Execute(
+                        It.IsAny<string>(),
+                        It.IsAny<string[]>(),
+                        It.IsAny<AssemblyReferences>(),
+                        It.Is<IEnumerable<string>>(x => x.Contains("Foo.Bar")),
+                        It.IsAny<ScriptPackSession>()),
+                    Times.Once());
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldAddReferencesFromScriptLibrary(
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                Mock<Repl> repl
+                )
+            {
+                repl.Protected();
+                repl.Setup(r => r.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()))
+                    .Callback((string p, FilePreProcessorResult r, IDictionary<string, object> s) =>
+                    {
+                        r.References.Add("Foo.Bar");
+                    });
+
+                scriptEngine.Setup(e => e.Execute(
+                    It.IsAny<string>(),
+                    It.IsAny<string[]>(),
+                    It.IsAny<AssemblyReferences>(),
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<ScriptPackSession>()));
+
+
+                repl.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+                repl.Object.Execute("", new string[] { });
+
+                scriptEngine.Verify(
+                    e => e.Execute(
+                        It.IsAny<string>(),
+                        It.IsAny<string[]>(),
+                        It.Is<AssemblyReferences>(x => x.Paths.Contains("Foo.Bar")),
+                        It.IsAny<IEnumerable<string>>(),
+                        It.IsAny<ScriptPackSession>()),
+                    Times.Once());
             }
 
             [Fact]
