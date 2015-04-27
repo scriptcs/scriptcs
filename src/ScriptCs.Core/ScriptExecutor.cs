@@ -167,26 +167,27 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-            References = References.Union(result.References);
-            var namespaces = Namespaces.Union(result.Namespaces);
             ScriptEngine.FileName = Path.GetFileName(path);
-
-            Logger.Debug("Starting execution in engine");
-
-            InjectScriptLibraries(Path.GetDirectoryName(path), result, ScriptPackSession.State);
-            return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
+            return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
 
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessScript(script);
-            References = References.Union(result.References);
+            return EngineExecute(FileSystem.CurrentDirectory, scriptArgs, result);
+        }
+
+        protected internal virtual ScriptResult EngineExecute(
+            string workingDirectory, 
+            string[] scriptArgs, 
+            FilePreProcessorResult result
+        )
+        {
+            InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
-
+            var references = References.Union(result.References);
             Logger.Debug("Starting execution in engine");
-
-            InjectScriptLibraries(FileSystem.CurrentDirectory, result, ScriptPackSession.State);
-            return ScriptEngine.Execute(result.Code, scriptArgs, References, namespaces, ScriptPackSession);
+            return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }
 
         protected internal virtual void InjectScriptLibraries(

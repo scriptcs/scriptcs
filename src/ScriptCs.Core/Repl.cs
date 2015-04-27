@@ -114,7 +114,10 @@ namespace ScriptCs
                     ? preProcessResult.Code
                     : Buffer + Environment.NewLine + preProcessResult.Code;
 
-                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
+                var namespaces = Namespaces.Union(preProcessResult.Namespaces);
+                var references = References.Union(preProcessResult.References);
+
+                var result = ScriptEngine.Execute(Buffer, _scriptArgs, references, namespaces, ScriptPackSession);
                 if (result == null) return ScriptResult.Empty;
 
                 if (result.CompileExceptionInfo != null)
