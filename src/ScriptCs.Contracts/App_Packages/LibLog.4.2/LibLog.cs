@@ -546,7 +546,7 @@ namespace ScriptCs.Contracts.Logging
 #else
         internal
 #endif
-        static IDisposable OpenNestedConext(string message)
+        static IDisposable OpenNestedContext(string message)
         {
             if(CurrentLogProvider == null)
             {
@@ -719,7 +719,9 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Text;
@@ -1066,10 +1068,71 @@ namespace ScriptCs.Contracts.Logging.LogProviders
         internal class Log4NetLogger
         {
             private readonly dynamic _logger;
+            private static Type _callerStackBoundaryType;
+
+            private readonly object _levelDebug;
+            private readonly object _levelInfo;
+            private readonly object _levelWarn;
+            private readonly object _levelError;
+            private readonly object _levelFatal;
+            private readonly Func<object, object, bool> isEnabledForDelegate;
+            private Action<object, Type, object, string, Exception> logDelegate;
 
             internal Log4NetLogger(dynamic logger)
             {
-                _logger = logger;
+                _logger = logger.Logger;
+
+                var logEventLevelType = Type.GetType("log4net.Core.Level, log4net");
+                if (logEventLevelType == null)
+                {
+                    throw new InvalidOperationException("Type log4net.Core.Level was not found.");
+                }
+
+                var levelFields = logEventLevelType.GetFieldsPortable().ToList();
+                _levelDebug = levelFields.First(x => x.Name == "Debug").GetValue(null);
+                _levelInfo = levelFields.First(x => x.Name == "Info").GetValue(null);
+                _levelWarn = levelFields.First(x => x.Name == "Warn").GetValue(null);
+                _levelError = levelFields.First(x => x.Name == "Error").GetValue(null);
+                _levelFatal = levelFields.First(x => x.Name == "Fatal").GetValue(null);
+
+                // Func<object, object, bool> isEnabledFor = (logger, level) => { return ((log4net.Core.ILogger)logger).IsEnabled(level); }
+                var loggerType = Type.GetType("log4net.Core.ILogger, log4net");
+                if (loggerType == null)
+                {
+                    throw new InvalidOperationException("Type log4net.Core.ILogger, was not found.");
+                }
+                MethodInfo isEnabledMethodInfo = loggerType.GetMethodPortable("IsEnabledFor", logEventLevelType);
+                ParameterExpression instanceParam = Expression.Parameter(typeof(object));
+                UnaryExpression instanceCast = Expression.Convert(instanceParam, loggerType);
+                ParameterExpression callerStackBoundaryDeclaringTypeParam = Expression.Parameter(typeof(Type));
+                ParameterExpression levelParam = Expression.Parameter(typeof(object));
+                ParameterExpression messageParam = Expression.Parameter(typeof(string));
+                UnaryExpression levelCast = Expression.Convert(levelParam, logEventLevelType);
+                MethodCallExpression isEnabledMethodCall = Expression.Call(instanceCast, isEnabledMethodInfo, levelCast);
+                isEnabledForDelegate = Expression.Lambda<Func<object, object, bool>>(isEnabledMethodCall, instanceParam, levelParam).Compile();
+
+                // Action<object, object, string, Exception> Log =
+                // (logger, callerStackBoundaryDeclaringType, level, message, exception) => { ((ILogger)logger).Write(callerStackBoundaryDeclaringType, level, message, exception); }
+                MethodInfo writeExceptionMethodInfo = loggerType.GetMethodPortable("Log",
+                    typeof(Type),
+                    logEventLevelType,
+                    typeof(string),
+                    typeof(Exception));
+                ParameterExpression exceptionParam = Expression.Parameter(typeof(Exception));
+                var writeMethodExp = Expression.Call(
+                    instanceCast,
+                    writeExceptionMethodInfo,
+                    callerStackBoundaryDeclaringTypeParam,
+                    levelCast,
+                    messageParam,
+                    exceptionParam);
+                logDelegate = Expression.Lambda<Action<object, Type, object, string, Exception>>(
+                    writeMethodExp,
+                    instanceParam,
+                    callerStackBoundaryDeclaringTypeParam,
+                    levelParam,
+                    messageParam,
+                    exceptionParam).Compile();
             }
 
             public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
@@ -1081,110 +1144,75 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
                 messageFunc = LogMessageFormatter.SimulateStructuredLogging(messageFunc, formatParameters);
 
-                if (exception != null)
+                if (!IsLogLevelEnable(logLevel))
                 {
-                    return LogException(logLevel, messageFunc, exception);
+                    return false;
                 }
-                switch (logLevel)
+
+                // determine correct caller - this might change due to jit optimizations with method inlining
+                if (_callerStackBoundaryType == null)
                 {
-                    case LogLevel.Info:
-                        if (_logger.IsInfoEnabled)
+                    lock (GetType())
+                    {
+#if !LIBLOG_PORTABLE
+                        StackTrace stack = new StackTrace();
+                        Type thisType = GetType();
+                        _callerStackBoundaryType = Type.GetType("LoggerExecutionWrapper");
+                        for (int i = 1; i < stack.FrameCount; i++)
                         {
-                            _logger.Info(messageFunc());
-                            return true;
+                            if (!IsInTypeHierarchy(thisType, stack.GetFrame(i).GetMethod().DeclaringType))
+                            {
+                                _callerStackBoundaryType = stack.GetFrame(i - 1).GetMethod().DeclaringType;
+                                break;
+                            }
                         }
-                        break;
-                    case LogLevel.Warn:
-                        if (_logger.IsWarnEnabled)
-                        {
-                            _logger.Warn(messageFunc());
-                            return true;
-                        }
-                        break;
-                    case LogLevel.Error:
-                        if (_logger.IsErrorEnabled)
-                        {
-                            _logger.Error(messageFunc());
-                            return true;
-                        }
-                        break;
-                    case LogLevel.Fatal:
-                        if (_logger.IsFatalEnabled)
-                        {
-                            _logger.Fatal(messageFunc());
-                            return true;
-                        }
-                        break;
-                    default:
-                        if (_logger.IsDebugEnabled)
-                        {
-                            _logger.Debug(messageFunc()); // Log4Net doesn't have a 'Trace' level, so all Trace messages are written as 'Debug'
-                            return true;
-                        }
-                        break;
+#else
+                        _callerStackBoundaryType = typeof (LoggerExecutionWrapper);
+#endif
+                    }
                 }
-                return false;
+
+                var translatedLevel = TranslateLevel(logLevel);
+                logDelegate(_logger, _callerStackBoundaryType, translatedLevel, messageFunc(), exception);
+                return true;
             }
 
-            private bool LogException(LogLevel logLevel, Func<string> messageFunc, Exception exception)
+            private bool IsInTypeHierarchy(Type currentType, Type checkType)
             {
-                switch (logLevel)
+                while (currentType != null && currentType != typeof(object))
                 {
-                    case LogLevel.Info:
-                        if (_logger.IsDebugEnabled)
-                        {
-                            _logger.Info(messageFunc(), exception);
-                            return true;
-                        }
-                        break;
-                    case LogLevel.Warn:
-                        if (_logger.IsWarnEnabled)
-                        {
-                            _logger.Warn(messageFunc(), exception);
-                            return true;
-                        }
-                        break;
-                    case LogLevel.Error:
-                        if (_logger.IsErrorEnabled)
-                        {
-                            _logger.Error(messageFunc(), exception);
-                            return true;
-                        }
-                        break;
-                    case LogLevel.Fatal:
-                        if (_logger.IsFatalEnabled)
-                        {
-                            _logger.Fatal(messageFunc(), exception);
-                            return true;
-                        }
-                        break;
-                    default:
-                        if (_logger.IsDebugEnabled)
-                        {
-                            _logger.Debug(messageFunc(), exception);
-                            return true;
-                        }
-                        break;
+                    if (currentType == checkType)
+                    {
+                        return true;
+                    }
+                    currentType = currentType.GetBaseTypePortable();
                 }
                 return false;
             }
 
             private bool IsLogLevelEnable(LogLevel logLevel)
             {
+                var level = TranslateLevel(logLevel);
+                return isEnabledForDelegate(_logger, level);
+            }
+
+            private object TranslateLevel(LogLevel logLevel)
+            {
                 switch (logLevel)
                 {
+                    case LogLevel.Trace:
                     case LogLevel.Debug:
-                        return _logger.IsDebugEnabled;
+                        return _levelDebug;
                     case LogLevel.Info:
-                        return _logger.IsInfoEnabled;
+                        return _levelInfo;
                     case LogLevel.Warn:
-                        return _logger.IsWarnEnabled;
+                        return _levelWarn;
                     case LogLevel.Error:
-                        return _logger.IsErrorEnabled;
+                        return _levelError;
                     case LogLevel.Fatal:
-                        return _logger.IsFatalEnabled;
+                        return _levelFatal;
                     default:
-                        return _logger.IsDebugEnabled;
+                        throw new ArgumentOutOfRangeException("logLevel", logLevel, null);
                 }
             }
         }
@@ -1813,7 +1841,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
 
     internal static class LogMessageFormatter
     {
-        private static readonly Regex Pattern = new Regex(@"\{\w{1,}\}");
+        private static readonly Regex Pattern = new Regex(@"\{@?\w{1,}\}");
 
         /// <summary>
         /// Some logging frameworks support structured logging, such as serilog. This will allow you to add names to structured data in a format string:
@@ -1847,7 +1875,7 @@ namespace ScriptCs.Contracts.Logging.LogProviders
                 }
                 try
                 {
-                    return String.Format(CultureInfo.InvariantCulture, targetMessage, formatParameters);
+                    return string.Format(CultureInfo.InvariantCulture, targetMessage, formatParameters);
                 }
                 catch (FormatException ex)
                 {
@@ -1893,6 +1921,24 @@ namespace ScriptCs.Contracts.Logging.LogProviders
             return type.GetRuntimeProperty(name);
 #else
             return type.GetProperty(name);
+#endif
+        }
+
+        internal static IEnumerable<FieldInfo> GetFieldsPortable(this Type type)
+        {
+#if LIBLOG_PORTABLE
+            return type.GetRuntimeFields();
+#else
+            return type.GetFields();
+#endif
+        }
+
+        internal static Type GetBaseTypePortable(this Type type)
+        {
+#if LIBLOG_PORTABLE
+            return type.GetTypeInfo().BaseType;
+#else
+            return type.BaseType;
 #endif
         }
 
