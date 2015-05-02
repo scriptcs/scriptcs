@@ -25,7 +25,7 @@ namespace ScriptCs.Engine.Mono.Segmenter
             {
                 foreach (var region in parser.Parse(code))
                 {
-                    // Calculate region linenumber
+                    // Calculate region line number
                     var lineNr = code.Substring(0, region.Offset).Count(x => x.Equals('\n'));
 
                     var segment = code.Substring(region.Offset, region.Length);
