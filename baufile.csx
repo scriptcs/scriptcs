@@ -1,6 +1,6 @@
 // parameters
 var versionSuffix = Environment.GetEnvironmentVariable("VERSION_SUFFIX");
-versionSuffix = string.IsNullOrWhiteSpace(versionSuffix) ? "-alpha" : versionSuffix;
+versionSuffix = string.IsNullOrWhiteSpace(versionSuffix) ? "-beta" : versionSuffix;
 var msBuildFileVerbosity = (Verbosity)Enum.Parse(typeof(Verbosity), Environment.GetEnvironmentVariable("MSBUILD_FILE_VERBOSITY") ?? "detailed", true);
 var nugetVerbosity = Environment.GetEnvironmentVariable("NUGET_VERBOSITY") ?? "quiet";
 

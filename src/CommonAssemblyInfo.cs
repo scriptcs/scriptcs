@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.0.0.0")]
 
 // NOTE (adamralph): this is used for the NuGet package version
-[assembly: AssemblyInformationalVersion("0.1.1")]
+[assembly: AssemblyInformationalVersion("0.2.0")]
 
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(false)]
