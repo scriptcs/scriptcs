@@ -31,7 +31,7 @@ namespace ScriptCs.ReplCommands
 
         public string Description
         {
-            get { return "Installs a Nuget package. I.e. :install <package> <version>"; }
+            get { return "Installs a NuGet package. I.e. :install <package> <version>"; }
         }
 
         public string CommandName

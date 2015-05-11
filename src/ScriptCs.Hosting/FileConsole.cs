@@ -63,6 +63,11 @@ namespace ScriptCs.Hosting
             set { _innerConsole.ForegroundColor = value; }
         }
 
+        public int Width
+        {
+            get { return int.MaxValue; }
+        }
+
         private void Append(string text)
         {
             using (var writer = new StreamWriter(_path, true))

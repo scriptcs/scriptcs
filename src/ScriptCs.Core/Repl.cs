@@ -65,34 +65,14 @@ namespace ScriptCs
                             var argsToPass = new List<object>();
                             foreach (var argument in tokens.Skip(1))
                             {
-                                var argumentResult = ScriptEngine.Execute(
-                                    argument, _scriptArgs, References, Namespaces, ScriptPackSession);
-
-                                if (argumentResult.CompileExceptionInfo != null)
-                                {
-                                    throw new Exception(
-                                        GetInvalidCommandArgumentMessage(argument),
-                                        argumentResult.CompileExceptionInfo.SourceException);
-                                }
-
-                                if (argumentResult.ExecuteExceptionInfo != null)
-                                {
-                                    throw new Exception(
-                                        GetInvalidCommandArgumentMessage(argument),
-                                        argumentResult.ExecuteExceptionInfo.SourceException);
-                                }
-
-                                if (!argumentResult.IsCompleteSubmission)
-                                {
-                                    throw new Exception(GetInvalidCommandArgumentMessage(argument));
-                                }
-
-                                argsToPass.Add(argumentResult.ReturnValue);
+                                argsToPass.Add(argument);
                             }
 
                             var commandResult = command.Value.Execute(this, argsToPass.ToArray());
                             return ProcessCommandResult(commandResult);
                         }
+                        // we have an invalid command - don't print the command colon again
+                        return ProcessCommandResult(string.Format("*** Invalid command: {0}", tokens[0].Substring(1)));
                     }
                 }
 

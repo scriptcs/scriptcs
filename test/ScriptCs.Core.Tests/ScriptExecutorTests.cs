@@ -154,7 +154,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(destPaths, Enumerable.Empty<IScriptPack>());
 
                 // act
-                scriptExecutor.EngineExecute("", new string[]{}, new FilePreProcessorResult());
+                scriptExecutor.EngineExecute("", new string[] {}, new FilePreProcessorResult());
 
                 // assert
                 scriptEngine.Verify(
@@ -185,7 +185,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
 
                 // act
-                scriptExecutor.EngineExecute("", new string[]{}, new FilePreProcessorResult() {Code = code});
+                scriptExecutor.EngineExecute("", new string[] {}, new FilePreProcessorResult() {Code = code});
 
                 // assert
 
@@ -222,7 +222,7 @@ namespace ScriptCs.Tests
 
 
                 scriptExecutor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                scriptExecutor.Object.EngineExecute("", new string[]{}, result);
+                scriptExecutor.Object.EngineExecute("", new string[] {}, result);
 
                 scriptEngine.Verify(
                     e => e.Execute(
@@ -257,7 +257,7 @@ namespace ScriptCs.Tests
 
 
                 scriptExecutor.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                scriptExecutor.Object.EngineExecute("", new string[]{}, result);
+                scriptExecutor.Object.EngineExecute("", new string[] {}, result);
 
                 scriptEngine.Verify(
                     e => e.Execute(
@@ -345,7 +345,7 @@ namespace ScriptCs.Tests
                 executor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
 
                 // act
-                executor.EngineExecute("", new string[]{}, new FilePreProcessorResult());
+                executor.EngineExecute("", new string[] {}, new FilePreProcessorResult());
 
                 // assert
                 engine.Verify(
@@ -369,7 +369,7 @@ namespace ScriptCs.Tests
                 
                 var result = new FilePreProcessorResult();
 
-                executor.Object.EngineExecute("", new string[]{ }, result);
+                executor.Object.EngineExecute("", new string[] { }, result);
                
                 executor.Verify(e => e.InjectScriptLibraries(
                     It.IsAny<string>(), result, It.IsAny<IDictionary<string, object>>()));
