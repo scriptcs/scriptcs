@@ -94,34 +94,6 @@ namespace ScriptCs
             }
         }
 
-        public void AddReferences(params Assembly[] assemblies)
-        {
-            Guard.AgainstNullArgument("assemblies", assemblies);
-
-            References = References.Union(assemblies);
-        }
-
-        public void RemoveReferences(params Assembly[] assemblies)
-        {
-            Guard.AgainstNullArgument("assemblies", assemblies);
-
-            References = References.Except(assemblies);
-        }
-
-        public void AddReferences(params string[] paths)
-        {
-            Guard.AgainstNullArgument("paths", paths);
-
-            References = References.Union(paths);
-        }
-
-        public void RemoveReferences(params string[] paths)
-        {
-            Guard.AgainstNullArgument("paths", paths);
-
-            References = References.Except(paths);
-        }
-
         public void RemoveNamespaces(params string[] namespaces)
         {
             Guard.AgainstNullArgument("namespaces", namespaces);
@@ -130,6 +102,34 @@ namespace ScriptCs
             {
                 Namespaces.Remove(@namespace);
             }
+        }
+
+        public virtual void AddReferences(params Assembly[] assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            References = References.Union(assemblies);
+        }
+
+        public virtual void RemoveReferences(params Assembly[] assemblies)
+        {
+            Guard.AgainstNullArgument("assemblies", assemblies);
+
+            References = References.Except(assemblies);
+        }
+
+        public virtual void AddReferences(params string[] paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+
+            References = References.Union(paths);
+        }
+
+        public virtual void RemoveReferences(params string[] paths)
+        {
+            Guard.AgainstNullArgument("paths", paths);
+
+            References = References.Except(paths);
         }
 
         public virtual void Initialize(
