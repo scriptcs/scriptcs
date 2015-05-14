@@ -235,7 +235,7 @@ namespace ScriptCs.Tests
                     It.IsAny<ScriptPackSession>()));
 
                 repl.Object.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
-                repl.Object.Execute("", new string[]{});
+                repl.Object.Execute("", new string[] {});
 
                 scriptEngine.Verify(
                     e => e.Execute(

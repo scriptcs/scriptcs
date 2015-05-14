@@ -91,7 +91,7 @@ namespace ScriptCs.Tests.ReplCommands
         }
     }
 
-    class DummyScriptPack : IScriptPackContext
+    public class DummyScriptPack : IScriptPackContext
     {
         public string Foo(int bar)
         {
@@ -115,7 +115,6 @@ namespace ScriptCs.Tests.ReplCommands
     {
         public static void FooExtension(this DummyScriptPack dummyScriptPack)
         {
-
         }
     }
 }
