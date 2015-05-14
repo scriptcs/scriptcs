@@ -54,7 +54,7 @@ namespace ScriptCs.Engine.Mono.Segmenter.Analyser
 
             // use code methodblock to maintain linenumbers
             var codeBlock = code.Substring(code.IndexOf("{", StringComparison.Ordinal), code.LastIndexOf("}", StringComparison.Ordinal) - code.IndexOf("{", StringComparison.Ordinal) + 1);
-            var method = result.MethodExpression.GetText();
+            var method = result.MethodExpression.ToString();
             var blockStart = method.IndexOf("{", StringComparison.Ordinal);
             var blockEnd = method.LastIndexOf("}", StringComparison.Ordinal);
             method = method.Remove(blockStart, blockEnd - blockStart + 1);
@@ -62,7 +62,7 @@ namespace ScriptCs.Engine.Mono.Segmenter.Analyser
 
             return new MethodResult
             {
-                ProtoType = result.MethodPrototype.GetText().Trim() + newLines,
+                ProtoType = result.MethodPrototype.ToString().Trim() + newLines,
                 MethodExpression = newLines + method.Trim()
             };
         }
