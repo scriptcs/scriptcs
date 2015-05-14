@@ -74,7 +74,7 @@ namespace ScriptCs.Engine.Roslyn
         {
             Logger.Debug("Retrieving compiled script class (reflection).");
 
-            // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
+            // the following line can throw NullReferenceException, if that happens it's useful to notify that an error occurred
             var type = assembly.GetType(CompiledScriptClass);
             Logger.Debug("Retrieving compiled script method (reflection).");
             var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);

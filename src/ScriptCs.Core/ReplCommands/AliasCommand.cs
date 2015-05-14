@@ -33,7 +33,7 @@ namespace ScriptCs.ReplCommands
 
             if (args == null || args.Length != 2)
             {
-                _console.WriteLine("You must specifiy the command name and alias, e.g. :alias \"clear\" \"cls\"");
+                _console.WriteLine("You must specify the command name and alias, e.g. :alias \"clear\" \"cls\"");
                 return null;
             }
 

@@ -28,6 +28,8 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
+                console.Setup(c => c.Width).Returns(80);
+
                 var repl = new Mock<IRepl>();
                 var clearCommand = new ClearCommand(console.Object);
                 var exitCommand = new ExitCommand(console.Object);
@@ -47,8 +49,8 @@ namespace ScriptCs.Tests.ReplCommands
 
                 // assert
                 console.Verify(x => x.WriteLine(It.IsAny<string>()), Times.Exactly(3));
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + exitCommand.CommandName) && f.Contains(exitCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(" :" + clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(" :" + exitCommand.CommandName) && f.Contains(exitCommand.Description))), Times.Once);
             }
 
             [Fact]
@@ -56,6 +58,8 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
+                console.Setup(c => c.Width).Returns(80);
+
                 var repl = new Mock<IRepl>();
                 var clearCommand = new ClearCommand(console.Object);
                 var aliasCommand = new AliasCommand(console.Object);
@@ -75,9 +79,9 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(repl.Object, null);
 
                 // assert
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":" + aliasCommand.CommandName) && f.Contains(aliasCommand.Description))), Times.Once);
-                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(":clr") && f.Contains(clearCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(" :" + clearCommand.CommandName) && f.Contains(clearCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(" :" + aliasCommand.CommandName) && f.Contains(aliasCommand.Description))), Times.Once);
+                console.Verify(x => x.WriteLine(It.Is<string>(f => f.StartsWith(" :clr") && f.Contains(clearCommand.Description))), Times.Once);
             }
         }
     }

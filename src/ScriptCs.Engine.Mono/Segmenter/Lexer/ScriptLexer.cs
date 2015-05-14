@@ -12,7 +12,7 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
 
         public ScriptLexer(string code)
         {
-            _position = -1; //inital pos
+            _position = -1; //initial pos
 
             _sr = new StringReader(code);
         }
