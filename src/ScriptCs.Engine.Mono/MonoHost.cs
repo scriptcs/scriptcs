@@ -1,6 +1,5 @@
 ﻿extern alias MonoCSharp;
 
-using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Mono
