@@ -10,8 +10,7 @@ namespace ScriptCs
         {
             return string.Format("#define TRACE{0}{1}", Environment.NewLine, code);
         }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
+        
         /// <summary>
         /// Split string on whitespace, but keeps string with quotes together
         /// For example: :cd "\\Foo Bar"
@@ -20,9 +19,11 @@ namespace ScriptCs
         /// </summary>
         /// <param name="argument">String with or without quotes.</param>
         /// <returns>Array of strings.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", 
+                                Justification = "Guard Against Null Argument method is not need because of the if statement.", 
+                                MessageId = "0")]
         public static string[] SplitQuoted(this string argument)
         {
-            // This method doesn't need a Guard Against Null Argument
             if (string.IsNullOrWhiteSpace(argument))
             {
                 return argument.Split(' ');
