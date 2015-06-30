@@ -155,10 +155,6 @@
       <Project>{e4adcfee-ff3b-4ef5-8298-2b31f407f58b}</Project>
       <Name>ScriptCs.Engine.Mono</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj">
-      <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
-      <Name>ScriptCs.Engine.Roslyn</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
       <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
       <Name>ScriptCs.Hosting</Name>
