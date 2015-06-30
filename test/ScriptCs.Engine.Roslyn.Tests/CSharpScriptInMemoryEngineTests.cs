@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis.Scripting;
 using Moq;
-using Roslyn.Compilers;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
+using ScriptCs.CSharp;
 using ScriptCs.Exceptions;
-using ScriptCs.Logging;
+using Common.Logging;
+using Should;
 using Xunit;
 
 namespace ScriptCs.Tests
 {
-    using Should;
-
-    public class RoslynScriptInMemoryEngineTests
+    public class CSharpScriptInMemoryEngineTests
     {
         public class TheExecuteMethod
         {
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
                 // Arrange
                 var lines = new List<string>
                 {
@@ -44,7 +43,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new RoslynScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
 
                 // Arrange
                 var lines = new List<string>

@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
-using Xunit;
+using ScriptCs.CSharp;
 using Should;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
-    public class RoslynModuleTests
+    public class CSharpModuleTests
     {
         public class TheInitializeMethod
         {
             private readonly Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
             private readonly IModuleConfiguration _config;
-            private readonly RoslynModule _module = new RoslynModule();
+            private readonly CSharpModule _module = new CSharpModule();
             private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             
             public TheInitializeMethod()
@@ -40,14 +40,14 @@ namespace ScriptCs.Tests
             {
                 _configMock.SetupGet(c => c.Cache).Returns(true);
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynScriptPersistentEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(CSharpPersistentEngine));
             }
 
             [Fact]
             public void ShouldRegisterTheScriptEngineWhenCacheIsDisabled()
             {
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynScriptEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(CSharpScriptEngine));
             }
 
             [Fact]
@@ -55,7 +55,7 @@ namespace ScriptCs.Tests
             {
                 _configMock.Setup(c => c.Debug).Returns(true);
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynScriptInMemoryEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(CSharpScriptInMemoryEngine));
             }
 
             [Fact]
@@ -63,7 +63,7 @@ namespace ScriptCs.Tests
             {
                 _configMock.Setup(c => c.IsRepl).Returns(true);
                 _module.Initialize(_config);
-                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(RoslynReplEngine));
+                _overrides[typeof(IScriptEngine)].ShouldEqual(typeof(CSharpReplEngine));
             }
         }
     }

@@ -1,24 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Scripting.CSharp;
 using Ploeh.AutoFixture.Xunit;
-using Roslyn.Scripting;
-using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Roslyn;
+using ScriptCs.CSharp;
+using ScriptCs.Engine.Common;
 using Should;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
 {
-    public class RoslynReplEngineTests
+    public class CSharpReplEngineTests
     {
         public class GetLocalVariablesMethod
         {
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnDeclaredVariables([NoAutoProperties]RoslynReplEngine engine, ScriptPackSession scriptPackSession)
+            public void ShouldReturnDeclaredVariables([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
                     scriptPackSession);
@@ -29,10 +30,10 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturnOnlyLastValueOfVariablesDeclaredManyTimes([NoAutoProperties]RoslynReplEngine engine, ScriptPackSession scriptPackSession)
+            public void ShouldReturnOnlyLastValueOfVariablesDeclaredManyTimes([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
                 engine.Execute("int x = 2;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
@@ -41,17 +42,17 @@ namespace ScriptCs.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldReturn0VariablesAfterReset([NoAutoProperties]RoslynReplEngine engine, ScriptPackSession scriptPackSession)
+            public void ShouldReturn0VariablesAfterReset([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
                     scriptPackSession);
                 engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
     scriptPackSession);
 
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
 
                 engine.GetLocalVariables(scriptPackSession).ShouldBeEmpty();
             }
@@ -61,13 +62,13 @@ namespace ScriptCs.Tests
         {
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsCompleteSubmissionToFalseIfCodeIsMissingCurlyBracket(
-                [NoAutoProperties] RoslynReplEngine engine, ScriptPackSession scriptPackSession)
+                [NoAutoProperties] CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
                 // Arrange
                 const string Code = "class test {";
 
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
@@ -80,14 +81,14 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsCompleteSubmissionToFalseIfCodeIsMissingParenthesis(
-                [NoAutoProperties] RoslynReplEngine engine,
+                [NoAutoProperties] CSharpReplEngine engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
                 const string Code = "System.Diagnostics.Debug.WriteLine(\"a\"";
 
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
@@ -99,14 +100,14 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldSetIsCompleteSubmissionToFalseIfCodeIsMissingSquareBracket(
-                [NoAutoProperties] RoslynReplEngine engine,
+                [NoAutoProperties] CSharpReplEngine engine,
                 ScriptPackSession scriptPackSession)
             {
                 // Arrange
                 const string Code = "var x = new[1] { 1 }; var y = x[0";
 
-                var session = new SessionState<Session> { Session = new ScriptEngine().CreateSession() };
-                scriptPackSession.State[RoslynScriptEngine.SessionKey] = session;
+                var session = new SessionState<ScriptState> { Session  = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
                 // Act
