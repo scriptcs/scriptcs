@@ -7,7 +7,7 @@ using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.CSharp;
 using ScriptCs.Exceptions;
-using Common.Logging;
+using ScriptCs.Logging;
 using Should;
 using Xunit;
 

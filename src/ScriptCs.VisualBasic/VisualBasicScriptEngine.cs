@@ -1,11 +1,11 @@
 using System.Linq;
-using Common.Logging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.VisualBasic;
 using Microsoft.CodeAnalysis.VisualBasic;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
+using ScriptCs.Logging;
 
 namespace ScriptCs.VisualBasic
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Common.Logging;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
+using ScriptCs.Logging;
 
 namespace ScriptCs.CSharp
 {

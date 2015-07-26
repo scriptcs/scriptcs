@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 using ScriptCs.Exceptions;
+using ScriptCs.Logging;
 
 namespace ScriptCs.CSharp
 {
