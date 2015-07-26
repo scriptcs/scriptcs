@@ -7,7 +7,7 @@ using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.CSharp;
 using ScriptCs.Engine.Common;
-using ScriptCs.Logging;
+using Common.Logging;
 using Should;
 using Xunit.Extensions;
 
@@ -307,15 +307,15 @@ namespace ScriptCs.Tests
         [Theory, ScriptCsAutoData]
         public void ShouldCompileWhenUsingClassesFromAPassedAssemblyInstance(
             [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-            [NoAutoProperties] CSharpScriptEngine engine,
-            ScriptPackSession scriptPackSession)
+            [Frozen] ScriptPackSession scriptPackSession)
         {
             // Arrange
             const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
 
             scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                .Returns<IScriptPackManager, ScriptEnvironment>((p, q) => new ScriptHost(p, q));
+                .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
 
+            var engine = new CSharpScriptEngine(scriptHostFactory.Object, new Mock<ILog>().Object);
             var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
             scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
             var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
@@ -363,6 +363,7 @@ namespace ScriptCs.Tests
 
             protected override ScriptResult Execute(string code, object globals, SessionState<ScriptState> sessionState)
             {
+                base.Execute(code, globals, sessionState);
                 Session = sessionState.Session;
                 return ScriptResult.Empty;
             }

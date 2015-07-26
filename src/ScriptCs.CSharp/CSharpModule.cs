@@ -8,15 +8,15 @@ namespace ScriptCs.CSharp
     {
         public void Initialize(IModuleConfiguration config)
         {
-            if (config == null)
-            {
-                throw new ArgumentNullException("config");
-            }
+            Guard.AgainstNullArgument("config", config);
 
-            var engineType = config.Cache ? typeof(CSharpPersistentEngine) : typeof(CSharpScriptEngine);
-            engineType = config.Debug ? typeof(CSharpScriptInMemoryEngine) : engineType;
-            engineType = config.IsRepl ? typeof(CSharpReplEngine) : engineType;
-            config.Overrides[typeof(IScriptEngine)] = engineType;
+            if (!config.Overrides.ContainsKey(typeof(IScriptEngine)))
+            {
+                var engineType = config.Cache ? typeof(CSharpPersistentEngine) : typeof(CSharpScriptEngine);
+                engineType = config.Debug ? typeof(CSharpScriptInMemoryEngine) : engineType;
+                engineType = config.IsRepl ? typeof(CSharpReplEngine) : engineType;
+                config.Overrides[typeof(IScriptEngine)] = engineType;
+            }
         }
     }
 }

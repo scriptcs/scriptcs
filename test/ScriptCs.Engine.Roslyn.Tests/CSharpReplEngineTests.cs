@@ -26,7 +26,7 @@ namespace ScriptCs.Tests
                 engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
     scriptPackSession);
 
-                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { @"System.String y = www", "System.Int32 x = 1" });
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { "System.Int32 x", "System.String y" });
             }
 
             [Theory, ScriptCsAutoData]
@@ -38,7 +38,7 @@ namespace ScriptCs.Tests
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
                 engine.Execute("int x = 2;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
 
-                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { "System.Int32 x = 2" });
+                engine.GetLocalVariables(scriptPackSession).ShouldEqual(new Collection<string> { "System.Int32 x" });
             }
 
             [Theory, ScriptCsAutoData]

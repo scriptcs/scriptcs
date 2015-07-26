@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using Moq;
@@ -48,7 +49,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 var lines = new List<string>
                 {
-                    "using Sysasdasdasdtem;"
+                    "Sysasdasdasdtem;"
                 };
 
                 var code = string.Join(Environment.NewLine, lines);
@@ -60,8 +61,7 @@ namespace ScriptCs.Tests
 
                 // Assert
                 var exception = Assert.Throws<ScriptCompilationException>(() => result.CompileExceptionInfo.Throw());
-                exception.InnerException.ShouldBeType<CompilationErrorException>();
-                exception.Message.ShouldContain("The type or namespace name 'Sysasdasdasdtem' could not be found");
+                exception.Message.ShouldContain("error CS0103: The name 'Sysasdasdasdtem' does not exist in the current context");
             }
         }
     }

@@ -89,6 +89,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptCs.Core\Guard.cs">
+      <Link>Guard.cs</Link>
+    </Compile>
     <Compile Include="CSharpModule.cs" />
     <Compile Include="CSharpPersistentEngine.cs" />
     <Compile Include="CSharpReplEngine.cs" />
