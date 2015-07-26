@@ -9,6 +9,7 @@ using ScriptCs.CSharp;
 using ScriptCs.Engine.Common;
 using ScriptCs.Logging;
 using Should;
+using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -62,20 +63,19 @@ namespace ScriptCs.Tests
                 engine.Session.ShouldEqual(session.Session);
             }
 
-            [Theory, ScriptCsAutoData]
-            public void ShouldCreateNewSessionIfNotProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-                [NoAutoProperties] CSharpTestScriptEngine engine,
-                ScriptPackSession scriptPackSession)
+            [Fact]
+            public void ShouldCreateNewSessionIfNotProvided()
             {
+                var scriptHostFactory = new Mock<IScriptHostFactory>();
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+
                 // Arrange
+                var engine = new CSharpTestScriptEngine(scriptHostFactory.Object, new Mock<ILog>().Object);
                 const string Code = "var a = 0;";
 
-                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
-
                 // Act
-                engine.Execute(Code, new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
+                engine.Execute(Code, new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), new ScriptPackSession(new IScriptPack[0], new string[0]));
 
                 // Assert
                 engine.Session.ShouldNotBeNull();
@@ -141,7 +141,8 @@ namespace ScriptCs.Tests
                 result.CompileExceptionInfo.ShouldNotBeNull();
             }
 
-            [Theory, ScriptCsAutoData]
+            //todo: filip: this feature is not supported in Roslyn 1.0.0-rc2: see https://github.com/dotnet/roslyn/issues/1012
+            //[Theory, ScriptCsAutoData]
             public void ShouldReturnInvalidNamespacesIfCS0241Encountered(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
@@ -158,6 +159,7 @@ namespace ScriptCs.Tests
                 result.InvalidNamespaces.ShouldContain("foo");
             }
 
+            //todo: filip: this test will not even compile as it used to do reflection old roslyn assemblies!
             //[Theory, ScriptCsAutoData]
             //public void ShouldRemoveInvalidNamespacesFromSessionStateAndEngine(
             //    [Frozen] Mock<IScriptHostFactory> scriptHostFactory,

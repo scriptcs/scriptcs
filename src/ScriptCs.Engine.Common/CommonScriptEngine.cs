@@ -56,13 +56,16 @@ namespace ScriptCs.Engine.Common
 
             var isFirstExecution = !scriptPackSession.State.ContainsKey(SessionKey);
 
-            var host = _scriptHostFactory.CreateScriptHost(new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
-            Logger.Debug("Creating session");
-
-            var hostType = host.GetType();
-
             if (isFirstExecution)
             {
+                var host = _scriptHostFactory.CreateScriptHost(
+                    new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
+
+                ScriptLibraryWrapper.SetHost(host);
+                Logger.Debug("Creating session");
+
+                var hostType = host.GetType();
+
                 ScriptOptions = ScriptOptions.AddReferences(hostType.Assembly);
                 
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
@@ -110,14 +113,14 @@ namespace ScriptCs.Engine.Common
                 foreach (var reference in newReferences.Paths)
                 {
                     Logger.DebugFormat("Adding reference to {0}", reference);
-                    ScriptOptions.AddReferences(reference);
+                    ScriptOptions = ScriptOptions.AddReferences(reference);
                     sessionState.References = sessionState.References.Union(new[] { reference });
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
                     Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
-                    ScriptOptions.AddReferences(assembly);
+                    ScriptOptions = ScriptOptions.AddReferences(assembly);
                     sessionState.References = sessionState.References.Union(new[] { assembly });
                 }
 
@@ -126,7 +129,7 @@ namespace ScriptCs.Engine.Common
                 foreach (var @namespace in newNamespaces)
                 {
                     Logger.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions.AddNamespaces(@namespace);
+                    ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
 
