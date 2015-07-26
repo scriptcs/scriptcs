@@ -151,6 +151,14 @@
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.CSharp\ScriptCs.CSharp.csproj">
+      <Project>{e79ec231-e27d-4057-91c9-2d001a3a8c3b}</Project>
+      <Name>ScriptCs.CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.Engine.Common\ScriptCs.Engine.Common.csproj">
+      <Project>{38a12481-8652-4a9c-9d90-1c15043efee5}</Project>
+      <Name>ScriptCs.Engine.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj">
       <Project>{e4adcfee-ff3b-4ef5-8298-2b31f407f58b}</Project>
       <Name>ScriptCs.Engine.Mono</Name>
@@ -158,6 +166,10 @@
     <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj">
       <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
       <Name>ScriptCs.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.VisualBasic\ScriptCs.VisualBasic.csproj">
+      <Project>{4c68dc34-60ab-405b-878f-377cf6c4336c}</Project>
+      <Name>ScriptCs.VisualBasic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
