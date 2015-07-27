@@ -8,16 +8,12 @@ namespace ScriptCs.CSharp
 {
     public class CSharpPersistentEngine : CSharpScriptCompilerEngine
     {
-        private readonly ILog _log;
         private readonly IFileSystem _fileSystem;
         private const string RoslynAssemblyNameCharacter = "ℛ";
 
         public CSharpPersistentEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider, IFileSystem fileSystem)
             : base(scriptHostFactory, logProvider)
         {
-            Guard.AgainstNullArgument("logProvider", logProvider);
-
-            _log = logProvider.ForCurrentType();
             _fileSystem = fileSystem;
         }
 
@@ -30,7 +26,7 @@ namespace ScriptCs.CSharp
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
-            _log.DebugFormat("Writing assembly to {0}.", FileName);
+            Logger.DebugFormat("Writing assembly to {0}.", FileName);
 
             if (!_fileSystem.DirectoryExists(CacheDirectory))
             {
@@ -40,7 +36,7 @@ namespace ScriptCs.CSharp
             var dllPath = GetDllTargetPath();
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
-            _log.DebugFormat("Loading assembly {0}.", dllPath);
+            Logger.DebugFormat("Loading assembly {0}.", dllPath);
 
             // the assembly is automatically loaded into the AppDomain when compiled
             // just need to find and return it

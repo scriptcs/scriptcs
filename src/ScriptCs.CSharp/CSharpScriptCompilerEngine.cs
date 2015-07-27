@@ -16,15 +16,9 @@ namespace ScriptCs.CSharp
 
         private const string CompiledScriptMethod = "<Factory>";
 
-        private readonly ILog _log;
-
         protected CSharpScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
             : base(scriptHostFactory, logProvider)
         {
-            Guard.AgainstNullArgument("logProvider", logProvider);
-
-            _log = logProvider.ForCurrentType();
-
         }
 
         protected abstract bool ShouldCompile();
@@ -60,7 +54,7 @@ namespace ScriptCs.CSharp
 
                     if (result.Success)
                     {
-                        _log.Debug("Compilation was successful.");
+                        Logger.Debug("Compilation was successful.");
 
                         var assembly = LoadAssembly(exeStream.ToArray(), pdbStream.ToArray());
                         return InvokeEntryPointMethod(globals, assembly);
@@ -68,7 +62,7 @@ namespace ScriptCs.CSharp
 
                     var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
 
-                    _log.ErrorFormat("Error occurred when compiling: {0})", errors);
+                    Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
 
                     return new ScriptResult(compilationException: new ScriptCompilationException(errors));
                 }
@@ -82,23 +76,23 @@ namespace ScriptCs.CSharp
 
         private ScriptResult InvokeEntryPointMethod(object globals, Assembly assembly)
         {
-            _log.Debug("Retrieving compiled script class (reflection).");
+            Logger.Debug("Retrieving compiled script class (reflection).");
 
             // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
             var type = assembly.GetType(CompiledScriptClass);
-            _log.Debug("Retrieving compiled script method (reflection).");
+            Logger.Debug("Retrieving compiled script method (reflection).");
             var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
             try
             {
-                _log.Debug("Invoking method.");
+                Logger.Debug("Invoking method.");
                 var submissionStates = new object[2];
                 submissionStates[0] = globals;
                 return new ScriptResult(returnValue: method.Invoke(null, new[] { submissionStates }));
             }
             catch (Exception executeException)
             {
-                _log.Error("An error occurred when executing the scripts.");
+                Logger.Error("An error occurred when executing the scripts.");
 
                 var ex = executeException.InnerException ?? executeException;
 

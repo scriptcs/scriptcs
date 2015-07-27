@@ -2,14 +2,13 @@
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
-using ScriptCs.Logging;
 
 namespace ScriptCs.CSharp
 {
     public class CSharpReplEngine : CSharpScriptEngine, IReplEngine
     {
-        public CSharpReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        public CSharpReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
         }
 

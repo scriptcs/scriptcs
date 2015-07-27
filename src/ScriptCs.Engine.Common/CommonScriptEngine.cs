@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Common
 {
@@ -14,11 +13,13 @@ namespace ScriptCs.Engine.Common
 
         public const string SessionKey = "Session";
 
-        protected CommonScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        protected CommonScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
             ScriptOptions = new ScriptOptions().WithReferences(typeof(ScriptExecutor).Assembly, typeof(Object).Assembly);
             _scriptHostFactory = scriptHostFactory;
-            Logger = logger;
+
+            Logger = logProvider.ForCurrentType();
         }
 
         protected ILog Logger { get; private set; }

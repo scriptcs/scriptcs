@@ -2,14 +2,13 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
-using ScriptCs.Logging;
 
 namespace ScriptCs.VisualBasic
 {
     public class VisualBasicReplEngine : VisualBasicScriptEngine, IReplEngine
     {
-        public VisualBasicReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        public VisualBasicReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
         }
 
