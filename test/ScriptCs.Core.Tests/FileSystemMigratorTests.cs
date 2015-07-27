@@ -1,7 +1,6 @@
 ﻿using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests
@@ -21,7 +20,7 @@ namespace ScriptCs.Tests
                 SetupUnmigrated(fileSystem);
                 fileSystem.Setup(f => f.DirectoryExists(fileName)).Returns(true);
 
-                var sut = new FileSystemMigrator(fileSystem.Object, new Mock<ILog>().Object);
+                var sut = new FileSystemMigrator(fileSystem.Object, new TestLogProvider());
 
                 // act
                 sut.Migrate();
@@ -40,7 +39,7 @@ namespace ScriptCs.Tests
                 SetupUnmigrated(fileSystem);
                 fileSystem.Setup(f => f.FileExists(fileName)).Returns(true);
 
-                var sut = new FileSystemMigrator(fileSystem.Object, new Mock<ILog>().Object);
+                var sut = new FileSystemMigrator(fileSystem.Object, new TestLogProvider());
 
                 // act
                 sut.Migrate();

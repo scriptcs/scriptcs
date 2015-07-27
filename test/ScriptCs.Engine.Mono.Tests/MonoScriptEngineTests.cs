@@ -6,7 +6,6 @@ using MonoCSharp::Mono.CSharp;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 using ScriptCs.Tests;
 using Should;
 using Xunit.Extensions;
@@ -346,8 +345,8 @@ namespace ScriptCs.Engine.Mono.Tests
 
         public class MonoTestScriptEngine : MonoScriptEngine
         {
-            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

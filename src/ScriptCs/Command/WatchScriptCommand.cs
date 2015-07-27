@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Command
 {
@@ -25,21 +24,21 @@ namespace ScriptCs.Command
             string[] scriptArgs,
             IConsole console,
             IFileSystem fileSystem,
-            ILog logger,
+            ILogProvider logProvider,
             IFileSystemMigrator fileSystemMigrator)
         {
             Guard.AgainstNullArgument("config", config);
             Guard.AgainstNullArgument("scriptArgs", scriptArgs);
             Guard.AgainstNullArgument("console", console);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
             _config = config;
             _scriptArgs = scriptArgs;
             _console = console;
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _fileSystemMigrator = fileSystemMigrator;
 
             _executeScriptCommand = new CrossAppDomainExecuteScriptCommand

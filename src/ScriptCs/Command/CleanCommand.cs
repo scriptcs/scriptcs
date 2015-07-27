@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Command
 {
@@ -11,16 +10,16 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly ILog _logger;
 
-        public CleanCommand(string scriptName, IFileSystem fileSystem, ILog logger)
+        public CleanCommand(string scriptName, IFileSystem fileSystem, ILogProvider logProvider)
         {
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "DllCacheFolder", fileSystem.DllCacheFolder);
 
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _scriptName = scriptName;
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public CommandResult Execute()

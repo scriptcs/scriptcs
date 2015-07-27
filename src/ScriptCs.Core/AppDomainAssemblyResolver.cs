@@ -1,5 +1,4 @@
-﻿using ScriptCs.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using ScriptCs.Contracts;
@@ -16,21 +15,21 @@ namespace ScriptCs
         private readonly IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
         public AppDomainAssemblyResolver(
-            ILog logger,
+            ILogProvider logProvider,
             IFileSystem fileSystem,
             IAssemblyResolver resolver,
             IAssemblyUtility assemblyUtility,
             IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
             Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
         {
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("resolver", resolver);
             Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
 
             _assemblyInfoMap = assemblyInfoMap ?? new Dictionary<string, AssemblyInfo>();
             _assemblyUtility = assemblyUtility;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _fileSystem = fileSystem;
             _resolver = resolver;
 

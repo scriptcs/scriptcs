@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs
 {
@@ -15,13 +14,13 @@ namespace ScriptCs
 
         private readonly IFileSystem _fileSystem;
 
-        public FilePreProcessor(IFileSystem fileSystem, ILog logger, IEnumerable<ILineProcessor> lineProcessors)
+        public FilePreProcessor(IFileSystem fileSystem, ILogProvider logProvider, IEnumerable<ILineProcessor> lineProcessors)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _lineProcessors = lineProcessors;
         }
 

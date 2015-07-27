@@ -3,22 +3,27 @@ using System.Collections.Generic;
 using Autofac;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting
 {
     public class InitializationServices : ScriptServicesRegistration, IInitializationServices
     {
-        public InitializationServices(ILog logger, IDictionary<Type, object> overrides = null)
-            : base(logger, overrides)
+        private readonly ILog _log;
+
+        public InitializationServices(ILogProvider logProvider, IDictionary<Type, object> overrides = null)
+            : base(logProvider, overrides)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
+
         }
 
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            this.Logger.Debug("Registering initialization services");
-            builder.RegisterInstance(this.Logger);
+            _log.Debug("Registering initialization services");
+            builder.RegisterInstance(this.LogProvider);
             builder.RegisterType<ScriptServicesBuilder>().As<IScriptServicesBuilder>();
 
             RegisterLineProcessors(builder);
@@ -106,7 +111,7 @@ namespace ScriptCs.Hosting
         {
             if (Equals(service,null))
             {
-                this.Logger.Debug(string.Format("Resolving {0}", typeof(T).Name));
+                _log.Debug(string.Format("Resolving {0}", typeof(T).Name));
                 service = Container.Resolve<T>();
             }
 

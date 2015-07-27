@@ -7,7 +7,6 @@ using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.CSharp;
 using ScriptCs.Exceptions;
-using ScriptCs.Logging;
 using Should;
 using Xunit;
 
@@ -20,7 +19,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
                 // Arrange
                 var lines = new List<string>
                 {
@@ -44,7 +43,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new Mock<ILog>().Object);
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
 
                 // Arrange
                 var lines = new List<string>

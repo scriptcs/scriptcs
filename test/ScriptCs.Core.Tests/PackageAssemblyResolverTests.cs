@@ -6,8 +6,7 @@ using System.Runtime.Versioning;
 using Moq;
 using NuGet;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
-using Should;
+﻿using Should;
 using Xunit;
 using IFileSystem = ScriptCs.Contracts.IFileSystem;
 
@@ -17,7 +16,7 @@ namespace ScriptCs.Tests
     {
         public class GetAssemblyNamesMethod
         {
-            private readonly TestLogger _log = new TestLogger();
+            private readonly TestLogProvider _logProvider=new TestLogProvider();
             private readonly Mock<IFileSystem> _filesystem;
             private readonly Mock<IPackageObject> _package;
             private readonly Mock<IPackageContainer> _packageContainer;
@@ -63,7 +62,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void WhenManyPackagesAreMatchedAllMatchingDllsWithUniquePathsShouldBeReturned()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
                 _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
@@ -86,7 +85,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "testId2"))).Returns(p.Object);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
                 found.ShouldNotBeEmpty();
@@ -102,7 +101,7 @@ namespace ScriptCs.Tests
                         It.Is<FrameworkName>(x => x.FullName == VersionUtility.ParseFrameworkName("net40").FullName)))
                         .Returns(new List<string> { "test.dll" });
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -130,7 +129,7 @@ namespace ScriptCs.Tests
 
                 _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "testId2"))).Returns(p.Object);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -141,7 +140,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void WhenDllsAreMatchedDllFilePathsAreCorrectlyConcatenated()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
 
@@ -158,13 +157,13 @@ namespace ScriptCs.Tests
                 _packageContainer.Setup(i => i.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                                  .Returns<List<IPackageObject>>(null);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 // act
                 resolver.GetAssemblyNames(_workingDirectory);
 
                 // assert
-                _log.Output.ShouldContain("WARN: Cannot find: testId 3.0");
+                _logProvider.Output.ShouldContain("WARN: Cannot find: testId 3.0");
             }
 
             [Fact]
@@ -173,20 +172,20 @@ namespace ScriptCs.Tests
                 // arrange
                 _package.Setup(i => i.GetCompatibleDlls(It.IsAny<FrameworkName>())).Returns<List<string>>(null);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 // act
                 resolver.GetAssemblyNames(_workingDirectory);
 
                 // assert
-                _log.Output.ShouldContain(
+                _logProvider.Output.ShouldContain(
                     "WARN: Cannot find compatible binaries for .NETFramework,Version=v4.0 in: testId 3.0");
             }
 
             [Fact]
             public void WhenPackageDirectoryDoesNotExistShouldReturnEmptyPackagesList()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, new Mock<IPackageContainer>().Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, new Mock<IPackageContainer>().Object, _logProvider, _assemblyUtility.Object);
                 _filesystem.Setup(i => i.DirectoryExists(It.IsAny<string>())).Returns(false);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
@@ -196,7 +195,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void WhenPackagesConfigDoesNotExistShouldReturnEmptyPackagesList()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, new Mock<IPackageContainer>().Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, new Mock<IPackageContainer>().Object, _logProvider, _assemblyUtility.Object);
                 _filesystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory);
@@ -219,7 +218,7 @@ namespace ScriptCs.Tests
                     i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
                                  .Returns(p.Object);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -246,7 +245,7 @@ namespace ScriptCs.Tests
                     i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
                                  .Returns(p.Object);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -271,7 +270,7 @@ namespace ScriptCs.Tests
                     i => i.FindPackage(It.IsAny<string>(), It.Is<IPackageReference>(x => x.PackageId == "p2")))
                                  .Returns(p.Object);
 
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
 
                 var found = resolver.GetAssemblyNames(_workingDirectory).ToList();
 
@@ -283,7 +282,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldIgnoreUnmanagedAssemblies()
             {
-                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _log, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_filesystem.Object, _packageContainer.Object, _logProvider, _assemblyUtility.Object);
                 _packageIds.Add(new PackageReference("testId2", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")));
                 _assemblyUtility.Setup(u => u.IsManagedAssembly(It.Is<string>(s => Path.GetFileName(s) == "test.dll"))).Returns(false);
 
@@ -298,7 +297,7 @@ namespace ScriptCs.Tests
         {
             private Mock<IFileSystem> _fs;
             private Mock<IPackageContainer> _pc;
-            private Mock<ILog> _logger;
+            private TestLogProvider _logProvider = new TestLogProvider();
             private Mock<IAssemblyUtility> _assemblyUtility;
 
             public GetPackagesMethod()
@@ -308,7 +307,6 @@ namespace ScriptCs.Tests
                 _fs.SetupGet(f => f.PackagesFile).Returns("packages.config");
 
                 _pc = new Mock<IPackageContainer>();
-                _logger = new Mock<ILog>();
                 _assemblyUtility = new Mock<IAssemblyUtility>();
             }
 
@@ -317,7 +315,7 @@ namespace ScriptCs.Tests
             {
                 _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
 
-                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object, _logger.Object, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object, _logProvider, _assemblyUtility.Object);
                 var result = resolver.GetPackages(@"c:/");
 
                 result.ShouldBeEmpty();
@@ -329,7 +327,7 @@ namespace ScriptCs.Tests
                 _fs.Setup(i => i.FileExists(It.IsAny<string>())).Returns(true);
                 _pc.Setup(i => i.FindReferences(It.IsAny<string>())).Returns(new List<IPackageReference> { new PackageReference("id", VersionUtility.ParseFrameworkName("net40"), new Version("3.0")) });
 
-                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object, _logger.Object, _assemblyUtility.Object);
+                var resolver = new PackageAssemblyResolver(_fs.Object, _pc.Object, _logProvider, _assemblyUtility.Object);
                 var result = resolver.GetPackages(@"c:/");
 
                 _pc.Verify(i => i.FindReferences(It.IsAny<string>()), Times.Once());
@@ -341,7 +339,7 @@ namespace ScriptCs.Tests
         {
             private Mock<IFileSystem> _fs;
             private Mock<IPackageContainer> _pc;
-            private readonly TestLogger _log = new TestLogger();
+            private readonly TestLogProvider _logProvider = new TestLogProvider();
             private Mock<IAssemblyUtility> _assemblyUtility;
 
             public SavePackagesMethod()
@@ -356,7 +354,7 @@ namespace ScriptCs.Tests
 
             private IPackageAssemblyResolver GetResolver()
             {
-                return new PackageAssemblyResolver(_fs.Object, _pc.Object, _log, _assemblyUtility.Object);
+                return new PackageAssemblyResolver(_fs.Object, _pc.Object, _logProvider, _assemblyUtility.Object);
             }
 
             [Fact]
@@ -370,7 +368,7 @@ namespace ScriptCs.Tests
                 resolver.SavePackages();
 
                 _pc.Verify(i => i.CreatePackageFile(), Times.Never());
-                _log.Output.ShouldContain("WARN: Packages directory does not exist!");
+                _logProvider.Output.ShouldContain("WARN: Packages directory does not exist!");
             }
 
             [Fact]

@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Reflection;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.CSharp
 {
     public class CSharpScriptInMemoryEngine : CSharpScriptCompilerEngine
     {
-        public CSharpScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        private readonly ILog _log;
+
+        public CSharpScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
         }
 
         protected override bool ShouldCompile()
@@ -19,12 +23,12 @@ namespace ScriptCs.CSharp
 
         protected override Assembly LoadAssemblyFromCache()
         {
-            throw new NotImplementedException("Reaching this point indicates a bug. The RoslynScriptInMemoryEngine should never load the assembly from the cache.");
+            throw new NotImplementedException("Reaching this point indicates a bug. The CSharpScriptInMemoryEngine should never load the assembly from the cache.");
         }
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
-            this.Logger.Debug("Loading assembly from memory.");
+            _log.Debug("Loading assembly from memory.");
 
             // this is required for debugging. otherwise, the .dll is not related to the .pdb
             // there might be ways of doing this without "loading", haven't found one yet

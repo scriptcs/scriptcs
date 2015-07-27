@@ -3,7 +3,6 @@ using System.IO;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
-using ScriptCs.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;
@@ -32,7 +31,7 @@ namespace ScriptCs.Tests.ReplCommands
                 Mock<IFileSystem> fileSystem,
                 Mock<IScriptEngine> engine,
                 Mock<IObjectSerializer> serializer,
-                Mock<ILog> logger,
+                TestLogProvider logProvider,
                 Mock<IScriptLibraryComposer> composer,
                 Mock<IConsole> console,
                 Mock<IFilePreProcessor> filePreProcessor)
@@ -50,7 +49,7 @@ namespace ScriptCs.Tests.ReplCommands
                     fileSystem.Object,
                     engine.Object,
                     serializer.Object,
-                    logger.Object,
+                    logProvider,
                     composer.Object,
                     console.Object,
                     filePreProcessor.Object,

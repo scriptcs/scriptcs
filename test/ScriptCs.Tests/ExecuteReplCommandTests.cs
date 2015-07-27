@@ -6,7 +6,6 @@ using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using ScriptCs.Logging;
 using Should;
 using Xunit.Extensions;
 
@@ -130,7 +129,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptPackResolver>().Object,
                     new Mock<IRepl>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     console.Object,
                     new Mock<IAssemblyResolver>().Object,
                     fileSystemMigrator.Object,
@@ -153,7 +152,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     new Mock<IFileSystemMigrator>().Object,
                     composer.Object);

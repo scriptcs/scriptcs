@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 using ScriptCs.Exceptions;
-using ScriptCs.Logging;
 
 namespace ScriptCs.CSharp
 {
@@ -17,9 +16,15 @@ namespace ScriptCs.CSharp
 
         private const string CompiledScriptMethod = "<Factory>";
 
-        protected CSharpScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        private readonly ILog _log;
+
+        protected CSharpScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
+
         }
 
         protected abstract bool ShouldCompile();
@@ -42,6 +47,7 @@ namespace ScriptCs.CSharp
 
         protected ScriptResult CompileAndExecute(string code, object globals)
         {
+            Logger.Debug("Compiling submission");
             try
             {
                 var script = CSharpScript.Create(code, ScriptOptions);
@@ -54,7 +60,7 @@ namespace ScriptCs.CSharp
 
                     if (result.Success)
                     {
-                        Logger.Debug("Compilation was successful.");
+                        _log.Debug("Compilation was successful.");
 
                         var assembly = LoadAssembly(exeStream.ToArray(), pdbStream.ToArray());
                         return InvokeEntryPointMethod(globals, assembly);
@@ -62,7 +68,7 @@ namespace ScriptCs.CSharp
 
                     var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
 
-                    Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
+                    _log.ErrorFormat("Error occurred when compiling: {0})", errors);
 
                     return new ScriptResult(compilationException: new ScriptCompilationException(errors));
                 }
@@ -76,23 +82,23 @@ namespace ScriptCs.CSharp
 
         private ScriptResult InvokeEntryPointMethod(object globals, Assembly assembly)
         {
-            Logger.Debug("Retrieving compiled script class (reflection).");
+            _log.Debug("Retrieving compiled script class (reflection).");
 
             // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
             var type = assembly.GetType(CompiledScriptClass);
-            Logger.Debug("Retrieving compiled script method (reflection).");
+            _log.Debug("Retrieving compiled script method (reflection).");
             var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
             try
             {
-                Logger.Debug("Invoking method.");
+                _log.Debug("Invoking method.");
                 var submissionStates = new object[2];
                 submissionStates[0] = globals;
                 return new ScriptResult(returnValue: method.Invoke(null, new[] { submissionStates }));
             }
             catch (Exception executeException)
             {
-                Logger.Error("An error occurred when executing the scripts.");
+                _log.Error("An error occurred when executing the scripts.");
 
                 var ex = executeException.InnerException ?? executeException;
 

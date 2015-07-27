@@ -7,7 +7,6 @@ using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.CSharp;
 using ScriptCs.Engine.Common;
-using ScriptCs.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;
@@ -356,8 +355,8 @@ namespace ScriptCs.Tests
 
         public class CSharpTestScriptEngine : CSharpScriptEngine
         {
-            public CSharpTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public CSharpTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

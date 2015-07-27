@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs
 {
@@ -19,7 +18,7 @@ namespace ScriptCs
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IAssemblyUtility assemblyUtility,
-            ILog logger)
+            ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
@@ -27,12 +26,12 @@ namespace ScriptCs
 
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
             Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
             _assemblyUtility = assemblyUtility;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public IEnumerable<string> GetAssemblyPaths(string path, bool binariesOnly = false)

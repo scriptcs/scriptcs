@@ -2,15 +2,13 @@
 using System.Linq;
 using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
-using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly ITypeResolver _typeResolver;
-        private readonly ILog _logger;
+        private readonly ILogProvider _logProvider;
 
         private IRuntimeServices _runtimeServices;
         private bool _repl;
@@ -25,17 +23,17 @@ namespace ScriptCs.Hosting
 
         public ScriptServicesBuilder(
             IConsole console,
-            ILog logger,
+            ILogProvider logProvider,
             IRuntimeServices runtimeServices = null,
             ITypeResolver typeResolver = null,
             IInitializationServices initializationServices = null)
         {
-            InitializationServices = initializationServices ?? new InitializationServices(logger);
+            InitializationServices = initializationServices ?? new InitializationServices(logProvider);
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
             _typeResolver = typeResolver ?? new TypeResolver();
             ConsoleInstance = console;
-            _logger = logger;
+            _logProvider = logProvider;
         }
 
         public ScriptServices Build()
@@ -64,7 +62,7 @@ namespace ScriptCs.Hosting
             if (_runtimeServices == null)
             {
                 _runtimeServices = new RuntimeServices(
-                    _logger,
+                    _logProvider,
                     Overrides,
                     ConsoleInstance,
                     _scriptEngineType,
