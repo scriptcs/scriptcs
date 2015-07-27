@@ -57,14 +57,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft.CodeAnalysis.VisualBasic.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptCs.Contracts, Version=0.14.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ScriptCs.Contracts\bin\Debug\ScriptCs.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptCs.Core, Version=0.14.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ScriptCs.Core\bin\Debug\ScriptCs.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,6 +95,14 @@
     <None Include="ScriptCs.VisualBasic.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
+      <Project>{6049e205-8b5f-4080-b023-70600e51fd64}</Project>
+      <Name>ScriptCs.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.Core\ScriptCs.Core.csproj">
+      <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
+      <Name>ScriptCs.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptCs.Engine.Common\ScriptCs.Engine.Common.csproj">
       <Project>{38a12481-8652-4a9c-9d90-1c15043efee5}</Project>
       <Name>ScriptCs.Engine.Common</Name>
