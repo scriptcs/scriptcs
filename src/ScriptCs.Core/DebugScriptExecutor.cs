@@ -1,12 +1,11 @@
 ﻿using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs
 {
     public class DebugScriptExecutor : ScriptExecutor
     {
-        public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILog logger, IScriptLibraryComposer composer)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger, composer)
+        public DebugScriptExecutor(IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider, IScriptLibraryComposer composer)
+            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer)
         {
         }
     }

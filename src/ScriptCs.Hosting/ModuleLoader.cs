@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting
 {
@@ -28,15 +27,17 @@ namespace ScriptCs.Hosting
         private readonly IAssemblyUtility _assemblyUtility;
 
         [ImportingConstructor]
-        public ModuleLoader(IAssemblyResolver resolver, ILog logger, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
-            this(resolver, logger, null, null, fileSystem, assemblyUtility)
+        public ModuleLoader(IAssemblyResolver resolver, ILogProvider logProvider, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
+            this(resolver, logProvider, null, null, fileSystem, assemblyUtility)
         {
         }
 
-        public ModuleLoader(IAssemblyResolver resolver, ILog logger, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
+        public ModuleLoader(IAssemblyResolver resolver, ILogProvider logProvider, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
             _resolver = resolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
 
             if (addToCatalog == null)
             {
@@ -49,7 +50,7 @@ namespace ScriptCs.Hosting
                     }
                     catch (Exception exception)
                     {
-                        logger.DebugFormat("Module Loader exception: {0}", exception.Message);
+                        _logger.DebugFormat("Module Loader exception: {0}", exception.Message);
                     }
                 };
             }

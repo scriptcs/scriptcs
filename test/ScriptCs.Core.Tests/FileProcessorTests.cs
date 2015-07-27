@@ -4,7 +4,6 @@ using System.Linq;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Contracts.Exceptions;
-using ScriptCs.Logging;
 using Should;
 using Xunit;
 
@@ -525,7 +524,7 @@ namespace ScriptCs.Tests
                     new ShebangLineProcessor()
                 };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
         }
 
@@ -589,7 +588,7 @@ namespace ScriptCs.Tests
                     new ShebangLineProcessor()
                 };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
         }
 
@@ -647,7 +646,7 @@ namespace ScriptCs.Tests
                         customDirectiveProcessor
                     };
 
-                return new FilePreProcessor(_fileSystem.Object, Mock.Of<ILog>(), lineProcessors);
+                return new FilePreProcessor(_fileSystem.Object, new TestLogProvider(), lineProcessors);
             }
 
             public class TestableLoadLineProcessor : LoadLineProcessor

@@ -5,7 +5,6 @@ using System.Reflection;
 using Roslyn.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -14,10 +13,16 @@ namespace ScriptCs.Engine.Roslyn
         private const string CompiledScriptClass = "Submission#0";
 
         private const string CompiledScriptMethod = "<Factory>";
-        
-        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+
+        private readonly ILog _log;
+
+        protected RoslynScriptCompilerEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
+
         }
 
         protected abstract bool ShouldCompile();
@@ -37,7 +42,7 @@ namespace ScriptCs.Engine.Roslyn
 
         private ScriptResult CompileAndExecute(string code, Session session)
         {
-            Logger.Debug("Compiling submission");
+            _log.Debug("Compiling submission");
             try
             {
                 var submission = session.CompileSubmission<object>(code);
@@ -49,7 +54,7 @@ namespace ScriptCs.Engine.Roslyn
 
                     if (result.Success)
                     {
-                        Logger.Debug("Compilation was successful.");
+                        _log.Debug("Compilation was successful.");
 
                         var assembly = LoadAssembly(exeStream.ToArray(), pdbStream.ToArray());
 
@@ -58,7 +63,7 @@ namespace ScriptCs.Engine.Roslyn
 
                     var errors = string.Join(Environment.NewLine, result.Diagnostics.Select(x => x.ToString()));
                     
-                    Logger.ErrorFormat("Error occurred when compiling: {0})", errors);
+                    _log.ErrorFormat("Error occurred when compiling: {0})", errors);
 
                     return new ScriptResult(compilationException: new ScriptCompilationException(errors));
                 }
@@ -72,22 +77,22 @@ namespace ScriptCs.Engine.Roslyn
 
         private ScriptResult InvokeEntryPointMethod(Session session, Assembly assembly)
         {
-            Logger.Debug("Retrieving compiled script class (reflection).");
+            _log.Debug("Retrieving compiled script class (reflection).");
 
             // the following line can throw NullReferenceException, if that happens it's useful to notify that an error ocurred
             var type = assembly.GetType(CompiledScriptClass);
-            Logger.Debug("Retrieving compiled script method (reflection).");
+            _log.Debug("Retrieving compiled script method (reflection).");
             var method = type.GetMethod(CompiledScriptMethod, BindingFlags.Static | BindingFlags.Public);
 
             try
             {
-                Logger.Debug("Invoking method.");
+                _log.Debug("Invoking method.");
 
                 return new ScriptResult(returnValue: method.Invoke(null, new object[] { session }));
             }
             catch (Exception executeException)
             {
-                Logger.Error("An error occurred when executing the scripts.");
+                _log.Error("An error occurred when executing the scripts.");
 
                 var ex = executeException.InnerException ?? executeException;
 

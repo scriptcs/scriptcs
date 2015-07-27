@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Runtime.Versioning;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.ReplCommands
 {
@@ -15,17 +14,17 @@ namespace ScriptCs.ReplCommands
         public InstallCommand(
             IPackageInstaller packageInstaller,
             IPackageAssemblyResolver packageAssemblyResolver,
-            ILog logger,
+            ILogProvider logProvider,
             IInstallationProvider installationProvider)
         {
             Guard.AgainstNullArgument("packageInstaller", packageInstaller);
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("installationProvider", installationProvider);
 
             _packageInstaller = packageInstaller;
             _packageAssemblyResolver = packageAssemblyResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _installationProvider = installationProvider;
         }
 

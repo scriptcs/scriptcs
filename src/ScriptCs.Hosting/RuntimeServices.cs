@@ -7,12 +7,12 @@ using Autofac;
 using Autofac.Integration.Mef;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Hosting
 {
     public class RuntimeServices : ScriptServicesRegistration, IRuntimeServices
     {
+        private readonly ILog _log;
         private readonly IConsole _console;
         private readonly Type _scriptEngineType;
         private readonly Type _scriptExecutorType;
@@ -22,7 +22,7 @@ namespace ScriptCs.Hosting
         private readonly string _scriptName;
 
         public RuntimeServices(
-            ILog logger,
+            ILogProvider logProvider,
             IDictionary<Type, object> overrides,
             IConsole console,
             Type scriptEngineType,
@@ -31,8 +31,11 @@ namespace ScriptCs.Hosting
             bool initDirectoryCatalog,
             IInitializationServices initializationServices,
             string scriptName)
-            : base(logger, overrides)
+            : base(logProvider, overrides)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
             _console = console;
             _scriptEngineType = scriptEngineType;
             _scriptExecutorType = scriptExecutorType;
@@ -50,9 +53,9 @@ namespace ScriptCs.Hosting
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            this.Logger.Debug("Registering runtime services");
+            _log.Debug("Registering runtime services");
 
-            builder.RegisterInstance(this.Logger).Exported(x => x.As<ILog>());
+            builder.RegisterInstance(this.LogProvider).Exported(x => x.As<ILogProvider>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
@@ -134,7 +137,7 @@ namespace ScriptCs.Hosting
                         {
                             foreach (var ex in typeLoadEx.LoaderExceptions.GroupBy(x => x.Message))
                             {
-                                Logger.DebugFormat(
+                                _log.DebugFormat(
                                     "Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.First().Message);
                             }
                         }
@@ -142,12 +145,12 @@ namespace ScriptCs.Hosting
                     catch (Exception ex)
                     {
                         assemblyLoadFailures = true;
-                        Logger.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.Message);
+                        _log.DebugFormat("Failure loading assembly: {0}. Exception: {1}", assemblyPath, ex.Message);
                     }
                 }
                 if (assemblyLoadFailures)
                 {
-                    Logger.Warn(string.IsNullOrEmpty(_scriptName)
+                    _log.Warn(string.IsNullOrEmpty(_scriptName)
                         ? "Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"
                         : "Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
                 }
@@ -176,7 +179,7 @@ namespace ScriptCs.Hosting
 
         public ScriptServices GetScriptServices()
         {
-            this.Logger.Debug("Resolving ScriptServices");
+            _log.Debug("Resolving ScriptServices");
             return Container.Resolve<ScriptServices>();
         }
     }

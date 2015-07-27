@@ -40,14 +40,8 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptCsAutoDataAttribute.cs">
-      <Link>ScriptCsAutoDataAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptCsMoqCustomization.cs">
-      <Link>ScriptCsMoqCustomization.cs</Link>
-    </Compile>
-    <Compile Include="..\TestLogger.cs">
-      <Link>TestLogger.cs</Link>
+    <Compile Include="..\*.cs">
+      <Link>%(Filename)%(Extension)</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynModuleTests.cs" />

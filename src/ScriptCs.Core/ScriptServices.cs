@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs
 {
@@ -16,7 +15,7 @@ namespace ScriptCs
             IScriptPackResolver scriptPackResolver,
             IPackageInstaller packageInstaller,
             IObjectSerializer objectSerializer,
-            ILog logger,
+            ILogProvider logProvider,
             IAssemblyResolver assemblyResolver,
             IEnumerable<IReplCommand> replCommands,
             IFileSystemMigrator fileSystemMigrator,
@@ -34,7 +33,7 @@ namespace ScriptCs
             ScriptPackResolver = scriptPackResolver;
             PackageInstaller = packageInstaller;
             ObjectSerializer = objectSerializer;
-            Logger = logger;
+            LogProvider = logProvider;
             Console = console;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
@@ -50,7 +49,7 @@ namespace ScriptCs
         public IScriptPackResolver ScriptPackResolver { get; private set; }
         public IPackageInstaller PackageInstaller { get; private set; }
         public IObjectSerializer ObjectSerializer { get; private set; }
-        public ILog Logger { get; private set; }
+        public ILogProvider LogProvider { get; private set; }
         public IScriptEngine Engine { get; private set; }
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }

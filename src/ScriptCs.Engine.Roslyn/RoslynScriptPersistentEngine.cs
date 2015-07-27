@@ -3,18 +3,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
     public class RoslynScriptPersistentEngine : RoslynScriptCompilerEngine
     {
+        private readonly ILog _log;
         private readonly IFileSystem _fileSystem;
         private const string RoslynAssemblyNameCharacter = "ℛ";
 
-        public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILog logger, IFileSystem fileSystem)
-            : base(scriptHostFactory, logger)
+        public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider, IFileSystem fileSystem)
+            : base(scriptHostFactory, logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
             _fileSystem = fileSystem;
         }
 
@@ -27,7 +30,7 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override Assembly LoadAssembly(byte[] exeBytes, byte[] pdbBytes)
         {
-            this.Logger.DebugFormat("Writing assembly to {0}.", FileName);
+            _log.DebugFormat("Writing assembly to {0}.", FileName);
 
             if (!_fileSystem.DirectoryExists(CacheDirectory))
             {
@@ -37,7 +40,7 @@ namespace ScriptCs.Engine.Roslyn
             var dllPath = GetDllTargetPath();
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
-            Logger.DebugFormat("Loading assembly {0}.", dllPath);
+            _log.DebugFormat("Loading assembly {0}.", dllPath);
 
             // the assembly is automatically loaded into the AppDomain when compiled
             // just need to find and return it

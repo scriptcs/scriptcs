@@ -7,7 +7,6 @@ using Moq;
 using Moq.Protected;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 using Should;
 using Xunit;
 using Xunit.Extensions;
@@ -585,13 +584,13 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
                 [Frozen] Mock<IScriptEngine> engine,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IScriptLibraryComposer> composer)
             {
                 // arrange
                 fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
                 var executor = new ScriptExecutor(
-                    fileSystem.Object, preProcessor.Object, engine.Object, logger.Object,composer.Object);
+                    fileSystem.Object, preProcessor.Object, engine.Object, logProvider, composer.Object);
 
                 // act
                 executor.LoadScriptLibraries("");

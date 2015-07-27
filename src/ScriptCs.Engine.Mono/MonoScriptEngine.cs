@@ -8,7 +8,6 @@ using Mono.Collections.Generic;
 using MonoCSharp::Mono.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Mono.Segmenter;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Mono
 {
@@ -17,18 +16,19 @@ namespace ScriptCs.Engine.Mono
         public const string SessionKey = "MonoSession";
 
         private readonly IScriptHostFactory _scriptHostFactory;
+        private readonly ILog _log;
 
         public string BaseDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
 
-        public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
-            _scriptHostFactory = scriptHostFactory;
-            Logger = logger;
-        }
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
-        public ILog Logger { get; set; }
+            _scriptHostFactory = scriptHostFactory;
+            _log = logProvider.ForCurrentType();
+        }
 
         public ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession)
         {
@@ -63,7 +63,7 @@ namespace ScriptCs.Engine.Mono
             if (isFirstExecution)
             {
                 code = code.DefineTrace();
-                Logger.Debug("Creating session");
+                _log.Debug("Creating session");
                 var context = new CompilerContext(
                     new CompilerSettings { AssemblyReferences = references.Paths.ToList() },
                     new ConsoleReportPrinter());
@@ -92,7 +92,7 @@ namespace ScriptCs.Engine.Mono
             }
             else
             {
-                Logger.Debug("Reusing existing session");
+                _log.Debug("Reusing existing session");
                 sessionState = (SessionState<Evaluator>)scriptPackSession.State[SessionKey];
 
                 var newReferences = sessionState.References == null
@@ -101,7 +101,7 @@ namespace ScriptCs.Engine.Mono
 
                 foreach (var reference in newReferences.Paths)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", reference);
+                    _log.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.LoadAssembly(reference);
                 }
 
@@ -114,9 +114,9 @@ namespace ScriptCs.Engine.Mono
                 ImportNamespaces(newNamespaces, sessionState);
             }
 
-            Logger.Debug("Starting execution");
+            _log.Debug("Starting execution");
             var result = Execute(code, sessionState.Session);
-            Logger.Debug("Finished execution");
+            _log.Debug("Finished execution");
 
             return result;
         }
@@ -152,7 +152,7 @@ namespace ScriptCs.Engine.Mono
             var builder = new StringBuilder();
             foreach (var ns in namespaces)
             {
-                Logger.DebugFormat(ns);
+                _log.DebugFormat(ns);
                 builder.AppendLine(string.Format("using {0};", ns));
                 sessionState.Namespaces.Add(ns);
             }

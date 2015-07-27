@@ -7,7 +7,6 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
-using ScriptCs.Logging;
 using Should;
 using Xunit.Extensions;
 
@@ -354,8 +353,8 @@ namespace ScriptCs.Tests
 
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {
-            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

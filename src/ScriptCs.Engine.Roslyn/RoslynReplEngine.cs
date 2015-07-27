@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Roslyn.Scripting;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -12,8 +11,8 @@ namespace ScriptCs.Engine.Roslyn
 
     public class RoslynReplEngine : RoslynScriptEngine, IReplEngine
     {
-        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
         }
 

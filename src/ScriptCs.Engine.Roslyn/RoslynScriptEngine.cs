@@ -7,26 +7,26 @@ using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.Logging;
 
 namespace ScriptCs.Engine.Roslyn
 {
     public class RoslynScriptEngine : IScriptEngine
     {
+        private readonly ILog _log;
         protected readonly ScriptEngine ScriptEngine;
         private readonly IScriptHostFactory _scriptHostFactory;
 
         public const string SessionKey = "Session";
         private const string InvalidNamespaceError = "error CS0246";
 
-        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
+        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
             ScriptEngine = new ScriptEngine();
             _scriptHostFactory = scriptHostFactory;
-            Logger = logger;
+            _log = logProvider.ForCurrentType();
         }
-
-        protected ILog Logger { get; private set; }
 
         public string BaseDirectory
         {
@@ -48,8 +48,8 @@ namespace ScriptCs.Engine.Roslyn
             Guard.AgainstNullArgument("scriptPackSession", scriptPackSession);
             Guard.AgainstNullArgument("references", references);
 
-            Logger.Debug("Starting to create execution components");
-            Logger.Debug("Creating script host");
+            _log.Debug("Starting to create execution components");
+            _log.Debug("Creating script host");
 
             var executionReferences = references.Union(scriptPackSession.References);
 
@@ -64,7 +64,7 @@ namespace ScriptCs.Engine.Roslyn
                     new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
 
                 ScriptLibraryWrapper.SetHost(host);
-                Logger.Debug("Creating session");
+                _log.Debug("Creating session");
 
                 var hostType = host.GetType();
                 ScriptEngine.AddReference(hostType.Assembly);
@@ -73,19 +73,19 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var reference in executionReferences.Paths)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", reference);
+                    _log.DebugFormat("Adding reference to {0}", reference);
                     session.AddReference(reference);
                 }
 
                 foreach (var assembly in executionReferences.Assemblies)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     session.AddReference(assembly);
                 }
 
                 foreach (var @namespace in allNamespaces)
                 {
-                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    _log.DebugFormat("Importing namespace {0}", @namespace);
                     session.ImportNamespace(@namespace);
                 }
 
@@ -100,7 +100,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             else
             {
-                Logger.Debug("Reusing existing session");
+                _log.Debug("Reusing existing session");
                 sessionState = (SessionState<Session>)scriptPackSession.State[SessionKey];
 
                 if (sessionState.References == null)
@@ -117,14 +117,14 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var reference in newReferences.Paths)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", reference);
+                    _log.DebugFormat("Adding reference to {0}", reference);
                     sessionState.Session.AddReference(reference);
                     sessionState.References = sessionState.References.Union(new[] { reference });
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     sessionState.Session.AddReference(assembly);
                     sessionState.References = sessionState.References.Union(new[] { assembly });
                 }
@@ -133,13 +133,13 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var @namespace in newNamespaces)
                 {
-                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    _log.DebugFormat("Importing namespace {0}", @namespace);
                     sessionState.Session.ImportNamespace(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
             }
 
-            Logger.Debug("Starting execution");
+            _log.Debug("Starting execution");
 
             var result = Execute(code, sessionState.Session);
 
@@ -170,7 +170,7 @@ namespace ScriptCs.Engine.Roslyn
                 }
             }
 
-            Logger.Debug("Finished execution");
+            _log.Debug("Finished execution");
             return result;
         }
 
