@@ -8,6 +8,8 @@
         public const int Character = -4;
         public const int Do = -5;
         public const int While = -6;
+        public const int If = -7;
+        public const int Else = -8;
         public const int LeftBracket = '{';
         public const int RightBracket = '}';
         public const int LeftParenthese = '(';

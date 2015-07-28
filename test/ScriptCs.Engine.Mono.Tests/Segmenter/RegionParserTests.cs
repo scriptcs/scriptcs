@@ -175,6 +175,34 @@ namespace ScriptCs.Engine.Mono.Tests.Segmenter
                 region = result[1];
                 Code.Substring(region.Offset, region.Length).ShouldEqual("if (true);");
             }
+
+            [Fact]
+            public void ShouldExtractIfElseAsSingleBlock()
+            {
+                const string Code = "if { } else { }";
+
+                var parser = new RegionParser();
+                var result = parser.Parse(Code);
+
+                result.Count().ShouldEqual(1);
+
+                var region = result[0];
+                Code.Substring(region.Offset, region.Length).ShouldEqual(Code);
+            }
+
+            [Fact]
+            public void ShouldExtractMultipleIfElseAsSingleBlock()
+            {
+                const string Code = "if { } else if { } else if { } else { }";
+
+                var parser = new RegionParser();
+                var result = parser.Parse(Code);
+
+                result.Count().ShouldEqual(1);
+
+                var region = result[0];
+                Code.Substring(region.Offset, region.Length).ShouldEqual(Code);
+            }
         }
 
         public class ParseExpressions
