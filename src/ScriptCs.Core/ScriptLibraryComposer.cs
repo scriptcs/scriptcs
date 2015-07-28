@@ -15,6 +15,12 @@ namespace ScriptCs
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly ILog _logger;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, Common.Logging.ILog logger)
+            : this(fileSystem, preProcessor, packageContainer, packageAssemblyResolver, new CommonLoggingLogProvider(logger))
+        {
+        }
+
         public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);

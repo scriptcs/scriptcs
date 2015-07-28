@@ -8,6 +8,12 @@ namespace ScriptCs.Engine.Roslyn
     {
         private readonly ILog _log;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, Common.Logging.ILog logger)
+            : this(scriptHostFactory, new CommonLoggingLogProvider(logger))
+        {
+        }
+
         public RoslynScriptInMemoryEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
             : base(scriptHostFactory, logProvider)
         {

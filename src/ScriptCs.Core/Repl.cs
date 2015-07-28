@@ -14,6 +14,30 @@ namespace ScriptCs
         private readonly IObjectSerializer _serializer;
         private readonly ILog _log;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public Repl(
+            string[] scriptArgs,
+            IFileSystem fileSystem,
+            IScriptEngine scriptEngine,
+            IObjectSerializer serializer,
+            Common.Logging.ILog logger,
+            IScriptLibraryComposer composer,
+            IConsole console,
+            IFilePreProcessor filePreProcessor,
+            IEnumerable<IReplCommand> replCommands)
+            : this(
+                scriptArgs,
+                fileSystem,
+                scriptEngine,
+                serializer,
+                new CommonLoggingLogProvider(logger),
+                composer,
+                console,
+                filePreProcessor,
+                replCommands)
+        {
+        }
+
         public Repl(
             string[] scriptArgs,
             IFileSystem fileSystem,
