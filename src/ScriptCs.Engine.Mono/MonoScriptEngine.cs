@@ -34,7 +34,13 @@ namespace ScriptCs.Engine.Mono
 
             _scriptHostFactory = scriptHostFactory;
             _log = logProvider.ForCurrentType();
+#pragma warning disable 618
+            Logger = new ScriptCsLogger(_log);
+#pragma warning restore 618
         }
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public Common.Logging.ILog Logger { get; set; }
 
         public ICollection<string> GetLocalVariables(ScriptPackSession scriptPackSession)
         {
