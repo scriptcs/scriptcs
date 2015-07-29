@@ -19,6 +19,12 @@ namespace ScriptCs.Engine.Roslyn
         public const string SessionKey = "Session";
         private const string InvalidNamespaceError = "error CS0246";
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, Common.Logging.ILog logger)
+            : this(scriptHostFactory, new CommonLoggingLogProvider(logger))
+        {
+        }
+
         public RoslynScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("logProvider", logProvider);
@@ -26,7 +32,13 @@ namespace ScriptCs.Engine.Roslyn
             ScriptEngine = new ScriptEngine();
             _scriptHostFactory = scriptHostFactory;
             _log = logProvider.ForCurrentType();
+#pragma warning disable 618
+            Logger = new ScriptCsLogger(_log);
+#pragma warning restore 618
         }
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        protected Common.Logging.ILog Logger { get; private set; }
 
         public string BaseDirectory
         {

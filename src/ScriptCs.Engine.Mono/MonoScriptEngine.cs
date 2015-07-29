@@ -22,6 +22,12 @@ namespace ScriptCs.Engine.Mono
         public string CacheDirectory { get; set; }
         public string FileName { get; set; }
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public MonoScriptEngine(IScriptHostFactory scriptHostFactory, Common.Logging.ILog logger)
+            : this(scriptHostFactory, new CommonLoggingLogProvider(logger))
+        {
+        }
+
         public MonoScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("logProvider", logProvider);

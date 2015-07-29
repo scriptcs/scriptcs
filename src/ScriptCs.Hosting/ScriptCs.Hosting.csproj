@@ -42,6 +42,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Autofac.Mef.3.0.3\lib\net40\Autofac.Integration.Mef.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Web.XmlTransform">
       <HintPath>..\..\packages\Microsoft.Web.Xdt.2.1.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
@@ -79,6 +83,7 @@
     <Compile Include="InitializationServices.cs" />
     <Compile Include="IRuntimeServices.cs" />
     <Compile Include="IScriptServicesBuilder.cs" />
+    <Compile Include="LoggerConfigurator.cs" />
     <Compile Include="ModuleConfiguration.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Package\NugetInstallationProvider.cs" />
@@ -89,6 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeServices.cs" />
     <Compile Include="ScriptConsole.cs" />
+    <Compile Include="ScriptConsoleLogger.cs" />
     <Compile Include="ScriptServicesRegistration.cs" />
     <Compile Include="ScriptServicesBuilder.cs" />
     <Compile Include="ServiceOverrides.cs" />

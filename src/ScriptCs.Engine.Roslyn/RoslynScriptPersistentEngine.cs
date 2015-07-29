@@ -12,6 +12,12 @@ namespace ScriptCs.Engine.Roslyn
         private readonly IFileSystem _fileSystem;
         private const string RoslynAssemblyNameCharacter = "ℛ";
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, Common.Logging.ILog logger, IFileSystem fileSystem)
+            : this(scriptHostFactory, new CommonLoggingLogProvider(logger), fileSystem)
+        {
+        }
+
         public RoslynScriptPersistentEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider, IFileSystem fileSystem)
             : base(scriptHostFactory, logProvider)
         {
