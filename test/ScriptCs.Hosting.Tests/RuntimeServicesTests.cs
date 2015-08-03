@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autofac;
-using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
+using ScriptCs.Tests;
 using Should;
 using Xunit;
 
@@ -19,7 +19,7 @@ namespace ScriptCs.Hosting.Tests
             private readonly Type _scriptExecutorType;
             private readonly Type _replType;
             private readonly Type _scriptEngineType;
-            private readonly Mock<ILog> _mockLogger = new Mock<ILog>();
+            private readonly TestLogProvider _logProvider = new TestLogProvider();
             private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             private readonly RuntimeServices _runtimeServices;
 
@@ -35,9 +35,9 @@ namespace ScriptCs.Hosting.Tests
                 var mockScriptEngineType = new Mock<IScriptEngine>();
                 _scriptEngineType = mockScriptEngineType.Object.GetType();
 
-                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var initializationServices = new InitializationServices(_logProvider, _overrides);
                 _runtimeServices = new RuntimeServices(
-                    _mockLogger.Object,
+                    _logProvider,
                     _overrides,
                     _mockConsole.Object,
                     _scriptEngineType,
@@ -51,8 +51,8 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldRegisterTheLoggerInstance()
             {
-                var logger = _runtimeServices.Container.Resolve<ILog>();
-                logger.ShouldEqual(_mockLogger.Object);
+                var logProvider = _runtimeServices.Container.Resolve<ILogProvider>();
+                logProvider.ShouldEqual(_logProvider);
             }
 
             [Fact]
@@ -280,9 +280,9 @@ namespace ScriptCs.Hosting.Tests
                 mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
                 _overrides[typeof(IAssemblyUtility)] = mockAssemblyUtility.Object;
 
-                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var initializationServices = new InitializationServices(_logProvider, _overrides);
                 var runtimeServices = new RuntimeServices(
-                    _mockLogger.Object,
+                    _logProvider,
                     _overrides,
                     _mockConsole.Object,
                     _scriptEngineType,
@@ -296,8 +296,8 @@ namespace ScriptCs.Hosting.Tests
                 var container = runtimeServices.Container;
 
                 // assert
-                _mockLogger.Verify(l => l.DebugFormat(
-                    "Failure loading assembly: {0}. Exception: {1}", "/foo.dll", It.IsAny<string>()));
+                _logProvider.Output.ShouldContain(
+                    "DEBUG: Failure loading assembly: /foo.dll. Exception: Could not load file or assembly 'foo.dll' or one of its dependencies. The system cannot find the file specified.");
             }
 
             [Fact]
@@ -312,9 +312,9 @@ namespace ScriptCs.Hosting.Tests
                 mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
                 _overrides[typeof(IAssemblyUtility)] = mockAssemblyUtility.Object;
 
-                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var initializationServices = new InitializationServices(_logProvider, _overrides);
                 var runtimeServices = new RuntimeServices(
-                    _mockLogger.Object,
+                    _logProvider,
                     _overrides,
                     _mockConsole.Object,
                     _scriptEngineType,
@@ -328,8 +328,8 @@ namespace ScriptCs.Hosting.Tests
                 var container = runtimeServices.Container;
 
                 // assert
-                _mockLogger.Verify(l => l.Warn(
-                    "Some assemblies failed to load. Launch with '-loglevel debug' to see the details"));
+                _logProvider.Output.ShouldContain(
+                    "WARN: Some assemblies failed to load. Launch with '-loglevel debug' to see the details");
             }
 
             [Fact]
@@ -344,9 +344,9 @@ namespace ScriptCs.Hosting.Tests
                 mockAssemblyUtility.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
                 _overrides[typeof (IAssemblyUtility)] = mockAssemblyUtility.Object;
 
-                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var initializationServices = new InitializationServices(_logProvider, _overrides);
                 var runtimeServices = new RuntimeServices(
-                    _mockLogger.Object,
+                    _logProvider,
                     _overrides,
                     _mockConsole.Object,
                     _scriptEngineType,
@@ -359,8 +359,8 @@ namespace ScriptCs.Hosting.Tests
                 var container = runtimeServices.Container;
 
                 // assert
-                _mockLogger.Verify(l => l.Warn(
-                    "Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details"));
+                _logProvider.Output.ShouldContain(
+                    "WARN: Some assemblies failed to load. Launch with '-repl -loglevel debug' to see the details");
             }
 
             [Fact]
@@ -376,9 +376,9 @@ namespace ScriptCs.Hosting.Tests
                 _overrides[typeof(IFileSystem)] = fsmock.Object;
                 _overrides[typeof(IAssemblyResolver)] = resolvermock.Object;
 
-                var initializationServices = new InitializationServices(_mockLogger.Object, _overrides);
+                var initializationServices = new InitializationServices(_logProvider, _overrides);
                 var runtimeServices = new RuntimeServices(
-                    _mockLogger.Object,
+                    _logProvider,
                     _overrides,
                     _mockConsole.Object,
                     _scriptEngineType,

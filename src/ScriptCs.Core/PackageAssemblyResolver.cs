@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -16,20 +15,27 @@ namespace ScriptCs
 
         private List<IPackageReference> _topLevelPackages;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public PackageAssemblyResolver(
-            IFileSystem fileSystem, IPackageContainer packageContainer, ILog logger, IAssemblyUtility assemblyUtility)
+            IFileSystem fileSystem, IPackageContainer packageContainer, Common.Logging.ILog logger, IAssemblyUtility assemblyUtility)
+            : this(fileSystem, packageContainer, new CommonLoggingLogProvider(logger), assemblyUtility)
+        {
+        }
+
+        public PackageAssemblyResolver(
+            IFileSystem fileSystem, IPackageContainer packageContainer, ILogProvider logProvider, IAssemblyUtility assemblyUtility)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFile", fileSystem.PackagesFile);
 
             Guard.AgainstNullArgument("packageContainer", packageContainer);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
 
             _fileSystem = fileSystem;
             _packageContainer = packageContainer;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _assemblyUtility = assemblyUtility;
         }
 
@@ -38,7 +44,7 @@ namespace ScriptCs
             var packagesFolder = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             if (!_fileSystem.DirectoryExists(packagesFolder))
             {
-                _logger.Info("Packages directory does not exist!");
+                _logger.Warn("Packages directory does not exist!");
                 return;
             }
 
@@ -80,7 +86,6 @@ namespace ScriptCs
                 if (packageObject == null)
                 {
                     _logger.WarnFormat(
-                        CultureInfo.InvariantCulture,
                         "Cannot find: {0} {1}",
                         packageReference.PackageId,
                         packageReference.Version);
@@ -92,7 +97,6 @@ namespace ScriptCs
                 if (compatibleDlls == null)
                 {
                     _logger.WarnFormat(
-                        CultureInfo.InvariantCulture,
                         "Cannot find compatible binaries for {0} in: {1} {2}",
                         packageReference.FrameworkName,
                         packageReference.PackageId,

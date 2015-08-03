@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using Roslyn.Compilers;
@@ -354,8 +353,8 @@ namespace ScriptCs.Tests
 
         public class RoslynTestScriptEngine : RoslynScriptEngine
         {
-            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public RoslynTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

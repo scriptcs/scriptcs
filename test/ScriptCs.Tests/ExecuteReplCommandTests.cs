@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
@@ -25,7 +24,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { Repl = true };
+                var config = new Config { Repl = true };
                 var readLines = 0;
                 var builder = new StringBuilder();
 
@@ -37,7 +36,7 @@ namespace ScriptCs.Tests
                 servicesBuilder.Setup(b => b.Build()).Returns(services);
 
                 var factory = new CommandFactory(servicesBuilder.Object);
-                var sut = factory.CreateCommand(args, new string[0]);
+                var sut = factory.CreateCommand(config, new string[0]);
 
                 // act
                 sut.Execute();
@@ -57,7 +56,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { Repl = true, ScriptName = "test.csx", };
+                var args = new Config { Repl = true, ScriptName = "test.csx", };
 
                 scriptEngine.Setup(x => x.Execute(
                     "#load test.csx",
@@ -91,7 +90,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { Repl = true };
+                var config = new Config { Repl = true };
 
                 console.Setup(x => x.ReadLine()).Throws(new Exception());
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
@@ -99,7 +98,7 @@ namespace ScriptCs.Tests
                 servicesBuilder.Setup(b => b.Build()).Returns(services);
 
                 var factory = new CommandFactory(servicesBuilder.Object);
-                var sut = factory.CreateCommand(args, new string[0]);
+                var sut = factory.CreateCommand(config, new string[0]);
 
                 // act
                 sut.Execute();
@@ -130,7 +129,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptPackResolver>().Object,
                     new Mock<IRepl>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     console.Object,
                     new Mock<IAssemblyResolver>().Object,
                     fileSystemMigrator.Object,
@@ -153,7 +152,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     new Mock<IFileSystemMigrator>().Object,
                     composer.Object);

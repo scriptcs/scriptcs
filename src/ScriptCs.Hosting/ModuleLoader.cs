@@ -5,7 +5,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting
@@ -27,16 +26,31 @@ namespace ScriptCs.Hosting
         private readonly IFileSystem _fileSystem;
         private readonly IAssemblyUtility _assemblyUtility;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         [ImportingConstructor]
-        public ModuleLoader(IAssemblyResolver resolver, ILog logger, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
-            this(resolver, logger, null, null, fileSystem, assemblyUtility)
+        public ModuleLoader(IAssemblyResolver resolver, Common.Logging.ILog logger, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
+            : this(resolver, new CommonLoggingLogProvider(logger), fileSystem, assemblyUtility)
         {
         }
 
-        public ModuleLoader(IAssemblyResolver resolver, ILog logger, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public ModuleLoader(IAssemblyResolver resolver, Common.Logging.ILog logger, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
+            : this(resolver, new CommonLoggingLogProvider(logger), addToCatalog, getLazyModules, fileSystem, assemblyUtility)
         {
+        }
+
+        [ImportingConstructor]
+        public ModuleLoader(IAssemblyResolver resolver, ILogProvider logProvider, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
+            this(resolver, logProvider, null, null, fileSystem, assemblyUtility)
+        {
+        }
+
+        public ModuleLoader(IAssemblyResolver resolver, ILogProvider logProvider, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
+        {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
             _resolver = resolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
 
             if (addToCatalog == null)
             {
@@ -49,7 +63,7 @@ namespace ScriptCs.Hosting
                     }
                     catch (Exception exception)
                     {
-                        logger.DebugFormat("Module Loader exception: {0}", exception.Message);
+                        _logger.DebugFormat("Module Loader exception: {0}", exception.Message);
                     }
                 };
             }
@@ -69,6 +83,8 @@ namespace ScriptCs.Hosting
         public void Load(IModuleConfiguration config, string[] modulePackagesPaths, string hostBin, string extension,
             params string[] moduleNames)
         {
+            Guard.AgainstNullArgument("moduleNames", moduleNames);
+
             if (modulePackagesPaths == null) return;
 
             // only CSharp module needed - use fast path

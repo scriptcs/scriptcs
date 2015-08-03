@@ -4,8 +4,8 @@
   <!-- Use the properties below to control the version of the assemblies created. -->
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
-    <MinorVersion>14</MinorVersion>
-    <PatchVersion>1</PatchVersion>
+    <MinorVersion>15</MinorVersion>
+    <PatchVersion>0</PatchVersion>
 
     <!-- Change this to set the build quality of the project. Use values like "alpha", "beta", "rc1", "rtm", etc. -->
     <!-- These values are used in SemVer, so make sure to always increase these alphabetically. -->

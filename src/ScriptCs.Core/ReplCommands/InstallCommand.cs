@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Runtime.Versioning;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
@@ -12,20 +12,30 @@ namespace ScriptCs.ReplCommands
         private readonly ILog _logger;
         private readonly IInstallationProvider _installationProvider;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public InstallCommand(
             IPackageInstaller packageInstaller,
             IPackageAssemblyResolver packageAssemblyResolver,
-            ILog logger,
+            Common.Logging.ILog logger,
+            IInstallationProvider installationProvider)
+            :this(packageInstaller, packageAssemblyResolver,new CommonLoggingLogProvider(logger), installationProvider)
+        {
+        }
+
+        public InstallCommand(
+            IPackageInstaller packageInstaller,
+            IPackageAssemblyResolver packageAssemblyResolver,
+            ILogProvider logProvider,
             IInstallationProvider installationProvider)
         {
             Guard.AgainstNullArgument("packageInstaller", packageInstaller);
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("installationProvider", installationProvider);
 
             _packageInstaller = packageInstaller;
             _packageAssemblyResolver = packageAssemblyResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _installationProvider = installationProvider;
         }
 

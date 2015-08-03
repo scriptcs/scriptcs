@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -23,7 +22,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IScriptExecutor scriptExecutor,
             IScriptPackResolver scriptPackResolver,
-            ILog logger,
+            ILogProvider logProvider,
             IAssemblyResolver assemblyResolver,
             IFileSystemMigrator fileSystemMigrator,
             IScriptLibraryComposer composer
@@ -32,7 +31,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("scriptExecutor", scriptExecutor);
             Guard.AgainstNullArgument("scriptPackResolver", scriptPackResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
             Guard.AgainstNullArgument("composer", composer);
@@ -42,7 +41,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _assemblyResolver = assemblyResolver;
             _fileSystemMigrator = fileSystemMigrator;
             _composer = composer;
@@ -71,14 +70,9 @@ namespace ScriptCs.Command
                 _scriptExecutor.Terminate();
                 return commandResult;
             }
-            catch (FileNotFoundException ex)
-            {
-                _logger.ErrorFormat("{0} - '{1}'.", ex, ex.Message, ex.FileName);
-                return CommandResult.Error;
-            }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.ErrorException("Error executing script '{0}'", ex, _script);
                 return CommandResult.Error;
             }
         }
@@ -93,14 +87,14 @@ namespace ScriptCs.Command
             if (result.CompileExceptionInfo != null)
             {
                 var ex = result.CompileExceptionInfo.SourceException;
-                _logger.ErrorFormat("Script compilation failed: {0}.", ex, ex.Message);
+                _logger.ErrorException("Script compilation failed.", ex);
                 return CommandResult.Error;
             }
 
             if (result.ExecuteExceptionInfo != null)
             {
                 var ex = result.ExecuteExceptionInfo.SourceException;
-                _logger.ErrorFormat("Script execution failed: {0}.", ex, ex.Message);
+                _logger.ErrorException("Script execution failed.", ex);
                 return CommandResult.Error;
             }
 

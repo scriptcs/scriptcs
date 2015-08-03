@@ -5,25 +5,25 @@ namespace ScriptCs.Command
     [Serializable]
     public class CrossAppDomainExecuteScriptCommand : ICrossAppDomainScriptCommand
     {
-        public ScriptCsArgs CommandArgs { get; set; }
+        public Config Config { get; set; }
         public string[] ScriptArgs { get; set; }
         public CommandResult Result { get; private set; }
 
         public void Execute()
         {
-            if (this.CommandArgs == null)
+            if (this.Config == null)
             {
-                throw new InvalidOperationException("The command args are missing.");
+                throw new InvalidOperationException("The config is missing.");
             }
 
-            var services = ScriptServicesBuilderFactory.Create(this.CommandArgs, this.ScriptArgs).Build();
+            var services = ScriptServicesBuilderFactory.Create(this.Config, this.ScriptArgs).Build();
             var command = new ExecuteScriptCommand(
-                this.CommandArgs.ScriptName,
+                this.Config.ScriptName,
                 this.ScriptArgs,
                 services.FileSystem,
                 services.Executor,
                 services.ScriptPackResolver,
-                services.Logger,
+                services.LogProvider,
                 services.AssemblyResolver,
                 services.FileSystemMigrator,
                 services.ScriptLibraryComposer);

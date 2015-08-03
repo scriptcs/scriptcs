@@ -41,19 +41,39 @@
             return Run(null, true, args, Enumerable.Empty<string>(), directory);
         }
 
-        public static string Run(
-            string scriptName,
-            ScenarioDirectory directory)
+        public static string Run(string scriptName, ScenarioDirectory directory)
         {
             return Run(scriptName, true, Enumerable.Empty<string>(), Enumerable.Empty<string>(), directory);
+        }
+
+        public static string Run(string scriptName, bool debug, ScenarioDirectory directory)
+        {
+            return Run(scriptName, debug, Enumerable.Empty<string>(), Enumerable.Empty<string>(), directory);
+        }
+
+        public static string Run(string scriptName, bool debug, IEnumerable<string> args, ScenarioDirectory directory)
+        {
+            return Run(scriptName, debug, args, Enumerable.Empty<string>(), directory);
         }
 
         public static string Run(
             string scriptName,
             bool debug,
+            IEnumerable<string> args,
+            IEnumerable<string> scriptArgs,
             ScenarioDirectory directory)
         {
-            return Run(scriptName, debug, Enumerable.Empty<string>(), Enumerable.Empty<string>(), directory);
+            var debugArgs =
+                    debug &&
+                    !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-DEBUG") &&
+                    !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-D")
+                ? new[] { "-debug" }
+                : new string[0];
+
+            return Execute(
+                (scriptName == null ? Enumerable.Empty<string>() : new[] { scriptName }).Concat(debugArgs).Concat(args),
+                scriptArgs,
+                directory);
         }
 
         public static string Install(string package, ScenarioDirectory directory)
@@ -87,26 +107,6 @@
         public static string Clean(ScenarioDirectory directory)
         {
             return Execute(new[] { "-clean" }, Enumerable.Empty<string>(), directory);
-        }
-
-        public static string Run(
-            string scriptName,
-            bool debug,
-            IEnumerable<string> args,
-            IEnumerable<string> scriptArgs,
-            ScenarioDirectory directory)
-        {
-            var debugArgs =
-                    debug &&
-                    !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-DEBUG") &&
-                    !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-D")
-                ? new[] { "-debug" }
-                : new string[0];
-
-            return Execute(
-                (scriptName == null ? Enumerable.Empty<string>() : new[] { scriptName }).Concat(debugArgs).Concat(args),
-                scriptArgs,
-                directory);
         }
 
         private static string Execute(

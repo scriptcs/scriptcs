@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-
-using Common.Logging;
-
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-
 using Should;
-
-using Xunit;
 using Xunit.Extensions;
 
 namespace ScriptCs.Tests

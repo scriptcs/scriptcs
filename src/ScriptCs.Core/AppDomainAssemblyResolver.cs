@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using ScriptCs.Contracts;
@@ -15,17 +14,34 @@ namespace ScriptCs
         private readonly IAssemblyUtility _assemblyUtility;
         private readonly IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public AppDomainAssemblyResolver(
-            ILog logger,
+            Common.Logging.ILog logger,
+            IFileSystem fileSystem,
+            IAssemblyResolver resolver,
+            IAssemblyUtility assemblyUtility,
+            IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
+            Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
+            : this(new CommonLoggingLogProvider(logger), fileSystem, resolver, assemblyUtility, assemblyInfoMap, resolveHandler)
+        {
+        }
+
+        public AppDomainAssemblyResolver(
+            ILogProvider logProvider,
             IFileSystem fileSystem,
             IAssemblyResolver resolver,
             IAssemblyUtility assemblyUtility,
             IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
             Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
         {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("resolver", resolver);
+            Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
+
             _assemblyInfoMap = assemblyInfoMap ?? new Dictionary<string, AssemblyInfo>();
             _assemblyUtility = assemblyUtility;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _fileSystem = fileSystem;
             _resolver = resolver;
 

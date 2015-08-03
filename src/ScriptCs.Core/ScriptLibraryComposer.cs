@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using Common.Logging;
 using ScriptCs.Contracts;
-using System.IO;
 
 namespace ScriptCs
 {
@@ -16,19 +15,25 @@ namespace ScriptCs
         private readonly IPackageAssemblyResolver _packageAssemblyResolver;
         private readonly ILog _logger;
 
-        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILog logger)
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, Common.Logging.ILog logger)
+            : this(fileSystem, preProcessor, packageContainer, packageAssemblyResolver, new CommonLoggingLogProvider(logger))
+        {
+        }
+
+        public ScriptLibraryComposer(IFileSystem fileSystem, IFilePreProcessor preProcessor, IPackageContainer packageContainer, IPackageAssemblyResolver packageAssemblyResolver, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("preProcessor", preProcessor);
             Guard.AgainstNullArgument("packageContainer", packageContainer);
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
             _preProcessor = preProcessor;
             _packageContainer = packageContainer;
             _packageAssemblyResolver = packageAssemblyResolver;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         internal string GetMainScript(IPackageObject package)
@@ -109,6 +114,11 @@ namespace ScriptCs
             List<string> references,
             List<string> namespaces)
         {
+            Guard.AgainstNullArgument("reference", reference);
+            Guard.AgainstNullArgument("builder", builder);
+            Guard.AgainstNullArgument("references", references);
+            Guard.AgainstNullArgument("namespaces", namespaces);
+
             _logger.DebugFormat("Finding package:{0}", reference.PackageId);
             var package = _packageContainer.FindPackage(packagesPath, reference);
 

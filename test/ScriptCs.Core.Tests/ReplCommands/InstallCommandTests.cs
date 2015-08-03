@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using Common.Logging;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.ReplCommands;
@@ -21,7 +20,7 @@ namespace ScriptCs.Tests.ReplCommands
                 var cmd = new InstallCommand(
                     new Mock<IPackageInstaller>().Object,
                     new Mock<IPackageAssemblyResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IInstallationProvider>().Object);
 
                 // assert
@@ -33,7 +32,7 @@ namespace ScriptCs.Tests.ReplCommands
         {
             private readonly Mock<IPackageInstaller> _packageInstaller;
             private readonly Mock<IPackageAssemblyResolver> _packageAssemblyResolver;
-            private readonly Mock<ILog> _logger;
+            private readonly TestLogProvider _logProvider = new TestLogProvider();
             private readonly Mock<IInstallationProvider> _installationProvider;
             private readonly Mock<IRepl> _repl;
 
@@ -41,7 +40,6 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 _packageInstaller = new Mock<IPackageInstaller>();
                 _packageAssemblyResolver = new Mock<IPackageAssemblyResolver>();
-                _logger = new Mock<ILog>();
                 _installationProvider = new Mock<IInstallationProvider>();
                 _repl = new Mock<IRepl>();
 
@@ -54,7 +52,7 @@ namespace ScriptCs.Tests.ReplCommands
 
             private InstallCommand GetCommand()
             {
-                return new InstallCommand(_packageInstaller.Object, _packageAssemblyResolver.Object, _logger.Object, _installationProvider.Object);
+                return new InstallCommand(_packageInstaller.Object, _packageAssemblyResolver.Object, _logProvider, _installationProvider.Object);
             }
 
             [Fact]

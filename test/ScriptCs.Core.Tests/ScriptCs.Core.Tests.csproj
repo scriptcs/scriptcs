@@ -40,11 +40,8 @@
     <Compile Include="..\..\common\CommonVersionInfo.cs">
       <Link>Properties\CommonVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptCsAutoDataAttribute.cs">
-      <Link>ScriptCsAutoDataAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptCsMoqCustomization.cs">
-      <Link>ScriptCsMoqCustomization.cs</Link>
+    <Compile Include="..\*.cs">
+      <Link>%(Filename)%(Extension)</Link>
     </Compile>
     <Compile Include="AppDomainAssemblyResolverTests.cs" />
     <Compile Include="AssemblyResolverTests.cs" />
@@ -52,6 +49,8 @@
     <Compile Include="DirectiveLineProcessorTests.cs" />
     <Compile Include="FileSystemMigratorTests.cs" />
     <Compile Include="PackageReferenceTests.cs" />
+    <Compile Include="ReplCommands\HelpCommandTests.cs" />
+    <Compile Include="ReplCommands\ScriptPacksCommandTests.cs" />
     <Compile Include="ScriptLibraryComposerTests.cs" />
     <Compile Include="ReferenceLineProcessorTests.cs" />
     <Compile Include="LoadLineProcessorTests.cs" />
@@ -85,8 +84,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -95,9 +95,8 @@
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Core, Version=2.8.60318.667, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Nuget.Core.2.8.5\lib\net40-Client\NuGet.Core.dll</HintPath>
+    <Reference Include="NuGet.Core">
+      <HintPath>..\..\packages\NuGet.Core.2.8.6\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture">
       <HintPath>..\..\packages\AutoFixture.3.18.8\lib\net40\Ploeh.AutoFixture.dll</HintPath>

@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Common.Logging;
+using System.Collections.Generic;
 using ScriptCs.Contracts;
-
-using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
         private readonly ITypeResolver _typeResolver;
-        private readonly ILog _logger;
+        private readonly ILogProvider _logProvider;
 
         private IRuntimeServices _runtimeServices;
         private bool _repl;
@@ -22,20 +19,37 @@ namespace ScriptCs.Hosting
         private Type _scriptExecutorType;
         private Type _replType;
         private Type _scriptEngineType;
+        private bool? _loadScriptPacks;
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public ScriptServicesBuilder(
+            IConsole console,
+            Common.Logging.ILog logger,
+            IRuntimeServices runtimeServices = null,
+            ITypeResolver typeResolver = null,
+            IInitializationServices initializationServices = null)
+            : this(
+                console,
+                new CommonLoggingLogProvider(logger),
+                runtimeServices,
+                typeResolver,
+                initializationServices)
+        {
+        }
 
         public ScriptServicesBuilder(
             IConsole console,
-            ILog logger,
+            ILogProvider logProvider,
             IRuntimeServices runtimeServices = null,
             ITypeResolver typeResolver = null,
             IInitializationServices initializationServices = null)
         {
-            InitializationServices = initializationServices ?? new InitializationServices(logger);
+            InitializationServices = initializationServices ?? new InitializationServices(logProvider);
             _runtimeServices = runtimeServices;
             _typeResolver = typeResolver;
             _typeResolver = typeResolver ?? new TypeResolver();
             ConsoleInstance = console;
-            _logger = logger;
+            _logProvider = logProvider;
         }
 
         public ScriptServices Build()
@@ -50,12 +64,21 @@ namespace ScriptCs.Hosting
 
             _scriptEngineType = (Type)Overrides[typeof(IScriptEngine)];
 
-            var initDirectoryCatalog = _scriptName != null || _repl;
+            bool initDirectoryCatalog;
+
+            if (_loadScriptPacks.HasValue)
+            {
+                initDirectoryCatalog = _loadScriptPacks.Value;
+            }
+            else
+            {
+                initDirectoryCatalog = _scriptName != null || _repl;
+            }
 
             if (_runtimeServices == null)
             {
                 _runtimeServices = new RuntimeServices(
-                    _logger,
+                    _logProvider,
                     Overrides,
                     ConsoleInstance,
                     _scriptEngineType,
@@ -75,15 +98,21 @@ namespace ScriptCs.Hosting
                 ? "mono"
                 : "roslyn";
 
-            moduleNames = moduleNames.Union(new[] {engineModule}).ToArray();
+            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
 
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
 
             var fs = InitializationServices.GetFileSystem();
 
-            var folders = new[] {fs.GlobalFolder};
+            var folders = new[] { fs.GlobalFolder };
             loader.Load(config, folders, InitializationServices.GetFileSystem().HostBin, extension, moduleNames);
+            return this;
+        }
+
+        public IScriptServicesBuilder LoadScriptPacks(bool load = true)
+        {
+            _loadScriptPacks = load;
             return this;
         }
 
@@ -117,8 +146,25 @@ namespace ScriptCs.Hosting
             return this;
         }
 
+        public IScriptServicesBuilder SetOverride<TContract, TImpl>(TImpl value) where TImpl : TContract
+        {
+            Overrides[typeof(TContract)] = value;
+            return this;
+        }
+
+        public IScriptServicesBuilder SetOverride<TContract, TImpl>() where TImpl : TContract
+        {
+            Overrides[typeof(TContract)] = typeof(TImpl);
+            return this;
+        }
+
         public IInitializationServices InitializationServices { get; private set; }
 
         public IConsole ConsoleInstance { get; private set; }
+
+        internal IRuntimeServices RuntimeServices
+        {
+            get { return _runtimeServices; }
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using Common.Logging;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.Package;
 
@@ -9,16 +8,28 @@ namespace ScriptCs.Hosting
 {
     public class InitializationServices : ScriptServicesRegistration, IInitializationServices
     {
-        public InitializationServices(ILog logger, IDictionary<Type, object> overrides = null)
-            : base(logger, overrides)
+        private readonly ILog _log;
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public InitializationServices(Common.Logging.ILog logger, IDictionary<Type, object> overrides = null)
+            : this(new CommonLoggingLogProvider(logger), overrides)
         {
+        }
+
+        public InitializationServices(ILogProvider logProvider, IDictionary<Type, object> overrides = null)
+            : base(logProvider, overrides)
+        {
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
+            _log = logProvider.ForCurrentType();
+
         }
 
         protected override IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            this.Logger.Debug("Registering initialization services");
-            builder.RegisterInstance(this.Logger);
+            _log.Debug("Registering initialization services");
+            builder.RegisterInstance(this.LogProvider);
             builder.RegisterType<ScriptServicesBuilder>().As<IScriptServicesBuilder>();
 
             RegisterLineProcessors(builder);
@@ -106,7 +117,7 @@ namespace ScriptCs.Hosting
         {
             if (Equals(service,null))
             {
-                this.Logger.Debug(string.Format("Resolving {0}", typeof(T).Name));
+                _log.Debug(string.Format("Resolving {0}", typeof(T).Name));
                 service = Container.Resolve<T>();
             }
 

@@ -2,7 +2,6 @@
 
 using System.Collections.ObjectModel;
 using System.Linq;
-using Common.Logging;
 using MonoCSharp::Mono.CSharp;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
@@ -346,8 +345,8 @@ namespace ScriptCs.Engine.Mono.Tests
 
         public class MonoTestScriptEngine : MonoScriptEngine
         {
-            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-                : base(scriptHostFactory, logger)
+            public MonoTestScriptEngine(IScriptHostFactory scriptHostFactory, TestLogProvider logProvider)
+                : base(scriptHostFactory, logProvider)
             {
             }
 

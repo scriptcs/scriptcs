@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
 using Roslyn.Scripting;
 using ScriptCs.Contracts;
 
@@ -12,8 +12,14 @@ namespace ScriptCs.Engine.Roslyn
 
     public class RoslynReplEngine : RoslynScriptEngine, IReplEngine
     {
-        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILog logger)
-            : base(scriptHostFactory, logger)
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, Common.Logging.ILog logger)
+            : this(scriptHostFactory, new CommonLoggingLogProvider(logger))
+        {
+        }
+
+        public RoslynReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+            : base(scriptHostFactory, logProvider)
         {
         }
 

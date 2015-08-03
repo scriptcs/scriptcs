@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-using Common.Logging;
-
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -17,10 +14,19 @@ namespace ScriptCs
 
         private readonly IFileSystem _fileSystem;
 
-        public FilePreProcessor(IFileSystem fileSystem, ILog logger, IEnumerable<ILineProcessor> lineProcessors)
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public FilePreProcessor(IFileSystem fileSystem, Common.Logging.ILog logger, IEnumerable<ILineProcessor> lineProcessors)
+            : this(fileSystem, new CommonLoggingLogProvider(logger), lineProcessors)
         {
+        }
+
+        public FilePreProcessor(IFileSystem fileSystem, ILogProvider logProvider, IEnumerable<ILineProcessor> lineProcessors)
+        {
+            Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("logProvider", logProvider);
+
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _lineProcessors = lineProcessors;
         }
 
@@ -102,7 +108,6 @@ namespace ScriptCs
                 var isBeforeCode = index < codeIndex || codeIndex < 0;
 
                 var wasProcessed = _lineProcessors.Any(x => x.ProcessLine(this, context, line, isBeforeCode));
-
                 if (!wasProcessed)
                 {
                     context.BodyLines.Add(line);

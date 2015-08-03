@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿using System;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting
@@ -17,7 +17,10 @@ namespace ScriptCs.Hosting
 
         IPackageInstaller GetPackageInstaller();
 
-        ILog Logger { get; }
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        Common.Logging.ILog Logger { get; }
+
+        ILogProvider LogProvider { get; }
 
         IAppDomainAssemblyResolver GetAppDomainAssemblyResolver();
 

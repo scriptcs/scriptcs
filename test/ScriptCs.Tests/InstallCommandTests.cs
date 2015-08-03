@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
@@ -27,7 +26,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // Arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "mypackage", };
+                var args = new Config { AllowPreRelease = false, PackageName = "mypackage", };
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
                 var servicesBuilder = fixture.Freeze<Mock<IScriptServicesBuilder>>();
 
@@ -60,7 +59,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // Arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = string.Empty, };
+                var args = new Config { AllowPreRelease = false, PackageName = string.Empty, };
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 initializationServices.Setup(i => i.GetPackageInstaller()).Returns(packageInstaller.Object);

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
@@ -32,6 +33,42 @@ namespace ScriptCs.Tests
                     composer.SetupGet(c => c.ScriptLibrariesFile).Returns("ScriptLibraries.csx");
                     return composer;
                 });
+
+            var logProvider = new TestLogProvider();
+            fixture.Register(() => logProvider);
+            fixture.Register<ILogProvider>(() => logProvider);
+
+            fixture.Register(()=>new AppDomainAssemblyResolver(
+                fixture.Create<ILogProvider>(),
+                fixture.Create<IFileSystem>(),
+                fixture.Create<IAssemblyResolver>(),
+                fixture.Create<IAssemblyUtility>(),
+                fixture.Create<IDictionary<string, AssemblyInfo>>()));
+
+            fixture.Register(()=> new ScriptLibraryComposer(
+                fixture.Create<IFileSystem>(),
+                fixture.Create<IFilePreProcessor>(),
+                fixture.Create<IPackageContainer>(),
+                fixture.Create<IPackageAssemblyResolver>(),
+                fixture.Create<ILogProvider>()));
+
+            fixture.Register(() => new ScriptServices(
+                fixture.Create<IFileSystem>(),
+                fixture.Create<IPackageAssemblyResolver>(),
+                fixture.Create<IScriptExecutor>(),
+                fixture.Create<IRepl>(),
+                fixture.Create<IScriptEngine>(),
+                fixture.Create<IFilePreProcessor>(),
+                fixture.Create<IScriptPackResolver>(),
+                fixture.Create<IPackageInstaller>(),
+                fixture.Create<IObjectSerializer>(),
+                fixture.Create<ILogProvider>(),
+                fixture.Create<IAssemblyResolver>(),
+                fixture.Create<IEnumerable<IReplCommand>>(),
+                fixture.Create<IFileSystemMigrator>(),
+                fixture.Create<IConsole>(),
+                fixture.Create<IInstallationProvider>(),
+                fixture.Create<IScriptLibraryComposer>()));
         }
     }
 }

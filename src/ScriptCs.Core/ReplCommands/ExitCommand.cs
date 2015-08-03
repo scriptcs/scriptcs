@@ -18,11 +18,15 @@ namespace ScriptCs.ReplCommands
 
         public ExitCommand(IConsole console)
         {
+            Guard.AgainstNullArgument("console", console);
+
             _console = console;
         }
 
         public object Execute(IRepl repl, object[] args)
         {
+            Guard.AgainstNullArgument("repl", repl);
+
             var response = string.Empty;
             var responseIsValid = false;
 

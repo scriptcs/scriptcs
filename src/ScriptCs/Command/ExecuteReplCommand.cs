@@ -1,5 +1,4 @@
 ﻿using System;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -23,7 +22,7 @@ namespace ScriptCs.Command
             IFileSystem fileSystem,
             IScriptPackResolver scriptPackResolver,
             IRepl repl,
-            ILog logger,
+            ILogProvider logProvider,
             IConsole console,
             IAssemblyResolver assemblyResolver,
             IFileSystemMigrator fileSystemMigrator,
@@ -32,7 +31,7 @@ namespace ScriptCs.Command
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("scriptPackResolver", scriptPackResolver);
             Guard.AgainstNullArgument("repl", repl);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("console", console);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
@@ -43,7 +42,7 @@ namespace ScriptCs.Command
             _fileSystem = fileSystem;
             _scriptPackResolver = scriptPackResolver;
             _repl = repl;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
             _console = console;
             _assemblyResolver = assemblyResolver;
             _fileSystemMigrator = fileSystemMigrator;
@@ -64,19 +63,27 @@ namespace ScriptCs.Command
             var workingDirectory = _fileSystem.CurrentDirectory;
             var assemblies = _assemblyResolver.GetAssemblyPaths(workingDirectory);
             var scriptPacks = _scriptPackResolver.GetPacks();
-            
+
             _composer.Compose(workingDirectory);
 
             _repl.Initialize(assemblies, scriptPacks, ScriptArgs);
 
-            try
+            if (!string.IsNullOrWhiteSpace(_scriptName))
             {
-                if (!string.IsNullOrWhiteSpace(_scriptName))
+                _logger.InfoFormat("Executing script '{0}'", _scriptName);
+                try
                 {
-                    _logger.Info(string.Format("Loading script: {0}", _scriptName));
                     _repl.Execute(string.Format("#load {0}", _scriptName));
                 }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Error executing script '{0}'", ex, _scriptName);
+                    return CommandResult.Error;
+                }
+            }
 
+            try
+            {
                 while (ExecuteLine(_repl))
                 {
                 }
@@ -85,7 +92,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.ErrorException("Error executing REPL", ex);
                 return CommandResult.Error;
             }
 

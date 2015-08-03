@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
@@ -26,7 +25,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, PackageName = "", ScriptName = "test.csx", };
 
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
@@ -62,7 +61,7 @@ namespace ScriptCs.Tests
                 // arrange
                 const string NonManaged = "non-managed.dll";
 
-                var args = new ScriptCsArgs { AllowPreRelease = false, Install = "", ScriptName = "test.csx", };
+                var args = new Config { AllowPreRelease = false, PackageName = "", ScriptName = "test.csx", };
 
                 fileSystem.Setup(
                         x => x.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
@@ -96,16 +95,16 @@ namespace ScriptCs.Tests
             public void ShouldReturnErrorIfThereIsCompileException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    PackageName = "",
                     ScriptName = "test.csx",
                 };
 
@@ -124,24 +123,23 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(
-                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfThereIsExecutionException(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs
+                var args = new Config
                 {
                     AllowPreRelease = false,
-                    Install = "",
+                    PackageName = "",
                     ScriptName = "test.csx"
                 };
 
@@ -160,21 +158,20 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(
-                    i => i.ErrorFormat(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<string>()), Times.Once());
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnErrorIfTheScriptIsIncomplete(
                 [Frozen] Mock<IFileSystem> fileSystem,
                 [Frozen] Mock<IScriptExecutor> executor,
-                [Frozen] Mock<ILog> logger,
+                [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IInitializationServices> initializationServices,
                 [Frozen] Mock<IScriptServicesBuilder> servicesBuilder,
                 ScriptServices services)
             {
                 // arrange
-                var args = new ScriptCsArgs { ScriptName = "test.csx" };
+                var args = new Config { ScriptName = "test.csx" };
 
                 executor.Setup(i => i.Execute(It.IsAny<string>(), It.IsAny<string[]>()))
                     .Returns(ScriptResult.Incomplete);
@@ -191,7 +188,7 @@ namespace ScriptCs.Tests
 
                 // assert
                 result.ShouldEqual(CommandResult.Error);
-                logger.Verify(i => i.Error(It.IsAny<object>()), Times.Once());
+                logProvider.Output.ShouldContain("ERROR:");
             }
 
             [Theory, ScriptCsAutoData]
@@ -205,7 +202,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     fileSystemMigrator.Object,
                     new Mock<IScriptLibraryComposer>().Object);
@@ -226,7 +223,7 @@ namespace ScriptCs.Tests
                     fileSystem.Object,
                     new Mock<IScriptExecutor>().Object,
                     new Mock<IScriptPackResolver>().Object,
-                    new Mock<ILog>().Object,
+                    new TestLogProvider(),
                     new Mock<IAssemblyResolver>().Object,
                     new Mock<IFileSystemMigrator>().Object,
                     composer.Object);

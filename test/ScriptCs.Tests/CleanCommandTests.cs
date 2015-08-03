@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using Moq;
+﻿using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
@@ -22,7 +21,7 @@ namespace ScriptCs.Tests
                 ScriptServices services)
             {
                 // Arrange
-                var args = new ScriptCsArgs { Clean = true };
+                var args = new Config { Clean = true };
 
                 fileSystem.Setup(i => i.DirectoryExists(It.Is<string>(x => x.Contains(folder)))).Returns(true);
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);

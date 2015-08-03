@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -26,7 +25,7 @@ namespace ScriptCs.Command
             IPackageAssemblyResolver packageAssemblyResolver,
             IPackageInstaller packageInstaller,
             IScriptLibraryComposer composer,
-            ILog logger)
+            ILogProvider logger)
         {
             _name = name;
             _version = version ?? string.Empty;
@@ -35,7 +34,7 @@ namespace ScriptCs.Command
             _packageAssemblyResolver = packageAssemblyResolver;
             _packageInstaller = packageInstaller;
             _composer = composer;
-            _logger = logger;
+            _logger = logger.ForCurrentType();
         }
 
         public CommandResult Execute()

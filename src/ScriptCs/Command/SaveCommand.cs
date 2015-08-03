@@ -1,5 +1,4 @@
 ﻿using System;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
@@ -11,14 +10,15 @@ namespace ScriptCs.Command
         private readonly IFileSystem _fileSystem;
         private readonly ILog _logger;
 
-        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver, IFileSystem fileSystem, ILog logger)
+        public SaveCommand(IPackageAssemblyResolver packageAssemblyResolver, IFileSystem fileSystem, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _packageAssemblyResolver = packageAssemblyResolver;
             _fileSystem = fileSystem;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public CommandResult Execute()

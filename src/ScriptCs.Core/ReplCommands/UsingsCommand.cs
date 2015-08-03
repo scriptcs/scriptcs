@@ -1,4 +1,5 @@
-﻿using ScriptCs.Contracts;
+﻿using System.Linq;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.ReplCommands
 {
@@ -18,7 +19,12 @@ namespace ScriptCs.ReplCommands
         {
             Guard.AgainstNullArgument("repl", repl);
 
-            return repl.Namespaces;
+            var namespaces = repl.Namespaces;
+
+            if (repl.ScriptPackSession == null || repl.ScriptPackSession.Namespaces == null || !repl.ScriptPackSession.Namespaces.Any())
+                return namespaces;
+
+            return namespaces.Union(repl.ScriptPackSession.Namespaces).OrderBy(x => x);
         }
     }
 }

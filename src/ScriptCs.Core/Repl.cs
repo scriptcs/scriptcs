@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -13,21 +12,51 @@ namespace ScriptCs
         private readonly string[] _scriptArgs;
 
         private readonly IObjectSerializer _serializer;
+        private readonly ILog _log;
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public Repl(
+            string[] scriptArgs,
+            IFileSystem fileSystem,
+            IScriptEngine scriptEngine,
+            IObjectSerializer serializer,
+            Common.Logging.ILog logger,
+            IScriptLibraryComposer composer,
+            IConsole console,
+            IFilePreProcessor filePreProcessor,
+            IEnumerable<IReplCommand> replCommands)
+            : this(
+                scriptArgs,
+                fileSystem,
+                scriptEngine,
+                serializer,
+                new CommonLoggingLogProvider(logger),
+                composer,
+                console,
+                filePreProcessor,
+                replCommands)
+        {
+        }
 
         public Repl(
             string[] scriptArgs,
             IFileSystem fileSystem,
             IScriptEngine scriptEngine,
             IObjectSerializer serializer,
-            ILog logger,
+            ILogProvider logProvider,
             IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands)
-            : base(fileSystem, filePreProcessor, scriptEngine, logger, composer)
+            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer)
         {
+            Guard.AgainstNullArgument("serializer", serializer);
+            Guard.AgainstNullArgument("logProvider", logProvider);
+            Guard.AgainstNullArgument("console", console);
+
             _scriptArgs = scriptArgs;
             _serializer = serializer;
+            _log = logProvider.ForCurrentType();
             Console = console;
             Commands = replCommands != null ? replCommands.Where(x => x.CommandName != null).ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
         }
@@ -41,7 +70,7 @@ namespace ScriptCs
         public override void Terminate()
         {
             base.Terminate();
-            Logger.Debug("Exiting console");
+            _log.Debug("Exiting console");
             Console.Exit();
         }
 
@@ -111,7 +140,10 @@ namespace ScriptCs
                     ? preProcessResult.Code
                     : Buffer + Environment.NewLine + preProcessResult.Code;
 
-                var result = ScriptEngine.Execute(Buffer, _scriptArgs, References, Namespaces, ScriptPackSession);
+                var namespaces = Namespaces.Union(preProcessResult.Namespaces);
+                var references = References.Union(preProcessResult.References);
+
+                var result = ScriptEngine.Execute(Buffer, _scriptArgs, references, namespaces, ScriptPackSession);
                 if (result == null) return ScriptResult.Empty;
 
                 if (result.CompileExceptionInfo != null)

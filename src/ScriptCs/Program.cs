@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Reflection;
-using PowerArgs;
-using ScriptCs.Argument;
-using ScriptCs.Command;
-using ScriptCs.Hosting;
+using System.IO;
+using System.Linq;
 
 namespace ScriptCs
 {
@@ -12,41 +9,43 @@ namespace ScriptCs
         [LoaderOptimizationAttribute(LoaderOptimization.MultiDomain)]
         private static int Main(string[] args)
         {
-            SetProfile();
-            
-            ArgumentParseResult arguments;
-            var console = new ScriptConsole();
+            ProfileOptimizationShim.SetProfileRoot(Path.GetDirectoryName(typeof(Program).Assembly.Location));
+            ProfileOptimizationShim.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
+
+            var nonScriptArgs = args.TakeWhile(arg => arg != "--").ToArray();
+            var scriptArgs = args.Skip(nonScriptArgs.Length + 1).ToArray();
+
+            ScriptCsArgs commandArgs;
             try
             {
-                var parser = new ArgumentHandler(new ArgumentParser(), new ConfigFileParser(console), new FileSystem());
-                arguments = parser.Parse(args);
+                commandArgs = ScriptCsArgs.Parse(nonScriptArgs);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                console.WriteLine(ex.Message);
-                var options = new ArgUsageOptions { ShowPosition = false, ShowType = false };
-                var usage = ArgUsage.GetUsage<ScriptCsArgs>(options: options);
-                console.WriteLine(usage);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ScriptCsArgs.GetUsage());
                 return 1;
             }
 
-            var scriptServicesBuilder = ScriptServicesBuilderFactory.Create(arguments.CommandArguments, arguments.ScriptArguments);
-            var factory = new CommandFactory(scriptServicesBuilder);
-            var command = factory.CreateCommand(arguments.CommandArguments, arguments.ScriptArguments);
-            return (int)command.Execute();
-        }
-
-        private static void SetProfile()
-        {
-            var profileOptimizationType = Type.GetType("System.Runtime.ProfileOptimization");
-            if (profileOptimizationType != null)
+            if (commandArgs.Help)
             {
-                var setProfileRoot = profileOptimizationType.GetMethod("SetProfileRoot", BindingFlags.Public | BindingFlags.Static);
-                setProfileRoot.Invoke(null, new object[] { typeof(Program).Assembly.Location });
-
-                var startProfile = profileOptimizationType.GetMethod("StartProfile", BindingFlags.Public | BindingFlags.Static);
-                startProfile.Invoke(null, new object[] { typeof(Program).Assembly.GetName().Name + ".profile" });
+                Console.WriteLine(ScriptCsArgs.GetUsage());
+                return 0;
             }
+
+            if (commandArgs.Version)
+            {
+                VersionWriter.Write();
+                return 0;
+            }
+
+            if (commandArgs.Config != null && !File.Exists(commandArgs.Config))
+            {
+                Console.WriteLine("The specified config file does not exist.");
+                return 1;
+            }
+
+            return Application.Run(Config.Create(commandArgs), scriptArgs);
         }
     }
 }

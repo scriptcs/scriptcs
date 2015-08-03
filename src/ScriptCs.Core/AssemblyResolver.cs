@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -15,11 +14,21 @@ namespace ScriptCs
         private readonly IAssemblyUtility _assemblyUtility;
         private readonly ILog _logger;
 
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public AssemblyResolver(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
             IAssemblyUtility assemblyUtility,
-            ILog logger)
+            Common.Logging.ILog logger)
+            :this(fileSystem,packageAssemblyResolver,assemblyUtility,new CommonLoggingLogProvider(logger))
+        {
+        }
+
+        public AssemblyResolver(
+            IFileSystem fileSystem,
+            IPackageAssemblyResolver packageAssemblyResolver,
+            IAssemblyUtility assemblyUtility,
+            ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "PackagesFolder", fileSystem.PackagesFolder);
@@ -27,12 +36,12 @@ namespace ScriptCs
 
             Guard.AgainstNullArgument("packageAssemblyResolver", packageAssemblyResolver);
             Guard.AgainstNullArgument("assemblyUtility", assemblyUtility);
-            Guard.AgainstNullArgument("logger", logger);
+            Guard.AgainstNullArgument("logProvider", logProvider);
 
             _fileSystem = fileSystem;
             _packageAssemblyResolver = packageAssemblyResolver;
             _assemblyUtility = assemblyUtility;
-            _logger = logger;
+            _logger = logProvider.ForCurrentType();
         }
 
         public IEnumerable<string> GetAssemblyPaths(string path, bool binariesOnly = false)
