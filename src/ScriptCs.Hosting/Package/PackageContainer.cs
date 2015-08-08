@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,12 @@ namespace ScriptCs.Hosting.Package
         private readonly IFileSystem _fileSystem;
 
         private readonly ILog _logger;
+
+        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
+        public PackageContainer(IFileSystem fileSystem, Common.Logging.ILog logger)
+            : this(fileSystem, new CommonLoggingLogProvider(logger))
+        {
+        }
 
         public PackageContainer(IFileSystem fileSystem, ILogProvider logProvider)
         {

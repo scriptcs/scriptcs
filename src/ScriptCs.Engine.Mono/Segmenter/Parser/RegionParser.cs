@@ -36,11 +36,20 @@ namespace ScriptCs.Engine.Mono.Segmenter.Parser
                         _current = _lexer.GetToken();
                         if (_current.Token == Token.While)
                         {
-                            var whileRegion = ParseBlock();
-                            var doWhile = region.Combine(whileRegion);
-                            result.Add(doWhile);
+                            var block = ParseBlock();
+                            region = region.Combine(block);
                             _current = _lexer.GetToken();
-                            break;
+                        }
+                        result.Add(region);
+                        break;
+                    case Token.If:
+                        region = ParseBlock();
+                        _current = _lexer.GetToken();
+                        while(_current.Token == Token.Else)
+                        {
+                            var block = ParseBlock();
+                            region = region.Combine(block);
+                            _current = _lexer.GetToken();
                         }
                         result.Add(region);
                         break;

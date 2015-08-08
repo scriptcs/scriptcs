@@ -34,6 +34,10 @@
     <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -48,12 +52,15 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="AssemblyUtility.cs" />
+    <Compile Include="CommonLoggingLogProvider.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="FileSystemMigrator.cs" />
+    <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="NullScriptLibraryComposer.cs" />
     <Compile Include="ReplCommands\ScriptPacksCommand.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="ScriptCsLogger.cs" />
     <Compile Include="ScriptLibraryComposer.cs" />
     <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />

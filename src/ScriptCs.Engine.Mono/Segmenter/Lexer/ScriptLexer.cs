@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -9,12 +10,22 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
         private int _lastChar = ' ';
         private int _position;
         private readonly StringReader _sr;
+        private readonly Dictionary<string, int> _tokenMap;
 
         public ScriptLexer(string code)
         {
             _position = -1; //inital pos
 
+            _tokenMap = new Dictionary<string, int>
+            {
+                { "if", Token.If },
+                { "else", Token.Else },
+                { "do", Token.Do },
+                { "while", Token.While }
+            };
+
             _sr = new StringReader(code);
+
         }
 
         /// <summary>
@@ -92,13 +103,9 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
                 }
 
                 var token = Token.Identifier;
-                if (identifier.Equals("do"))
+                if (_tokenMap.ContainsKey(identifier))
                 {
-                    token = Token.Do;
-                }
-                else if (identifier.Equals("while"))
-                {
-                    token = Token.While;
+                    token = _tokenMap[identifier];
                 }
 
                 return new LexerResult
