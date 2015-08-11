@@ -45,6 +45,7 @@ namespace ScriptCs.CSharp
             try
             {
                 var script = CSharpScript.Create(code, ScriptOptions);
+                script = script.WithGlobalsType(globals.GetType());
                 var compilation = script.GetCompilation();
 
                 using (var exeStream = new MemoryStream())
