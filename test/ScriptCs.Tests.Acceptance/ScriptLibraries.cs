@@ -72,7 +72,7 @@ namespace ScriptCs.Tests.Acceptance
                 .f(() => ScriptCsExe.Install("ScriptCs.Calculator", scriptDirectory));
 
             "When executing the script"
-                .f(() => output = ScriptCsExe.Run(Path.Combine("script", "foo.csx"), directory));
+                .f(() => output = ScriptCsExe.Run(Path.Combine("script", "foo.csx"), false, directory));
 
             "Then the ScriptCs.Calculator instance is created"
                 .f(() => output.ShouldContain("Type:Calculator"));
