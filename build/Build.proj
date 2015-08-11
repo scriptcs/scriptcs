@@ -46,7 +46,7 @@
   <!-- todo: filip: acceptance tests should be re-added here when fixed -->
   <Target Name="Test" DependsOnTargets="Build">
     <ItemGroup>
-      <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll" />
+       <TestAssemblies Include="$(Root)test\**\bin\$(Configuration)\**\*.Tests.dll;$(Root)test\**\bin\$(Configuration)\**\*.Tests.Acceptance.dll" />
     </ItemGroup>
     
     <xunit Assemblies="@(TestAssemblies)" Xml="$(ArtifactsPath)TestResults.xml" />
