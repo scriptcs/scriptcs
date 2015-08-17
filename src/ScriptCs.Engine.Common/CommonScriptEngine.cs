@@ -10,6 +10,7 @@ namespace ScriptCs.Engine.Common
     {
         protected ScriptOptions ScriptOptions;
         private readonly IScriptHostFactory _scriptHostFactory;
+        private readonly ILog _log;
 
         public const string SessionKey = "Session";
 
@@ -19,10 +20,8 @@ namespace ScriptCs.Engine.Common
             ScriptOptions = new ScriptOptions().WithReferences(typeof(ScriptExecutor).Assembly, typeof(Object).Assembly);
             _scriptHostFactory = scriptHostFactory;
 
-            Logger = logProvider.ForCurrentType();
+            _log = logProvider.ForCurrentType();
         }
-
-        protected ILog Logger { get; private set; }
 
         public string BaseDirectory
         {
@@ -46,8 +45,8 @@ namespace ScriptCs.Engine.Common
                 throw new ArgumentNullException("references");
             }
 
-            Logger.Debug("Starting to create execution components");
-            Logger.Debug("Creating script host");
+            _log.Debug("Starting to create execution components");
+            _log.Debug("Creating script host");
 
             var executionReferences = new AssemblyReferences(references.Assemblies, references.Paths);
             executionReferences.Union(scriptPackSession.References);
@@ -63,7 +62,7 @@ namespace ScriptCs.Engine.Common
                     new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
 
                 ScriptLibraryWrapper.SetHost(host);
-                Logger.Debug("Creating session");
+                _log.Debug("Creating session");
 
                 var hostType = host.GetType();
 
@@ -73,19 +72,19 @@ namespace ScriptCs.Engine.Common
 
                 foreach (var reference in executionReferences.Paths)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", reference);
+                    _log.DebugFormat("Adding reference to {0}", reference);
                     ScriptOptions = ScriptOptions.AddReferences(reference);
                 }
 
                 foreach (var assembly in executionReferences.Assemblies)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     ScriptOptions = ScriptOptions.AddReferences(assembly);
                 }
 
                 foreach (var @namespace in allNamespaces)
                 {
-                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    _log.DebugFormat("Importing namespace {0}", @namespace);
                     ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
                 }
 
@@ -96,7 +95,7 @@ namespace ScriptCs.Engine.Common
             }
             else
             {
-                Logger.Debug("Reusing existing session");
+                _log.Debug("Reusing existing session");
                 sessionState = (SessionState<ScriptState>)scriptPackSession.State[SessionKey];
 
                 if (sessionState.References == null)
@@ -113,14 +112,14 @@ namespace ScriptCs.Engine.Common
 
                 foreach (var reference in newReferences.Paths)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", reference);
+                    _log.DebugFormat("Adding reference to {0}", reference);
                     ScriptOptions = ScriptOptions.AddReferences(reference);
                     sessionState.References = sessionState.References.Union(new[] { reference });
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
-                    Logger.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     ScriptOptions = ScriptOptions.AddReferences(assembly);
                     sessionState.References = sessionState.References.Union(new[] { assembly });
                 }
@@ -129,7 +128,7 @@ namespace ScriptCs.Engine.Common
 
                 foreach (var @namespace in newNamespaces)
                 {
-                    Logger.DebugFormat("Importing namespace {0}", @namespace);
+                    _log.DebugFormat("Importing namespace {0}", @namespace);
                     ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
@@ -152,9 +151,9 @@ namespace ScriptCs.Engine.Common
         {
             try
             {
-                Logger.Debug("Starting execution");
+                _log.Debug("Starting execution");
                 var result = GetScriptState(code, globals);
-                Logger.Debug("Finished execution");
+                _log.Debug("Finished execution");
                 sessionState.Session = result;
                 return new ScriptResult(returnValue: result.ReturnValue);
             }
