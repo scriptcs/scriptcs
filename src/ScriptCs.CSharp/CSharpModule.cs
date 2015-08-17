@@ -1,5 +1,4 @@
-﻿using System;
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
 
 namespace ScriptCs.CSharp
 {
