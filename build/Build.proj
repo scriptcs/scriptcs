@@ -63,7 +63,8 @@
 
   <Target Name="RestoreCommonVersionInfo" AfterTargets="Build" Condition=" Exists('$(CommonVersionInfoPath).bak') ">
     <Delete Files="$(CommonVersionInfoPath)" Condition=" Exists('$(CommonVersionInfoPath)') " />
-    <Move SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
+    <Copy SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
+    <Delete Files="$(CommonVersionInfoPath).bak" Condition=" Exists('$(CommonVersionInfoPath).bak') " />
   </Target>
 
   <PropertyGroup>
