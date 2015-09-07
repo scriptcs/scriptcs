@@ -65,6 +65,8 @@ namespace ScriptCs.Command
                 _composer.Compose(workingDirectory);
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+
+                // HACK: This is a (dirty) fix for #1086. This might be a temporary solution until some further refactoring can be done. 
                 _scriptExecutor.ScriptEngine.CacheDirectory = Path.Combine(workingDirectory ?? _fileSystem.CurrentDirectory, _fileSystem.DllCacheFolder);
                 var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
                 var commandResult = Inspect(scriptResult);
