@@ -65,6 +65,7 @@ namespace ScriptCs.Command
                 _composer.Compose(workingDirectory);
 
                 _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+                _scriptExecutor.ScriptEngine.CacheDirectory = Path.Combine(workingDirectory ?? _fileSystem.CurrentDirectory, _fileSystem.DllCacheFolder);
                 var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
                 var commandResult = Inspect(scriptResult);
                 _scriptExecutor.Terminate();
