@@ -67,13 +67,19 @@ namespace ScriptCs.Hosting.Package
             foreach (PhysicalPackageFile file in dlls)
             {
                 var match = Regex.Match(((PhysicalPackageFile)dlls.First()).SourcePath, "(" + Path.Combine(Path.GetTempPath(), "nuget").Replace("\\", "\\\\") + "\\\\[^\\\\]+?)\\\\");
-                tempDirectories.Add(match.Groups[1].Value);
+                if (match.Success && match.Groups.Count > 1)
+                {
+                    tempDirectories.Add(match.Groups[1].Value); 
+                }
 
             }
 
             foreach (string directory in tempDirectories.Distinct())
             {
-                Directory.Delete(directory, true);
+                if (Directory.Exists(directory))
+                {
+                    Directory.Delete(directory, true);
+                }
             }
 
             // /HACK
