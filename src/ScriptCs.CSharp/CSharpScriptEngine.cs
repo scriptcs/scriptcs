@@ -13,6 +13,7 @@ namespace ScriptCs.CSharp
         {
         }
 
+
         protected override ScriptState GetScriptState(string code, object globals)
         {
            return CSharpScript.Run(code, ScriptOptions, globals);

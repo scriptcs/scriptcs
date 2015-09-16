@@ -2,8 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ScriptCs.Engine.Common</id>
-    <!-- The version will be replaced by the build script-->
-    <version>0.0.0</version>
+    <version>$version$</version>
     <title>ScriptCs.Engine.Common</title>
     <authors>Glenn Block, Filip Wojcieszyn, Justin Rusbatch, Kristian Hellang, Damian Schenkelman, Adam Ralph</authors>
     <description>ScriptCs.Engine.Common provides common types for Microsoft.CodeAnalysis-based script engines for scriptcs.</description>

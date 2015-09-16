@@ -114,6 +114,7 @@
       <Name>ScriptCs.Engine.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
