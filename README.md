@@ -161,7 +161,7 @@ RavenDB started, listening on http://localhost:8080.
 
 Script Packs can be used to further reduce the amount of code you need to write when working with common frameworks. 
 
-* In an empty directory, install the [ScriptCs.WebApi](https://nuget.org/packages/ScriptCs.WebApi/) script pack from NuGet. The script pack will automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default `ControllerResolver` with a custom implementation that allows Web API to discover controllers declared in scripts.
+* In an empty directory, install the [ScriptCs.WebApi](https://nuget.org/packages/ScriptCs.WebApi/) script pack from NuGet. The script pack automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default `ControllerResolver` with a custom implementation that allows Web API to discover controllers declared in scripts.
 
 ```batchfile
 scriptcs -install ScriptCs.WebApi
