@@ -1,0 +1,76 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Microsoft.CodeAnalysis.Scripting.VisualBasic
+</name>
+</assembly>
+<members>
+<member name="T:Microsoft.CodeAnalysis.Scripting.VisualBasic.VBScriptingResources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:Microsoft.CodeAnalysis.Scripting.VisualBasic.VBScriptingResources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:Microsoft.CodeAnalysis.Scripting.VisualBasic.VBScriptingResources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Create(System.String,Microsoft.CodeAnalysis.Scripting.ScriptOptions)">
+ <summary>
+ Create a new Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Create(System.String)">
+ <summary>
+ Create a new Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Run(System.String,Microsoft.CodeAnalysis.Scripting.ScriptOptions,System.Object)">
+ <summary>
+ Run a Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Run(System.String,Microsoft.CodeAnalysis.Scripting.ScriptOptions)">
+ <summary>
+ Run a Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Run(System.String,System.Object)">
+ <summary>
+ Run a Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Run(System.String)">
+ <summary>
+ Run a Visual Basic script.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Eval(System.String,Microsoft.CodeAnalysis.Scripting.ScriptOptions,System.Object)">
+ <summary>
+ Run a Visual Basic script and return its resulting value.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Eval(System.String,Microsoft.CodeAnalysis.Scripting.ScriptOptions)">
+ <summary>
+ Run a Visual Basic script and return its resulting value.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Eval(System.String,System.Object)">
+ <summary>
+ Run a Visual Basic script and return its resulting value.
+ </summary>
+</member>
+<member name="M:Microsoft.CodeAnalysis.Scripting.VisualBasic.VisualBasicScript.Eval(System.String)">
+ <summary>
+ Run a Visual Basic script and return its resulting value.
+ </summary>
+</member>
+</members>
+</doc>
