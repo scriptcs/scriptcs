@@ -1,4 +1,4 @@
-Copyright 2013, 2014 Glenn Block, Justin Rusbatch, Filip Wojcieszyn
+Copyright 2013 Glenn Block, Justin Rusbatch, Filip Wojcieszyn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
