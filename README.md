@@ -241,11 +241,11 @@ Instructions for debugging scripts using Visual Studio can be found on the [wiki
 
 ### Package installation
 
-You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the packages folder.
+You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the scriptcs_packages folder.
 
 Once the packages are installed, you can simply start using them in your script code directly (just import the namespaces - no additional bootstrapping or DLL referencing is needed).
 
-The `install` command will also create a `packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
+The `install` command will also create a `scriptcs_packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
 
  - `scriptcs -install {package name}` will install the desired package from NuGet. 
  	
@@ -253,9 +253,9 @@ The `install` command will also create a `packages.config` file if you don't hav
 
 		scriptcs -install ServiceStack
 		
- - `scriptcs -install` (without package name) will look for the `packages.config` file located in the current execution directory, and install all the packages specified there. You only need to specify **top level** packages.
+ - `scriptcs -install` (without package name) will look for the `scriptcs_packages.config` file located in the current execution directory, and install all the packages specified there. You only need to specify **top level** packages.
 
-For example, you might create the following `packages.config`:
+For example, you might create the following `scriptcs_packages.config`:
 
 	<?xml version="1.0" encoding="utf-8"?>
 	<packages>
@@ -268,7 +268,7 @@ And then just call:
 
     scriptcs -install
 
-As a result, all packages specified in the `packages.config`, including all dependencies, will be downloaded and installed in the `packages` folder. 
+As a result, all packages specified in the `scriptcs_packages.config`, including all dependencies, will be downloaded and installed in the `scriptcs_packages` folder. 
 
 
 ## Contributing
