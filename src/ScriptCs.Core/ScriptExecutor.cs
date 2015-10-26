@@ -21,6 +21,7 @@ namespace ScriptCs
             "System.Xml", 
             "System.Xml.Linq", 
             "System.Net.Http",
+            "Microsoft.CSharp",
             typeof(ScriptExecutor).Assembly.Location,
             typeof(IScriptEnvironment).Assembly.Location
         };
@@ -33,7 +34,8 @@ namespace ScriptCs
             "System.Text", 
             "System.Threading.Tasks",
             "System.IO",
-            "System.Net.Http"
+            "System.Net.Http",
+            "System.Dynamic"
         };
 
         private const string ScriptLibrariesInjected = "ScriptLibrariesInjected";

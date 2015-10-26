@@ -17,9 +17,8 @@ namespace ScriptCs.Engine.Common
         protected CommonScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("logProvider", logProvider);
-            ScriptOptions = new ScriptOptions().WithReferences(typeof(ScriptExecutor).Assembly, typeof(Object).Assembly);
+            ScriptOptions = new ScriptOptions().WithReferences(typeof(Object).Assembly);
             _scriptHostFactory = scriptHostFactory;
-
             _log = logProvider.ForCurrentType();
         }
 
