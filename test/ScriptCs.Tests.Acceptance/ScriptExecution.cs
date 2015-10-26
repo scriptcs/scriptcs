@@ -63,5 +63,22 @@
             "Then the Env object is displayed"
                 .f(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
         }
+        
+        [Scenario]
+        public static void ScriptCanUseDynamic(ScenarioDirectory directory, string output )
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which uses dynamic"
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", @"dynamic obj = new ExpandoObject(); obj.foo = ""bar""; Console.WriteLine(obj.foo); ;"));
+
+            "When I execute the script"
+                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then the dynamic value is properly returned "
+                .f(() => output.ShouldContain("bar"));
+
+        }
     }
 }
