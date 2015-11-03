@@ -62,7 +62,7 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat("Package installation failed: {0}.", ex, ex.Message);
+                _logger.ErrorException("Package installation failed.", ex);
                 return CommandResult.Error;
             }
         }
