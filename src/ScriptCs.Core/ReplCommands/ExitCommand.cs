@@ -32,8 +32,7 @@ namespace ScriptCs.ReplCommands
 
             while (!responseIsValid)
             {
-                _console.Write("Are you sure you wish to exit? (y/n): ");
-                response = (_console.ReadLine() ?? string.Empty).ToLowerInvariant();
+                 response = (_console.ReadLine("Are you sure you wish to exit? (y/n):") ?? string.Empty).ToLowerInvariant();
                 responseIsValid = response == "y" || response == "n";
             }
 
