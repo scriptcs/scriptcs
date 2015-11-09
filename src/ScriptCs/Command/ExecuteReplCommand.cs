@@ -104,14 +104,13 @@ namespace ScriptCs.Command
         {
             var prompt = string.IsNullOrWhiteSpace (repl.Buffer) ? "> " : "* ";
             
-
             try
             {
                 var line = _console.ReadLine(prompt);
 
                 if (line == null)
                     return false;
-				
+
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     repl.Execute(line);

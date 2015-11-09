@@ -96,7 +96,7 @@
     <Compile Include="ServiceOverrides.cs" />
     <Compile Include="ObjectSerializer.cs" />
     <Compile Include="TypeResolver.cs" />
-    <Compile Include="getline.cs" />
+    <Compile Include="LineEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

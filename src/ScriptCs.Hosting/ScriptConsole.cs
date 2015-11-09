@@ -6,10 +6,11 @@ namespace ScriptCs.Hosting
 {
     public class ScriptConsole : IConsole
     {
-		LineEditor le;
+        LineEditor _editor;
+
         public ScriptConsole()
         {
-			le = new LineEditor ("scriptcs");
+            _editor = new LineEditor ("scriptcs");
         }
 
         public void Write(string value)
@@ -27,9 +28,9 @@ namespace ScriptCs.Hosting
             Console.WriteLine(value);
         }
 
-		public string ReadLine(string prompt)
+        public string ReadLine(string prompt)
         {
-			return le.Edit (prompt, "");
+            return _editor.Edit (prompt, "");
         }
 
         public void Clear()
