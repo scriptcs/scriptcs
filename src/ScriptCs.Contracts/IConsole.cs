@@ -10,7 +10,7 @@ namespace ScriptCs.Contracts
 
         void WriteLine(string value);
 
-        string ReadLine();
+        string ReadLine(string prompt);
 
         void Clear();
 

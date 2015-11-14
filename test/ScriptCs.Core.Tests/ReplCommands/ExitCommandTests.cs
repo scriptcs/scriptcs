@@ -22,13 +22,14 @@ namespace ScriptCs.Tests.ReplCommands
 
         public class ExecuteMethod
         {
+            private const string message = "Are you sure you wish to exit? (y/n):";
+
             [Fact]
             public void PromptsUserBeforeExiting()
             {
                 // arrange
-                const string message = "Are you sure you wish to exit? (y/n): ";
                 var console = new Mock<IConsole>();
-                console.Setup(x => x.ReadLine()).Returns("n");
+                console.Setup(x => x.ReadLine(message)).Returns("n");
                 var executor = new Mock<IRepl>();
                 var cmd = new ExitCommand(console.Object);
 
@@ -36,7 +37,7 @@ namespace ScriptCs.Tests.ReplCommands
                 cmd.Execute(executor.Object, null);
 
                 // assert
-                console.Verify(x => x.Write(message));
+                console.Verify(x => x.ReadLine(message));
             }
 
             [Fact]
@@ -44,7 +45,7 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
-                console.Setup(x => x.ReadLine()).Returns("y");
+                console.Setup(x => x.ReadLine(message)).Returns("y");
 
                 var executor = new Mock<IRepl>();
                 var cmd = new ExitCommand(console.Object);
@@ -61,7 +62,7 @@ namespace ScriptCs.Tests.ReplCommands
             {
                 // arrange
                 var console = new Mock<IConsole>();
-                console.Setup(x => x.ReadLine()).Returns("n");
+                console.Setup(x => x.ReadLine(message)).Returns("n");
 
                 var executor = new Mock<IRepl>();
                 var cmd = new ExitCommand(console.Object);
