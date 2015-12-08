@@ -30,11 +30,13 @@ If the above fails with the error indicating that proxy authentication is requir
 
     @powershell -NoProfile -ExecutionPolicy Unrestricted -Command "[Net.WebRequest]::DefaultWebProxy.Credentials = [Net.CredentialCache]::DefaultCredentials; iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%systemdrive%\chocolatey\bin
 
+**Note:** If you are using a version of Chocolatey > 0.9.9.0 you can pass the `-y` into the install and upgrade commands to prevent the confirmation that will appear.
+
 ### Installing scriptcs
 
 Once Chocolatey has been installed, you can install the latest stable version of scriptcs from your command prompt:
 
-    cinst scriptcs
+    choco install scriptcs
 
 Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your PATH accordingly.
 
@@ -44,13 +46,15 @@ Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your P
 
 With Chocolatey, keeping scriptcs updated is just as easy:
 
-    cup scriptcs
+    choco upgrade scriptcs
+
+**Note:** If you are using a version of Chocolatey < 0.9.0.0 you will need to use `choco update scriptcs`, but also think about updating Chocolatey itself.
 
 ### Nightly builds
 
 Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be installed through with Chocolatey:
 
-    cinst scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
+    choco install scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
 
 ### Building from source
 
