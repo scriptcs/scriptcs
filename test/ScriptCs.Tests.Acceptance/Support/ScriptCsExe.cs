@@ -41,6 +41,11 @@
             return Run(null, true, args, Enumerable.Empty<string>(), directory);
         }
 
+        public static string Run(IEnumerable<string> args, bool debug, ScenarioDirectory directory)
+        {
+            return Run(null, debug, args, Enumerable.Empty<string>(), directory);
+        }
+
         public static string Run(string scriptName, ScenarioDirectory directory)
         {
             return Run(scriptName, true, Enumerable.Empty<string>(), Enumerable.Empty<string>(), directory);

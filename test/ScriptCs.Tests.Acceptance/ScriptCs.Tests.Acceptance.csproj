@@ -45,6 +45,7 @@
     </Compile>
     <Compile Include="CommandLine.cs" />
     <Compile Include="ImplicitInstallation.cs" />
+    <Compile Include="LooseScriptExecution.cs" />
     <Compile Include="Packages.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ScriptLibraries.cs" />

@@ -35,6 +35,8 @@ namespace ScriptCs
 
         public string ScriptName { get; set; }
 
+        public string Eval { get; set; }
+
         public bool? Watch { get; set; }
 
         public static ConfigMask Create(ScriptCsArgs args)
@@ -56,6 +58,7 @@ namespace ScriptCs
                 Repl = args.Repl ? (bool?)true : null,
                 Save = args.Save ? (bool?)true : null,
                 ScriptName = args.ScriptName,
+                Eval = args.Eval,
                 Watch = args.Watch ? (bool?)true : null,
             };
         }

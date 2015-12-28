@@ -18,6 +18,10 @@ namespace ScriptCs
         [ArgDescription("Script file name, must be specified first")]
         public string ScriptName { get; set; }
 
+        [ArgShortcut("e")]
+        [ArgDescription("Code to immediately evaluate")]
+        public string Eval { get; set; }
+        
         [ArgShortcut("?")]
         [ArgDescription("Displays help")]
         public bool Help { get; set; }

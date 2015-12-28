@@ -5,15 +5,15 @@ using ScriptCs.Contracts;
 
 namespace ScriptCs.Command
 {
-    internal class ExecuteScriptCommand : ExecuteScriptCommandBase, IScriptCommand
+    internal class ExecuteLooseScriptCommand : ExecuteScriptCommandBase, IExecuteLooseScriptCommand
     {
-        public ExecuteScriptCommand(
-            string script, string[] scriptArgs, 
-            IFileSystem fileSystem, IScriptExecutor scriptExecutor, 
-            IScriptPackResolver scriptPackResolver, 
-            ILogProvider logProvider, 
-            IAssemblyResolver assemblyResolver, 
-            IFileSystemMigrator fileSystemMigrator, 
+        public ExecuteLooseScriptCommand(
+            string script, string[] scriptArgs,
+            IFileSystem fileSystem, IScriptExecutor scriptExecutor,
+            IScriptPackResolver scriptPackResolver,
+            ILogProvider logProvider,
+            IAssemblyResolver assemblyResolver,
+            IFileSystemMigrator fileSystemMigrator,
             IScriptLibraryComposer composer) : 
                 base(script, scriptArgs, fileSystem, scriptExecutor, scriptPackResolver, logProvider, assemblyResolver, fileSystemMigrator, composer)
         {
@@ -26,20 +26,15 @@ namespace ScriptCs.Command
                 _fileSystemMigrator.Migrate();
 
                 var assemblyPaths = Enumerable.Empty<string>();
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
-                if (workingDirectory != null)
-                {
-                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
-                }
-
+                var workingDirectory = _fileSystem.CurrentDirectory;
+                assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
                 _composer.Compose(workingDirectory);
 
-                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks());
 
                 // HACK: This is a (dirty) fix for #1086. This might be a temporary solution until some further refactoring can be done. 
                 _scriptExecutor.ScriptEngine.CacheDirectory = Path.Combine(workingDirectory ?? _fileSystem.CurrentDirectory, _fileSystem.DllCacheFolder);
-                var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
-
+                var scriptResult = _scriptExecutor.ExecuteScript(_script, ScriptArgs);
                 var commandResult = Inspect(scriptResult);
                 _scriptExecutor.Terminate();
                 return commandResult;
