@@ -2,7 +2,7 @@
 using System.Reflection;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     public class CSharpScriptInMemoryEngine : CSharpScriptCompilerEngine
     {

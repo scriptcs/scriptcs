@@ -1,6 +1,6 @@
 ﻿using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     [Module("csharp")]
     public class CSharpModule : IModule

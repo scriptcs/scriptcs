@@ -13,7 +13,7 @@ namespace ScriptCs.Hosting
     {
         internal static readonly Dictionary<string, string> DefaultCSharpModules = new Dictionary<string, string>
         {
-            {"csharp", "ScriptCs.CSharp.dll"},
+            {"csharp", "ScriptCs.Engine.Roslyn.dll"},
             {"mono", "ScriptCs.Engine.Mono.dll"}
         };
 

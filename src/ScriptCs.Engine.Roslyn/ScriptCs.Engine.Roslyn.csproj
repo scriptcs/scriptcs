@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E79EC231-E27D-4057-91C9-2D001A3A8C3B}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ScriptCs.CSharp</RootNamespace>
-    <AssemblyName>ScriptCs.CSharp</AssemblyName>
+    <RootNamespace>ScriptCs.Engine.Roslyn</RootNamespace>
+    <AssemblyName>ScriptCs.Engine.Roslyn</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -64,7 +64,6 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO" />
     <Reference Include="System.Reflection.Metadata, Version=1.0.18.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\System.Reflection.Metadata.dll</HintPath>

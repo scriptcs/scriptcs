@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     public class CSharpScriptEngine : CommonScriptEngine
     {

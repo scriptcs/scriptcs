@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.CSharp;
+using ScriptCs.Engine.Roslyn;
 using ScriptCs.Exceptions;
 using Should;
 using Xunit;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Moq;
 using ScriptCs.Contracts;
-using ScriptCs.CSharp;
+using ScriptCs.Engine.Roslyn;
 using Should;
 using Xunit;
 

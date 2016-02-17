@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     public class CSharpReplEngine : CSharpScriptEngine, IReplEngine
     {
