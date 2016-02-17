@@ -49,7 +49,7 @@ namespace ScriptCs.Hosting.Tests.ReplCommands
                 _mockWriter.Verify(
                     w =>
                         w.WriteSolution(It.IsAny<IFileSystem>(), It.IsAny<string>(), It.IsAny<IVisualStudioSolution>(),
-                            It.IsAny<IList<Tuple<string, string>>>()));
+                            It.IsAny<IList<ProjectItem>>()));
             }
 
             [Fact]

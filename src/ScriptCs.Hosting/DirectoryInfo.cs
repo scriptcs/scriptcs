@@ -10,12 +10,12 @@ namespace ScriptCs.Hosting
     {
         public DirectoryInfo()
         {
-            Guid = System.Guid.NewGuid().ToString().ToUpper();
+            Guid = Guid.NewGuid();
             Files = new List<string>();
             Directories = new Dictionary<string, DirectoryInfo>();
         }
 
-        public string Guid { get; private set; }
+        public Guid Guid { get; private set; }
         public string Name { get; set; }
         public string Path { get; set; }
         public string FullPath { get; set; }

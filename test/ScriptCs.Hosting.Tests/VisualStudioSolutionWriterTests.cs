@@ -19,7 +19,7 @@ namespace ScriptCs.Hosting.Tests
             private Mock<IVisualStudioSolution> _solutionMock;
             private Mock<IFileSystem> _fsMock;
             private VisualStudioSolutionWriter _writer;
-            private IList<Tuple<string, string>> _nestedItems;
+            private IList<ProjectItem> _nestedItems;
             private string _launcher;
 
             public TheWriteSolutionMethod()
@@ -33,7 +33,7 @@ namespace ScriptCs.Hosting.Tests
                 _fsMock.Setup(fs=>fs.EnumerateFilesAndDirectories(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories)).Returns(new [] {Path.Combine("root","file1.csx"), Path.Combine("root", "child1", "file2.csx"), Path.Combine("root", "child1", "child2", "file3.csx")});
                 _fsMock.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
                 _fsMock.SetupGet(fs => fs.TempPath).Returns("temp");
-                _nestedItems = new List<Tuple<string, string>>();
+                _nestedItems = new List<ProjectItem>();
                 _launcher = _writer.WriteSolution(_fsMock.Object, "test.csx", _solutionMock.Object, _nestedItems);
             }
 
@@ -41,7 +41,7 @@ namespace ScriptCs.Hosting.Tests
             public void ShouldAddTheScriptcsProject()
             {
                 var scriptcsPath = Path.Combine("bin", "scriptcs.exe");
-                _solutionMock.Verify(fs=>fs.AddScriptcsProject(scriptcsPath, "root", "test.csx -debug -loglevel info", false, It.IsAny<string>()));
+                _solutionMock.Verify(fs=>fs.AddScriptcsProject(scriptcsPath, "root", "test.csx -debug -loglevel info", false, It.IsAny<Guid>()));
             }
 
             [Fact]
@@ -59,14 +59,14 @@ namespace ScriptCs.Hosting.Tests
             {
                 var child1 = _writer._root.Directories.Values.First();
                 var child2 = child1.Directories.Values.First();
-                _nestedItems.Where(i => i.Item1 == child1.Guid).Count().ShouldEqual(1);
-                _nestedItems.Where(i => i.Item1 == child2.Guid).Count().ShouldEqual(1);
+                _nestedItems.Where(i => i.Project == child1.Guid).Count().ShouldEqual(1);
+                _nestedItems.Where(i => i.Project == child2.Guid).Count().ShouldEqual(1);
             }
 
             [Fact]
             public void ShouldAddGlobal()
             {
-                _solutionMock.Verify(s=>s.AddGlobal(It.IsAny<string>(), _nestedItems));
+                _solutionMock.Verify(s=>s.AddGlobal(It.IsAny<Guid>(), _nestedItems));
             }
 
             [Fact]

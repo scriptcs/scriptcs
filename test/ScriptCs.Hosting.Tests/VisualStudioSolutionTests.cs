@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Should;
 using Xunit;
 using System.IO;
+using ScriptCs.Contracts;
 
 namespace ScriptCs.Hosting.Tests
 {
@@ -37,7 +38,7 @@ namespace ScriptCs.Hosting.Tests
 
         public class TheAddGlobalHeaderMethod
         {
-            private string _projectGuid = Guid.NewGuid().ToString();
+            private Guid _projectGuid = Guid.NewGuid();
             private VisualStudioSolution _builder = new VisualStudioSolution();
 
             [Fact]
@@ -66,15 +67,19 @@ namespace ScriptCs.Hosting.Tests
             {
                 var builder = new VisualStudioSolution();
 
-                var nestedItems = new List<Tuple<string, string>>();
-                nestedItems.Add(new Tuple<string, string>("A", "B"));
-                nestedItems.Add(new Tuple<string, string>("B", "C"));
+                var nestedItems = new List<ProjectItem>();
+                var a = Guid.NewGuid();
+                var b = Guid.NewGuid();
+                var c = Guid.NewGuid();
+
+                nestedItems.Add(new ProjectItem(a, b));
+                nestedItems.Add(new ProjectItem(b, c));
                 builder.AddGlobalNestedProjects(nestedItems);
                 var nestedBuilder = new StringBuilder();
                 nestedBuilder.AppendLine("\tGlobalSection(NestedProjects) = preSolution");
-                nestedBuilder.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", nestedItems[0].Item1, nestedItems[0].Item2,
+                nestedBuilder.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", nestedItems[0].Project, nestedItems[0].Parent,
                     Environment.NewLine);
-                nestedBuilder.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", nestedItems[1].Item1, nestedItems[1].Item2,
+                nestedBuilder.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", nestedItems[1].Project, nestedItems[1].Parent,
                     Environment.NewLine);
                 nestedBuilder.AppendLine("\tEndGlobalSection");
                 builder._global.ToString().Contains(nestedBuilder.ToString());
@@ -88,7 +93,7 @@ namespace ScriptCs.Hosting.Tests
             private const string _workingPath = "working";
             private const string _args = "test.csx";
             private const bool _attach = true;
-            private string _projectGuid = Guid.NewGuid().ToString();
+            private Guid _projectGuid = Guid.NewGuid();
             private string _projects;
 
             public TheAddScriptcsProjectMethod()

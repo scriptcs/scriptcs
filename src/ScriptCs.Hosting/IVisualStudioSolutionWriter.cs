@@ -6,6 +6,6 @@ namespace ScriptCs.Contracts
 {
     public interface IVisualStudioSolutionWriter
     {
-        string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<Tuple<string, string>> nestedItems = null);
+        string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<ProjectItem> nestedItems = null);
     }
 }

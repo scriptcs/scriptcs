@@ -11,12 +11,13 @@ namespace ScriptCs.Hosting
     public class VisualStudioSolutionWriter : IVisualStudioSolutionWriter
     {
         internal DirectoryInfo _root; 
+        private Guid _nullGuid = new Guid();
 
-        public string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<Tuple<string, string>> nestedItems = null)
+        public string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<ProjectItem> nestedItems = null)
         {
             if (nestedItems == null)
             {
-                nestedItems = new List<Tuple<string, string>>();
+                nestedItems = new List<ProjectItem>();
             }
 
             var launcher = Path.Combine(fs.TempPath, "launcher-" + Guid.NewGuid().ToString() + ".sln");
@@ -30,26 +31,26 @@ namespace ScriptCs.Hosting
             var scriptcsPath = Path.Combine(fs.HostBin, "scriptcs.exe");
             var scriptcsArgs = string.Format("{0} -debug -loglevel info", script);
             _root = new DirectoryInfo { Name = "Solution Items", FullPath = currentDir};
-            var projectGuid = Guid.NewGuid().ToString().ToUpper();
+            var projectGuid = Guid.NewGuid();
 
             solution.AddScriptcsProject(scriptcsPath, currentDir, scriptcsArgs, false, projectGuid);
             GetDirectoryInfo(fs, currentDir, _root);
-            AddDirectoryProject(solution, fs, _root, null, nestedItems);
+            AddDirectoryProject(solution, fs, _root, _nullGuid, nestedItems);
             solution.AddGlobal(projectGuid, nestedItems);
             fs.WriteToFile(launcher, solution.ToString());
             return launcher;
         }
 
-        private void AddDirectoryProject(IVisualStudioSolution solution, IFileSystem fs, DirectoryInfo currentDirectory, string parent, IList<Tuple<string, string>> nestedItems)
+        private void AddDirectoryProject(IVisualStudioSolution solution, IFileSystem fs, DirectoryInfo currentDirectory, Guid parent, IList<ProjectItem> nestedItems)
         {
             solution.AddProject(currentDirectory.FullPath, currentDirectory.Name, currentDirectory.Guid, currentDirectory.Files.ToArray());
             foreach (DirectoryInfo dir in currentDirectory.Directories.Values)
             {
                 AddDirectoryProject(solution, fs, dir, currentDirectory.Guid, nestedItems);
             }
-            if (parent != null)
+            if (parent != _nullGuid)
             {
-                nestedItems.Add(new Tuple<string, string>(currentDirectory.Guid, parent));
+                nestedItems.Add(new ProjectItem(currentDirectory.Guid, parent));
             }
         }
 

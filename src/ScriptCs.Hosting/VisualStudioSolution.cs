@@ -29,7 +29,7 @@ namespace ScriptCs.Hosting
             _header.AppendLine("MinimumVisualStudioVersion = 10.0.40219.1");
         }
 
-        public void AddScriptcsProject(string scriptcsPath, string workingPath, string args, bool attach, string projectGuid)
+        public void AddScriptcsProject(string scriptcsPath, string workingPath, string args, bool attach, Guid projectGuid)
         {
             _projects.AppendFormat(@"Project(""{{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}}"") = ""scriptcs"", ""{0}"", ""{{{1}}}""{2}", scriptcsPath, projectGuid, Environment.NewLine);
             _projects.AppendLine("\tProjectSection(DebuggerProjectSystem) = preProject");
@@ -47,7 +47,7 @@ namespace ScriptCs.Hosting
             _projects.AppendLine("EndProject");
         }
 
-        public void AddProject(string path, string name, string guid, string[] files)
+        public void AddProject(string path, string name, Guid guid, string[] files)
         {
             _projects.AppendFormat(@"Project(""{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}"") = ""{0}"", ""{0}"", ""{{{1}}}""{2}", name, guid, Environment.NewLine);
             _projects.AppendLine("\tProjectSection(SolutionItems) = preProject");
@@ -66,7 +66,7 @@ namespace ScriptCs.Hosting
             _projects.AppendLine("EndProject");
         }
 
-        public void AddGlobalHeader(string projectGuid)
+        public void AddGlobalHeader(Guid projectGuid)
         {
             _global.AppendLine  ("Global");
             _global.AppendLine  ("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
@@ -80,20 +80,20 @@ namespace ScriptCs.Hosting
             _global.AppendLine  ("\tEndGlobalSection");
         }
 
-        public void AddGlobalNestedProjects(IList<Tuple<string, string>> nestedItems)
+        public void AddGlobalNestedProjects(IList<ProjectItem> nestedItems)
         {
             if (nestedItems.Any())
             {
                 _global.AppendLine("\tGlobalSection(NestedProjects) = preSolution");
                 foreach (var item in nestedItems)
                 {
-                    _global.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", item.Item1, item.Item2, Environment.NewLine);
+                    _global.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", item.Project, item.Parent, Environment.NewLine);
                 }
                 _global.AppendLine("\tEndGlobalSection");
             }
         }
 
-        public void AddGlobal(string projectGuid, IList<Tuple<string, string>> nestedItems)
+        public void AddGlobal(Guid projectGuid, IList<ProjectItem> nestedItems)
         {
             AddGlobalHeader(projectGuid);
             AddGlobalNestedProjects(nestedItems);
