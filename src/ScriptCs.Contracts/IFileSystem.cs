@@ -35,6 +35,8 @@ namespace ScriptCs.Contracts
 
         string GetFullPath(string path);
 
+        string TempPath { get; }
+
         string CurrentDirectory { get; set; }
 
         string NewLine { get; }

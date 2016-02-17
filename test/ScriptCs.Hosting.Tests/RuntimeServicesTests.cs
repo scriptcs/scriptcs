@@ -148,6 +148,12 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Fact]
+            public void ShouldRegisterTheDefaultVisualStudioSolutionWriterIfNoOverride()
+            {
+                _runtimeServices.Container.Resolve<IVisualStudioSolutionWriter>().ShouldNotBeNull();
+            }
+
+            [Fact]
             public void ShouldRegisterTheDefaultLineProcessors()
             {
                 var processors = _runtimeServices.Container.Resolve<IEnumerable<ILineProcessor>>();
@@ -266,6 +272,14 @@ namespace ScriptCs.Hosting.Tests
                 var mock = new Mock<IAssemblyResolver>();
                 _overrides[typeof(IAssemblyResolver)] = mock.Object;
                 _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
+            }
+
+            [Fact]
+            public void ShouldRegisterTheOverriddenVisualStudioSolutionWriter()
+            {
+                var mock = new Mock<IVisualStudioSolutionWriter>();
+                _overrides[typeof (IVisualStudioSolutionWriter)] = mock.Object.GetType();
+                _runtimeServices.Container.Resolve<IVisualStudioSolutionWriter>().ShouldBeType(mock.Object.GetType());
             }
 
             [Fact]
@@ -464,6 +478,8 @@ namespace ScriptCs.Hosting.Tests
                 {
                     throw new NotImplementedException();
                 }
+
+                public string TempPath { get; private set; }
 
                 public string CurrentDirectory
                 {
