@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 
-namespace ScriptCs.VisualBasic
+namespace ScriptCs.Engine.Roslyn
 {
-    public class VisualBasicReplEngine : VisualBasicScriptEngine, IReplEngine
+    public class CSharpReplEngine : CSharpScriptEngine, IReplEngine
     {
-        public VisualBasicReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
+        public CSharpReplEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
             : base(scriptHostFactory, logProvider)
         {
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     public class CSharpPersistentEngine : CSharpScriptCompilerEngine
     {

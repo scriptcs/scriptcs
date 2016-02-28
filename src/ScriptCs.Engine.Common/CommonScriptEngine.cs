@@ -8,7 +8,8 @@ namespace ScriptCs.Engine.Common
 {
     public abstract class CommonScriptEngine : IScriptEngine
     {
-        protected ScriptOptions ScriptOptions;
+        protected ScriptOptions ScriptOptions { get; set; }
+
         private readonly IScriptHostFactory _scriptHostFactory;
         private readonly ILog _log;
 

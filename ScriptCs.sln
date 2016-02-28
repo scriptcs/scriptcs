@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
 EndProject
@@ -44,11 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B13804
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.CSharp", "src\ScriptCs.CSharp\ScriptCs.CSharp.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.VisualBasic", "src\ScriptCs.VisualBasic\ScriptCs.VisualBasic.csproj", "{4C68DC34-60AB-405B-878F-377CF6C4336C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Common", "src\ScriptCs.Engine.Common\ScriptCs.Engine.Common.csproj", "{38A12481-8652-4A9C-9D90-1C15043EFEE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn", "src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,18 +98,14 @@ Global
 		{10684649-2922-41F5-AB9B-20B127CBF92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10684649-2922-41F5-AB9B-20B127CBF92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10684649-2922-41F5-AB9B-20B127CBF92C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C68DC34-60AB-405B-878F-377CF6C4336C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C68DC34-60AB-405B-878F-377CF6C4336C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C68DC34-60AB-405B-878F-377CF6C4336C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C68DC34-60AB-405B-878F-377CF6C4336C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38A12481-8652-4A9C-9D90-1C15043EFEE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38A12481-8652-4A9C-9D90-1C15043EFEE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38A12481-8652-4A9C-9D90-1C15043EFEE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38A12481-8652-4A9C-9D90-1C15043EFEE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79EC231-E27D-4057-91C9-2D001A3A8C3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

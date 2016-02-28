@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 using ScriptCs.Engine.Common;
 using ScriptCs.Exceptions;
 
-namespace ScriptCs.CSharp
+namespace ScriptCs.Engine.Roslyn
 {
     public abstract class CSharpScriptCompilerEngine : CommonScriptEngine
     {
