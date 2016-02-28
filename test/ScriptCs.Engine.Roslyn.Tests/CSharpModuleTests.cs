@@ -14,7 +14,7 @@ namespace ScriptCs.Tests
         {
             private readonly Mock<IModuleConfiguration> _configMock = new Mock<IModuleConfiguration>();
             private readonly IModuleConfiguration _config;
-            private readonly CSharpModule _module = new CSharpModule();
+            private readonly RoslynModule _module = new RoslynModule();
             private readonly IDictionary<Type, object> _overrides = new Dictionary<Type, object>();
             
             public TheInitializeMethod()

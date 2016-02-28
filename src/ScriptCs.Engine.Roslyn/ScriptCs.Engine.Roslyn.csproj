@@ -84,7 +84,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
-    <Compile Include="CSharpModule.cs" />
+    <Compile Include="RoslynModule.cs" />
     <Compile Include="CSharpPersistentEngine.cs" />
     <Compile Include="CSharpReplEngine.cs" />
     <Compile Include="CSharpScriptCompilerEngine.cs" />

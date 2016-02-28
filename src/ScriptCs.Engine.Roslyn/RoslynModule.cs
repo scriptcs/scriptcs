@@ -2,8 +2,8 @@
 
 namespace ScriptCs.Engine.Roslyn
 {
-    [Module("csharp")]
-    public class CSharpModule : IModule
+    [Module("roslyn")]
+    public class RoslynModule : IModule
     {
         public void Initialize(IModuleConfiguration config)
         {

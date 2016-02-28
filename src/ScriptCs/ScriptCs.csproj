@@ -173,10 +173,6 @@
       <Project>{9aef2d95-87fb-4829-b384-34bfe076d531}</Project>
       <Name>ScriptCs.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.VisualBasic\ScriptCs.VisualBasic.csproj">
-      <Project>{4c68dc34-60ab-405b-878f-377cf6c4336c}</Project>
-      <Name>ScriptCs.VisualBasic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
