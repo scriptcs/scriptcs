@@ -14,6 +14,7 @@ namespace ScriptCs
         private readonly IObjectSerializer _serializer;
         private readonly ILog _log;
         private readonly Dictionary<Type, Func<object, string>> _printers = new  Dictionary<Type, Func<object, string>>();
+
         [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public Repl(
             string[] scriptArgs,
@@ -75,6 +76,7 @@ namespace ScriptCs
         }
 
         public void AddCustomPrinter<T>(Func<T, string> printer) {
+            Console.WriteLine("adding custom printer");
             _printers[typeof(T)] = x => printer((T) x);
         }
 
@@ -176,10 +178,13 @@ namespace ScriptCs
                 if (result.ReturnValue != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-
-                    var serializedResult = _serializer.Serialize(result.ReturnValue);
-
-                    Console.WriteLine(serializedResult);
+                    Func<object, string> printer;
+                    if(_printers.TryGetValue(result.ReturnValue.GetType(), out printer)) {
+                        Console.WriteLine(printer(result.ReturnValue));
+                    } else {
+                        var serializedResult = _serializer.Serialize(result.ReturnValue);
+                        Console.WriteLine(serializedResult);
+                    }
                 }
 
                 Buffer = null;

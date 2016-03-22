@@ -1,5 +1,5 @@
 ﻿using ScriptCs.Contracts;
-
+using System;
 namespace ScriptCs
 {
     public class ScriptHostFactory : IScriptHostFactory
