@@ -6,5 +6,6 @@ namespace ScriptCs.Contracts
     {
         T Require<T>() where T : IScriptPackContext;
         IScriptEnvironment Env { get; }
+        IRepl Repl { get;}
     }
 }

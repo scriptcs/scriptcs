@@ -13,7 +13,7 @@ namespace ScriptCs
 
         private readonly IObjectSerializer _serializer;
         private readonly ILog _log;
-
+        private readonly Dictionary<Type, Func<object, string>> _printers = new  Dictionary<Type, Func<object, string>>();
         [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
         public Repl(
             string[] scriptArgs,
@@ -74,9 +74,14 @@ namespace ScriptCs
             Console.Exit();
         }
 
+        public void AddCustomPrinter<T>(Func<T, string> printer) {
+            _printers[typeof(T)] = x => printer((T) x);
+        }
+
         public override ScriptResult Execute(string script, params string[] scriptArgs)
         {
             Guard.AgainstNullArgument("script", script);
+            ScriptEngine.ScriptHostFactory.SetRepl(this);
             try
             {
                 if (script.StartsWith(":"))
@@ -133,7 +138,7 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                
+
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)

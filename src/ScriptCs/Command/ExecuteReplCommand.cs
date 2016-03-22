@@ -65,7 +65,6 @@ namespace ScriptCs.Command
             var scriptPacks = _scriptPackResolver.GetPacks();
 
             _composer.Compose(workingDirectory);
-
             _repl.Initialize(assemblies, scriptPacks, ScriptArgs);
 
             if (!string.IsNullOrWhiteSpace(_scriptName))
@@ -103,7 +102,7 @@ namespace ScriptCs.Command
         private bool ExecuteLine(IRepl repl)
         {
             var prompt = string.IsNullOrWhiteSpace (repl.Buffer) ? "> " : "* ";
-            
+
             try
             {
                 var line = _console.ReadLine(prompt);

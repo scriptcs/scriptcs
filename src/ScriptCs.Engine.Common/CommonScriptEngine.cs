@@ -29,6 +29,10 @@ namespace ScriptCs.Engine.Common
             set { ScriptOptions = ScriptOptions.WithBaseDirectory(value); }
         }
 
+        public IScriptHostFactory ScriptHostFactory {
+            get { return _scriptHostFactory; }
+        }
+
         public string CacheDirectory { get; set; }
 
         public string FileName { get; set; }
@@ -67,7 +71,7 @@ namespace ScriptCs.Engine.Common
                 var hostType = host.GetType();
 
                 ScriptOptions = ScriptOptions.AddReferences(hostType.Assembly);
-                
+
                 var allNamespaces = namespaces.Union(scriptPackSession.Namespaces).Distinct();
 
                 foreach (var reference in executionReferences.Paths)
