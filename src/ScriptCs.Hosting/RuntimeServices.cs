@@ -85,6 +85,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
             builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
+            builder.RegisterType<Printers>().SingleInstance();
 
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);

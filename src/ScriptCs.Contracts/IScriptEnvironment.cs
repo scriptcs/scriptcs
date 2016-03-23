@@ -9,5 +9,6 @@ namespace ScriptCs.Contracts
     public interface IScriptEnvironment
     {
         IReadOnlyList<string> ScriptArgs { get; }
+        void AddCustomPrinter<T>(Func<T, string> printer);
     }
 }

@@ -64,7 +64,8 @@ namespace ScriptCs.Tests
                 mocks.ScriptLibraryComposer.Object,
                 mocks.Console.Object,
                 mocks.FilePreProcessor.Object,
-                mocks.ReplCommands.Select(x => x.Object));
+                mocks.ReplCommands.Select(x => x.Object),
+                new Printers());
         }
 
         public class TheConstructor

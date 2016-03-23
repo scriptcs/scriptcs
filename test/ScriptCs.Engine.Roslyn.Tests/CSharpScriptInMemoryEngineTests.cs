@@ -16,10 +16,13 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
+            private IConsole _console = new Mock<IConsole>().Object;
+            private Printers _printers = new Printers();
+
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(_console, _printers), new TestLogProvider());
                 // Arrange
                 var lines = new List<string>
                 {
@@ -43,7 +46,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(_console, _printers), new TestLogProvider());
 
                 // Arrange
                 var lines = new List<string>

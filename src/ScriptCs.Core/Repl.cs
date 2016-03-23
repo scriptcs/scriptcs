@@ -12,6 +12,7 @@ namespace ScriptCs
         private readonly string[] _scriptArgs;
 
         private readonly IObjectSerializer _serializer;
+        private readonly Printers _printers;
         private readonly ILog _log;
 
         [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
@@ -24,7 +25,8 @@ namespace ScriptCs
             IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
-            IEnumerable<IReplCommand> replCommands)
+            IEnumerable<IReplCommand> replCommands,
+            Printers printers)
             : this(
                 scriptArgs,
                 fileSystem,
@@ -34,7 +36,8 @@ namespace ScriptCs
                 composer,
                 console,
                 filePreProcessor,
-                replCommands)
+                replCommands,
+                printers)
         {
         }
 
@@ -47,7 +50,8 @@ namespace ScriptCs
             IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
-            IEnumerable<IReplCommand> replCommands)
+            IEnumerable<IReplCommand> replCommands,
+            Printers printers)
             : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer)
         {
             Guard.AgainstNullArgument("serializer", serializer);
@@ -56,6 +60,7 @@ namespace ScriptCs
 
             _scriptArgs = scriptArgs;
             _serializer = serializer;
+            _printers = printers;
             _log = logProvider.ForCurrentType();
             Console = console;
             Commands = replCommands != null ? replCommands.Where(x => x.CommandName != null).ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
@@ -172,9 +177,13 @@ namespace ScriptCs
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
-                    var serializedResult = _serializer.Serialize(result.ReturnValue);
-
-                    Console.WriteLine(serializedResult);
+                    Func<object, string> printer;
+                    if(_printers.TryGetValue(result.ReturnValue.GetType(), out printer)) {
+                     Console.WriteLine(printer(result.ReturnValue));
+                    } else {
+                     var serializedResult = _serializer.Serialize(result.ReturnValue);
+                     Console.WriteLine(serializedResult);
+                    }
                 }
 
                 Buffer = null;
