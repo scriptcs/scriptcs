@@ -72,7 +72,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 scriptPack.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
                 scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext)null);
@@ -94,7 +94,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -116,7 +116,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 // Act
                 engine.Execute(Code, new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
@@ -135,7 +135,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -158,7 +158,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 var code = string.Empty;
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -173,7 +173,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
             // Need to get the compiler ex from mono.
             // Currently the ConsoleReportWriter is swallowing the ex
-            /*            
+            /*
             [Theory, ScriptCsAutoData]
             public void ShouldReturnCompileExceptionIfCodeDoesNotCompile(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
@@ -211,7 +211,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var theNumber = 42; //this should compile";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -236,7 +236,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "throw new System.Exception(); //this should throw an Exception";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -259,7 +259,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var theNumber = 42; //this should not throw an Exception";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -283,7 +283,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
                 // Arrange
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -306,7 +306,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 const string Code = "var theNumber = 42; //this should not return a value";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<Evaluator> { Session = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter())) };
                 scriptPackSession.State[MonoScriptEngine.SessionKey] = session;
@@ -333,7 +333,7 @@ namespace ScriptCs.Engine.Mono.Tests
                 var refs = new AssemblyReferences(new[] { "System" });
 
                 scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns(new ScriptHost(manager.Object, null));
+                    .Returns(new ScriptHost(manager.Object, null, null));
 
                 // Act
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);

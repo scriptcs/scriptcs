@@ -28,7 +28,7 @@ namespace ScriptCs.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 scriptPack.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
                 scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext)null);
@@ -50,7 +50,7 @@ namespace ScriptCs.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
@@ -67,7 +67,7 @@ namespace ScriptCs.Tests
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
                 // Arrange
                 var engine = new CSharpTestScriptEngine(scriptHostFactory.Object, new TestLogProvider());
@@ -314,7 +314,7 @@ namespace ScriptCs.Tests
             const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
 
             scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q), null));
 
             var engine = new CSharpScriptEngine(scriptHostFactory.Object, new TestLogProvider());
             var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
@@ -344,7 +344,7 @@ namespace ScriptCs.Tests
             var refs = new AssemblyReferences(new[] { "System" });
 
             scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                .Returns(new ScriptHost(manager.Object, null));
+                .Returns(new ScriptHost(manager.Object, null, null));
 
             // Act
             engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);

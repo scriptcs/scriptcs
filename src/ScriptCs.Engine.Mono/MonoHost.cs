@@ -20,6 +20,13 @@ namespace ScriptCs.Engine.Mono
             get { return _scriptHost.Env; }
         }
 
+        public static IRepl Repl { get { return _scriptHost.Repl; }}
+
+        IRepl IScriptHost.Repl
+        {
+            get { return _scriptHost.Repl; }
+        }
+
         public static T Require<T>() where T : IScriptPackContext
         {
             return _scriptHost.Require<T>();
