@@ -77,11 +77,13 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
                 {
                     previous = _lastChar;
                     _lastChar = Read();
-                    @char += (char)_lastChar;
+					if(_lastChar != Token.Eof)
+                    	@char += (char)_lastChar;
                 } while (!(_lastChar == Token.SingleQuote && previous != Token.EscapeChar)
                     && _lastChar != Token.Eof);
 
-                _lastChar = Read(); //eat
+				if(_lastChar != Token.Eof)
+					_lastChar = Read(); //eat
 
                 return new LexerResult
                 {
