@@ -30,11 +30,13 @@ If the above fails with the error indicating that proxy authentication is requir
 
     @powershell -NoProfile -ExecutionPolicy Unrestricted -Command "[Net.WebRequest]::DefaultWebProxy.Credentials = [Net.CredentialCache]::DefaultCredentials; iex ((New-Object Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%systemdrive%\chocolatey\bin
 
+**Note:** If you are using a version of Chocolatey > 0.9.9.0 you can pass the `-y` into the install and upgrade commands to prevent the confirmation that will appear.
+
 ### Installing scriptcs
 
 Once Chocolatey has been installed, you can install the latest stable version of scriptcs from your command prompt:
 
-    cinst scriptcs
+    choco install scriptcs
 
 Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your PATH accordingly.
 
@@ -44,13 +46,15 @@ Chocolatey will install scriptcs to `%LOCALAPPDATA%\scriptcs\` and update your P
 
 With Chocolatey, keeping scriptcs updated is just as easy:
 
-    cup scriptcs
+    choco upgrade scriptcs
+
+**Note:** If you are using a version of Chocolatey < 0.9.0.0 you will need to use `choco update scriptcs`, but also think about updating Chocolatey itself.
 
 ### Nightly builds
 
 Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be installed through with Chocolatey:
 
-    cinst scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
+    choco install scriptcs -pre -source https://www.myget.org/F/scriptcsnightly/ 
 
 ### Building from source
 
@@ -161,7 +165,7 @@ RavenDB started, listening on http://localhost:8080.
 
 Script Packs can be used to further reduce the amount of code you need to write when working with common frameworks. 
 
-* In an empty directory, install the [ScriptCs.WebApi](https://nuget.org/packages/ScriptCs.WebApi/) script pack from NuGet. The script pack will automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default `ControllerResolver` with a custom implementation that allows Web API to discover controllers declared in scripts.
+* In an empty directory, install the [ScriptCs.WebApi](https://nuget.org/packages/ScriptCs.WebApi/) script pack from NuGet. The script pack automatically imports the Web API namespaces and provides a convenient factory method for initializing the Web API host. It also replaces the default `ControllerResolver` with a custom implementation that allows Web API to discover controllers declared in scripts.
 
 ```batchfile
 scriptcs -install ScriptCs.WebApi
@@ -241,11 +245,11 @@ Instructions for debugging scripts using Visual Studio can be found on the [wiki
 
 ### Package installation
 
-You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the packages folder.
+You can install any NuGet packages directly from the scriptcs CLI. This will pull the relevant packages from NuGet, and install them in the scriptcs_packages folder.
 
 Once the packages are installed, you can simply start using them in your script code directly (just import the namespaces - no additional bootstrapping or DLL referencing is needed).
 
-The `install` command will also create a `packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
+The `install` command will also create a `scriptcs_packages.config` file if you don't have one - so that you can easily redistribute your script (without having to copy the package binaries).
 
  - `scriptcs -install {package name}` will install the desired package from NuGet. 
  	
@@ -253,9 +257,9 @@ The `install` command will also create a `packages.config` file if you don't hav
 
 		scriptcs -install ServiceStack
 		
- - `scriptcs -install` (without package name) will look for the `packages.config` file located in the current execution directory, and install all the packages specified there. You only need to specify **top level** packages.
+ - `scriptcs -install` (without package name) will look for the `scriptcs_packages.config` file located in the current execution directory, and install all the packages specified there. You only need to specify **top level** packages.
 
-For example, you might create the following `packages.config`:
+For example, you might create the following `scriptcs_packages.config`:
 
 	<?xml version="1.0" encoding="utf-8"?>
 	<packages>
@@ -268,7 +272,7 @@ And then just call:
 
     scriptcs -install
 
-As a result, all packages specified in the `packages.config`, including all dependencies, will be downloaded and installed in the `packages` folder. 
+As a result, all packages specified in the `scriptcs_packages.config`, including all dependencies, will be downloaded and installed in the `scriptcs_packages` folder. 
 
 
 ## Contributing
@@ -298,7 +302,7 @@ Want to chat? In addition to Twitter, you can find us on [Google Groups](https:/
 * [Damian Schenkelman](http://github.com/dschenkelman) ([@dschenkelman](https://twitter.com/intent/user?screen_name=dschenkelman))
 * [Kristian Hellang](http://github.com/khellang) ([@khellang](https://twitter.com/intent/user?screen_name=khellang))
 * [Adam Ralph](http://github.com/adamralph) ([@adamralph](https://twitter.com/intent/user?screen_name=adamralph))
-* [Paul Bouwer](http://github.com/paulbouwer) [@pbouwer](https://twitter.com/intent/user?screen_name=pbouwer))
+* [Paul Bouwer](http://github.com/paulbouwer) ([@pbouwer](https://twitter.com/intent/user?screen_name=pbouwer))
 
 ## Credits 
 

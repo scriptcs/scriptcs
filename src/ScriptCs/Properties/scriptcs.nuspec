@@ -13,9 +13,6 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net45" />
     </frameworkAssemblies>
-    <dependencies>
-      <dependency id="NuGet.CommandLine" version="2.5.0" />
-    </dependencies>
   </metadata>
   <files>
     <file src="Properties\chocolateyInstall.ps1" target="tools" />

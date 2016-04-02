@@ -11,9 +11,9 @@ namespace ScriptCs.Engine.Roslyn
 
             if (!config.Overrides.ContainsKey(typeof(IScriptEngine)))
             {
-                var engineType = config.Cache ? typeof(RoslynScriptPersistentEngine) : typeof(RoslynScriptEngine);
-                engineType = config.Debug ? typeof(RoslynScriptInMemoryEngine) : engineType;
-                engineType = config.IsRepl ? typeof(RoslynReplEngine) : engineType;
+                var engineType = config.Cache ? typeof(CSharpPersistentEngine) : typeof(CSharpScriptEngine);
+                engineType = config.Debug ? typeof(CSharpScriptInMemoryEngine) : engineType;
+                engineType = config.IsRepl ? typeof(CSharpReplEngine) : engineType;
                 config.Overrides[typeof(IScriptEngine)] = engineType;
             }
         }

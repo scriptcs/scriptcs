@@ -25,11 +25,8 @@ namespace ScriptCs.Tests
             {
                 // arrange
                 var config = new Config { Repl = true };
-                var readLines = 0;
-                var builder = new StringBuilder();
 
-                console.Setup(x => x.ReadLine()).Callback(() => readLines++).Throws(new Exception());
-                console.Setup(x => x.Write(It.IsAny<string>())).Callback<string>(value => builder.Append(value));
+                console.Setup(x => x.ReadLine(It.IsAny<string>())).Returns((string)null);
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
                 servicesBuilder.SetupGet(b => b.ConsoleInstance).Returns(console.Object);
@@ -42,8 +39,7 @@ namespace ScriptCs.Tests
                 sut.Execute();
 
                 // assert
-                builder.ToString().EndsWith("> ").ShouldBeTrue();
-                readLines.ShouldEqual(1);
+                console.Verify(x=>x.ReadLine("> "));
             }
 
             [Theory, ScriptCsAutoData]
@@ -65,7 +61,7 @@ namespace ScriptCs.Tests
                     It.IsAny<IEnumerable<string>>(),
                     It.IsAny<ScriptPackSession>()));
 
-                console.Setup(x => x.ReadLine()).Throws(new Exception());
+                console.Setup(x => x.ReadLine("")).Throws(new Exception());
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
                 servicesBuilder.Setup(b => b.Build()).Returns(services);
@@ -92,7 +88,7 @@ namespace ScriptCs.Tests
                 // arrange
                 var config = new Config { Repl = true };
 
-                console.Setup(x => x.ReadLine()).Throws(new Exception());
+                console.Setup(x => x.ReadLine("")).Throws(new Exception());
                 initializationServices.Setup(i => i.GetFileSystem()).Returns(fileSystem.Object);
                 servicesBuilder.SetupGet(b => b.InitializationServices).Returns(initializationServices.Object);
                 servicesBuilder.Setup(b => b.Build()).Returns(services);
@@ -122,7 +118,7 @@ namespace ScriptCs.Tests
                 IScriptLibraryComposer composer)
             {
                 // arrange
-                console.Setup(c => c.ReadLine()).Throws(new Exception());
+                console.Setup(c => c.ReadLine("")).Throws(new Exception());
                 var sut = new ExecuteReplCommand(
                     null,
                     null,

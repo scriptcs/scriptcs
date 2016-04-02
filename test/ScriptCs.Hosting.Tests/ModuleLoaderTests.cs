@@ -141,7 +141,7 @@ namespace ScriptCs.Hosting.Tests
                 var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
                 _mockAssemblyUtility.Setup(x => x.LoadFile(path));
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _logProvider, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
-                
+
                 loader.Load(null, new string[0], "c:\\foo", ".fsx", "roslyn");
                 _mockAssemblyUtility.Verify(x => x.LoadFile(It.IsAny<string>()), Times.Never);
             }
