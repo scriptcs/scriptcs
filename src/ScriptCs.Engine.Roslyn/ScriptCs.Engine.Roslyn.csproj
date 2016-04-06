@@ -97,7 +97,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="ScriptCs.CSharp.nuspec" />
+    <None Include="Properties\ScriptCs.Engine.Roslyn.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj">
