@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Common;
 
 namespace ScriptCs.Engine.Roslyn
 {
