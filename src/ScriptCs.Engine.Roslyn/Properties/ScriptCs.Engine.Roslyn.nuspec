@@ -17,4 +17,7 @@
       <dependency id="ScriptCs.Core" version="$version$" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="..\..\lib\*.dll" target="lib\net45" />
+  </files>  
 </package>
