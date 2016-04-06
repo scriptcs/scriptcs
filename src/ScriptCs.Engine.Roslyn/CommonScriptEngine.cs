@@ -4,8 +4,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
-namespace ScriptCs.Engine.Common
+namespace ScriptCs.Engine.Roslyn
 {
+    // note this class is a base for future VB engine
     public abstract class CommonScriptEngine : IScriptEngine
     {
         protected ScriptOptions ScriptOptions { get; set; }

@@ -84,6 +84,8 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="CommonScriptEngine.cs" />
+    <Compile Include="ReplEngineExtensions.cs" />
     <Compile Include="RoslynModule.cs" />
     <Compile Include="CSharpPersistentEngine.cs" />
     <Compile Include="CSharpReplEngine.cs" />
@@ -107,10 +109,6 @@
     <ProjectReference Include="..\ScriptCs.Core\ScriptCs.Core.csproj">
       <Project>{e590e710-e159-48e6-a3e6-1a83d3fe732c}</Project>
       <Name>ScriptCs.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptCs.Engine.Common\ScriptCs.Engine.Common.csproj">
-      <Project>{38a12481-8652-4a9c-9d90-1c15043efee5}</Project>
-      <Name>ScriptCs.Engine.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
