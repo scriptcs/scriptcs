@@ -6,7 +6,6 @@ using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
-using ScriptCs.Engine.Common;
 using Should;
 using Xunit;
 using Xunit.Extensions;

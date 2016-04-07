@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ScriptCs.Engine.Roslyn</id>
+    <version>$version$</version>
+    <authors>Glenn Block, Filip Wojcieszyn, Justin Rusbatch, Kristian Hellang, Damian Schenkelman, Adam Ralph</authors>
+    <owners>Glenn Block, Justin Rusbatch, Filip Wojcieszyn</owners>
+    <licenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>http://scriptcs.net</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/5c754f646971d8bc800b9d4057931938.png?s=120</iconUrl>
+    <description>ScriptCs.Engine.Roslyn provides a Roslyn-based script engine for scriptcs.</description>
+    <tags>roslyn csx script scriptcs</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.ComponentModel.Composition" targetFramework="net45" />
+    </frameworkAssemblies>
+    <dependencies>
+      <dependency id="ScriptCs.Core" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\..\lib\*.dll" target="lib\net45" />
+  </files>  
+</package>

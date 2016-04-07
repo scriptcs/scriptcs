@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("ScriptCs.CSharp")]
+[assembly: AssemblyTitle("ScriptCs.Engine.Roslyn")]
 [assembly: AssemblyDescription(
-    "ScriptCs.CSharp provides a Microsoft.CodeAnalysis-based C# script engine for scriptcs.")]
+    "ScriptCs.Engine.Roslyn provides a Microsoft.CodeAnalysis-based C# script engine for scriptcs.")]

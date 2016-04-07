@@ -5,7 +5,6 @@ using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
-using ScriptCs.Engine.Common;
 using ScriptCs.Exceptions;
 
 namespace ScriptCs.Engine.Roslyn
