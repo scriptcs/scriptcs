@@ -9,7 +9,6 @@ namespace ScriptCs.Engine.Roslyn
     public class CSharpPersistentEngine : CSharpScriptCompilerEngine
     {
         private readonly IFileSystem _fileSystem;
-        private const string RoslynAssemblyNameCharacter = "ℛ";
         private readonly ILog _log;
 
         public CSharpPersistentEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider, IFileSystem fileSystem)
@@ -40,10 +39,7 @@ namespace ScriptCs.Engine.Roslyn
             _fileSystem.WriteAllBytes(dllPath, exeBytes);
 
             _log.DebugFormat("Loading assembly {0}.", dllPath);
-
-            // the assembly is automatically loaded into the AppDomain when compiled
-            // just need to find and return it
-            return AppDomain.CurrentDomain.GetAssemblies().LastOrDefault(x => x.FullName.StartsWith(RoslynAssemblyNameCharacter));
+            return LoadAssemblyFromCache();
         }
 
         protected override Assembly LoadAssemblyFromCache()
