@@ -26,12 +26,12 @@ namespace ScriptCs
 
         public void Print(object o)
         {
-            Console.WriteLine(_printers.GetStringFor(o));
+            _console.WriteLine(_printers.GetStringFor(o));
         }
 
         public void Print<T>(T o)
         {
-            Console.WriteLine(_printers.GetStringFor<T>(o));
+            _console.WriteLine(_printers.GetStringFor<T>(o));
         }
 
     }
