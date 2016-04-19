@@ -18,8 +18,13 @@ namespace ScriptCs.Tests
         public class TheExecuteMethod
         {
             private IConsole _console = new Mock<IConsole>().Object;
-            private Printers _printers = new Printers();
+            private IObjectSerializer _serializer = new Mock<IObjectSerializer>().Object;
+            private Printers _printers;
 
+            public TheExecuteMethod()
+            {
+                _printers =  new Printers(_serializer);
+            }
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,

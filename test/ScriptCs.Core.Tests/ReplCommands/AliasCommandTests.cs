@@ -54,7 +54,7 @@ namespace ScriptCs.Tests.ReplCommands
                     console.Object,
                     filePreProcessor.Object,
                     new List<IReplCommand> { dummyCommand.Object },
-                    new Printers());
+                    new Printers(serializer.Object));
 
                 var cmd = new AliasCommand(console.Object);
 

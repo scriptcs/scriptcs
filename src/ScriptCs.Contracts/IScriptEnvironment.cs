@@ -10,5 +10,7 @@ namespace ScriptCs.Contracts
     {
         IReadOnlyList<string> ScriptArgs { get; }
         void AddCustomPrinter<T>(Func<T, string> printer);
+        void Print<T>(T o);
+        void Print(object o);
     }
 }

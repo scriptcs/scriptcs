@@ -62,7 +62,12 @@ namespace ScriptCs.Engine.Mono.Tests
         public class TheExecuteMethod
         {
             private IConsole _console = new Mock<IConsole>().Object;
-            private Printers _printers = new Printers();
+            private IObjectSerializer _serializer = new Mock<IObjectSerializer>().Object;
+            private Printers _printers;
+            public TheExecuteMethod()
+            {
+                _printers =  new Printers(_serializer);
+            }
 
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
@@ -176,7 +181,7 @@ namespace ScriptCs.Engine.Mono.Tests
 
             // Need to get the compiler ex from mono.
             // Currently the ConsoleReportWriter is swallowing the ex
-            /*            
+            /*
             [Theory, ScriptCsAutoData]
             public void ShouldReturnCompileExceptionIfCodeDoesNotCompile(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,

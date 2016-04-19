@@ -138,7 +138,7 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                
+
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)
@@ -177,13 +177,7 @@ namespace ScriptCs
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
-                    Func<object, string> printer;
-                    if(_printers.TryGetValue(result.ReturnValue.GetType(), out printer)) {
-                     Console.WriteLine(printer(result.ReturnValue));
-                    } else {
-                     var serializedResult = _serializer.Serialize(result.ReturnValue);
-                     Console.WriteLine(serializedResult);
-                    }
+                    Console.WriteLine(_printers.GetStringFor(result.ReturnValue));
                 }
 
                 Buffer = null;

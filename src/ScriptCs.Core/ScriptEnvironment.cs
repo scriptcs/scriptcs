@@ -20,8 +20,19 @@ namespace ScriptCs
 
         public void AddCustomPrinter<T>(Func<T, string> printer)
         {
-            _console.WriteLine("Adding custom printer");
-            _printers[typeof(T)] = x => printer((T) x);
+            _console.WriteLine("Adding custom printer for " + typeof(T).Name);
+            _printers.AddCustomPrinter<T>(printer);
         }
+
+        public void Print(object o)
+        {
+            Console.WriteLine(_printers.GetStringFor(o));
+        }
+
+        public void Print<T>(T o)
+        {
+            Console.WriteLine(_printers.GetStringFor<T>(o));
+        }
+
     }
 }
