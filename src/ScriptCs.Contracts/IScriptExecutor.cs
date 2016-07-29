@@ -7,7 +7,7 @@ namespace ScriptCs.Contracts
     {
         AssemblyReferences References { get; }
 
-        ICollection<string> Namespaces { get; }
+        IReadOnlyCollection<string> Namespaces { get; }
 
         IScriptEngine ScriptEngine { get; }
 
