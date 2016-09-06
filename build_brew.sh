@@ -11,4 +11,3 @@ mono ./.nuget/NuGet.exe restore ./ScriptCs.sln
 mkdir -p artifacts/Release/bin
 xbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
 cp src/ScriptCs/bin/Release/* artifacts/Release/bin/
-
