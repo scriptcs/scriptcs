@@ -181,6 +181,15 @@ namespace ScriptCs
             return Path.GetFullPath(path);
         }
 
+
+        public virtual string TempPath
+        {
+            get
+            {
+                return Path.GetTempPath();
+            }
+        }
+
         public virtual string HostBin
         {
             get { return AppDomain.CurrentDomain.BaseDirectory; }

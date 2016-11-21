@@ -4,8 +4,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.CSharp;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.CSharp;
-using ScriptCs.Engine.Common;
+using ScriptCs.Engine.Roslyn;
 using Should;
 using Xunit.Extensions;
 

@@ -78,9 +78,8 @@
     <ItemGroup>
       <NuGetProjects Include="$(Root)src\ScriptCs.Contracts\ScriptCs.Contracts.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
-      <NuGetProjects Include="$(Root)src\ScriptCs.CSharp\ScriptCs.CSharp.csproj" />
-      <NuGetProjects Include="$(Root)src\ScriptCs.VisualBasic\ScriptCs.VisualBasic.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
+      <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />

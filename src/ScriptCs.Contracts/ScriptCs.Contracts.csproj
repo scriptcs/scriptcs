@@ -105,6 +105,8 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogProviderExtensions.cs" />
     <Compile Include="ModuleAttribute.cs" />
+    <Compile Include="Printers.cs" />
+    <Compile Include="ProjectItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptPack.cs" />
     <Compile Include="ScriptPackSession.cs" />

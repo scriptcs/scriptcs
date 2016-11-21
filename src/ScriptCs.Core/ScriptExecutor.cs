@@ -51,7 +51,7 @@ namespace ScriptCs
 
         public AssemblyReferences References { get; private set; }
 
-        public ICollection<string> Namespaces { get; private set; }
+        public IReadOnlyCollection<string> Namespaces { get; private set; }
 
         public ScriptPackSession ScriptPackSession { get; protected set; }
 
@@ -97,8 +97,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("composer", composer);
 
             References = new AssemblyReferences(DefaultReferences);
-            Namespaces = new Collection<string>();
-            ImportNamespaces(DefaultNamespaces);
+            Namespaces = new ReadOnlyCollection<string>(DefaultNamespaces);
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
@@ -109,24 +108,16 @@ namespace ScriptCs
             ScriptLibraryComposer = composer;
         }
 
-        public void ImportNamespaces(params string[] namespaces)
+        public virtual void ImportNamespaces(params string[] namespaces)
         {
             Guard.AgainstNullArgument("namespaces", namespaces);
-
-            foreach (var @namespace in namespaces)
-            {
-                Namespaces.Add(@namespace);
-            }
+            Namespaces = new ReadOnlyCollection<string>(Namespaces.Union(namespaces).ToArray());
         }
 
-        public void RemoveNamespaces(params string[] namespaces)
+        public virtual void RemoveNamespaces(params string[] namespaces)
         {
             Guard.AgainstNullArgument("namespaces", namespaces);
-
-            foreach (var @namespace in namespaces)
-            {
-                Namespaces.Remove(@namespace);
-            }
+            Namespaces = new ReadOnlyCollection<string>(Namespaces.Except(namespaces).ToArray());
         }
 
         public virtual void AddReferences(params Assembly[] assemblies)
@@ -176,9 +167,7 @@ namespace ScriptCs
         public virtual void Reset()
         {
             References = new AssemblyReferences(DefaultReferences);
-            Namespaces.Clear();
-            ImportNamespaces(DefaultNamespaces);
-
+            Namespaces = new ReadOnlyCollection<string>(DefaultNamespaces);
             ScriptPackSession.State.Clear();
         }
 

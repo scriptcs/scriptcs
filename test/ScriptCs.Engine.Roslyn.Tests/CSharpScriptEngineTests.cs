@@ -5,8 +5,7 @@ using Microsoft.CodeAnalysis.Scripting.CSharp;
 using Moq;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
-using ScriptCs.CSharp;
-using ScriptCs.Engine.Common;
+using ScriptCs.Engine.Roslyn;
 using Should;
 using Xunit;
 using Xunit.Extensions;
@@ -17,6 +16,14 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
+            private IConsole _console = new Mock<IConsole>().Object;
+            private IObjectSerializer _serializer = new Mock<IObjectSerializer>().Object;
+            private Printers _printers;
+
+            public TheExecuteMethod()
+            {
+                _printers =  new Printers(_serializer);
+            }
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
@@ -28,7 +35,7 @@ namespace ScriptCs.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q, _console, _printers)));
 
                 scriptPack.Setup(p => p.Initialize(It.IsAny<IScriptPackSession>()));
                 scriptPack.Setup(p => p.GetContext()).Returns((IScriptPackContext)null);
@@ -50,7 +57,7 @@ namespace ScriptCs.Tests
                 const string Code = "var a = 0;";
 
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q, _console, _printers)));
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
@@ -67,7 +74,7 @@ namespace ScriptCs.Tests
             {
                 var scriptHostFactory = new Mock<IScriptHostFactory>();
                 scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q, _console, _printers)));
 
                 // Arrange
                 var engine = new CSharpTestScriptEngine(scriptHostFactory.Object, new TestLogProvider());
@@ -303,54 +310,54 @@ namespace ScriptCs.Tests
                 result.IsCompleteSubmission.ShouldBeTrue();
                 result.CompileExceptionInfo.ShouldNotBeNull();
             }
-        }
 
-        [Theory, ScriptCsAutoData]
-        public void ShouldCompileWhenUsingClassesFromAPassedAssemblyInstance(
-            [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-            [Frozen] ScriptPackSession scriptPackSession)
-        {
-            // Arrange
-            const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
+            [Theory, ScriptCsAutoData]
+            public void ShouldCompileWhenUsingClassesFromAPassedAssemblyInstance(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                [Frozen] ScriptPackSession scriptPackSession)
+            {
+                // Arrange
+                const string Code = "var x = new ScriptCs.Tests.TestMarkerClass();";
 
-            scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q)));
+                scriptHostFactory.Setup(f => f.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                    .Returns<IScriptPackManager, string[]>((p, q) => new ScriptHost(p, new ScriptEnvironment(q, _console, _printers)));
 
-            var engine = new CSharpScriptEngine(scriptHostFactory.Object, new TestLogProvider());
-            var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
-            scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-            var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
+                var engine = new CSharpScriptEngine(scriptHostFactory.Object, new TestLogProvider());
+                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
+                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
 
-            // Act
-            var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
+                // Act
+                var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
-            // Assert
-            result.CompileExceptionInfo.ShouldBeNull();
-            result.ExecuteExceptionInfo.ShouldBeNull();
-        }
+                // Assert
+                result.CompileExceptionInfo.ShouldBeNull();
+                result.ExecuteExceptionInfo.ShouldBeNull();
+            }
 
 
-        [Theory, ScriptCsAutoData]
-        public void ShouldInitializeScriptLibraryWrapperHost(
-            [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
-            Mock<IScriptPackManager> manager,
-            [NoAutoProperties] CSharpScriptEngine engine,
-            ScriptPackSession scriptPackSession
-            )
-        {
-            // Arrange
-            const string Code = "var theNumber = 42; //this should compile";
+            [Theory, ScriptCsAutoData]
+            public void ShouldInitializeScriptLibraryWrapperHost(
+                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
+                Mock<IScriptPackManager> manager,
+                [NoAutoProperties] CSharpScriptEngine engine,
+                ScriptPackSession scriptPackSession
+                )
+            {
+                // Arrange
+                const string Code = "var theNumber = 42; //this should compile";
 
-            var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System" });
 
-            scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
-                .Returns(new ScriptHost(manager.Object, null));
+                scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
+                    .Returns(new ScriptHost(manager.Object, null));
 
-            // Act
-            engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
+                // Act
+                engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
-            // Assert
-            ScriptLibraryWrapper.ScriptHost.ShouldNotEqual(null);
+                // Assert
+                ScriptLibraryWrapper.ScriptHost.ShouldNotEqual(null);
+            }
         }
 
         public class CSharpTestScriptEngine : CSharpScriptEngine

@@ -96,7 +96,7 @@ namespace ScriptCs.Hosting
         {
             var engineModule = _typeResolver.ResolveType("Mono.Runtime") != null || moduleNames.Contains("mono")
                 ? "mono"
-                : "csharp";
+                : "roslyn";
 
             moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
 

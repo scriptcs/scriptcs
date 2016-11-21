@@ -49,8 +49,11 @@
     <Compile Include="ObjectSerializerTests.cs" />
     <Compile Include="PackageInstallerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplCommands\OpenVSCommandTests.cs" />
     <Compile Include="RuntimeServicesTests.cs" />
     <Compile Include="ScriptServicesBuilderTests.cs" />
+    <Compile Include="VisualStudioSolutionTests.cs" />
+    <Compile Include="VisualStudioSolutionWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

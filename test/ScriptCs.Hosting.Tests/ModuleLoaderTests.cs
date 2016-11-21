@@ -114,10 +114,10 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldLoadEngineAssemblyByHandIfItsTheOnlyModule()
             {
-                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["csharp"]);
+                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
                 _mockAssemblyUtility.Setup(x => x.LoadFile(path));
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _logProvider, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
-                loader.Load(null, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "csharp");
+                loader.Load(null, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "roslyn");
 
                 _mockAssemblyUtility.Verify(x => x.LoadFile(path), Times.Once());
             }
@@ -130,7 +130,7 @@ namespace ScriptCs.Hosting.Tests
 
                 var config = new ModuleConfiguration(true, string.Empty, false, LogLevel.Debug, true,
                     new Dictionary<Type, object> {{typeof (string), "not loaded"}});
-                loader.Load(config, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "csharp");
+                loader.Load(config, new string[0], "c:\\foo", ModuleLoader.DefaultCSharpExtension, "roslyn");
 
                 config.Overrides[typeof(string)].ShouldEqual("module loaded");
             }
@@ -138,11 +138,11 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldNotLoadEngineAssemblyByHandIfItsTheOnlyModuleButExtensionIsNotDefault()
             {
-                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["csharp"]);
+                var path = Path.Combine("c:\\foo", ModuleLoader.DefaultCSharpModules["roslyn"]);
                 _mockAssemblyUtility.Setup(x => x.LoadFile(path));
                 var loader = new ModuleLoader(_mockAssemblyResolver.Object, _logProvider, (a, c) => { }, _getModules, _mockFileSystem.Object, _mockAssemblyUtility.Object);
 
-                loader.Load(null, new string[0], "c:\\foo", ".fsx", "csharp");
+                loader.Load(null, new string[0], "c:\\foo", ".fsx", "roslyn");
                 _mockAssemblyUtility.Verify(x => x.LoadFile(It.IsAny<string>()), Times.Never);
             }
 

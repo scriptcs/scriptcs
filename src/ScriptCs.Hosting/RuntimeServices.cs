@@ -85,6 +85,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
             builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
+            builder.RegisterType<Printers>().SingleInstance();
 
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);
@@ -133,6 +134,9 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IScriptLibraryComposer>(
                 builder, b => b.RegisterType<ScriptLibraryComposer>().As<IScriptLibraryComposer>().SingleInstance());
+
+            RegisterOverrideOrDefault<IVisualStudioSolutionWriter>(
+                builder, b => b.RegisterType<VisualStudioSolutionWriter>().As<IVisualStudioSolutionWriter>().SingleInstance());
 
             if (_initDirectoryCatalog)
             {
