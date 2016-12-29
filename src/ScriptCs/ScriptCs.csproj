@@ -85,8 +85,10 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="Command\ExecuteLooseScriptCommand.cs" />
     <Compile Include="ConfigMask.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ExecuteScriptCommandBase.cs" />
     <Compile Include="ProfileOptimizationShim.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="VersionWriter.cs" />

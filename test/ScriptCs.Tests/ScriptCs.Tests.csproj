@@ -44,6 +44,7 @@
       <Link>%(Filename)%(Extension)</Link>
     </Compile>
     <Compile Include="ConfigTests.cs" />
+    <Compile Include="ExecuteLooseScriptCommandTests.cs" />
     <Compile Include="ScriptCsArgsTests.cs" />
     <Compile Include="CleanCommandTests.cs" />
     <Compile Include="CommandFactoryTests.cs" />

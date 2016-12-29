@@ -52,6 +52,8 @@ namespace ScriptCs
 
         public bool Watch { get; set; }
 
+        public string Eval { get; set; }
+
         public static Config Create(ScriptCsArgs commandArgs)
         {
             Guard.AgainstNullArgument("commandArgs", commandArgs);
@@ -96,6 +98,7 @@ namespace ScriptCs
                 Debug = mask.Debug ?? Debug,
                 Repl = mask.Repl ?? Repl,
                 ScriptName = scriptName ?? ScriptName,
+                Eval = mask.Eval ?? Eval,
                 Watch = mask.Watch ?? Watch,
             };
         }

@@ -73,6 +73,22 @@ namespace ScriptCs.Command
                 return explicitReplCommand;
             }
 
+            if (config.Eval != null)
+            {
+                var executeLooseScriptCommand = new ExecuteLooseScriptCommand(
+                    config.Eval,
+                    scriptArgs,
+                    scriptServices.FileSystem,
+                    scriptServices.Executor,
+                    scriptServices.ScriptPackResolver,
+                    scriptServices.LogProvider,
+                    scriptServices.AssemblyResolver,
+                    scriptServices.FileSystemMigrator,
+                    scriptServices.ScriptLibraryComposer);
+
+                return executeLooseScriptCommand;
+            }
+
             if (config.ScriptName != null)
             {
                 var currentDirectory = _fileSystem.CurrentDirectory;

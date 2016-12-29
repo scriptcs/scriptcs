@@ -63,6 +63,25 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldExecuteLooseScriptWhenExecIsPassed()
+            {
+                // Arrange
+                var args = new Config
+                {
+                    AllowPreRelease = false,
+                    PackageName = null,
+                    Eval = "foo"
+                };
+
+                // Act
+                var factory = new CommandFactory(CreateBuilder());
+                var result = factory.CreateCommand(args, new string[0]);
+
+                // Assert
+                result.ShouldImplement<IExecuteLooseScriptCommand>();
+            }            
+
+            [Fact]
             public void ShouldExecuteWhenScriptNameIsPassed()
             {
                 // Arrange
