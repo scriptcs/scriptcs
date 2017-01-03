@@ -130,6 +130,20 @@ namespace ScriptCs.Engine.Mono.Tests.Segmenter
             }
 
             [Fact]
+            public void ShouldIdentifyEscapeSequencesInCharacterLiterals()
+            {
+                const string Code = "\'\\t\'";
+
+                var lexer = new ScriptLexer(Code);
+                var token = lexer.GetToken();
+
+                token.Token.ShouldEqual(Token.Character);
+                token.Start.ShouldEqual(0);
+                token.End.ShouldEqual(4);
+                token.TokenValue.ShouldEqual(Code);
+            }
+
+            [Fact]
             public void ShouldNotFailOnIdentifyingCharactersAsToken()
             {
                 const string Code = "\'A";
