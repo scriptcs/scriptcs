@@ -54,7 +54,8 @@ namespace ScriptCs
                 Namespaces = context.Namespaces,
                 LoadedScripts = context.LoadedScripts,
                 References = context.References,
-                Code = code
+                Code = code,
+                ScriptPath = context.ScriptPath
             };
         }
 
@@ -80,8 +81,15 @@ namespace ScriptCs
 
             _logger.DebugFormat("Processing {0}...", filename);
 
-            // Add script to loaded collection before parsing to avoid loop.
-            context.LoadedScripts.Add(fullPath);
+            if (context.ScriptPath == null)
+            {
+                context.ScriptPath = fullPath;
+            }
+            else
+            {
+                // Add script to loaded collection before parsing to avoid loop.
+                context.LoadedScripts.Add(fullPath);
+            }
 
             var scriptLines = _fileSystem.ReadFileLines(fullPath).ToList();
 

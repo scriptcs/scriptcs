@@ -17,6 +17,8 @@ namespace ScriptCs.Contracts
 
         public List<string> References { get; set; }
 
+        public string ScriptPath { get; set; }
+
         public string Code { get; set; }
     }
 }

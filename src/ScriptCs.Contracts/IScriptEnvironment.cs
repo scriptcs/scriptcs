@@ -12,5 +12,7 @@ namespace ScriptCs.Contracts
         void AddCustomPrinter<T>(Func<T, string> printer);
         void Print<T>(T o);
         void Print(object o);
+        string ScriptPath { get; }
+        string[] LoadedScripts { get; }
     }
 }

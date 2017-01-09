@@ -14,12 +14,12 @@ namespace ScriptCs
 
         public static readonly string[] DefaultReferences =
         {
-            "System", 
-            "System.Core", 
-            "System.Data", 
-            "System.Data.DataSetExtensions", 
-            "System.Xml", 
-            "System.Xml.Linq", 
+            "System",
+            "System.Core",
+            "System.Data",
+            "System.Data.DataSetExtensions",
+            "System.Xml",
+            "System.Xml.Linq",
             "System.Net.Http",
             "Microsoft.CSharp",
             typeof(ScriptExecutor).Assembly.Location,
@@ -30,8 +30,8 @@ namespace ScriptCs
         {
             "System",
             "System.Collections.Generic",
-            "System.Linq", 
-            "System.Text", 
+            "System.Linq",
+            "System.Text",
             "System.Threading.Tasks",
             "System.IO",
             "System.Net.Http",
@@ -54,9 +54,11 @@ namespace ScriptCs
 
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
 
+        public IScriptInfo ScriptInfo { get; protected set; }
+
         public ScriptExecutor(
-            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider)
-            : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer())
+            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider, IScriptInfo scriptInfo)
+            : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer(), scriptInfo)
         {
         }
 
@@ -65,7 +67,8 @@ namespace ScriptCs
             IFilePreProcessor filePreProcessor,
             IScriptEngine scriptEngine,
             ILogProvider logProvider,
-            IScriptLibraryComposer composer)
+            IScriptLibraryComposer composer,
+            IScriptInfo scriptInfo)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
@@ -74,6 +77,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("scriptEngine", scriptEngine);
             Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("composer", composer);
+            Guard.AgainstNullArgument("scriptInfo", scriptInfo);
 
             References = new AssemblyReferences(DefaultReferences);
             Namespaces = new ReadOnlyCollection<string>(DefaultNamespaces);
@@ -82,6 +86,7 @@ namespace ScriptCs
             ScriptEngine = scriptEngine;
             _log = logProvider.ForCurrentType();
             ScriptLibraryComposer = composer;
+            ScriptInfo = scriptInfo;
         }
 
         public virtual void ImportNamespaces(params string[] namespaces)
@@ -157,8 +162,9 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-            
+
             ScriptEngine.FileName = Path.GetFileName(path);
+            ScriptInfo.ScriptPath = Path.GetFullPath(path);
 
             return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
@@ -170,14 +176,19 @@ namespace ScriptCs
         }
 
         protected internal virtual ScriptResult EngineExecute(
-            string workingDirectory, 
-            string[] scriptArgs, 
+            string workingDirectory,
+            string[] scriptArgs,
             FilePreProcessorResult result
         )
         {
             InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
             var references = References.Union(result.References);
+            ScriptInfo.ScriptPath = result.ScriptPath;
+            foreach (var loadedScript in result.LoadedScripts)
+            {
+                ScriptInfo.LoadedScripts.Add(loadedScript);
+            }
             _log.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }

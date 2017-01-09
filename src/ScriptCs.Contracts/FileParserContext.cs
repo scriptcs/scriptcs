@@ -19,5 +19,7 @@ namespace ScriptCs.Contracts
         public List<string> LoadedScripts { get; private set; }
 
         public List<string> BodyLines { get; private set; }
+
+        public string ScriptPath { get; set; }
     }
 }
