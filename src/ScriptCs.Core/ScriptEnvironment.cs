@@ -8,11 +8,13 @@ namespace ScriptCs
     {
         private readonly IConsole _console;
         private readonly Printers _printers;
+        private readonly string _scriptPath;
 
-        public ScriptEnvironment(string[] scriptArgs, IConsole console, Printers printers)
+        public ScriptEnvironment(string[] scriptArgs, IConsole console, Printers printers, string scriptPath = null)
         {
             _console = console;
             _printers = printers;
+            _scriptPath = scriptPath;
             ScriptArgs = scriptArgs;
         }
 
@@ -34,5 +36,9 @@ namespace ScriptCs
             _console.WriteLine(_printers.GetStringFor<T>(o));
         }
 
+        public string ScriptPath
+        {
+            get { return _scriptPath; }
+        }
     }
 }

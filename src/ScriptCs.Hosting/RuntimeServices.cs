@@ -114,6 +114,8 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IVisualStudioSolutionWriter>(
                 builder, b => b.RegisterType<VisualStudioSolutionWriter>().As<IVisualStudioSolutionWriter>().SingleInstance());
 
+            RegisterOverrideOrDefault<IScriptInfo>(builder, b => b.RegisterType<ScriptInfo>().As<IScriptInfo>().SingleInstance());
+
             if (_initDirectoryCatalog)
             {
                 var fileSystem = _initializationServices.GetFileSystem();

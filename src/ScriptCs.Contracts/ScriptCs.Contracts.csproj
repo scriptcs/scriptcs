@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs">
-        <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="AssemblyReferences.cs" />
     <Compile Include="BehaviorAfterCode.cs" />
@@ -81,6 +81,7 @@
     <Compile Include="IPackageReference.cs" />
     <Compile Include="IRepl.cs" />
     <Compile Include="IScriptEnvironment.cs" />
+    <Compile Include="IScriptInfo.cs" />
     <Compile Include="IScriptLibraryComposer.cs" />
     <Compile Include="IReplCommand.cs" />
     <Compile Include="IReplEngine.cs" />

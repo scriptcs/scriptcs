@@ -25,8 +25,9 @@ namespace ScriptCs
             IConsole console,
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands,
-            Printers printers)
-            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer)
+            Printers printers,
+            IScriptInfo scriptInfo)
+            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer, scriptInfo)
         {
             Guard.AgainstNullArgument("serializer", serializer);
             Guard.AgainstNullArgument("logProvider", logProvider);

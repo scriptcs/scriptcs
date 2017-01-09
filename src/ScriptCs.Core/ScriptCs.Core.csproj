@@ -55,6 +55,7 @@
     <Compile Include="NullScriptLibraryComposer.cs" />
     <Compile Include="ReplCommands\ScriptPacksCommand.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="ScriptInfo.cs" />
     <Compile Include="ScriptLibraryComposer.cs" />
     <Compile Include="ScriptLibraryWrapper.cs" />
     <Compile Include="ReplCommands\AliasCommand.cs" />

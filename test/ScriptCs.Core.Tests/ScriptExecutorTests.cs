@@ -590,7 +590,7 @@ namespace ScriptCs.Tests
                 // arrange
                 fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
                 var executor = new ScriptExecutor(
-                    fileSystem.Object, preProcessor.Object, engine.Object, logProvider, composer.Object);
+                    fileSystem.Object, preProcessor.Object, engine.Object, logProvider, composer.Object, new ScriptInfo());
 
                 // act
                 executor.LoadScriptLibraries("");
