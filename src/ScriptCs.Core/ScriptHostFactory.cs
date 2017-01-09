@@ -1,4 +1,5 @@
-﻿using ScriptCs.Contracts;
+﻿using System.Linq;
+using ScriptCs.Contracts;
 
 namespace ScriptCs
 {
@@ -17,7 +18,7 @@ namespace ScriptCs
 
         public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {
-            return new ScriptHost(scriptPackManager, new ScriptEnvironment(scriptArgs, _console, _printers, _scriptInfo.ScriptPath));
+            return new ScriptHost(scriptPackManager, new ScriptEnvironment(scriptArgs, _console, _printers, _scriptInfo.ScriptPath, _scriptInfo.LoadedScripts.ToArray()));
         }
     }
 }

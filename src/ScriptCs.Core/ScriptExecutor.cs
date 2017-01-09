@@ -164,7 +164,7 @@ namespace ScriptCs
             var result = FilePreProcessor.ProcessFile(path);
 
             ScriptEngine.FileName = Path.GetFileName(path);
-            ScriptInfo.ScriptPath = path;
+            ScriptInfo.ScriptPath = Path.GetFullPath(path);
 
             return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
@@ -184,6 +184,10 @@ namespace ScriptCs
             InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
             var references = References.Union(result.References);
+            foreach (var loadedScript in result.LoadedScripts.Skip(1))
+            {
+                ScriptInfo.LoadedScripts.Add(loadedScript);
+            }
             _log.Debug("Starting execution in engine");
             return ScriptEngine.Execute(result.Code, scriptArgs, references, namespaces, ScriptPackSession);
         }

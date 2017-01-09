@@ -13,5 +13,6 @@ namespace ScriptCs.Contracts
         void Print<T>(T o);
         void Print(object o);
         string ScriptPath { get; }
+        string[] LoadedScripts { get; }
     }
 }

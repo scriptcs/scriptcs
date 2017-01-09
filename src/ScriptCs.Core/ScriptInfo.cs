@@ -9,6 +9,12 @@ namespace ScriptCs
 {
     public class ScriptInfo : IScriptInfo
     {
+        public ScriptInfo()
+        {
+            LoadedScripts = new List<string>();
+        }
+
         public string ScriptPath { get; set; }
-    }
+        public IList<string> LoadedScripts { get; private set; }
+    } 
 }

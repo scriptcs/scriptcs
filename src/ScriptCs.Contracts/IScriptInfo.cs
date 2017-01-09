@@ -9,5 +9,6 @@ namespace ScriptCs.Contracts
     public interface IScriptInfo
     {
         string ScriptPath { get; set; }
+        IList<string> LoadedScripts { get; }
     }
 }
