@@ -12,18 +12,9 @@ namespace ScriptCs.Hosting
         private readonly ILog _log;
         private readonly IDictionary<Type, object> _overrides;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public Common.Logging.ILog Logger { get; private set; }
-
         public ILogProvider LogProvider
         {
             get { return _logProvider; }
-        }
-
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        protected ScriptServicesRegistration(Common.Logging.ILog logger, IDictionary<Type, object> overrides)
-            :this(new CommonLoggingLogProvider(logger), overrides)
-        {
         }
 
         protected ScriptServicesRegistration(ILogProvider logProvider, IDictionary<Type, object> overrides)
@@ -33,9 +24,6 @@ namespace ScriptCs.Hosting
             _overrides = overrides ?? new Dictionary<Type, object>();
             _logProvider = logProvider;
             _log = _logProvider.ForCurrentType();
-#pragma warning disable 618
-            Logger = new ScriptCsLogger(_log);
-#pragma warning restore 618
         }
 
         protected void RegisterOverrideOrDefault<T>(ContainerBuilder builder, Action<ContainerBuilder> registrationAction)

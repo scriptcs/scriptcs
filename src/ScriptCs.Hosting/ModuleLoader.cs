@@ -26,19 +26,6 @@ namespace ScriptCs.Hosting
         private readonly IFileSystem _fileSystem;
         private readonly IAssemblyUtility _assemblyUtility;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        [ImportingConstructor]
-        public ModuleLoader(IAssemblyResolver resolver, Common.Logging.ILog logger, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
-            : this(resolver, new CommonLoggingLogProvider(logger), fileSystem, assemblyUtility)
-        {
-        }
-
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public ModuleLoader(IAssemblyResolver resolver, Common.Logging.ILog logger, Action<Assembly, AggregateCatalog> addToCatalog, Func<CompositionContainer, IEnumerable<Lazy<IModule, IModuleMetadata>>> getLazyModules, IFileSystem fileSystem, IAssemblyUtility assemblyUtility)
-            : this(resolver, new CommonLoggingLogProvider(logger), addToCatalog, getLazyModules, fileSystem, assemblyUtility)
-        {
-        }
-
         [ImportingConstructor]
         public ModuleLoader(IAssemblyResolver resolver, ILogProvider logProvider, IFileSystem fileSystem, IAssemblyUtility assemblyUtility) :
             this(resolver, logProvider, null, null, fileSystem, assemblyUtility)

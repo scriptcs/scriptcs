@@ -15,13 +15,6 @@ namespace ScriptCs
 
         private List<IPackageReference> _topLevelPackages;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public PackageAssemblyResolver(
-            IFileSystem fileSystem, IPackageContainer packageContainer, Common.Logging.ILog logger, IAssemblyUtility assemblyUtility)
-            : this(fileSystem, packageContainer, new CommonLoggingLogProvider(logger), assemblyUtility)
-        {
-        }
-
         public PackageAssemblyResolver(
             IFileSystem fileSystem, IPackageContainer packageContainer, ILogProvider logProvider, IAssemblyUtility assemblyUtility)
         {

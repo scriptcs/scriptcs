@@ -6,7 +6,7 @@ namespace ScriptCs
     {
         private readonly IConsole _console;
         private readonly Printers _printers;
-
+         
         public ScriptHostFactory(IConsole console, Printers printers)
         {
             _console = console;

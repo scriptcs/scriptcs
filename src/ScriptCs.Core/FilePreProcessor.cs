@@ -14,12 +14,6 @@ namespace ScriptCs
 
         private readonly IFileSystem _fileSystem;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public FilePreProcessor(IFileSystem fileSystem, Common.Logging.ILog logger, IEnumerable<ILineProcessor> lineProcessors)
-            : this(fileSystem, new CommonLoggingLogProvider(logger), lineProcessors)
-        {
-        }
-
         public FilePreProcessor(IFileSystem fileSystem, ILogProvider logProvider, IEnumerable<ILineProcessor> lineProcessors)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
