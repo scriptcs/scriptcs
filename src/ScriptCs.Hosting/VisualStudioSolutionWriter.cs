@@ -10,7 +10,7 @@ namespace ScriptCs.Hosting
 {
     public class VisualStudioSolutionWriter : IVisualStudioSolutionWriter
     {
-        internal DirectoryInfo _root; 
+        internal DirectoryInfo Root { get; set; }
         private Guid _nullGuid = new Guid();
 
         public string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<ProjectItem> nestedItems = null)
@@ -30,12 +30,12 @@ namespace ScriptCs.Hosting
             var currentDir = fs.CurrentDirectory;
             var scriptcsPath = Path.Combine(fs.HostBin, "scriptcs.exe");
             var scriptcsArgs = string.Format("{0} -debug -loglevel info", script);
-            _root = new DirectoryInfo { Name = "Solution Items", FullPath = currentDir};
+            Root = new DirectoryInfo { Name = "Solution Items", FullPath = currentDir};
             var projectGuid = Guid.NewGuid();
 
             solution.AddScriptcsProject(scriptcsPath, currentDir, scriptcsArgs, false, projectGuid);
-            GetDirectoryInfo(fs, currentDir, _root);
-            AddDirectoryProject(solution, fs, _root, _nullGuid, nestedItems);
+            GetDirectoryInfo(fs, currentDir, Root);
+            AddDirectoryProject(solution, fs, Root, _nullGuid, nestedItems);
             solution.AddGlobal(projectGuid, nestedItems);
             fs.WriteToFile(launcher, solution.ToString());
             return launcher;

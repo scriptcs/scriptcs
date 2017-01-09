@@ -23,30 +23,30 @@ namespace ScriptCs.Command
         {
             try
             {
-                _fileSystemMigrator.Migrate();
+                FileSystemMigrator.Migrate();
 
                 var assemblyPaths = Enumerable.Empty<string>();
-                var workingDirectory = _fileSystem.GetWorkingDirectory(_script);
+                var workingDirectory = FileSystem.GetWorkingDirectory(Script);
                 if (workingDirectory != null)
                 {
-                    assemblyPaths = _assemblyResolver.GetAssemblyPaths(workingDirectory);
+                    assemblyPaths = AssemblyResolver.GetAssemblyPaths(workingDirectory);
                 }
 
-                _composer.Compose(workingDirectory);
+                Composer.Compose(workingDirectory);
 
-                _scriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
+                ScriptExecutor.Initialize(assemblyPaths, _scriptPackResolver.GetPacks(), ScriptArgs);
 
                 // HACK: This is a (dirty) fix for #1086. This might be a temporary solution until some further refactoring can be done. 
-                _scriptExecutor.ScriptEngine.CacheDirectory = Path.Combine(workingDirectory ?? _fileSystem.CurrentDirectory, _fileSystem.DllCacheFolder);
-                var scriptResult = _scriptExecutor.Execute(_script, ScriptArgs);
+                ScriptExecutor.ScriptEngine.CacheDirectory = Path.Combine(workingDirectory ?? FileSystem.CurrentDirectory, FileSystem.DllCacheFolder);
+                var scriptResult = ScriptExecutor.Execute(Script, ScriptArgs);
 
                 var commandResult = Inspect(scriptResult);
-                _scriptExecutor.Terminate();
+                ScriptExecutor.Terminate();
                 return commandResult;
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("Error executing script '{0}'", ex, _script);
+                Logger.ErrorException("Error executing script '{0}'", ex, Script);
                 return CommandResult.Error;
             }
         }

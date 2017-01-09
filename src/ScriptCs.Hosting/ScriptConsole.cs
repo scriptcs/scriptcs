@@ -6,7 +6,7 @@ namespace ScriptCs.Hosting
 {
     public class ScriptConsole : IConsole
     {
-        LineEditor _editor;
+        private LineEditor _editor;
 
         public ScriptConsole()
         {
