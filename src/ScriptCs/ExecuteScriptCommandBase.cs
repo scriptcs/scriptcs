@@ -11,14 +11,14 @@ namespace ScriptCs
 {
     public abstract class ExecuteScriptCommandBase
     {
-        protected readonly string _script;
-        protected readonly IFileSystem _fileSystem;
-        protected readonly IScriptExecutor _scriptExecutor;
-        protected readonly IScriptPackResolver _scriptPackResolver;
-        protected readonly ILog _logger;
-        protected readonly IAssemblyResolver _assemblyResolver;
-        protected readonly IFileSystemMigrator _fileSystemMigrator;
-        protected readonly IScriptLibraryComposer _composer;
+        protected string Script { get; private set; }
+        protected IFileSystem FileSystem { get; private set; }
+        protected IScriptExecutor ScriptExecutor { get; private set; }
+        protected IScriptPackResolver _scriptPackResolver { get; private set; }
+        protected ILog Logger { get; private set; }
+        protected IAssemblyResolver AssemblyResolver { get; private set; }
+        protected IFileSystemMigrator FileSystemMigrator { get; private set; }
+        protected IScriptLibraryComposer Composer { get; private set; }
 
         public ExecuteScriptCommandBase(
             string script,
@@ -40,15 +40,15 @@ namespace ScriptCs
             Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
             Guard.AgainstNullArgument("composer", composer);
 
-            _script = script;
+            Script = script;
             ScriptArgs = scriptArgs;
-            _fileSystem = fileSystem;
-            _scriptExecutor = scriptExecutor;
+            FileSystem = fileSystem;
+            ScriptExecutor = scriptExecutor;
             _scriptPackResolver = scriptPackResolver;
-            _logger = logProvider.ForCurrentType();
-            _assemblyResolver = assemblyResolver;
-            _fileSystemMigrator = fileSystemMigrator;
-            _composer = composer;
+            Logger = logProvider.ForCurrentType();
+            AssemblyResolver = assemblyResolver;
+            FileSystemMigrator = fileSystemMigrator;
+            Composer = composer;
         }
 
         public string[] ScriptArgs { get; private set; }
@@ -65,20 +65,20 @@ namespace ScriptCs
             if (result.CompileExceptionInfo != null)
             {
                 var ex = result.CompileExceptionInfo.SourceException;
-                _logger.ErrorException("Script compilation failed.", ex);
+                Logger.ErrorException("Script compilation failed.", ex);
                 return CommandResult.Error;
             }
 
             if (result.ExecuteExceptionInfo != null)
             {
                 var ex = result.ExecuteExceptionInfo.SourceException;
-                _logger.ErrorException("Script execution failed.", ex);
+                Logger.ErrorException("Script execution failed.", ex);
                 return CommandResult.Error;
             }
 
             if (!result.IsCompleteSubmission)
             {
-                _logger.Error("The script is incomplete.");
+                Logger.Error("The script is incomplete.");
                 return CommandResult.Error;
             }
 

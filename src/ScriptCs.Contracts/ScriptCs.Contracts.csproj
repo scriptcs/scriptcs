@@ -45,7 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs">
+        <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="AssemblyReferences.cs" />
     <Compile Include="BehaviorAfterCode.cs" />
     <Compile Include="..\ScriptCs.Core\Guard.cs">

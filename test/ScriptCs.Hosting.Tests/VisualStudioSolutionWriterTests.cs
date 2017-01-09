@@ -47,8 +47,8 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShoulGetDirectoryInfo()
             {
-                _writer._root.Files.ShouldContain("file1.csx");
-                var child = _writer._root.Directories.Values.First();
+                _writer.Root.Files.ShouldContain("file1.csx");
+                var child = _writer.Root.Directories.Values.First();
                 child.Files.ShouldContain("file2.csx");
                 child = child.Directories.Values.First();
                 child.Files.ShouldContain("file3.csx");
@@ -57,7 +57,7 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldCallAddDirectoryProjectForChild()
             {
-                var child1 = _writer._root.Directories.Values.First();
+                var child1 = _writer.Root.Directories.Values.First();
                 var child2 = child1.Directories.Values.First();
                 _nestedItems.Where(i => i.Project == child1.Guid).Count().ShouldEqual(1);
                 _nestedItems.Where(i => i.Project == child2.Guid).Count().ShouldEqual(1);

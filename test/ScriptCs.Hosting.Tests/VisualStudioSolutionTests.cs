@@ -19,9 +19,9 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldInitializeVariables()
             {
-                _solution._header.ShouldNotBeNull();
-                _solution._projects.ShouldNotBeNull();
-                _solution._global.ShouldNotBeNull();
+                _solution.Header.ShouldNotBeNull();
+                _solution.Projects.ShouldNotBeNull();
+                _solution.Global.ShouldNotBeNull();
             }
 
             [Fact]
@@ -32,7 +32,7 @@ namespace ScriptCs.Hosting.Tests
                 headerBuilder.AppendLine("# Visual Studio 2013");
                 headerBuilder.AppendLine("VisualStudioVersion = 12.0.30501.0");
                 headerBuilder.AppendLine("MinimumVisualStudioVersion = 10.0.40219.1");
-                _solution._header.ToString().ShouldEqual(headerBuilder.ToString());
+                _solution.Header.ToString().ShouldEqual(headerBuilder.ToString());
             }
         }
 
@@ -56,7 +56,7 @@ namespace ScriptCs.Hosting.Tests
                 globalBuilder.AppendLine("\tGlobalSection(SolutionProperties) = preSolution");
                 globalBuilder.AppendLine("\t\tHideSolutionNode = FALSE");
                 globalBuilder.AppendLine("\tEndGlobalSection");
-                globalBuilder.ToString().ShouldEqual(_builder._global.ToString());
+                globalBuilder.ToString().ShouldEqual(_builder.Global.ToString());
             }
         }
 
@@ -82,7 +82,7 @@ namespace ScriptCs.Hosting.Tests
                 nestedBuilder.AppendFormat("\t\t{{{0}}} = {{{1}}}{2}", nestedItems[1].Project, nestedItems[1].Parent,
                     Environment.NewLine);
                 nestedBuilder.AppendLine("\tEndGlobalSection");
-                builder._global.ToString().Contains(nestedBuilder.ToString());
+                builder.Global.ToString().Contains(nestedBuilder.ToString());
             }
         }
 
@@ -99,7 +99,7 @@ namespace ScriptCs.Hosting.Tests
             public TheAddScriptcsProjectMethod()
             {
                 _builder.AddScriptcsProject(_scriptcsPath, _workingPath, _args, _attach, _projectGuid);
-                _projects = _builder._projects.ToString();
+                _projects = _builder.Projects.ToString();
             }
 
             [Fact]
@@ -161,9 +161,9 @@ namespace ScriptCs.Hosting.Tests
             public void BuildsTheSolution()
             {
                 var builder = new VisualStudioSolution();
-                builder._header = new StringBuilder("A");
-                builder._projects = new StringBuilder("B");
-                builder._global = new StringBuilder("C");
+                builder.Header = new StringBuilder("A");
+                builder.Projects = new StringBuilder("B");
+                builder.Global = new StringBuilder("C");
                 var solution = builder.ToString();
                 solution.ShouldEqual("ABC");
             }

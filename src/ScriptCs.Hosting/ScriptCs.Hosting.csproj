@@ -97,7 +97,9 @@
     <Compile Include="ServiceOverrides.cs" />
     <Compile Include="ObjectSerializer.cs" />
     <Compile Include="TypeResolver.cs" />
-    <Compile Include="LineEditor.cs" />
+    <Compile Include="LineEditor.cs">
+       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="VisualStudioSolution.cs" />
     <Compile Include="VisualStudioSolutionWriter.cs" />
   </ItemGroup>
