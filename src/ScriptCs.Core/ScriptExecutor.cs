@@ -184,7 +184,8 @@ namespace ScriptCs
             InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
             var references = References.Union(result.References);
-            foreach (var loadedScript in result.LoadedScripts.Skip(1))
+            ScriptInfo.ScriptPath = result.ScriptPath;
+            foreach (var loadedScript in result.LoadedScripts)
             {
                 ScriptInfo.LoadedScripts.Add(loadedScript);
             }
