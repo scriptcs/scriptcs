@@ -21,22 +21,6 @@ namespace ScriptCs.Hosting
         private Type _scriptEngineType;
         private bool? _loadScriptPacks;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public ScriptServicesBuilder(
-            IConsole console,
-            Common.Logging.ILog logger,
-            IRuntimeServices runtimeServices = null,
-            ITypeResolver typeResolver = null,
-            IInitializationServices initializationServices = null)
-            : this(
-                console,
-                new CommonLoggingLogProvider(logger),
-                runtimeServices,
-                typeResolver,
-                initializationServices)
-        {
-        }
-
         public ScriptServicesBuilder(
             IConsole console,
             ILogProvider logProvider,

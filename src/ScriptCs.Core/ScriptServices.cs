@@ -6,46 +6,6 @@ namespace ScriptCs
 {
     public class ScriptServices
     {
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public ScriptServices(
-            IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver,
-            IScriptExecutor executor,
-            IRepl repl,
-            IScriptEngine engine,
-            IFilePreProcessor filePreProcessor,
-            IScriptPackResolver scriptPackResolver,
-            IPackageInstaller packageInstaller,
-            IObjectSerializer objectSerializer,
-            Common.Logging.ILog logger,
-            IAssemblyResolver assemblyResolver,
-            IEnumerable<IReplCommand> replCommands,
-            IFileSystemMigrator fileSystemMigrator,
-            IConsole console = null,
-            IInstallationProvider installationProvider = null,
-            IScriptLibraryComposer scriptLibraryComposer = null
-            )
-            : this(
-                fileSystem,
-                packageAssemblyResolver,
-                executor,
-                repl,
-                engine,
-                filePreProcessor,
-                scriptPackResolver,
-                packageInstaller,
-                objectSerializer,
-                new CommonLoggingLogProvider(logger),
-                assemblyResolver,
-                replCommands,
-                fileSystemMigrator,
-                console,
-                installationProvider,
-                scriptLibraryComposer
-            )
-        {
-        }
-
         public ScriptServices(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,
@@ -75,9 +35,6 @@ namespace ScriptCs
             PackageInstaller = packageInstaller;
             ObjectSerializer = objectSerializer;
             LogProvider = logProvider;
-#pragma warning disable 618
-            Logger = new ScriptCsLogger(logProvider.ForCurrentType());
-#pragma warning restore 618
             Console = console;
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
@@ -94,9 +51,6 @@ namespace ScriptCs
         public IPackageInstaller PackageInstaller { get; private set; }
         public IObjectSerializer ObjectSerializer { get; private set; }
         public ILogProvider LogProvider { get; private set; }
-        
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public Common.Logging.ILog Logger { get; private set; }
         
         public IScriptEngine Engine { get; private set; }
         public IFilePreProcessor FilePreProcessor { get; private set; }

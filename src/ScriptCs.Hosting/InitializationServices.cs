@@ -10,12 +10,6 @@ namespace ScriptCs.Hosting
     {
         private readonly ILog _log;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public InitializationServices(Common.Logging.ILog logger, IDictionary<Type, object> overrides = null)
-            : this(new CommonLoggingLogProvider(logger), overrides)
-        {
-        }
-
         public InitializationServices(ILogProvider logProvider, IDictionary<Type, object> overrides = null)
             : base(logProvider, overrides)
         {

@@ -46,9 +46,6 @@ namespace ScriptCs
 
         public IScriptEngine ScriptEngine { get; private set; }
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public Common.Logging.ILog Logger { get; private set; }
-
         public AssemblyReferences References { get; private set; }
 
         public IReadOnlyCollection<string> Namespaces { get; private set; }
@@ -57,27 +54,9 @@ namespace ScriptCs
 
         public IScriptLibraryComposer ScriptLibraryComposer { get; protected set; }
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public ScriptExecutor(
-            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, Common.Logging.ILog logger)
-            : this(fileSystem, filePreProcessor, scriptEngine, new CommonLoggingLogProvider(logger), new NullScriptLibraryComposer())
-        {
-        }
-
         public ScriptExecutor(
             IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider)
             : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer())
-        {
-        }
-
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public ScriptExecutor(
-            IFileSystem fileSystem,
-            IFilePreProcessor filePreProcessor,
-            IScriptEngine scriptEngine,
-            Common.Logging.ILog logger,
-            IScriptLibraryComposer composer)
-            : this(fileSystem, filePreProcessor, scriptEngine, new CommonLoggingLogProvider(logger), composer)
         {
         }
 
@@ -102,9 +81,6 @@ namespace ScriptCs
             FilePreProcessor = filePreProcessor;
             ScriptEngine = scriptEngine;
             _log = logProvider.ForCurrentType();
-#pragma warning disable 618
-            Logger = new ScriptCsLogger(_log);
-#pragma warning restore 618
             ScriptLibraryComposer = composer;
         }
 
@@ -181,7 +157,9 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
+            
             ScriptEngine.FileName = Path.GetFileName(path);
+
             return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
 

@@ -14,18 +14,6 @@ namespace ScriptCs
         private readonly IAssemblyUtility _assemblyUtility;
         private readonly IDictionary<string, AssemblyInfo> _assemblyInfoMap;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public AppDomainAssemblyResolver(
-            Common.Logging.ILog logger,
-            IFileSystem fileSystem,
-            IAssemblyResolver resolver,
-            IAssemblyUtility assemblyUtility,
-            IDictionary<string, AssemblyInfo> assemblyInfoMap = null,
-            Func<object, ResolveEventArgs, Assembly> resolveHandler = null)
-            : this(new CommonLoggingLogProvider(logger), fileSystem, resolver, assemblyUtility, assemblyInfoMap, resolveHandler)
-        {
-        }
-
         public AppDomainAssemblyResolver(
             ILogProvider logProvider,
             IFileSystem fileSystem,
