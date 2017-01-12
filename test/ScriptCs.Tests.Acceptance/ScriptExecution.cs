@@ -1,4 +1,6 @@
-﻿namespace ScriptCs.Tests.Acceptance
+﻿using System.IO;
+
+namespace ScriptCs.Tests.Acceptance
 {
     using System;
     using System.Reflection;
@@ -53,7 +55,7 @@
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
-            "Given a script which access Env"
+            "Given a script which accesses Env"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine(Env)"));
 
@@ -80,5 +82,64 @@
                 .f(() => output.ShouldContain("bar"));
 
         }
+
+        [Scenario]
+        public static void ScriptAssemblyIsSet(ScenarioDirectory directory, string output)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which accesses Env.ScriptAssembly"
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", "Console.WriteLine(Env.ScriptAssembly)"));
+
+            "When I execute the script"
+                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then the Assembly is displayed"
+                .f(() => output.ShouldContain("Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"));
+
+        }
+
+        [Scenario]
+        public static void ScriptPathIsSet(ScenarioDirectory directory, string output)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which accesses Env.ScriptPath"
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", "Console.WriteLine(Env.ScriptPath)"));
+
+            "When I execute the script"
+                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then the ScriptPath is displayed"
+                .f(() => output.ShouldContain("foo.csx"));
+        }
+
+        [Scenario]
+        public static void LoadedScriptsIsSet(ScenarioDirectory directory, string output)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which loads another script and accesses Env.LoadedScripts"
+                .f(() =>
+                {
+                    directory = ScenarioDirectory.Create(scenario)
+                        .WriteLine(
+                            "foo.csx", "#load bar.csx;" + Environment.NewLine +
+                                       "Console.WriteLine(Env.LoadedScripts.First());"
+                        );
+                    directory.WriteLine("bar.csx", "");
+                });
+                    
+
+            "When I execute the script"
+                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then the loaded script path is displayed"
+                .f(() => output.ShouldContain("bar.csx"));
+        }
+
+
     }
 }

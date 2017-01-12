@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,5 +15,6 @@ namespace ScriptCs.Contracts
         void Print(object o);
         string ScriptPath { get; }
         string[] LoadedScripts { get; }
+        Assembly ScriptAssembly { get; }
     }
 }
