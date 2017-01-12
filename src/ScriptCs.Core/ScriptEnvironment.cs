@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -45,6 +46,19 @@ namespace ScriptCs
         public string[] LoadedScripts
         {
             get { return _scriptInfo.LoadedScripts.ToArray(); }
+        }
+
+        private Assembly _scriptAssembly;
+        public Assembly ScriptAssembly
+        {
+            get
+            {
+                if (_scriptAssembly == null)
+                {
+                    _scriptAssembly = Assembly.GetCallingAssembly();
+                }
+                return _scriptAssembly;
+            }
         }
     }
 }
