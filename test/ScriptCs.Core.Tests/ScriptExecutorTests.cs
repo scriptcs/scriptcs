@@ -106,6 +106,47 @@ namespace ScriptCs.Tests
         public class TheEngineExecuteMethod
         {
             [Theory, ScriptCsAutoData]
+            public void ShouldSetScriptInfo_ScriptPath(
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                ScriptExecutor scriptExecutor)
+            {
+                scriptEngine.Setup(e => e.Execute(
+                It.IsAny<string>(),
+                It.IsAny<string[]>(),
+                It.IsAny<AssemblyReferences>(),
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<ScriptPackSession>()));
+
+                scriptExecutor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                var result = new FilePreProcessorResult();
+                result.ScriptPath = "Main.csx";
+                scriptExecutor.EngineExecute("", new string[] {}, result);
+                scriptExecutor.ScriptInfo.ScriptPath.ShouldEqual("Main.csx");
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldPopulateScriptInfo_LoadedScript(
+                [Frozen] Mock<IScriptEngine> scriptEngine,
+                ScriptExecutor scriptExecutor)
+            {
+                scriptEngine.Setup(e => e.Execute(
+                It.IsAny<string>(),
+                It.IsAny<string[]>(),
+                It.IsAny<AssemblyReferences>(),
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<ScriptPackSession>()));
+
+                scriptExecutor.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
+
+                var result = new FilePreProcessorResult();
+                result.ScriptPath = "Main.csx";
+                result.LoadedScripts.Add("Child.csx");
+                scriptExecutor.EngineExecute("", new string[] { }, result);
+                scriptExecutor.ScriptInfo.LoadedScripts.First().ShouldEqual("Child.csx");
+            }
+
+            [Theory, ScriptCsAutoData]
             public void ShouldAddReferenceToEachDestinationFile(
                 [Frozen] Mock<IScriptEngine> scriptEngine,
                 ScriptExecutor scriptExecutor)
