@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -8,24 +9,13 @@ namespace ScriptCs
     {
         private readonly IConsole _console;
         private readonly Printers _printers;
-        private readonly string _scriptPath;
-        private readonly string[] _loadedScripts;
+        private readonly IScriptInfo _scriptInfo;
 
-        public ScriptEnvironment(string[] scriptArgs, IConsole console, Printers printers, string scriptPath = null, string[] loadedScripts = null )
+        public ScriptEnvironment(string[] scriptArgs, IConsole console, Printers printers, IScriptInfo scriptInfo = null )
         {
             _console = console;
             _printers = printers;
-            _scriptPath = scriptPath;
-
-            if (loadedScripts == null)
-            {
-                _loadedScripts = new string[] {};
-            } 
-            else
-            {
-                _loadedScripts = loadedScripts;
-            }
-            
+            _scriptInfo = scriptInfo;            
             ScriptArgs = scriptArgs;
         }
 
@@ -49,12 +39,12 @@ namespace ScriptCs
 
         public string ScriptPath
         {
-            get { return _scriptPath; }
+            get { return _scriptInfo.ScriptPath; }
         }
 
         public string[] LoadedScripts
         {
-            get { return _loadedScripts; }
+            get { return _scriptInfo.LoadedScripts.ToArray(); }
         }
     }
 }

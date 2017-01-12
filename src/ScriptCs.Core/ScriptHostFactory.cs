@@ -18,7 +18,7 @@ namespace ScriptCs
 
         public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
         {
-            return new ScriptHost(scriptPackManager, new ScriptEnvironment(scriptArgs, _console, _printers, _scriptInfo.ScriptPath, _scriptInfo.LoadedScripts.ToArray()));
+            return new ScriptHost(scriptPackManager, new ScriptEnvironment(scriptArgs, _console, _printers, _scriptInfo));
         }
     }
 }
