@@ -61,7 +61,7 @@ namespace ScriptCs
             {
                 if (script.StartsWith(":"))
                 {
-                    var tokens = script.Split(' ');
+                    var tokens = script.SplitQuoted();
                     if (tokens[0].Length > 1)
                     {
                         var command = Commands.FirstOrDefault(x => x.Key == tokens[0].Substring(1));
@@ -99,6 +99,8 @@ namespace ScriptCs
                             var commandResult = command.Value.Execute(this, argsToPass.ToArray());
                             return ProcessCommandResult(commandResult);
                         }
+                        // since the command that was type is not found - say so
+                        return ProcessCommandResult(string.Format("*** Invalid command: {0}", tokens[0].Substring(1)));
                     }
                 }
 
