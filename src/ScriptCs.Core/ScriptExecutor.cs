@@ -165,7 +165,7 @@ namespace ScriptCs
 
             ScriptEngine.FileName = Path.GetFileName(path);
             ScriptInfo.ScriptPath = Path.GetFullPath(path);
-
+            
             return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
 
@@ -211,11 +211,18 @@ namespace ScriptCs
 
             if (scriptLibrariesPreProcessorResult != null)
             {
-                result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine + result.Code;
+                result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine
+                              + "Env.Init();" + Environment.NewLine
+                              + result.Code;
                 result.References.AddRange(scriptLibrariesPreProcessorResult.References);
                 result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
             }
+            else
+            {
+                result.Code = "Env.Init();" + Environment.NewLine;
+            }
             state.Add(ScriptLibrariesInjected, null);
+
         }
 
         protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
