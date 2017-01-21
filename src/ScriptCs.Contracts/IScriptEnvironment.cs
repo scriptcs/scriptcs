@@ -16,5 +16,6 @@ namespace ScriptCs.Contracts
         string ScriptPath { get; }
         string[] LoadedScripts { get; }
         Assembly ScriptAssembly { get; }
+        void Init();
     }
 }

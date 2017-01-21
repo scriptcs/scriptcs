@@ -48,16 +48,15 @@ namespace ScriptCs
             get { return _scriptInfo.LoadedScripts.ToArray(); }
         }
 
-        private Assembly _scriptAssembly;
-        public Assembly ScriptAssembly
+        public Assembly ScriptAssembly { get; private set; }
+
+        private bool _initialized;
+        public void Init()
         {
-            get
+            if (!_initialized)
             {
-                if (_scriptAssembly == null)
-                {
-                    _scriptAssembly = Assembly.GetCallingAssembly();
-                }
-                return _scriptAssembly;
+                ScriptAssembly = Assembly.GetCallingAssembly();
+                _initialized = true;
             }
         }
     }
