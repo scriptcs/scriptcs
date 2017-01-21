@@ -29,6 +29,7 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IRepl repl, object[] args)
         {
+            Guard.AgainstNullArgument("repl", repl);
             var packContexts = repl.ScriptPackSession.Contexts;
 
             if (packContexts.IsNullOrEmpty())
