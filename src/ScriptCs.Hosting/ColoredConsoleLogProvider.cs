@@ -12,7 +12,7 @@ namespace ScriptCs.Hosting
             new Dictionary<LogLevel, ConsoleColor>
             {
                 { LogLevel.Fatal, ConsoleColor.Red },
-                { LogLevel.Error, ConsoleColor.DarkRed },
+                { LogLevel.Error, ConsoleColor.Red },
                 { LogLevel.Warn, ConsoleColor.DarkYellow },
                 { LogLevel.Info, ConsoleColor.Gray },
                 { LogLevel.Debug, ConsoleColor.DarkGray },
