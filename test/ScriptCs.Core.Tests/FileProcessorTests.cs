@@ -157,8 +157,7 @@ namespace ScriptCs.Tests
                 var processor = GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
 
-                result.LoadedScripts.Count.ShouldEqual(3);
-                result.LoadedScripts.ShouldContain("script1.csx");
+                result.LoadedScripts.Count.ShouldEqual(2);
                 result.LoadedScripts.ShouldContain("script2.csx");
                 result.LoadedScripts.ShouldContain("script4.csx");
             }

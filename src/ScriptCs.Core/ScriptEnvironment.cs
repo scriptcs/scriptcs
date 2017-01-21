@@ -51,7 +51,7 @@ namespace ScriptCs
         public Assembly ScriptAssembly { get; private set; }
 
         private bool _initialized;
-        public void Init()
+        public void Initialize()
         {
             if (!_initialized)
             {
