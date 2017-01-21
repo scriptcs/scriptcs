@@ -189,7 +189,7 @@ namespace ScriptCs.Tests
             {
                 _mocks.ScriptEngine.Verify(
                     x => x.Execute(
-                        "foo",
+                        "Env.Initialize();" + Environment.NewLine + "foo",
                         new string[0],
                         It.Is<AssemblyReferences>(i => i.Assemblies.SequenceEqual(_repl.References.Assemblies)),
                         It.Is<IEnumerable<string>>(i => i.SequenceEqual(_repl.Namespaces)),
