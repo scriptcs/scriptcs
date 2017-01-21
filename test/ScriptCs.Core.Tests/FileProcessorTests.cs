@@ -649,6 +649,23 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
+            public void ShouldAllowSingleLineCommentsBeforeDirectives()
+            {
+                var testableDirectiveProcessor = new DirectiveLineProcessorTests.TestableDirectiveLineProcessor(BehaviorAfterCode.Throw);
+                var filePreprocessor = GetFilePreProcessor(testableDirectiveProcessor, new LoadLineProcessor(_fileSystem.Object));
+                var lines = new List<string>
+                    {
+                        "//Test Comment",
+                        "#Test something",
+                        "Console.WriteLine(\"Success\");"
+                    };
+
+                Assert.DoesNotThrow(
+                    ()=> filePreprocessor.ParseScript(lines, new FileParserContext())
+                );
+            }
+
+            [Fact]
             public void ShouldProcessCustomDirectiveWhenItComesBeforeCode()
             {
                 var testableDirectiveProcessor = new DirectiveLineProcessorTests.TestableDirectiveLineProcessor();
