@@ -219,7 +219,7 @@ namespace ScriptCs
             }
             else
             {
-                result.Code = "Env.Init();" + Environment.NewLine;
+                result.Code = "Env.Init();" + Environment.NewLine + result.Code;
             }
             state.Add(ScriptLibrariesInjected, null);
 
