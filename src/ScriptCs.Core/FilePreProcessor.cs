@@ -11,6 +11,7 @@ namespace ScriptCs
         private readonly ILog _logger;
 
         private readonly IEnumerable<ILineProcessor> _lineProcessors;
+        private readonly IEnumerable<IDirectiveLineProcessor> _directiveLineProcessors; 
 
         private readonly IFileSystem _fileSystem;
 
@@ -22,6 +23,7 @@ namespace ScriptCs
             _fileSystem = fileSystem;
             _logger = logProvider.ForCurrentType();
             _lineProcessors = lineProcessors;
+            _directiveLineProcessors = _lineProcessors.OfType<IDirectiveLineProcessor>();
         }
 
         public virtual FilePreProcessorResult ProcessFile(string path)
@@ -143,10 +145,11 @@ namespace ScriptCs
 
         private bool IsNonDirectiveLine(string line)
         {
-            var directiveLineProcessors =
-                _lineProcessors.OfType<IDirectiveLineProcessor>();
+            line = line.Trim();
+            if (line.StartsWith("//") || line.Equals(string.Empty))
+                return false;
 
-            return line.Trim() != string.Empty && !directiveLineProcessors.Any(lp => lp.Matches(line));
+            return !_directiveLineProcessors.Any(lp => lp.Matches(line));
         }
 
         private static bool IsUsingLine(string line)
