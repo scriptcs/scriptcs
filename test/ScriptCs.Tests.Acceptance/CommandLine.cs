@@ -30,9 +30,6 @@ namespace ScriptCs.Tests.Acceptance
                 {
                     exception.Message.ShouldContain("unknownoption");
                 });
-
-            "And I see scriptcs usage details"
-                .f(() => exception.Message.ShouldContain("Usage:"));
         }
     }
 }

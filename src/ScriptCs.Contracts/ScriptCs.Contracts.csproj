@@ -45,7 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs">
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="AssemblyReferences.cs" />
     <Compile Include="BehaviorAfterCode.cs" />
     <Compile Include="..\ScriptCs.Core\Guard.cs">
@@ -79,6 +81,7 @@
     <Compile Include="IPackageReference.cs" />
     <Compile Include="IRepl.cs" />
     <Compile Include="IScriptEnvironment.cs" />
+    <Compile Include="IScriptInfo.cs" />
     <Compile Include="IScriptLibraryComposer.cs" />
     <Compile Include="IReplCommand.cs" />
     <Compile Include="IReplEngine.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogProviderExtensions.cs" />
     <Compile Include="ModuleAttribute.cs" />
+    <Compile Include="Printers.cs" />
     <Compile Include="ProjectItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptPack.cs" />

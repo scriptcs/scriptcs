@@ -12,16 +12,6 @@ namespace ScriptCs.ReplCommands
         private readonly ILog _logger;
         private readonly IInstallationProvider _installationProvider;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public InstallCommand(
-            IPackageInstaller packageInstaller,
-            IPackageAssemblyResolver packageAssemblyResolver,
-            Common.Logging.ILog logger,
-            IInstallationProvider installationProvider)
-            :this(packageInstaller, packageAssemblyResolver,new CommonLoggingLogProvider(logger), installationProvider)
-        {
-        }
-
         public InstallCommand(
             IPackageInstaller packageInstaller,
             IPackageAssemblyResolver packageAssemblyResolver,

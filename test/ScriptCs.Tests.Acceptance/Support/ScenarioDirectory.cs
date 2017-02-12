@@ -34,6 +34,7 @@
             {
                 writer.WriteLine(text);
                 writer.Flush();
+                writer.Close();
             }
 
             return this;

@@ -64,7 +64,9 @@ namespace ScriptCs.Tests
                 mocks.ScriptLibraryComposer.Object,
                 mocks.Console.Object,
                 mocks.FilePreProcessor.Object,
-                mocks.ReplCommands.Select(x => x.Object));
+                mocks.ReplCommands.Select(x => x.Object),
+                new Printers(mocks.ObjectSerializer.Object),
+                new ScriptInfo());
         }
 
         public class TheConstructor
@@ -187,7 +189,7 @@ namespace ScriptCs.Tests
             {
                 _mocks.ScriptEngine.Verify(
                     x => x.Execute(
-                        "foo",
+                        "Env.Initialize();" + Environment.NewLine + "foo",
                         new string[0],
                         It.Is<AssemblyReferences>(i => i.Assemblies.SequenceEqual(_repl.References.Assemblies)),
                         It.Is<IEnumerable<string>>(i => i.SequenceEqual(_repl.Namespaces)),

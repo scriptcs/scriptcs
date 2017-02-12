@@ -34,6 +34,8 @@ namespace ScriptCs.Engine.Roslyn
 
         public string FileName { get; set; }
 
+        public string ScriptPath { get; set; }
+
         public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
         {
             if (scriptPackSession == null)

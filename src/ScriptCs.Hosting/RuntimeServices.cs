@@ -21,30 +21,6 @@ namespace ScriptCs.Hosting
         private readonly IInitializationServices _initializationServices;
         private readonly string _scriptName;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public RuntimeServices(
-            Common.Logging.ILog logger,
-            IDictionary<Type, object> overrides,
-            IConsole console,
-            Type scriptEngineType,
-            Type scriptExecutorType,
-            Type replType,
-            bool initDirectoryCatalog,
-            IInitializationServices initializationServices,
-            string scriptName)
-            : this(
-                new CommonLoggingLogProvider(logger),
-                overrides,
-                console,
-                scriptEngineType,
-                scriptExecutorType,
-                replType,
-                initDirectoryCatalog,
-                initializationServices,
-                scriptName)
-        {
-        }
-
         public RuntimeServices(
             ILogProvider logProvider,
             IDictionary<Type, object> overrides,
@@ -85,6 +61,7 @@ namespace ScriptCs.Hosting
             builder.RegisterType(_replType).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
             builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
+            builder.RegisterType<Printers>().SingleInstance();
 
             RegisterLineProcessors(builder);
             RegisterReplCommands(builder);
@@ -136,6 +113,8 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IVisualStudioSolutionWriter>(
                 builder, b => b.RegisterType<VisualStudioSolutionWriter>().As<IVisualStudioSolutionWriter>().SingleInstance());
+
+            RegisterOverrideOrDefault<IScriptInfo>(builder, b => b.RegisterType<ScriptInfo>().As<IScriptInfo>().SingleInstance());
 
             if (_initDirectoryCatalog)
             {

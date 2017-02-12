@@ -14,16 +14,6 @@ namespace ScriptCs
         private readonly IAssemblyUtility _assemblyUtility;
         private readonly ILog _logger;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public AssemblyResolver(
-            IFileSystem fileSystem,
-            IPackageAssemblyResolver packageAssemblyResolver,
-            IAssemblyUtility assemblyUtility,
-            Common.Logging.ILog logger)
-            :this(fileSystem,packageAssemblyResolver,assemblyUtility,new CommonLoggingLogProvider(logger))
-        {
-        }
-
         public AssemblyResolver(
             IFileSystem fileSystem,
             IPackageAssemblyResolver packageAssemblyResolver,

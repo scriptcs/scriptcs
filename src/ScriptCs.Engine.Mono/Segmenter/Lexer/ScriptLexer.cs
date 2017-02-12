@@ -72,14 +72,18 @@ namespace ScriptCs.Engine.Mono.Segmenter.Lexer
                 string @char = string.Empty;
                 @char += (char)_lastChar;
 
-                _lastChar = Read();
-                int count = 0;
-                while (count < 2 && _lastChar != Token.Eof)
+                int previous;
+                do
                 {
-                    count++;
-                    @char += (char)_lastChar;
+                    previous = _lastChar;
                     _lastChar = Read();
-                }
+					if(_lastChar != Token.Eof)
+                    	@char += (char)_lastChar;
+                } while (!(_lastChar == Token.SingleQuote && previous != Token.EscapeChar)
+                    && _lastChar != Token.Eof);
+
+				if(_lastChar != Token.Eof)
+					_lastChar = Read(); //eat
 
                 return new LexerResult
                 {

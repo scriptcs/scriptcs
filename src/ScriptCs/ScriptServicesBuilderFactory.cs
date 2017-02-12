@@ -21,6 +21,13 @@ namespace ScriptCs
             var initializationServices = new InitializationServices(logProvider);
             initializationServices.GetAppDomainAssemblyResolver().Initialize();
 
+            if (config.ScriptName != null && Path.GetFileName(config.ScriptName) != config.ScriptName)
+            {
+                var path = Path.GetFullPath(config.ScriptName);
+                initializationServices.GetFileSystem().CurrentDirectory = Path.GetDirectoryName(path);
+                config.ScriptName = path;
+            }
+
             // NOTE (adamralph): this is a hideous assumption about what happens inside the CommandFactory.
             // It is a result of the ScriptServicesBuilderFactory also having to know what is going to happen inside the
             // Command Factory so that it builds the builder(:-p) correctly in advance.

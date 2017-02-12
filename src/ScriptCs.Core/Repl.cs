@@ -12,31 +12,8 @@ namespace ScriptCs
         private readonly string[] _scriptArgs;
 
         private readonly IObjectSerializer _serializer;
+        private readonly Printers _printers;
         private readonly ILog _log;
-
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public Repl(
-            string[] scriptArgs,
-            IFileSystem fileSystem,
-            IScriptEngine scriptEngine,
-            IObjectSerializer serializer,
-            Common.Logging.ILog logger,
-            IScriptLibraryComposer composer,
-            IConsole console,
-            IFilePreProcessor filePreProcessor,
-            IEnumerable<IReplCommand> replCommands)
-            : this(
-                scriptArgs,
-                fileSystem,
-                scriptEngine,
-                serializer,
-                new CommonLoggingLogProvider(logger),
-                composer,
-                console,
-                filePreProcessor,
-                replCommands)
-        {
-        }
 
         public Repl(
             string[] scriptArgs,
@@ -47,8 +24,10 @@ namespace ScriptCs
             IScriptLibraryComposer composer,
             IConsole console,
             IFilePreProcessor filePreProcessor,
-            IEnumerable<IReplCommand> replCommands)
-            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer)
+            IEnumerable<IReplCommand> replCommands,
+            Printers printers,
+            IScriptInfo scriptInfo)
+            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer, scriptInfo)
         {
             Guard.AgainstNullArgument("serializer", serializer);
             Guard.AgainstNullArgument("logProvider", logProvider);
@@ -56,6 +35,7 @@ namespace ScriptCs
 
             _scriptArgs = scriptArgs;
             _serializer = serializer;
+            _printers = printers;
             _log = logProvider.ForCurrentType();
             Console = console;
             Commands = replCommands != null ? replCommands.Where(x => x.CommandName != null).ToDictionary(x => x.CommandName, x => x) : new Dictionary<string, IReplCommand>();
@@ -133,7 +113,7 @@ namespace ScriptCs
                 }
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                
+
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
                 Buffer = (Buffer == null)
@@ -172,9 +152,7 @@ namespace ScriptCs
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
-                    var serializedResult = _serializer.Serialize(result.ReturnValue);
-
-                    Console.WriteLine(serializedResult);
+                    Console.WriteLine(_printers.GetStringFor(result.ReturnValue));
                 }
 
                 Buffer = null;

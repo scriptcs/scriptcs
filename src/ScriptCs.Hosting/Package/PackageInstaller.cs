@@ -10,12 +10,6 @@ namespace ScriptCs.Hosting.Package
         private readonly IInstallationProvider _installer;
         private readonly ILog _logger;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public PackageInstaller(IInstallationProvider installer, Common.Logging.ILog logger)
-            : this(installer, new CommonLoggingLogProvider(logger))
-        {
-        }
-
         public PackageInstaller(IInstallationProvider installer, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("installer", installer);

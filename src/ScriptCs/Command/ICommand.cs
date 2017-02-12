@@ -11,6 +11,10 @@ namespace ScriptCs.Command
     {
     }
 
+    public interface IExecuteLooseScriptCommand : ICommand
+    {
+    }
+
     public interface ISaveCommand : ICommand
     {
     }

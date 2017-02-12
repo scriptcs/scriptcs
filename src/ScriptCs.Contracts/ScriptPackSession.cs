@@ -87,5 +87,6 @@ namespace ScriptCs.Contracts
         {
             _namespaces.Add(@namespace);
         }
+
     }
 }

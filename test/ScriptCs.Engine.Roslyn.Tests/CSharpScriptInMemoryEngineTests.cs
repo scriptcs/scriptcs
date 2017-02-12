@@ -16,10 +16,19 @@ namespace ScriptCs.Tests
     {
         public class TheExecuteMethod
         {
+            private IConsole _console = new Mock<IConsole>().Object;
+            private IObjectSerializer _serializer = new Mock<IObjectSerializer>().Object;
+            private Printers _printers;
+
+            public TheExecuteMethod()
+            {
+                _printers =  new Printers(_serializer);
+            }
+
             [Fact]
             public void ShouldExposeExceptionThrownByScriptWhenErrorOccurs()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(_console, _printers, new ScriptInfo()), new TestLogProvider());
                 // Arrange
                 var lines = new List<string>
                 {
@@ -43,7 +52,7 @@ namespace ScriptCs.Tests
             [Fact]
             public void ShouldExposeExceptionThrownByCompilation()
             {
-                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(), new TestLogProvider());
+                var scriptEngine = new CSharpScriptInMemoryEngine(new ScriptHostFactory(_console, _printers, new ScriptInfo()), new TestLogProvider());
 
                 // Arrange
                 var lines = new List<string>

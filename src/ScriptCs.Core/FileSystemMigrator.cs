@@ -13,12 +13,6 @@ namespace ScriptCs
         private readonly Dictionary<string, string> _directoryMoves;
         private readonly Dictionary<string, string> _directoryCopies;
 
-        [Obsolete("Support for Common.Logging types was deprecated in version 0.15.0 and will soon be removed.")]
-        public FileSystemMigrator(IFileSystem fileSystem, Common.Logging.ILog logger)
-            : this(fileSystem, new CommonLoggingLogProvider(logger))
-        {
-        }
-
         public FileSystemMigrator(IFileSystem fileSystem, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);

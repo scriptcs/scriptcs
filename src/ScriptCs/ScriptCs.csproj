@@ -55,10 +55,6 @@
     <ApplicationIcon>..\..\common\Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -85,8 +81,10 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs">
       <Link>Guard.cs</Link>
     </Compile>
+    <Compile Include="Command\ExecuteLooseScriptCommand.cs" />
     <Compile Include="ConfigMask.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ExecuteScriptCommandBase.cs" />
     <Compile Include="ProfileOptimizationShim.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="VersionWriter.cs" />
