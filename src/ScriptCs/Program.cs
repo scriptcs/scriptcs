@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -11,10 +12,8 @@ namespace ScriptCs
         {
             ProfileOptimizationShim.SetProfileRoot(Path.GetDirectoryName(typeof(Program).Assembly.Location));
             ProfileOptimizationShim.StartProfile(typeof(Program).Assembly.GetName().Name + ".profile");
-
             var nonScriptArgs = args.TakeWhile(arg => arg != "--").ToArray();
             var scriptArgs = args.Skip(nonScriptArgs.Length + 1).ToArray();
-
             ScriptCsArgs commandArgs;
             try
             {
@@ -23,7 +22,6 @@ namespace ScriptCs
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine(ScriptCsArgs.GetUsage());
                 return 1;
             }
 
