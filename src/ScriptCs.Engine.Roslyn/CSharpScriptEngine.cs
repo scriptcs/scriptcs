@@ -26,7 +26,7 @@ namespace ScriptCs.Engine.Roslyn
                 return true;
             }
 
-            var options = new CSharpParseOptions(LanguageVersion.CSharp6, DocumentationMode.Parse, SourceCodeKind.Script);
+            var options = new CSharpParseOptions(LanguageVersion.CSharp7, DocumentationMode.Parse, SourceCodeKind.Script);
 
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(code, options: options);
             return SyntaxFactory.IsCompleteSubmission(syntaxTree);

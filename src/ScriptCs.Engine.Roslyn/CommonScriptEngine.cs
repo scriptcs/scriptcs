@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
@@ -24,6 +25,7 @@ namespace ScriptCs.Engine.Roslyn
             ScriptMetadataResolver = ScriptMetadataResolver.Default;
             ScriptOptions = ScriptOptions.Default.
                 WithReferences(typeof(object).Assembly).
+                WithReferences(typeof(TupleElementNamesAttribute).Assembly). // System.ValueTuple
                 WithMetadataResolver(ScriptMetadataResolver);
             _scriptHostFactory = scriptHostFactory;
             Log = logProvider.ForCurrentType();
