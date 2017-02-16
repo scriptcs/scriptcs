@@ -78,11 +78,7 @@ namespace ScriptCs.Hosting
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var engineModule = _typeResolver.ResolveType("Mono.Runtime") != null || moduleNames.Contains("mono")
-                ? "mono"
-                : "roslyn";
-
-            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
+            moduleNames = moduleNames.Union(new[] { "roslyn" }).ToArray();
 
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();
