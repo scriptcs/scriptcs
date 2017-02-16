@@ -93,7 +93,7 @@ namespace ScriptCs.Engine.Roslyn
                 foreach (var @namespace in allNamespaces)
                 {
                     _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.WithImports(@namespace);
+                    ScriptOptions = ScriptOptions.AddImports(@namespace);
                 }
 
                 sessionState = new SessionState<ScriptState> { References = executionReferences, Namespaces = new HashSet<string>(allNamespaces) };
@@ -137,7 +137,7 @@ namespace ScriptCs.Engine.Roslyn
                 foreach (var @namespace in newNamespaces)
                 {
                     _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.WithImports(@namespace);
+                    ScriptOptions = ScriptOptions.AddImports(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
 

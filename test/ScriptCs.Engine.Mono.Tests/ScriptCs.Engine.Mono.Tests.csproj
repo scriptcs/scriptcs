@@ -90,10 +90,6 @@
       <Project>{E590E710-E159-48E6-A3E6-1A83D3FE732C}</Project>
       <Name>ScriptCs.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj">
-      <Project>{E4ADCFEE-FF3B-4EF5-8298-2B31F407F58B}</Project>
-      <Name>ScriptCs.Engine.Mono</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
