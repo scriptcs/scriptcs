@@ -212,15 +212,14 @@ namespace ScriptCs
             if (scriptLibrariesPreProcessorResult != null)
             {
                 result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine
-                             // + "Env.Initialize();" + Environment.NewLine
+                              + "Env.Initialize();" + Environment.NewLine
                               + result.Code;
                 result.References.AddRange(scriptLibrariesPreProcessorResult.References);
                 result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
             }
             else
             {
-                //result.Code = "Env.Initialize();" + Environment.NewLine + result.Code;
-                result.Code = result.Code;
+                result.Code = "Env.Initialize();" + Environment.NewLine + result.Code;
             }
             state.Add(ScriptLibrariesInjected, null);
 
