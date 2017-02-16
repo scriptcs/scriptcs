@@ -89,6 +89,7 @@
     <Compile Include="Package\PackageContainer.cs" />
     <Compile Include="Package\PackageInstaller.cs" />
     <Compile Include="Package\PackageObject.cs" />
+    <Compile Include="Package\ScriptCsPackageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplCommands\OpenVSCommand.cs" />
     <Compile Include="RuntimeServices.cs" />

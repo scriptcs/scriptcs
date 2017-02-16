@@ -80,7 +80,7 @@ namespace ScriptCs.Command
                 yield break;
             }
 
-            yield return new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.0"), _version);
+            yield return new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.5"), _version);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace ScriptCs.Hosting.Package
             var path = Path.Combine(_fileSystem.CurrentDirectory, _fileSystem.PackagesFolder);
             _repositoryUrls = GetRepositorySources(path);
             var remoteRepository = new AggregateRepository(PackageRepositoryFactory.Default, _repositoryUrls, true);
-            _manager = new PackageManager(remoteRepository, path);
+            _manager = new ScriptCsPackageManager(remoteRepository, path);
         }
 
         public IEnumerable<string> GetRepositorySources(string path)
@@ -71,9 +71,10 @@ namespace ScriptCs.Hosting.Package
         public void InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
         {
             Guard.AgainstNullArgument("packageId", packageId);
-
+            
             var version = GetVersion(packageId);
             var packageName = packageId.PackageId + " " + (version == null ? string.Empty : packageId.Version.ToString());
+
             _manager.InstallPackage(packageId.PackageId, version, allowPrereleaseVersions: allowPreRelease, ignoreDependencies: false);
             _logger.Info("Installed: " + packageName);
         }
