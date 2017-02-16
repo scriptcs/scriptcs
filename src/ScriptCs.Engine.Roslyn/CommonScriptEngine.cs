@@ -11,6 +11,8 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected ScriptOptions ScriptOptions { get; set; }
 
+        protected ScriptMetadataResolver ScriptMetadataResolver { get; private set; }
+
         private readonly IScriptHostFactory _scriptHostFactory;
         private readonly ILog _log;
 
@@ -19,15 +21,18 @@ namespace ScriptCs.Engine.Roslyn
         protected CommonScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("logProvider", logProvider);
-            ScriptOptions = new ScriptOptions().WithReferences(typeof(Object).Assembly);
+            ScriptMetadataResolver = ScriptMetadataResolver.Default;
+            ScriptOptions = ScriptOptions.Default.
+                WithReferences(typeof(object).Assembly).
+                WithMetadataResolver(ScriptMetadataResolver);
             _scriptHostFactory = scriptHostFactory;
             _log = logProvider.ForCurrentType();
         }
 
         public string BaseDirectory
         {
-            get { return ScriptOptions.BaseDirectory; }
-            set { ScriptOptions = ScriptOptions.WithBaseDirectory(value); }
+            get { return ScriptMetadataResolver.BaseDirectory; }
+            set { ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value); }
         }
 
         public string CacheDirectory { get; set; }
@@ -88,7 +93,7 @@ namespace ScriptCs.Engine.Roslyn
                 foreach (var @namespace in allNamespaces)
                 {
                     _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
+                    ScriptOptions = ScriptOptions.WithImports(@namespace);
                 }
 
                 sessionState = new SessionState<ScriptState> { References = executionReferences, Namespaces = new HashSet<string>(allNamespaces) };
@@ -132,7 +137,7 @@ namespace ScriptCs.Engine.Roslyn
                 foreach (var @namespace in newNamespaces)
                 {
                     _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
+                    ScriptOptions = ScriptOptions.WithImports(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
 

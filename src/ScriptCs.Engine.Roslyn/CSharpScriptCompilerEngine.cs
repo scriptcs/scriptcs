@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
 
@@ -45,8 +45,7 @@ namespace ScriptCs.Engine.Roslyn
             _log.Debug("Compiling submission");
             try
             {
-                var script = CSharpScript.Create(code, ScriptOptions);
-                script = script.WithGlobalsType(globals.GetType());
+                var script = CSharpScript.Create(code, ScriptOptions, globals.GetType());
                 var compilation = script.GetCompilation();
 
                 using (var exeStream = new MemoryStream())
