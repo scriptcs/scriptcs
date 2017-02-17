@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
 using ScriptCs.Contracts;
+using ScriptCs.Hosting.Package;
 
 namespace ScriptCs.Command
 {
@@ -80,7 +81,7 @@ namespace ScriptCs.Command
                 yield break;
             }
 
-            yield return new PackageReference(_name, new FrameworkName(".NETFramework,Version=v4.5"), _version);
+            yield return new PackageReference(_name, new FrameworkName(FrameworkUtils.FrameworkName), _version);
         }
     }
 }
