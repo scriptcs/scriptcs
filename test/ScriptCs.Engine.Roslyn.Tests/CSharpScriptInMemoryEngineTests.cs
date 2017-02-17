@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.CodeAnalysis.Scripting;
 using Moq;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
