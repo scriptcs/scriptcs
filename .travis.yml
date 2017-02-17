@@ -1,7 +1,7 @@
 sudo: false
 language: csharp
 mono: 
-  - 4.2.3
+  - latest
 install:
   - nuget restore ./ScriptCs.sln
 
