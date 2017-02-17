@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
@@ -89,7 +90,8 @@ namespace ScriptCs.Engine.Roslyn
                 _log.Debug("Invoking method.");
                 var submissionStates = new object[2];
                 submissionStates[0] = globals;
-                return new ScriptResult(returnValue: method.Invoke(null, new[] { submissionStates }));
+                var result = method.Invoke(null, new[] {submissionStates}) as Task<object>;
+                return new ScriptResult(returnValue: result.GetAwaiter().GetResult());
             }
             catch (Exception executeException)
             {
