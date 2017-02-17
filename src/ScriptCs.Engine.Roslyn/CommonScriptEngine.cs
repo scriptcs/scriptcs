@@ -24,8 +24,7 @@ namespace ScriptCs.Engine.Roslyn
             Guard.AgainstNullArgument("logProvider", logProvider);
             ScriptMetadataResolver = ScriptMetadataResolver.Default;
             ScriptOptions = ScriptOptions.Default.
-                WithReferences(typeof(object).Assembly).
-                WithReferences(typeof(TupleElementNamesAttribute).Assembly). // System.ValueTuple
+                WithReferences(typeof(object).Assembly, typeof(TupleElementNamesAttribute).Assembly). // System.ValueTuple
                 WithMetadataResolver(ScriptMetadataResolver);
             _scriptHostFactory = scriptHostFactory;
             Log = logProvider.ForCurrentType();
