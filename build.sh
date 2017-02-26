@@ -6,6 +6,8 @@ set -x
 # install
 mozroots --import --sync --quiet
 mono ./.nuget/NuGet.exe restore ./ScriptCs.sln
+mono ./.paket/paket.bootstrapper.exe prerelease
+mono ./.paket/paket.exe restore
 
 # script
 mkdir -p artifacts/Release/bin
