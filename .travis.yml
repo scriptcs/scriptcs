@@ -4,7 +4,6 @@ mono:
   - 4.2.3
 install:
   - nuget restore ./ScriptCs.sln
-  - mono ./.paket/paket.bootstrapper.exe prerelease
   - mono ./.paket/paket.exe restore
   
 script:
