@@ -1,0 +1,3 @@
+source https://nuget.org/api/v2
+nuget FSharp.Core = 4.0.0.1
+github smoothdeveloper/visualfsharp:paket-extract-ismono src/fsharp/ReferenceLoading.PaketHandler.fs
