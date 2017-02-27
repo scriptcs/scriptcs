@@ -115,3 +115,4 @@ UpgradeLog*.XML
 
 artifacts
 /scriptcs_packages
+paket-files
