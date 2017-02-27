@@ -32,11 +32,22 @@ namespace ScriptCs
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {
             Guard.AgainstNullArgument("context", context);
-
+            
             var argument = GetDirectiveArgument(line);
-            var assemblyPath = Environment.ExpandEnvironmentVariables(argument);
 
-            var referencePath = _fileSystem.GetFullPath(assemblyPath);
+
+            var expandedArgument = Environment.ExpandEnvironmentVariables(argument);
+
+            if (argument.ToLower().Contains("paket:"))
+            {
+                if (!context.References.Contains(argument))
+                {
+                    context.References.Add(argument);
+                }
+                return true;
+            }
+
+            var referencePath = _fileSystem.GetFullPath(expandedArgument);
             var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
 
             if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
