@@ -11,7 +11,7 @@ if errorlevel 1 (
   exit /b %errorlevel%
 )
 
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Diagnostic;DetailedSummary /nr:false 
+"%ProgramFiles(x86)%\MSBuild\14.0\bin\msbuild" Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Diagnostic;DetailedSummary /nr:false 
 
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
