@@ -55,7 +55,8 @@ namespace ScriptCs
             {
                 Namespaces = context.Namespaces,
                 LoadedScripts = context.LoadedScripts,
-                References = context.References,
+                AssemblyReferences = context.AssemblyReferences,
+                CustomReferences = context.CustomReferences,
                 Code = code,
                 ScriptPath = context.ScriptPath
             };

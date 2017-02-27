@@ -197,9 +197,9 @@ namespace ScriptCs.Tests
                 var processor = GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
 
-                result.References.Count.ShouldEqual(2);
-                result.References.ShouldContain("My.dll");
-                result.References.ShouldContain("My2.dll");
+                result.AssemblyReferences.Count.ShouldEqual(2);
+                result.AssemblyReferences.ShouldContain("My.dll");
+                result.AssemblyReferences.ShouldContain("My2.dll");
             }
 
             [Fact]
@@ -381,7 +381,7 @@ namespace ScriptCs.Tests
                 var processor = GetFilePreProcessor();
                 var result = processor.ProcessFile("script1.csx");
 
-                result.References.Count.ShouldEqual(2);
+                result.AssemblyReferences.Count.ShouldEqual(2);
             }
 
             [Fact]

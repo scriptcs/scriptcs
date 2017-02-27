@@ -257,7 +257,7 @@ namespace ScriptCs.Tests
                 repl.Setup(r => r.InjectScriptLibraries(It.IsAny<string>(), It.IsAny<FilePreProcessorResult>(), It.IsAny<IDictionary<string, object>>()))
                     .Callback((string p, FilePreProcessorResult r, IDictionary<string, object> s) =>
                     {
-                        r.References.Add("Foo.Bar");
+                        r.AssemblyReferences.Add("Foo.Bar");
                     });
 
                 scriptEngine.Setup(e => e.Execute(
@@ -383,7 +383,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"c:/my.dll");
                 mocks.FileSystem.Setup(x => x.FileExists("c:/my.dll")).Returns(true);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
-                    .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
+                    .Returns(new FilePreProcessorResult { AssemblyReferences = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -400,7 +400,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
-                    .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
+                    .Returns(new FilePreProcessorResult { AssemblyReferences = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -416,7 +416,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
-                    .Returns(new FilePreProcessorResult { References = new List<string> { "PresentationCore" } });
+                    .Returns(new FilePreProcessorResult { AssemblyReferences = new List<string> { "PresentationCore" } });
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -433,7 +433,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
-                    .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
+                    .Returns(new FilePreProcessorResult { AssemblyReferences = new List<string> { "my.dll" } });
 
                 _repl = GetRepl(mocks);
                 _repl.Initialize(Enumerable.Empty<string>(), Enumerable.Empty<IScriptPack>());
@@ -450,7 +450,7 @@ namespace ScriptCs.Tests
                 mocks.FileSystem.Setup(i => i.GetFullPath(It.IsAny<string>())).Returns(@"C:/my.dll");
                 mocks.FileSystem.Setup(i => i.FileExists(It.IsAny<string>())).Returns(false);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
-                    .Returns(new FilePreProcessorResult { References = new List<string> { "my.dll" } });
+                    .Returns(new FilePreProcessorResult { AssemblyReferences = new List<string> { "my.dll" } });
                 mocks.ScriptEngine.Setup(
                     i =>
                     i.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),

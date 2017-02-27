@@ -38,11 +38,11 @@ namespace ScriptCs
 
             var expandedArgument = Environment.ExpandEnvironmentVariables(argument);
 
-            if (argument.ToLower().Contains("paket:"))
+            if (argument.ToLower().StartsWith(Constants.PaketPrefix))
             {
-                if (!context.References.Contains(argument))
+                if (!context.CustomReferences.Contains(argument))
                 {
-                    context.References.Add(argument);
+                    context.CustomReferences.Add(argument);
                 }
                 return true;
             }
@@ -50,9 +50,9 @@ namespace ScriptCs
             var referencePath = _fileSystem.GetFullPath(expandedArgument);
             var referencePathOrName = _fileSystem.FileExists(referencePath) ? referencePath : argument;
 
-            if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.References.Contains(referencePathOrName))
+            if (!string.IsNullOrWhiteSpace(referencePathOrName) && !context.AssemblyReferences.Contains(referencePathOrName))
             {
-                context.References.Add(referencePathOrName);
+                context.AssemblyReferences.Add(referencePathOrName);
             }
 
             return true;

@@ -141,7 +141,7 @@ namespace ScriptCs.Tests
                 packageContainer.Setup(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                     .Returns(package.Object);
                 package.Setup(p => p.GetContentFiles()).Returns(new List<string> { "TestMain.csx" });
-                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "TestCode", References = new List<string> {"ref1", "ref2"}});
+                preProcessor.Setup(p => p.ProcessFile(It.IsAny<string>())).Returns(new FilePreProcessorResult { Code = "TestCode", AssemblyReferences = new List<string> {"ref1", "ref2"}});
                 var refs = new List<string>();
                 composer.ProcessPackage(@"c:\packages", reference.Object, new StringBuilder(), refs, new List<string>());
                 refs.ShouldContain("ref1");

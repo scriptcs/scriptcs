@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ScriptCs.Contracts;
+using ScriptCs.PaketDirective;
 
 namespace ScriptCs
 {
@@ -106,7 +107,7 @@ namespace ScriptCs
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
 
-                foreach (var reference in preProcessResult.References)
+                foreach (var reference in preProcessResult.AssemblyReferences)
                 {
                     var referencePath = FileSystem.GetFullPath(Path.Combine(FileSystem.BinFolder, reference));
                     AddReferences(FileSystem.FileExists(referencePath) ? referencePath : reference);
@@ -116,12 +117,14 @@ namespace ScriptCs
 
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
+                HandleCustomReferences(preProcessResult.CustomReferences);
+
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code
                     : Buffer + Environment.NewLine + preProcessResult.Code;
 
                 var namespaces = Namespaces.Union(preProcessResult.Namespaces);
-                var references = References.Union(preProcessResult.References);
+                var references = References.Union(preProcessResult.AssemblyReferences);
 
                 var result = ScriptEngine.Execute(Buffer, _scriptArgs, references, namespaces, ScriptPackSession);
                 if (result == null) return ScriptResult.Empty;
@@ -178,6 +181,23 @@ namespace ScriptCs
             {
                 Console.ResetColor();
             }
+        }
+
+        private void HandleCustomReferences(IEnumerable<string> references)
+        {
+            HandlePaketReferences(references);
+        }
+
+        private void HandlePaketReferences(IEnumerable<string> references)
+        {
+            var paketRefs = references.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
+            var refs = Path.Combine(FileSystem.CurrentDirectory, "Refs.csx");
+            var fi = new FileInfo(refs);
+            dynamic result = PaketShim.ResolveLoadScript(fi, paketRefs, s =>
+            {
+                return s;
+            });
+            Console.WriteLine(result.ToString());
         }
 
         private static string GetInvalidCommandArgumentMessage(string argument)

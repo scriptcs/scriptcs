@@ -285,7 +285,7 @@ namespace ScriptCs.Tests
                 scriptExecutor.Setup(e => e.InjectScriptLibraries(It.IsAny<string>(), result, It.IsAny<IDictionary<string, object>>()))
                     .Callback((string p, FilePreProcessorResult r, IDictionary<string, object> s) =>
                     {
-                        r.References.Add("Foo.Bar");
+                        r.AssemblyReferences.Add("Foo.Bar");
                     });
 
                 scriptEngine.Setup(e => e.Execute(
@@ -593,9 +593,9 @@ namespace ScriptCs.Tests
             {
                 executor.Protected();
                 executor.Setup(e => e.LoadScriptLibraries(It.IsAny<string>())).Returns(_scriptLibrariesPreProcessorResult);
-                _scriptLibrariesPreProcessorResult.References.Add("ref1");
+                _scriptLibrariesPreProcessorResult.AssemblyReferences.Add("ref1");
                 executor.Object.InjectScriptLibraries("", _result, _state);
-                _result.References.ShouldContain("ref1");
+                _result.AssemblyReferences.ShouldContain("ref1");
             }
 
             [Theory, ScriptCsAutoData]

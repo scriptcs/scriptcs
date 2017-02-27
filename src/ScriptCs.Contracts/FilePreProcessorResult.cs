@@ -8,14 +8,17 @@ namespace ScriptCs.Contracts
         {
             Namespaces = new List<string>();
             LoadedScripts = new List<string>();
-            References = new List<string>();
+            AssemblyReferences = new List<string>();
+            CustomReferences = new List<string>();
         }
 
         public List<string> Namespaces { get; set; }
 
         public List<string> LoadedScripts { get; set; }
 
-        public List<string> References { get; set; }
+        public List<string> AssemblyReferences { get; set; }
+
+        public List<string> CustomReferences { get; set; } 
 
         public string ScriptPath { get; set; }
 
