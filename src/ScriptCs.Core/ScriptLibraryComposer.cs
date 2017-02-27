@@ -139,7 +139,7 @@ namespace ScriptCs
                 var classDefinition = classBuilder.ToString();
                 _logger.TraceFormat("Class definition:{0}{0}{1}", Environment.NewLine, classDefinition);
                 builder.Append(classDefinition);
-                references.AddRange(result.References);
+                references.AddRange(result.AssemblyReferences);
                 namespaces.AddRange(result.Namespaces);
             }
         }

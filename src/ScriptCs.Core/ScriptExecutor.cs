@@ -183,7 +183,7 @@ namespace ScriptCs
         {
             InjectScriptLibraries(workingDirectory, result, ScriptPackSession.State);
             var namespaces = Namespaces.Union(result.Namespaces);
-            var references = References.Union(result.References);
+            var references = References.Union(result.AssemblyReferences);
             ScriptInfo.ScriptPath = result.ScriptPath;
             foreach (var loadedScript in result.LoadedScripts)
             {
@@ -214,7 +214,7 @@ namespace ScriptCs
                 result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine
                               + "Env.Initialize();" + Environment.NewLine
                               + result.Code;
-                result.References.AddRange(scriptLibrariesPreProcessorResult.References);
+                result.AssemblyReferences.AddRange(scriptLibrariesPreProcessorResult.AssemblyReferences);
                 result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
             }
             else

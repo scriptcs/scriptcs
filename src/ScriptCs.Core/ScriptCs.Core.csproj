@@ -113,6 +113,10 @@
       <Project>{6049e205-8b5f-4080-b023-70600e51fd64}</Project>
       <Name>ScriptCs.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptCs.PaketDirective\ScriptCs.PaketDirective.fsproj">
+      <Project>{370e27b3-a2b4-4a8a-8992-49252b7175c1}</Project>
+      <Name>ScriptCs.PaketDirective</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

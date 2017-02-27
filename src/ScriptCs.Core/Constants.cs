@@ -22,5 +22,7 @@ namespace ScriptCs
         public const string ConfigFilename = "scriptcs.opts";
 
         public const string DefaultRepositoryUrl = "https://nuget.org/api/v2/";
+
+        public const string PaketPrefix = "paket:";
     }
 }

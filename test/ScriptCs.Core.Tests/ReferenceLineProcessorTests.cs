@@ -87,7 +87,7 @@ namespace ScriptCs.Tests
                 processor.ProcessLine(parser, context, Line, true);
 
                 // Assert
-                context.References.Count.ShouldEqual(1);
+                context.AssemblyReferences.Count.ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]
@@ -110,7 +110,7 @@ namespace ScriptCs.Tests
                 processor.ProcessLine(parser, context, line, true);
 
                 // Assert
-                context.References.Count(x => x == name).ShouldEqual(1);
+                context.AssemblyReferences.Count(x => x == name).ShouldEqual(1);
             }
 
             [Theory, ScriptCsAutoData]
