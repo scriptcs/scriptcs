@@ -124,21 +124,11 @@ using Raven.Client.Indexes;
 
 Console.WriteLine("Starting RavenDB server...");
 
-EmbeddableDocumentStore documentStore = null;
-try
+using (var documentStore = new EmbeddableDocumentStore { UseEmbeddedHttpServer = true })
 {
-    documentStore = new EmbeddableDocumentStore { UseEmbeddedHttpServer = true };
     documentStore.Initialize();
-
-    var url = string.Format("http://localhost:{0}", documentStore.Configuration.Port);
-    Console.WriteLine("RavenDB started, listening on {0}.", url);
-
+    Console.WriteLine($"RavenDB started, listening on http://localhost:{documentStore.Configuration.Port}");
     Console.ReadKey();
-}
-finally
-{
-    if (documentStore != null)
-        documentStore.Dispose();
 }
 ```
 
