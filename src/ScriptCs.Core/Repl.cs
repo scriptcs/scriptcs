@@ -192,12 +192,52 @@ namespace ScriptCs
         {
             var paketRefs = references.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
             var refs = Path.Combine(FileSystem.CurrentDirectory, "Refs.csx");
-            var fi = new FileInfo(refs);
-            dynamic result = PaketShim.ResolveLoadScript(fi, paketRefs, s =>
+            
+            // todo: is this the .csx we are currently evaluating?
+            var scriptFileBeingProcessed = new FileInfo(refs);
+            
+            // todo: fix if running on mono
+            var isMono = false;
+
+            Func<string, string> prefixWithMonoIfNeeded =
+                commandLine => isMono ? "mono " + commandLine : commandLine;
+
+            ReferenceLoading.PaketHandler.ReferenceLoadingResult result = PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
+            if (result.IsSolved)
             {
-                return s;
-            });
-            Console.WriteLine(result.ToString());
+                var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
+                // hack: current implementation of paket has hardcoded .fsx load script name
+                var csxLoadScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
+                // todo: loading instead of outputing
+                Console.WriteLine(String.Format("should load '{0}'", solved.loadingScript));
+            }
+            // failure: we should test the different cases
+            else if (result.IsPackageManagerNotFound)
+            {
+                var packageManagerNotFound = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
+                // we could print those properties:
+                //packageManagerNotFound.implicitIncludeDir
+                //packageManagerNotFound.userProfile
+                Console.WriteLine("package manager not found");
+            }
+            else if (result.IsPackageResolutionFailed)
+            {
+                var packageResolutionFailed = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed)result;
+    
+                Console.WriteLine(
+                    String.Format(@"package resolution failed: 
+    toolpath: {0}
+    workingdir: {1}
+    message: {2}",
+    packageResolutionFailed.toolPath,
+    packageResolutionFailed.workingDir,
+    packageResolutionFailed.msg)
+                            );
+            }
+            else
+            {
+                Console.WriteLine("unkown error:" + result.ToString());
+            }
         }
 
         private static string GetInvalidCommandArgumentMessage(string argument)
