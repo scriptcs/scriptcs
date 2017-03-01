@@ -201,16 +201,23 @@ namespace ScriptCs
             Func<string, string> prefixWithMonoIfNeeded =
                 commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
 
-            ReferenceLoading.PaketHandler.ReferenceLoadingResult result =
-                PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
+            // todo: get framework from ambient context
+            var targetFramework = "net461";
+            // todo: decide if we want to give a specific folder containing paket.exe to search in first
+            var prioritizedSearchPaths = Enumerable.Empty<DirectoryInfo>();
+            var result =
+                PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded, targetFramework, prioritizedSearchPaths);
 
             if (result.IsSolved)
             {
                 var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
-                // hack: current implementation of paket has hardcoded .fsx load script name
-                var loadingScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
+                var loadingScript = solved.loadingScript;
                 var loadingScriptCodeResult = FilePreProcessor.ProcessFile(loadingScript);
                 preProcessorResult.AssemblyReferences.AddRange(loadingScriptCodeResult.AssemblyReferences);
+
+                // todo: decide what we should do with solved.additionalIncludeFolders
+                // (contains list of folders we should search for csx files for subsequent #load statements)
+                // see https://github.com/forki/visualfsharp/blob/paket/tests/fsharpqa/Source/InteractiveSession/Paket/PaketWithRemoteFile/UseGlobbing.fsx
                 return;
             }
 

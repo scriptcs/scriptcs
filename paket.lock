@@ -2,5 +2,5 @@ NUGET
   remote: https://www.nuget.org/api/v2
     FSharp.Core (4.0.0.1)
 GITHUB
-  remote: forki/visualfsharp
-    src/fsharp/ReferenceLoading.PaketHandler.fs (595a068cfbf096e5871a18ead753f6ff34e027ee)
+  remote: smoothdeveloper/visualfsharp
+    src/fsharp/ReferenceLoading.PaketHandler.fs (8266bb4a7d579fd3d98d8eaa416ce8a0b12d520d)
