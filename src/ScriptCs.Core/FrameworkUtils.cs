@@ -26,5 +26,18 @@ namespace ScriptCs
                 return _frameworkName;
             }
         }
+
+        private static object _isMono;
+        public static bool IsMono
+        {
+            get
+            {
+                if (_isMono == null)
+                {
+                    _isMono = Type.GetType("Mono.Runtime") != null;
+                }
+                return (bool) _isMono;
+            }
+        }
     }
 }

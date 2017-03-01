@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using ScriptCs.Contracts;
 using ScriptCs.PaketDirective;
 
@@ -117,7 +118,7 @@ namespace ScriptCs
 
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
-                HandleCustomReferences(preProcessResult.CustomReferences);
+                HandleCustomReferences(preProcessResult);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code
@@ -183,60 +184,69 @@ namespace ScriptCs
             }
         }
 
-        private void HandleCustomReferences(IEnumerable<string> references)
+        private void HandleCustomReferences(FilePreProcessorResult preProcessorResult)
         {
-            HandlePaketReferences(references);
+            HandlePaketReferences(preProcessorResult);
         }
 
-        private void HandlePaketReferences(IEnumerable<string> references)
+        private void HandlePaketReferences(FilePreProcessorResult preProcessorResult)
         {
-            var paketRefs = references.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
-            var refs = Path.Combine(FileSystem.CurrentDirectory, "Refs.csx");
-            
-            // todo: is this the .csx we are currently evaluating?
-            var scriptFileBeingProcessed = new FileInfo(refs);
-            
-            // todo: fix if running on mono
-            var isMono = false;
+            var paketRefs = preProcessorResult.CustomReferences.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
 
-            Func<string, string> prefixWithMonoIfNeeded =
-                commandLine => isMono ? "mono " + commandLine : commandLine;
+            if (paketRefs.Any())
+            {
+                var info = Path.Combine(FileSystem.CurrentDirectory, "Repl.csx");
+                var scriptFileBeingProcessed = new FileInfo(info);
 
-            ReferenceLoading.PaketHandler.ReferenceLoadingResult result = PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
-            if (result.IsSolved)
-            {
-                var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
-                // hack: current implementation of paket has hardcoded .fsx load script name
-                var csxLoadScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
-                // todo: loading instead of outputing
-                Console.WriteLine(String.Format("should load '{0}'", solved.loadingScript));
-            }
-            // failure: we should test the different cases
-            else if (result.IsPackageManagerNotFound)
-            {
-                var packageManagerNotFound = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
-                // we could print those properties:
-                //packageManagerNotFound.implicitIncludeDir
-                //packageManagerNotFound.userProfile
-                Console.WriteLine("package manager not found");
-            }
-            else if (result.IsPackageResolutionFailed)
-            {
-                var packageResolutionFailed = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed)result;
-    
-                Console.WriteLine(
-                    String.Format(@"package resolution failed: 
-    toolpath: {0}
-    workingdir: {1}
-    message: {2}",
-    packageResolutionFailed.toolPath,
-    packageResolutionFailed.workingDir,
-    packageResolutionFailed.msg)
+                Func<string, string> prefixWithMonoIfNeeded =
+                    commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
+
+                ReferenceLoading.PaketHandler.ReferenceLoadingResult result =
+                    PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
+
+                if (result.IsSolved)
+                {
+                    var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
+                    // hack: current implementation of paket has hardcoded .fsx load script name
+                    var loadingScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
+                    var loadingScriptCodeResult = FilePreProcessor.ProcessFile(loadingScript);
+                    preProcessorResult.AssemblyReferences.AddRange(loadingScriptCodeResult.AssemblyReferences);
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    // failure: we should test the different cases
+
+                    if (result.IsPackageManagerNotFound)
+                    {
+                        var packageManagerNotFound =
+                            (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
+
+                        // we could print those properties:
+                        //packageManagerNotFound.implicitIncludeDir
+                        //packageManagerNotFound.userProfile
+                        Console.WriteLine("Package manager not found");
+                    }
+                    else if (result.IsPackageResolutionFailed)
+                    {
+                        var packageResolutionFailed =
+                            (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed) result;
+                        Console.WriteLine(
+                            string.Format(@"package resolution failed: 
+                                toolpath: {0}
+                                workingdir: {1}
+                                message: {2}",
+                                packageResolutionFailed.toolPath,
+                                packageResolutionFailed.workingDir,
+                                packageResolutionFailed.msg)
                             );
-            }
-            else
-            {
-                Console.WriteLine("unkown error:" + result.ToString());
+                    }
+                    else
+                    {
+                        Console.WriteLine("unkown error:" + result.ToString());
+                    }
+                    Console.ResetColor();
+                }
             }
         }
 
