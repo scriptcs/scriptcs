@@ -192,61 +192,60 @@ namespace ScriptCs
         {
             var paketRefs = preProcessorResult.CustomReferences.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
 
-            if (paketRefs.Any())
+            if (!paketRefs.Any())
+                return;
+
+            var info = Path.Combine(FileSystem.CurrentDirectory, "Repl.csx");
+            var scriptFileBeingProcessed = new FileInfo(info);
+
+            Func<string, string> prefixWithMonoIfNeeded =
+                commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
+
+            ReferenceLoading.PaketHandler.ReferenceLoadingResult result =
+                PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
+
+            if (result.IsSolved)
             {
-                var info = Path.Combine(FileSystem.CurrentDirectory, "Repl.csx");
-                var scriptFileBeingProcessed = new FileInfo(info);
-
-                Func<string, string> prefixWithMonoIfNeeded =
-                    commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
-
-                ReferenceLoading.PaketHandler.ReferenceLoadingResult result =
-                    PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded);
-
-                if (result.IsSolved)
-                {
-                    var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
-                    // hack: current implementation of paket has hardcoded .fsx load script name
-                    var loadingScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
-                    var loadingScriptCodeResult = FilePreProcessor.ProcessFile(loadingScript);
-                    preProcessorResult.AssemblyReferences.AddRange(loadingScriptCodeResult.AssemblyReferences);
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    // failure: we should test the different cases
-
-                    if (result.IsPackageManagerNotFound)
-                    {
-                        var packageManagerNotFound =
-                            (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
-
-                        // we could print those properties:
-                        //packageManagerNotFound.implicitIncludeDir
-                        //packageManagerNotFound.userProfile
-                        Console.WriteLine("Package manager not found");
-                    }
-                    else if (result.IsPackageResolutionFailed)
-                    {
-                        var packageResolutionFailed =
-                            (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed) result;
-                        Console.WriteLine(
-                            string.Format(@"package resolution failed: 
-                                toolpath: {0}
-                                workingdir: {1}
-                                message: {2}",
-                                packageResolutionFailed.toolPath,
-                                packageResolutionFailed.workingDir,
-                                packageResolutionFailed.msg)
-                            );
-                    }
-                    else
-                    {
-                        Console.WriteLine("unkown error:" + result.ToString());
-                    }
-                    Console.ResetColor();
-                }
+                var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
+                // hack: current implementation of paket has hardcoded .fsx load script name
+                var loadingScript = solved.loadingScript.Replace("main.group.fsx", "main.group.csx");
+                var loadingScriptCodeResult = FilePreProcessor.ProcessFile(loadingScript);
+                preProcessorResult.AssemblyReferences.AddRange(loadingScriptCodeResult.AssemblyReferences);
+                return;
             }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            // failure: we should test the different cases
+
+            if (result.IsPackageManagerNotFound)
+            {
+                var packageManagerNotFound =
+                    (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
+
+                // we could print those properties:
+                //packageManagerNotFound.implicitIncludeDir
+                //packageManagerNotFound.userProfile
+                Console.WriteLine("Package manager not found");
+            }
+            else if (result.IsPackageResolutionFailed)
+            {
+                var packageResolutionFailed =
+                    (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed) result;
+                Console.WriteLine(
+                    string.Format(@"Package resolution failed: 
+                        toolpath: {0}
+                        workingdir: {1}
+                        message: {2}",
+                        packageResolutionFailed.toolPath,
+                        packageResolutionFailed.workingDir,
+                        packageResolutionFailed.msg)
+                    );
+            }
+            else
+            {
+                Console.WriteLine("Unknown error:" + result.ToString());
+            }
+            Console.ResetColor();
         }
 
         private static string GetInvalidCommandArgumentMessage(string argument)
