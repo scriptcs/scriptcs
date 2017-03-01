@@ -232,7 +232,7 @@ namespace ScriptCs
                 var packageResolutionFailed =
                     (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed) result;
                 Console.WriteLine(
-                    string.Format(@"package resolution failed: 
+                    string.Format(@"Package resolution failed: 
                         toolpath: {0}
                         workingdir: {1}
                         message: {2}",
@@ -243,7 +243,7 @@ namespace ScriptCs
             }
             else
             {
-                Console.WriteLine("unkown error:" + result.ToString());
+                Console.WriteLine("Unknown error:" + result.ToString());
             }
             Console.ResetColor();
         }
