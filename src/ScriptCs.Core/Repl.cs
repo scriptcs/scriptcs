@@ -193,7 +193,7 @@ namespace ScriptCs
             var customRefs = (List<string>) tempCustomRefs;
 
             //Keep capturing until there are no more directives
-            if (script.StartsWith("#") && preProcessResult.CustomReferences.Any())
+            if (script.StartsWith("#"))
             {
                 customRefs.AddRange(preProcessResult.CustomReferences);
             }
