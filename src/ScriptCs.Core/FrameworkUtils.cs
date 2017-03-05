@@ -17,7 +17,7 @@ namespace ScriptCs
                 if (_frameworkName == null)
                 {
                     //Thanks to Dave Glick for this code contribution
-                    var frameworkName = Assembly.GetExecutingAssembly().GetCustomAttributes(true)
+                    var frameworkName = typeof(ScriptExecutor).Assembly.GetCustomAttributes(true)
                        .OfType<System.Runtime.Versioning.TargetFrameworkAttribute>()
                        .Select(x => x.FrameworkName)
                        .FirstOrDefault();
@@ -26,6 +26,7 @@ namespace ScriptCs
                 return _frameworkName;
             }
         }
+
 
         private static object _isMono;
         public static bool IsMono

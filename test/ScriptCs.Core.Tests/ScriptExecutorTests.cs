@@ -626,12 +626,13 @@ namespace ScriptCs.Tests
                 [Frozen] Mock<IFilePreProcessor> preProcessor,
                 [Frozen] Mock<IScriptEngine> engine,
                 [Frozen] TestLogProvider logProvider,
-                [Frozen] Mock<IScriptLibraryComposer> composer)
+                [Frozen] Mock<IScriptLibraryComposer> composer,
+                [Frozen] Mock<IPaketLoader> paketLoader)
             {
                 // arrange
                 fileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
                 var executor = new ScriptExecutor(
-                    fileSystem.Object, preProcessor.Object, engine.Object, logProvider, composer.Object, new ScriptInfo());
+                    fileSystem.Object, preProcessor.Object, engine.Object, logProvider, composer.Object, new ScriptInfo(), paketLoader.Object);
 
                 // act
                 executor.LoadScriptLibraries("");

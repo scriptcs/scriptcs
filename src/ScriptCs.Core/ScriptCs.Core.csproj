@@ -54,6 +54,7 @@
     <Compile Include="FrameworkUtils.cs" />
     <Compile Include="ILoggerConfigurator.cs" />
     <Compile Include="NullScriptLibraryComposer.cs" />
+    <Compile Include="PaketLoader.cs" />
     <Compile Include="ReplCommands\ScriptPacksCommand.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="ScriptInfo.cs" />

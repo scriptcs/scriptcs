@@ -56,9 +56,11 @@ namespace ScriptCs
 
         public IScriptInfo ScriptInfo { get; protected set; }
 
+        public IPaketLoader PaketLoader { get; protected set; }
+
         public ScriptExecutor(
-            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider, IScriptInfo scriptInfo)
-            : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer(), scriptInfo)
+            IFileSystem fileSystem, IFilePreProcessor filePreProcessor, IScriptEngine scriptEngine, ILogProvider logProvider, IScriptInfo scriptInfo, IPaketLoader paketLoader)
+            : this(fileSystem, filePreProcessor, scriptEngine, logProvider, new NullScriptLibraryComposer(), scriptInfo, paketLoader)
         {
         }
 
@@ -68,7 +70,8 @@ namespace ScriptCs
             IScriptEngine scriptEngine,
             ILogProvider logProvider,
             IScriptLibraryComposer composer,
-            IScriptInfo scriptInfo)
+            IScriptInfo scriptInfo,
+            IPaketLoader paketLoader)
         {
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgumentProperty("fileSystem", "BinFolder", fileSystem.BinFolder);
@@ -78,6 +81,8 @@ namespace ScriptCs
             Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("composer", composer);
             Guard.AgainstNullArgument("scriptInfo", scriptInfo);
+            Guard.AgainstNullArgument("paketLoader", paketLoader);
+
 
             References = new AssemblyReferences(DefaultReferences);
             Namespaces = new ReadOnlyCollection<string>(DefaultNamespaces);
@@ -87,6 +92,7 @@ namespace ScriptCs
             _log = logProvider.ForCurrentType();
             ScriptLibraryComposer = composer;
             ScriptInfo = scriptInfo;
+            PaketLoader = paketLoader;
         }
 
         public virtual void ImportNamespaces(params string[] namespaces)

@@ -77,7 +77,8 @@ namespace ScriptCs.Tests
                 fixture.Create<IScriptEngine>(),
                 fixture.Create<ILogProvider>(),
                 fixture.Create<IScriptLibraryComposer>(),
-                new ScriptInfo()));
+                new ScriptInfo(),
+                fixture.Create<IPaketLoader>()));
         }
     }
 }

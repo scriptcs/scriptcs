@@ -27,8 +27,9 @@ namespace ScriptCs
             IFilePreProcessor filePreProcessor,
             IEnumerable<IReplCommand> replCommands,
             Printers printers,
-            IScriptInfo scriptInfo)
-            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer, scriptInfo)
+            IScriptInfo scriptInfo,
+            IPaketLoader paketLoader)
+            : base(fileSystem, filePreProcessor, scriptEngine, logProvider, composer, scriptInfo, paketLoader)
         {
             Guard.AgainstNullArgument("serializer", serializer);
             Guard.AgainstNullArgument("logProvider", logProvider);
@@ -117,7 +118,7 @@ namespace ScriptCs
 
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
-                HandleCustomReferences(preProcessResult);
+                PaketLoader.Load(preProcessResult);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code
@@ -181,78 +182,6 @@ namespace ScriptCs
             {
                 Console.ResetColor();
             }
-        }
-
-        private void HandleCustomReferences(FilePreProcessorResult preProcessorResult)
-        {
-            HandlePaketReferences(preProcessorResult);
-        }
-
-        private void HandlePaketReferences(FilePreProcessorResult preProcessorResult)
-        {
-            var paketRefs = preProcessorResult.CustomReferences.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
-
-            if (!paketRefs.Any())
-                return;
-
-            var info = Path.Combine(FileSystem.CurrentDirectory, "Repl.csx");
-            var scriptFileBeingProcessed = new FileInfo(info);
-
-            Func<string, string> prefixWithMonoIfNeeded =
-                commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
-
-            // todo: get framework from ambient context
-            var targetFramework = "net461";
-            // todo: decide if we want to give a specific folder containing paket.exe to search in first
-            var prioritizedSearchPaths = Enumerable.Empty<DirectoryInfo>();
-            var result =
-                PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded, targetFramework, prioritizedSearchPaths);
-
-            if (result.IsSolved)
-            {
-                var solved = (ReferenceLoading.PaketHandler.ReferenceLoadingResult.Solved) result;
-                var loadingScript = solved.loadingScript;
-                var loadingScriptCodeResult = FilePreProcessor.ProcessFile(loadingScript);
-                preProcessorResult.AssemblyReferences.AddRange(loadingScriptCodeResult.AssemblyReferences);
-
-                // todo: decide what we should do with solved.additionalIncludeFolders
-                // (contains list of folders we should search for csx files for subsequent #load statements)
-                // see https://github.com/forki/visualfsharp/blob/paket/tests/fsharpqa/Source/InteractiveSession/Paket/PaketWithRemoteFile/UseGlobbing.fsx
-                return;
-            }
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            // failure: we should test the different cases
-
-            if (result.IsPackageManagerNotFound)
-            {
-                var packageManagerNotFound =
-                    (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageManagerNotFound) result;
-
-                // we could print those properties:
-                //packageManagerNotFound.implicitIncludeDir
-                //packageManagerNotFound.userProfile
-                Console.WriteLine("Package manager not found");
-            }
-            else if (result.IsPackageResolutionFailed)
-            {
-                var packageResolutionFailed =
-                    (ReferenceLoading.PaketHandler.ReferenceLoadingResult.PackageResolutionFailed) result;
-                Console.WriteLine(
-                    string.Format(@"Package resolution failed: 
-                        toolpath: {0}
-                        workingdir: {1}
-                        message: {2}",
-                        packageResolutionFailed.toolPath,
-                        packageResolutionFailed.workingDir,
-                        packageResolutionFailed.msg)
-                    );
-            }
-            else
-            {
-                Console.WriteLine("Unknown error:" + result.ToString());
-            }
-            Console.ResetColor();
         }
 
         private static string GetInvalidCommandArgumentMessage(string argument)

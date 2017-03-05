@@ -32,6 +32,7 @@ namespace ScriptCs.Tests
                 FilePreProcessor = new Mock<IFilePreProcessor>();
                 ObjectSerializer = new Mock<IObjectSerializer>();
                 ReplCommands = new[] { new Mock<IReplCommand>() };
+                PaketLoader = new Mock<IPaketLoader>();
             }
 
             public Mock<IObjectSerializer> ObjectSerializer { get; private set; }
@@ -51,6 +52,8 @@ namespace ScriptCs.Tests
             public Mock<IScriptLibraryComposer> ScriptLibraryComposer { get; private set; }
 
             public Mock<IReplCommand>[] ReplCommands { get; set; }
+
+            public Mock<IPaketLoader> PaketLoader { get; set; }
         }
 
         public static Repl GetRepl(Mocks mocks)
@@ -66,7 +69,8 @@ namespace ScriptCs.Tests
                 mocks.FilePreProcessor.Object,
                 mocks.ReplCommands.Select(x => x.Object),
                 new Printers(mocks.ObjectSerializer.Object),
-                new ScriptInfo());
+                new ScriptInfo(),
+                mocks.PaketLoader.Object);
         }
 
         public class TheConstructor

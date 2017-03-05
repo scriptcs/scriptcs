@@ -116,6 +116,8 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IScriptInfo>(builder, b => b.RegisterType<ScriptInfo>().As<IScriptInfo>().SingleInstance());
 
+            RegisterOverrideOrDefault<IPaketLoader>(builder, b => b.RegisterType<PaketLoader>().As<IPaketLoader>().SingleInstance());
+
             if (_initDirectoryCatalog)
             {
                 var fileSystem = _initializationServices.GetFileSystem();

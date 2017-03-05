@@ -34,7 +34,8 @@ namespace ScriptCs.Tests.ReplCommands
                 TestLogProvider logProvider,
                 Mock<IScriptLibraryComposer> composer,
                 Mock<IConsole> console,
-                Mock<IFilePreProcessor> filePreProcessor)
+                Mock<IFilePreProcessor> filePreProcessor,
+                Mock<IPaketLoader> paketLoader)
             {
                 // arrange
                 var currentDir = @"C:\";
@@ -55,7 +56,8 @@ namespace ScriptCs.Tests.ReplCommands
                     filePreProcessor.Object,
                     new List<IReplCommand> { dummyCommand.Object },
                     new Printers(serializer.Object),
-                    new ScriptInfo());
+                    new ScriptInfo(),
+                    paketLoader.Object);
 
                 var cmd = new AliasCommand(console.Object);
 

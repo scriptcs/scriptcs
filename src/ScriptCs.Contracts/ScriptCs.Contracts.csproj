@@ -79,6 +79,7 @@
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IPackageObject.cs" />
     <Compile Include="IPackageReference.cs" />
+    <Compile Include="IPaketLoader.cs" />
     <Compile Include="IRepl.cs" />
     <Compile Include="IScriptEnvironment.cs" />
     <Compile Include="IScriptInfo.cs" />

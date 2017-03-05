@@ -48,6 +48,8 @@ namespace ScriptCs.Hosting
 
             RegisterOverrideOrDefault<IFilePreProcessor>(builder, b => b.RegisterType<FilePreProcessor>().As<IFilePreProcessor>().SingleInstance());
 
+            RegisterOverrideOrDefault<IPaketLoader>(builder, b=> b.RegisterType<PaketLoader>().As<IPaketLoader>().SingleInstance());
+
             return builder.Build();
         }
 

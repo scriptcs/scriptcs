@@ -128,6 +128,9 @@
     <Content Include="..\..\common\Icon.ico">
       <Link>Properties\Icon.ico</Link>
     </Content>
+    <Content Include="paket.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
