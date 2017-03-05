@@ -6,7 +6,7 @@ mkdir artifacts
 
 :Build
 
-.paket\paket.exe restore
+.\src\Scriptcs\paket.exe restore
 if errorlevel 1 (
   exit /b %errorlevel%
 )
