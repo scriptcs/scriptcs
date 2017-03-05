@@ -43,7 +43,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\paket-files\forki\visualfsharp\src\fsharp\ReferenceLoading.PaketHandler.fs">
+    <Compile Include="..\..\paket-files\smoothdeveloper\visualfsharp\src\fsharp\ReferenceLoading.PaketHandler.fs">
       <Paket>True</Paket>
       <Link>ReferenceLoading.PaketHandler.fs</Link>
     </Compile>
