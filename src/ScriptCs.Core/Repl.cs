@@ -108,17 +108,13 @@ namespace ScriptCs
 
                 ImportNamespaces(preProcessResult.Namespaces.ToArray());
 
-                foreach (var reference in preProcessResult.AssemblyReferences)
-                {
-                    var referencePath = FileSystem.GetFullPath(Path.Combine(FileSystem.BinFolder, reference));
-                    AddReferences(FileSystem.FileExists(referencePath) ? referencePath : reference);
-                }
+                AddAssemblyReferences(preProcessResult);
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
                 InjectScriptLibraries(FileSystem.CurrentDirectory, preProcessResult, ScriptPackSession.State);
 
-                PaketLoader.Load(preProcessResult);
+                HandleCustomReferences(script, preProcessResult);
 
                 Buffer = (Buffer == null)
                     ? preProcessResult.Code
@@ -181,6 +177,40 @@ namespace ScriptCs
             finally
             {
                 Console.ResetColor();
+            }
+        }
+
+        private void HandleCustomReferences(string script, FilePreProcessorResult preProcessResult)
+        {
+            object tempCustomRefs = null;
+
+            var found = ScriptPackSession.State.TryGetValue(Constants.SessionCustomReferences, out tempCustomRefs);
+            if (!found)
+            {
+                tempCustomRefs = new List<string>();
+                ScriptPackSession.State[Constants.SessionCustomReferences] = tempCustomRefs;
+            }
+            var customRefs = (List<string>) tempCustomRefs;
+
+            //Keep capturing until there are no more directives
+            if (script.StartsWith("#") && preProcessResult.CustomReferences.Any())
+            {
+                customRefs.AddRange(preProcessResult.CustomReferences);
+            }
+            else
+            {
+                preProcessResult.CustomReferences.AddRange(customRefs);
+                customRefs.Clear();
+                PaketLoader.Load(preProcessResult);
+            }
+        }
+
+        private void AddAssemblyReferences(FilePreProcessorResult preProcessResult)
+        {
+            foreach (var reference in preProcessResult.AssemblyReferences)
+            {
+                var referencePath = FileSystem.GetFullPath(Path.Combine(FileSystem.BinFolder, reference));
+                AddReferences(FileSystem.FileExists(referencePath) ? referencePath : reference);
             }
         }
 

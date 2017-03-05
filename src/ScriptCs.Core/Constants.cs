@@ -24,5 +24,7 @@ namespace ScriptCs
         public const string DefaultRepositoryUrl = "https://nuget.org/api/v2/";
 
         public const string PaketPrefix = "paket:";
+
+        public const string SessionCustomReferences = "customRefs";
     }
 }
