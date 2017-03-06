@@ -168,7 +168,7 @@ namespace ScriptCs
         {
             var path = Path.IsPathRooted(script) ? script : Path.Combine(FileSystem.CurrentDirectory, script);
             var result = FilePreProcessor.ProcessFile(path);
-
+            PaketLoader.Load(result);
             ScriptEngine.FileName = Path.GetFileName(path);
             ScriptInfo.ScriptPath = Path.GetFullPath(path);
             
@@ -178,6 +178,7 @@ namespace ScriptCs
         public virtual ScriptResult ExecuteScript(string script, params string[] scriptArgs)
         {
             var result = FilePreProcessor.ProcessScript(script);
+            PaketLoader.Load(result);
             return EngineExecute(FileSystem.CurrentDirectory, scriptArgs, result);
         }
 
