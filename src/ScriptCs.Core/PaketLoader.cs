@@ -18,7 +18,7 @@ namespace ScriptCs
             _fileSystem = fileSystem;
             _console = console;
         }
-
+        
         public void Load(FilePreProcessorResult preProcessorResult)
         {
             var paketRefs = preProcessorResult.CustomReferences.Where(r => r.StartsWith(Constants.PaketPrefix)).Select(r => r.Substring(Constants.PaketPrefix.Length)).ToArray();
@@ -26,8 +26,9 @@ namespace ScriptCs
             if (!paketRefs.Any())
                 return;
 
-            var info = Path.Combine(_fileSystem.CurrentDirectory, "Repl.csx");
-            var scriptFileBeingProcessed = new FileInfo(info);
+            var scriptFile = preProcessorResult.ScriptPath ?? Path.Combine(_fileSystem.CurrentDirectory, "Repl.csx");
+
+            var scriptFileInfo = new FileInfo(scriptFile);
 
             Func<string, string> prefixWithMonoIfNeeded =
                 commandLine => FrameworkUtils.IsMono ? "mono " + commandLine : commandLine;
@@ -39,7 +40,7 @@ namespace ScriptCs
             var prioritizedSearchPaths = new[] {new DirectoryInfo(_fileSystem.HostBin)};
 
             var result =
-                PaketShim.ResolveLoadScript(scriptFileBeingProcessed, paketRefs, prefixWithMonoIfNeeded, targetFramework, prioritizedSearchPaths);
+                PaketShim.ResolveLoadScript(scriptFileInfo, paketRefs, prefixWithMonoIfNeeded, targetFramework, prioritizedSearchPaths);
 
             if (result.IsSolved)
             {
