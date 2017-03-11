@@ -3,7 +3,7 @@ language: csharp
 mono: 
   - latest
 install:
-  - mono .nuget/nuget.exe restore ./ScriptCs.sln
+  - mono .nuget/NuGet.exe restore ./ScriptCs.sln
 
 script:
   - mkdir artifacts --parents
