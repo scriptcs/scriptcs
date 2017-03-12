@@ -1,7 +1,19 @@
-sudo: false
+sudo: required
 language: csharp
 mono: 
-  - latest
+  - 4.8.0
+
+# Ensure MSBuild is installed
+before_install:
+  - | 
+    if [ "$TRAVIS_OS_NAME" == "linux" ]
+    then
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+      echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+      sudo apt-get -qq update
+      sudo apt-get install msbuild
+    fi
+
 install:
   - mono .nuget/NuGet.exe restore ./ScriptCs.sln
 
@@ -9,3 +21,14 @@ script:
   - mkdir artifacts --parents
   - msbuild /p:CscToolExe=csc.exe /p:CscToolPath=/Library/Frameworks/Mono.framework/Versions/4.8.0/lib/mono/msbuild/15.0/bin/
   - mono ./packages/xunit.runners.1.9.2/tools/xunit.console.clr4.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll /xml artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.xml /html artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.html
+
+addons:
+  apt:
+    packages:
+      - gettext
+      - libcurl4-openssl-dev
+      - libicu-dev
+      - libssl-dev
+      - libunwind8
+      - zlib1g
+      - curl
