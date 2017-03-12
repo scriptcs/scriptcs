@@ -6,6 +6,7 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
 
     public static class ScriptCsExe
     {
@@ -146,7 +147,9 @@
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
+                StandardErrorEncoding = Encoding.UTF8,
+                StandardOutputEncoding = Encoding.UTF8
             };
             var result = info.Run(Path.GetFileName(directory.Name) + ".log");
             if (result.Item1 != 0)

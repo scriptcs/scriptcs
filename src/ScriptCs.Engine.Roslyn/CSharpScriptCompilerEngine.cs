@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 using ScriptCs.Exceptions;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace ScriptCs.Engine.Roslyn
 {
@@ -52,7 +53,8 @@ namespace ScriptCs.Engine.Roslyn
                 using (var exeStream = new MemoryStream())
                 using (var pdbStream = new MemoryStream())
                 {
-                    var result = compilation.Emit(exeStream, pdbStream: pdbStream);
+                    var result = compilation.Emit(exeStream, pdbStream: pdbStream, options: new EmitOptions().
+                        WithDebugInformationFormat(GetPlatformSpecificDebugInformationFormat()));
 
                     if (result.Success)
                     {
@@ -100,6 +102,18 @@ namespace ScriptCs.Engine.Roslyn
                 var ex = executeException.InnerException ?? executeException;
                 return new ScriptResult(executionException: ex);
             }
+        }
+
+        private static DebugInformationFormat GetPlatformSpecificDebugInformationFormat()
+        {
+            // Mono, use PortablePdb
+            if (Type.GetType("Mono.Runtime") != null)
+            {
+                return DebugInformationFormat.PortablePdb;
+            }
+
+            // otherwise standard PDB
+            return DebugInformationFormat.Pdb;
         }
     }
 }
