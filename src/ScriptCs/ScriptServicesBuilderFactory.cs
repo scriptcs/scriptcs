@@ -36,7 +36,7 @@ namespace ScriptCs
             var repl = config.Repl ||
                 (!config.Clean && config.PackageName == null && !config.Save && config.ScriptName == null);
 
-            var scriptServicesBuilder = new ScriptServicesBuilder(console, logProvider, null, null, initializationServices)
+            var scriptServicesBuilder = new ScriptServicesBuilder(console, logProvider, null, initializationServices)
                 .Cache(config.Cache)
                 .Debug(config.Debug)
                 .LogLevel(config.LogLevel)

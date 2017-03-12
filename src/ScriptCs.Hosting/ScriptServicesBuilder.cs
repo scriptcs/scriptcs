@@ -7,7 +7,6 @@ namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
-        private readonly ITypeResolver _typeResolver;
         private readonly ILogProvider _logProvider;
 
         private IRuntimeServices _runtimeServices;
@@ -25,13 +24,10 @@ namespace ScriptCs.Hosting
             IConsole console,
             ILogProvider logProvider,
             IRuntimeServices runtimeServices = null,
-            ITypeResolver typeResolver = null,
             IInitializationServices initializationServices = null)
         {
             InitializationServices = initializationServices ?? new InitializationServices(logProvider);
             _runtimeServices = runtimeServices;
-            _typeResolver = typeResolver;
-            _typeResolver = typeResolver ?? new TypeResolver();
             ConsoleInstance = console;
             _logProvider = logProvider;
         }
