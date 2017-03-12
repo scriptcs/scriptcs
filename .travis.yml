@@ -25,7 +25,7 @@ install:
 
 script:
   - mkdir artifacts --parents
-  - msbuild /p:CscToolExe=csc.exe /p:CscToolPath=/Library/Frameworks/Mono.framework/Versions/4.8.0/lib/mono/msbuild/15.0/bin/
+  - msbuild
   - mono ./packages/xunit.runners.1.9.2/tools/xunit.console.clr4.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll /xml artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.xml /html artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.html
 
 addons:
