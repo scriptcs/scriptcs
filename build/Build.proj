@@ -4,7 +4,13 @@
   
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Version.props" />
-  
+
+  <PropertyGroup>
+  	<IsMono>false</IsMono>
+  	<!-- Assuming !Windows = mono; not strictly true, but more correct determinations are more complicated, so this will do for now -->
+  	<IsMono Condition="'$(OS)' != 'Windows_NT'">true</IsMono>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 
@@ -14,6 +20,8 @@
     <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
     
     <NuGetExePath>$(Root).nuget\NuGet.exe</NuGetExePath>
+    <NuGetCommand Condition="!$(IsMono)">&quot;$(NuGetExePath)&quot;</NuGetCommand>
+    <NuGetCommand Condition="$(IsMono)">mono &quot;$(NuGetExePath)&quot;</NuGetCommand>
 
     <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
   </PropertyGroup>
@@ -38,7 +46,7 @@
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages; UpdateProjectVersions">
-    <MSBuild Projects="@(Solution)" Targets="Build">
+    <MSBuild Projects="@(Solution)" Targets="Build" Properties="Configuration=$(Configuration)">
       <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
     </MSBuild>
   </Target>
@@ -72,7 +80,7 @@
   </PropertyGroup>
 
   <Target Name="BuildChocolateyPackage">
-    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;$(Root)src\ScriptCs\Properties\scriptcs.nuspec&quot; -BasePath &quot;$(Root)src\ScriptCs&quot; $(NuGetParameters)" />
+    <Exec Command="$(NuGetCommand) pack &quot;$(Root)src\ScriptCs\Properties\scriptcs.nuspec&quot; -BasePath &quot;$(Root)src\ScriptCs&quot; $(NuGetParameters)" />
   </Target>
 
   <Target Name="BuildNuGetPackages">
@@ -85,13 +93,13 @@
       <NuGetProjects Include="$(Root)src\ScriptCs\ScriptCs.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />
-    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
+    <Exec Command="$(NuGetExeCommand) pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)" />
   </Target>
 
   <Target Name="RestorePackages">
     <Message Text="Restoring NuGet packages..." Importance="high" />
 
-    <Exec Command="&quot;$(NuGetExePath)&quot; restore -Verbosity detailed -NonInteractive"
+    <Exec Command="$(NuGetCommand) restore -Verbosity detailed -NonInteractive"
           WorkingDirectory="$(Root)" StandardOutputImportance="Low" />
   </Target>
 
@@ -108,7 +116,7 @@
     <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') " ContinueOnError="true"/>
   </Target>
 
-  <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
+  <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build" Condition="!$(IsMono)">
     <ItemGroup>
       <FilesToCopy Include="$(Root)src\**\bin\$(Configuration)\*"/>
     </ItemGroup>
