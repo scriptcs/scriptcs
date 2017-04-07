@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\packages\xunit.runners.1.9.2\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
   
   <Import Project="$(MSBuildThisFileDirectory)ScriptCs.Tasks.targets" />
@@ -80,7 +80,6 @@
       <NuGetProjects Include="$(Root)src\ScriptCs.Core\ScriptCs.Core.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
-      <NuGetProjects Include="$(Root)src\ScriptCs.Engine.Mono\ScriptCs.Engine.Mono.csproj" />
       <NuGetProjects Include="$(Root)src\ScriptCs\ScriptCs.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />

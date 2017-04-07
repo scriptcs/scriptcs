@@ -28,6 +28,7 @@ namespace ScriptCs.Tests.Acceptance
             "And I see an error message regarding the unknown option"
                 .f(() =>
                 {
+                    Console.WriteLine(exception);
                     exception.Message.ShouldContain("unknownoption");
                 });
         }

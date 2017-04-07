@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Scripting.CSharp;
 using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
@@ -17,7 +17,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldReturnDeclaredVariables([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
@@ -31,7 +31,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldReturnOnlyLastValueOfVariablesDeclaredManyTimes([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(), scriptPackSession);
@@ -43,7 +43,7 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldReturn0VariablesAfterReset([NoAutoProperties]CSharpReplEngine engine, ScriptPackSession scriptPackSession)
             {
-                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
 
                 engine.Execute("int x = 1;", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
@@ -51,7 +51,7 @@ namespace ScriptCs.Tests
                 engine.Execute(@"var y = ""www"";", new string[0], new AssemblyReferences(), Enumerable.Empty<string>(),
     scriptPackSession);
 
-                scriptPackSession.State[CommonScriptEngine.SessionKey] = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                scriptPackSession.State[CommonScriptEngine.SessionKey] = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
 
                 engine.GetLocalVariables(scriptPackSession).ShouldBeEmpty();
             }
@@ -66,7 +66,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "class test {";
 
-                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -86,7 +86,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "System.Diagnostics.Debug.WriteLine(\"a\"";
 
-                var session = new SessionState<ScriptState> { Session = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 
@@ -105,7 +105,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var x = new[1] { 1 }; var y = x[0";
 
-                var session = new SessionState<ScriptState> { Session  = CSharpScript.Run("") };
+                var session = new SessionState<ScriptState> { Session  = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
                 var refs = new AssemblyReferences(new[] { "System" });
 

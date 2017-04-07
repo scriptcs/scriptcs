@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Scripting.CSharp;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Engine.Roslyn
@@ -15,7 +15,7 @@ namespace ScriptCs.Engine.Roslyn
 
         protected override ScriptState GetScriptState(string code, object globals)
         {
-           return CSharpScript.Run(code, ScriptOptions, globals);
+           return CSharpScript.RunAsync(code, ScriptOptions, globals).GetAwaiter().GetResult();
         }
 
         protected bool IsCompleteSubmission(string code)
@@ -26,8 +26,7 @@ namespace ScriptCs.Engine.Roslyn
                 return true;
             }
 
-            var options = new CSharpParseOptions(LanguageVersion.CSharp6, DocumentationMode.Parse,
-                SourceCodeKind.Interactive, null);
+            var options = new CSharpParseOptions(LanguageVersion.CSharp7, DocumentationMode.Parse, SourceCodeKind.Script);
 
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(code, options: options);
             return SyntaxFactory.IsCompleteSubmission(syntaxTree);

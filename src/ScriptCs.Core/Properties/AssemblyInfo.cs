@@ -10,4 +10,3 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("ScriptCs.Core.Tests")]
 [assembly: InternalsVisibleTo("ScriptCs.Engine.Roslyn.Tests")]
-[assembly: InternalsVisibleTo("ScriptCs.Engine.Mono.Tests")]

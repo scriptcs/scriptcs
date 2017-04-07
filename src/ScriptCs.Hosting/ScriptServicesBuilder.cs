@@ -7,7 +7,6 @@ namespace ScriptCs.Hosting
 {
     public class ScriptServicesBuilder : ServiceOverrides<IScriptServicesBuilder>, IScriptServicesBuilder
     {
-        private readonly ITypeResolver _typeResolver;
         private readonly ILogProvider _logProvider;
 
         private IRuntimeServices _runtimeServices;
@@ -25,13 +24,10 @@ namespace ScriptCs.Hosting
             IConsole console,
             ILogProvider logProvider,
             IRuntimeServices runtimeServices = null,
-            ITypeResolver typeResolver = null,
             IInitializationServices initializationServices = null)
         {
             InitializationServices = initializationServices ?? new InitializationServices(logProvider);
             _runtimeServices = runtimeServices;
-            _typeResolver = typeResolver;
-            _typeResolver = typeResolver ?? new TypeResolver();
             ConsoleInstance = console;
             _logProvider = logProvider;
         }
@@ -78,11 +74,7 @@ namespace ScriptCs.Hosting
 
         public IScriptServicesBuilder LoadModules(string extension, params string[] moduleNames)
         {
-            var engineModule = _typeResolver.ResolveType("Mono.Runtime") != null || moduleNames.Contains("mono")
-                ? "mono"
-                : "roslyn";
-
-            moduleNames = moduleNames.Union(new[] { engineModule }).ToArray();
+            moduleNames = moduleNames.Union(new[] { "roslyn" }).ToArray();
 
             var config = new ModuleConfiguration(_cache, _scriptName, _repl, _logLevel, _debug, Overrides);
             var loader = InitializationServices.GetModuleLoader();

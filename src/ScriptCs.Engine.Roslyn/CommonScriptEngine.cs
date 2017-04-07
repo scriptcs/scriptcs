@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.Scripting;
 using ScriptCs.Contracts;
 
@@ -11,23 +12,28 @@ namespace ScriptCs.Engine.Roslyn
     {
         protected ScriptOptions ScriptOptions { get; set; }
 
+        protected ScriptMetadataResolver ScriptMetadataResolver { get; private set; }
+
         private readonly IScriptHostFactory _scriptHostFactory;
-        private readonly ILog _log;
+        protected ILog Log;
 
         public const string SessionKey = "Session";
 
         protected CommonScriptEngine(IScriptHostFactory scriptHostFactory, ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("logProvider", logProvider);
-            ScriptOptions = new ScriptOptions().WithReferences(typeof(Object).Assembly);
+            ScriptMetadataResolver = ScriptMetadataResolver.Default;
+            ScriptOptions = ScriptOptions.Default.
+                WithReferences(typeof(object).Assembly, typeof(TupleElementNamesAttribute).Assembly). // System.ValueTuple
+                WithMetadataResolver(ScriptMetadataResolver);
             _scriptHostFactory = scriptHostFactory;
-            _log = logProvider.ForCurrentType();
+            Log = logProvider.ForCurrentType();
         }
 
         public string BaseDirectory
         {
-            get { return ScriptOptions.BaseDirectory; }
-            set { ScriptOptions = ScriptOptions.WithBaseDirectory(value); }
+            get { return ScriptMetadataResolver.BaseDirectory; }
+            set { ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value); }
         }
 
         public string CacheDirectory { get; set; }
@@ -48,8 +54,8 @@ namespace ScriptCs.Engine.Roslyn
                 throw new ArgumentNullException("references");
             }
 
-            _log.Debug("Starting to create execution components");
-            _log.Debug("Creating script host");
+            Log.Debug("Starting to create execution components");
+            Log.Debug("Creating script host");
 
             var executionReferences = new AssemblyReferences(references.Assemblies, references.Paths);
             executionReferences.Union(scriptPackSession.References);
@@ -65,7 +71,7 @@ namespace ScriptCs.Engine.Roslyn
                     new ScriptPackManager(scriptPackSession.Contexts), scriptArgs);
 
                 ScriptLibraryWrapper.SetHost(host);
-                _log.Debug("Creating session");
+                Log.Debug("Creating session");
 
                 var hostType = host.GetType();
 
@@ -75,20 +81,20 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var reference in executionReferences.Paths)
                 {
-                    _log.DebugFormat("Adding reference to {0}", reference);
+                    Log.DebugFormat("Adding reference to {0}", reference);
                     ScriptOptions = ScriptOptions.AddReferences(reference);
                 }
 
                 foreach (var assembly in executionReferences.Assemblies)
                 {
-                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    Log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     ScriptOptions = ScriptOptions.AddReferences(assembly);
                 }
 
                 foreach (var @namespace in allNamespaces)
                 {
-                    _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
+                    Log.DebugFormat("Importing namespace {0}", @namespace);
+                    ScriptOptions = ScriptOptions.AddImports(@namespace);
                 }
 
                 sessionState = new SessionState<ScriptState> { References = executionReferences, Namespaces = new HashSet<string>(allNamespaces) };
@@ -98,7 +104,7 @@ namespace ScriptCs.Engine.Roslyn
             }
             else
             {
-                _log.Debug("Reusing existing session");
+                Log.Debug("Reusing existing session");
                 sessionState = (SessionState<ScriptState>)scriptPackSession.State[SessionKey];
 
                 if (sessionState.References == null)
@@ -115,14 +121,14 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var reference in newReferences.Paths)
                 {
-                    _log.DebugFormat("Adding reference to {0}", reference);
+                    Log.DebugFormat("Adding reference to {0}", reference);
                     ScriptOptions = ScriptOptions.AddReferences(reference);
                     sessionState.References = sessionState.References.Union(new[] { reference });
                 }
 
                 foreach (var assembly in newReferences.Assemblies)
                 {
-                    _log.DebugFormat("Adding reference to {0}", assembly.FullName);
+                    Log.DebugFormat("Adding reference to {0}", assembly.FullName);
                     ScriptOptions = ScriptOptions.AddReferences(assembly);
                     sessionState.References = sessionState.References.Union(new[] { assembly });
                 }
@@ -131,8 +137,8 @@ namespace ScriptCs.Engine.Roslyn
 
                 foreach (var @namespace in newNamespaces)
                 {
-                    _log.DebugFormat("Importing namespace {0}", @namespace);
-                    ScriptOptions = ScriptOptions.AddNamespaces(@namespace);
+                    Log.DebugFormat("Importing namespace {0}", @namespace);
+                    ScriptOptions = ScriptOptions.AddImports(@namespace);
                     sessionState.Namespaces.Add(@namespace);
                 }
 
@@ -154,9 +160,9 @@ namespace ScriptCs.Engine.Roslyn
         {
             try
             {
-                _log.Debug("Starting execution");
+                Log.Debug("Starting execution");
                 var result = GetScriptState(code, globals);
-                _log.Debug("Finished execution");
+                Log.Debug("Finished execution");
                 sessionState.Session = result;
                 return new ScriptResult(returnValue: result.ReturnValue);
             }

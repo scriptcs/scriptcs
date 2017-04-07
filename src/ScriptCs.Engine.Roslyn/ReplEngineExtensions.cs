@@ -13,7 +13,7 @@ namespace ScriptCs.Engine.Roslyn
             if (scriptPackSession != null && scriptPackSession.State.ContainsKey(sessionKey))
             {
                 var sessionState = (SessionState<ScriptState>)scriptPackSession.State[sessionKey];
-                return sessionState.Session.Variables.Select(x => string.Format("{0} {1}", x.Type, x.Name)).ToArray();
+                return sessionState.Session.Variables.Select(x => $"{x.Type} {x.Name}").Distinct().ToArray();
             }
 
             return new string[0];
