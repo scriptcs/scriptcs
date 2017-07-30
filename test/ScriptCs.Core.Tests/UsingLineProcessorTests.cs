@@ -14,7 +14,7 @@ namespace ScriptCs.Tests
             public void ShouldReturnTrueOnUsingLine(IFileParser parser, UsingLineProcessor processor)
             {
                 // Arrange
-                const string UsingLine = @"using ""System.Data"";";
+                const string UsingLine = "using System.Data;";
 
                 // Act
                 var result = processor.ProcessLine(parser, new FileParserContext(), UsingLine, true);
@@ -40,7 +40,21 @@ namespace ScriptCs.Tests
             public void ShouldIgnoreAliases(IFileParser parser, UsingLineProcessor processor)
             {
                 // Arrange
-                const string UsingLine = @"using Path = ""System.IO.Path"";";
+                const string UsingLine = "using Path = System.IO.Path";
+
+                // Act
+                var result = processor.ProcessLine(parser, new FileParserContext(), UsingLine, true);
+
+                // Assert
+                result.ShouldBeFalse();
+            }
+
+            [Theory, ScriptCsAutoData]
+            public void ShouldIgnoreUsingStatic(IFileParser parser, UsingLineProcessor processor)
+            {
+                // Arrange
+                const string UsingLine = "using static System.Console;";
+                var context = new FileParserContext();
 
                 // Act
                 var result = processor.ProcessLine(parser, new FileParserContext(), UsingLine, true);
@@ -53,7 +67,7 @@ namespace ScriptCs.Tests
             public void ShouldAddNamespaceToContext(IFileParser parser, UsingLineProcessor processor)
             {
                 // Arrange
-                const string UsingLine = @"using ""System.Data"";";
+                const string UsingLine = "using System.Data;";
                 var context = new FileParserContext();
 
                 // Act
