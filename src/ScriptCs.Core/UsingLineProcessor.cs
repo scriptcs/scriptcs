@@ -19,6 +19,12 @@ namespace ScriptCs
                 return false;
             }
 
+            // for using static, we will not extract the import into the context, but rather let it be treated as code
+            if (line.Contains(" static "))
+            {
+                return false;
+            }
+
             var @namespace = GetNamespace(line);
             if (!context.Namespaces.Contains(@namespace))
             {
@@ -30,7 +36,7 @@ namespace ScriptCs
 
         private static bool IsUsingLine(string line)
         {
-            return line.Trim(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";") && !line.Contains("=") && !line.Contains("static");
+            return line.Trim(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";") && !line.Contains("=");
         }
 
         private static string GetNamespace(string line)

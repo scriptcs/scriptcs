@@ -208,21 +208,24 @@ namespace ScriptCs
             }
 
             var scriptLibrariesPreProcessorResult = LoadScriptLibraries(workingDirectory);
+            var safeInsertIndex = result.Code.IndexOf("#line");
 
-            if (scriptLibrariesPreProcessorResult != null)
+            if (safeInsertIndex > -1)
             {
-                result.Code = scriptLibrariesPreProcessorResult.Code + Environment.NewLine
-                              + "Env.Initialize();" + Environment.NewLine
-                              + result.Code;
-                result.References.AddRange(scriptLibrariesPreProcessorResult.References);
-                result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
+                if (scriptLibrariesPreProcessorResult != null)
+                {
+                    result.Code = result.Code.Insert(safeInsertIndex, scriptLibrariesPreProcessorResult.Code + Environment.NewLine
+                                  + "Env.Initialize();" + Environment.NewLine);
+                    result.References.AddRange(scriptLibrariesPreProcessorResult.References);
+                    result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
+                }
+                else
+                {
+                    result.Code = result.Code.Insert(safeInsertIndex, "Env.Initialize();" + Environment.NewLine);
+                }
             }
-            else
-            {
-                result.Code = "Env.Initialize();" + Environment.NewLine + result.Code;
-            }
+
             state.Add(ScriptLibrariesInjected, null);
-
         }
 
         protected internal virtual FilePreProcessorResult LoadScriptLibraries(string workingDirectory)
