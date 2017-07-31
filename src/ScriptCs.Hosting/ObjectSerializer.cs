@@ -16,37 +16,44 @@ namespace ScriptCs.Hosting
 
         public string Serialize(object value)
         {
-            var writer = new JTokenWriter();
-            var serializer = JsonSerializer.Create(settings);
-            serializer.Serialize(writer, value);
-
-            var container = writer.Token as JContainer;
-            if (container != null)
+            try
             {
-                var idProperties = container.Descendants().OfType<JProperty>().Where(d => d.Name == "$id").ToList();
-                if (idProperties.Any())
+                var writer = new JTokenWriter();
+                var serializer = JsonSerializer.Create(settings);
+                serializer.Serialize(writer, value);
+
+                var container = writer.Token as JContainer;
+                if (container != null)
                 {
-                    var refProperties = container.Descendants().OfType<JProperty>().Where(d => d.Name == "$ref").ToList();
-                    if (refProperties.Any())
+                    var idProperties = container.Descendants().OfType<JProperty>().Where(d => d.Name == "$id").ToList();
+                    if (idProperties.Any())
                     {
-                        foreach (var idProperty in idProperties
-                            .Where(idProperty => refProperties
-                                .All(refProperty => refProperty.Value.ToString() != idProperty.Value.ToString())))
+                        var refProperties = container.Descendants().OfType<JProperty>().Where(d => d.Name == "$ref").ToList();
+                        if (refProperties.Any())
                         {
-                            idProperty.Remove();
+                            foreach (var idProperty in idProperties
+                                .Where(idProperty => refProperties
+                                    .All(refProperty => refProperty.Value.ToString() != idProperty.Value.ToString())))
+                            {
+                                idProperty.Remove();
+                            }
                         }
-                    }
-                    else
-                    {
-                        foreach (var idProperty in idProperties)
+                        else
                         {
-                            idProperty.Remove();
+                            foreach (var idProperty in idProperties)
+                            {
+                                idProperty.Remove();
+                            }
                         }
                     }
                 }
-            }
 
-            return writer.Token.ToString();
+                return writer.Token.ToString();
+            }
+            catch (JsonSerializationException)
+            {
+                return string.Format("Couldn't serialize a returned instance of {0}", value.GetType());
+            }
         }
     }
 }
