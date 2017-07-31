@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Tests;
 using Should;
-using Xunit.Extensions;
+using Xunit;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Hosting.Tests
 {

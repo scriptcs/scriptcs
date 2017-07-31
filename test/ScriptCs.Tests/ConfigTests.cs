@@ -4,6 +4,7 @@ using Xunit.Extensions;
 namespace ScriptCs.Tests
 {
     using ScriptCs.Contracts;
+    using Xunit;
 
     public class ConfigTests
     {

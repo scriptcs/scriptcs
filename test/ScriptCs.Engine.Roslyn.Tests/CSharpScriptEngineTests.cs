@@ -3,12 +3,11 @@ using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Moq;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using Should;
 using Xunit;
-using Xunit.Extensions;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {
@@ -24,6 +23,7 @@ namespace ScriptCs.Tests
             {
                 _printers =  new Printers(_serializer);
             }
+
             [Theory, ScriptCsAutoData]
             public void ShouldCreateScriptHostWithContexts(
                 [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
