@@ -1,6 +1,7 @@
 ﻿using System;
 using Should;
 using Xunit;
+using System.Diagnostics;
 
 namespace ScriptCs.Hosting.Tests
 {
@@ -71,6 +72,16 @@ namespace ScriptCs.Hosting.Tests
 
                 // assert
                 exception.ShouldBeNull();
+            }
+
+            [Fact]
+            public void ShouldNotShowExceptionForUnserializableTypes()
+            {
+                var obj = new Process();
+
+                string result = null;
+                Assert.DoesNotThrow(() => result = _serializer.Serialize(obj));
+                Assert.Equal("Couldn't serialize a returned instance of System.Diagnostics.Process", result);
             }
 
             [Fact]
