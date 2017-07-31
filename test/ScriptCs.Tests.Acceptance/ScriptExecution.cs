@@ -51,6 +51,22 @@ namespace ScriptCs.Tests.Acceptance
         }
 
         [Scenario]
+        public static void ScriptCanWorkWithUsingStatic(ScenarioDirectory directory, string output)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which defined a static import"
+                .f(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", "using static System.Console;" + Environment.NewLine + @"WriteLine(""Hello world!"");"));
+
+            "When I execute the script"
+                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then I see 'Hello world!'"
+                .f(() => output.ShouldContain("Hello world!"));
+        }
+
+        [Scenario]
         public static void ScriptCanAccessEnv(ScenarioDirectory directory, string output )
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
