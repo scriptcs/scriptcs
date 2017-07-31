@@ -15,17 +15,17 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a simple script"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine();"));
 
             "When I install a package which contains a framework assembly reference"
-                .f(() => ScriptCsExe.Install("FrameworkAssemblyReferencer", directory));
+                .x(() => ScriptCsExe.Install("FrameworkAssemblyReferencer", directory));
 
             "And I execute the script"
-                .f(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", directory)));
+                .x(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", directory)));
 
             "Then there should be no errors"
-                .f(() => exception.ShouldBeNull());
+                .x(() => exception.ShouldBeNull());
         }
 
         [Scenario]
@@ -34,20 +34,20 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a simple script"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine();"));
 
             "When I install a package"
-                .f(() => ScriptCsExe.Install("Duplicate.A", directory));
+                .x(() => ScriptCsExe.Install("Duplicate.A", directory));
 
             "And I install another package containing the same assembly"
-                .f(() => ScriptCsExe.Install("Duplicate.B", directory));
+                .x(() => ScriptCsExe.Install("Duplicate.B", directory));
 
             "And I execute the script"
-                .f(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", directory)));
+                .x(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", directory)));
 
             "Then there should be no errors"
-                .f(() => exception.ShouldBeNull());
+                .x(() => exception.ShouldBeNull());
         }
     }
 }

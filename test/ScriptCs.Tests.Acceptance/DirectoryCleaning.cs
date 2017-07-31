@@ -14,22 +14,22 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a directory"
-                .f(() => directory = ScenarioDirectory.Create(scenario));
+                .x(() => directory = ScenarioDirectory.Create(scenario));
 
             "And the directory has an installed package"
-                .f(() => ScriptCsExe.Install("ScriptCs.Adder.Local", directory));
+                .x(() => ScriptCsExe.Install("ScriptCs.Adder.Local", directory));
 
             "And the directory has an assembly cache"
-                .f(() => directory.WriteLine(Path.Combine(directory.Map(ScriptCsExe.DllCacheFolder), "foo.txt"), null));
+                .x(() => directory.WriteLine(Path.Combine(directory.Map(ScriptCsExe.DllCacheFolder), "foo.txt"), null));
 
             "When I clean the directory"
-                .f(() => ScriptCsExe.Clean(directory));
+                .x(() => ScriptCsExe.Clean(directory));
 
             "Then the packages folder is removed"
-                .f(() => Directory.Exists(directory.Map(ScriptCsExe.PackagesFolder)).ShouldBeFalse());
+                .x(() => Directory.Exists(directory.Map(ScriptCsExe.PackagesFolder)).ShouldBeFalse());
 
             "And the assembly cache folder is removed"
-                .f(() => Directory.Exists(directory.Map(ScriptCsExe.DllCacheFolder)).ShouldBeFalse());
+                .x(() => Directory.Exists(directory.Map(ScriptCsExe.DllCacheFolder)).ShouldBeFalse());
         }
     }
 }

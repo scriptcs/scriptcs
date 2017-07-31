@@ -19,14 +19,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(""Hello world!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => output = ScriptCsExe.Run("foo.csx", debug, directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", debug, directory));
 
             "Then I see 'Hello world!'"
-                .f(() => output.ShouldContain("Hello world!"));
+                .x(() => output.ShouldContain("Hello world!"));
         }
 
         [Scenario]
@@ -37,17 +37,17 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"throw new Exception(""BOOM!"");"));
 
             "When I execute the script with debug set to {0}"
-                .f(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", debug, directory)));
+                .x(() => exception = Record.Exception(() => ScriptCsExe.Run("foo.csx", debug, directory)));
 
             "Then scriptcs fails"
-                .f(() => exception.ShouldBeType<ScriptCsException>());
+                .x(() => exception.ShouldBeType<ScriptCsException>());
 
             "And I see the exception message"
-                .f(() => exception.Message.ShouldContain("BOOM!"));
+                .x(() => exception.Message.ShouldContain("BOOM!"));
         }
 
         [Scenario]
@@ -56,14 +56,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which defined a static import"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "using static System.Console;" + Environment.NewLine + @"WriteLine(""Hello world!"");"));
 
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then I see 'Hello world!'"
-                .f(() => output.ShouldContain("Hello world!"));
+                .x(() => output.ShouldContain("Hello world!"));
         }
 
         [Scenario]
@@ -72,14 +72,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which accesses Env"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine(Env)"));
 
             "When I execute the script"
-                .f(()=> output = ScriptCsExe.Run("foo.csx", directory));
+                .x(()=> output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the Env object is displayed"
-                .f(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
+                .x(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
         }
         
         [Scenario]
@@ -88,14 +88,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses dynamic"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"dynamic obj = new ExpandoObject(); obj.foo = ""bar""; Console.WriteLine(obj.foo); ;"));
 
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the dynamic value is properly returned "
-                .f(() => output.ShouldContain("bar"));
+                .x(() => output.ShouldContain("bar"));
 
         }
 
@@ -105,14 +105,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which accesses Env.ScriptAssembly"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine(Env.ScriptAssembly)"));
 
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the Assembly is displayed"
-                .f(() => output.ShouldContain("Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                .x(() => output.ShouldContain("Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"));
 
         }
 
@@ -122,14 +122,14 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which accesses Env.ScriptPath"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", "Console.WriteLine(Env.ScriptPath)"));
 
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the ScriptPath is displayed"
-                .f(() => output.ShouldContain("foo.csx"));
+                .x(() => output.ShouldContain("foo.csx"));
         }
 
         [Scenario]
@@ -138,7 +138,7 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which loads another script and accesses Env.LoadedScripts"
-                .f(() =>
+                .x(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario)
                         .WriteLine(
@@ -150,10 +150,10 @@ namespace ScriptCs.Tests.Acceptance
                     
 
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then the loaded script path is displayed"
-                .f(() => output.ShouldContain("bar.csx"));
+                .x(() => output.ShouldContain("bar.csx"));
         }
 
 
