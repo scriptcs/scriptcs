@@ -126,6 +126,7 @@
     <None Include="Support\Gallery\ScriptCs.Logger.ScriptPack.0.1.0.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="xunit.runner.json" />
   </ItemGroup>
   <Import Project="..\..\build\ScriptCs.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
