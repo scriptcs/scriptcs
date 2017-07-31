@@ -208,21 +208,23 @@ namespace ScriptCs
             }
 
             var scriptLibrariesPreProcessorResult = LoadScriptLibraries(workingDirectory);
-            var safeInsertIndex = result.Code.IndexOf("#line");
 
-            if (safeInsertIndex > -1)
+            // script libraries should be injected just before the #line directive
+            // if there is no #line directive, they can be injected at the beginning of code
+            if (result.Code == null) result.Code = string.Empty;
+            var safeInsertIndex = result.Code.IndexOf("#line");
+            if (safeInsertIndex < 0) safeInsertIndex = 0;
+
+            if (scriptLibrariesPreProcessorResult != null)
             {
-                if (scriptLibrariesPreProcessorResult != null)
-                {
-                    result.Code = result.Code.Insert(safeInsertIndex, scriptLibrariesPreProcessorResult.Code + Environment.NewLine
-                                  + "Env.Initialize();" + Environment.NewLine);
-                    result.References.AddRange(scriptLibrariesPreProcessorResult.References);
-                    result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
-                }
-                else
-                {
-                    result.Code = result.Code.Insert(safeInsertIndex, "Env.Initialize();" + Environment.NewLine);
-                }
+                result.Code = result.Code.Insert(safeInsertIndex, scriptLibrariesPreProcessorResult.Code + Environment.NewLine
+                              + "Env.Initialize();" + Environment.NewLine);
+                result.References.AddRange(scriptLibrariesPreProcessorResult.References);
+                result.Namespaces.AddRange(scriptLibrariesPreProcessorResult.Namespaces);
+            }
+            else
+            {
+                result.Code = result.Code.Insert(safeInsertIndex, "Env.Initialize();" + Environment.NewLine);
             }
 
             state.Add(ScriptLibrariesInjected, null);

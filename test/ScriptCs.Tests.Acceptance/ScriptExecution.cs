@@ -57,7 +57,7 @@ namespace ScriptCs.Tests.Acceptance
 
             "Given a script which defined a static import"
                 .f(() => directory = ScenarioDirectory.Create(scenario)
-                    .WriteLine("foo.csx", @"using static System.Console; WriteLine(""Hello world!"")"));
+                    .WriteLine("foo.csx", "using static System.Console;" + Environment.NewLine + @"WriteLine(""Hello world!"");"));
 
             "When I execute the script"
                 .f(() => output = ScriptCsExe.Run("foo.csx", directory));
