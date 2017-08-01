@@ -21,6 +21,7 @@ before_install:
     fi
 
 install:
+  - mono .nuget/NuGet.exe restore ./.nuget/packages.config -PackagesDirectory ./packages
   - mono .nuget/NuGet.exe restore ./ScriptCs.sln
 
 script:
