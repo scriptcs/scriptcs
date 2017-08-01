@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ScriptCs.Contracts;
+using ScriptCs.Exceptions;
 
 namespace ScriptCs
 {
@@ -20,7 +21,13 @@ namespace ScriptCs
 
         public TContext Get<TContext>() where TContext : IScriptPackContext
         {
-            return (TContext)_contexts[typeof(TContext)];
+            var key = typeof(TContext);
+            if (!_contexts.ContainsKey(key))
+            {
+                throw new ScriptPackException(string.Format("Tried to resolve a script pack '{0}', but such script pack is not available in the current execution context.", key));
+            }
+
+            return (TContext)_contexts[key];
         }
     }
 }
