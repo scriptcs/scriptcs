@@ -2,11 +2,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using ScriptCs.Engine.Roslyn;
 using Should;
-using Xunit.Extensions;
+using Xunit;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

@@ -5,11 +5,11 @@ using System.Runtime.Versioning;
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using Xunit.Extensions;
+using Xunit;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

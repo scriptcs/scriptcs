@@ -16,24 +16,24 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Calculator to print the sum of 40 and 2"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Add(40, 2));"));
 
             "And ScriptCs.Calculator is installed"
-                .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
+                .x(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
             "When executing the script"
-                .f(() =>
+                .x(() =>
                 {
                     var scriptArgs = new[] { "-loglevel", "info" };
                     output = ScriptCsExe.Run("foo.csx", false, Enumerable.Empty<string>(), scriptArgs, directory);
                 });
 
             "Then I see 42"
-                .f(() => output.ShouldContain("42"));
+                .x(() => output.ShouldContain("42"));
 
             "Then I see INFO outputted from the required Logger script pack"
-                .f(() => output.ShouldContain("INFO"));
+                .x(() => output.ShouldContain("INFO"));
         }
 
         [Scenario(Skip = "Failing with a path length exception")]
@@ -42,17 +42,17 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Calculator"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(""Type:"" + new Calculator().GetType().Name);" + Environment.NewLine + "Environment.Exit(0);"));
 
             "And ScriptCs.Calculator is installed"
-                .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
+                .x(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
             "When executing the script into REPL"
-                .f(() => output = ScriptCsExe.Run("foo.csx", false, new[] { "-r" }, directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", false, new[] { "-r" }, directory));
 
             "Then the ScriptCs.Calculator instance is created"
-                .f(() => output.ShouldContain("Type:Calculator"));
+                .x(() => output.ShouldContain("Type:Calculator"));
         }
 
         [Scenario]
@@ -61,7 +61,7 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Calculator and it is non-rooted"
-                .f(() =>
+                .x(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario);
                     scriptDirectory = ScenarioDirectory.Create(Path.Combine(scenario, "script"))
@@ -69,13 +69,13 @@ namespace ScriptCs.Tests.Acceptance
                 });
 
             "And ScriptCs.Calculator is installed"
-                .f(() => ScriptCsExe.Install("ScriptCs.Calculator", scriptDirectory));
+                .x(() => ScriptCsExe.Install("ScriptCs.Calculator", scriptDirectory));
 
             "When executing the script"
-                .f(() => output = ScriptCsExe.Run(Path.Combine("script", "foo.csx"), false, directory));
+                .x(() => output = ScriptCsExe.Run(Path.Combine("script", "foo.csx"), false, directory));
 
             "Then the ScriptCs.Calculator instance is created"
-                .f(() => output.ShouldContain("Type:Calculator"));
+                .x(() => output.ShouldContain("Type:Calculator"));
         }
 
 
@@ -85,17 +85,17 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Calculator to print the product of 7 and 6"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(new Calculator().Multiply(7, 6));"));
 
             "And ScriptCs.Calculator is installed"
-                .f(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
+                .x(() => ScriptCsExe.Install("ScriptCs.Calculator", directory));
 
             "When executing the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then I see 42"
-                .f(() => output.ShouldContain("42"));
+                .x(() => output.ShouldContain("42"));
         }
     }
 }

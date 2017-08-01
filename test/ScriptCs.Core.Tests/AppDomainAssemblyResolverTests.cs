@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Moq;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using Should;
 using Xunit;
 using Xunit.Extensions;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

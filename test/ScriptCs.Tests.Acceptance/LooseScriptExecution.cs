@@ -17,7 +17,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a hello world script"
-                .f(() =>
+                .x(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario);
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -32,10 +32,10 @@
                 });
 
             "When I execute the script with debug set to {0}"
-                .f(() => output = ScriptCsExe.Run(args, debug, directory));
+                .x(() => output = ScriptCsExe.Run(args, debug, directory));
 
             "Then I see 'Hello World!'"
-                .f(() => output.ShouldContain("Hello World!"));
+                .x(() => output.ShouldContain("Hello World!"));
         }
 
         [Scenario]
@@ -46,7 +46,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which throws an exception"
-                .f(() =>
+                .x(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario);
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -62,13 +62,13 @@
                 });
 
             "When I execute the script with debug set to {0}"
-                .f(() => exception = Record.Exception(() => ScriptCsExe.Run(args, debug, directory)));
+                .x(() => exception = Record.Exception(() => ScriptCsExe.Run(args, debug, directory)));
 
             "Then scriptcs fails"
-                .f(() => exception.ShouldBeType<ScriptCsException>());
+                .x(() => exception.ShouldBeType<ScriptCsException>());
 
             "And I see the exception message"
-                .f(() =>
+                .x(() =>
                 {
                     exception.Message.ShouldContain("BOOM!");
                 });
@@ -80,17 +80,17 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which access Env"
-                .f(() =>
+                .x(() =>
                 {
                     directory = ScenarioDirectory.Create(scenario);
                     script = "Console.WriteLine(Env)";
                     args = new[] {"-e", script};
                 });
             "When I execute the script"
-                .f(() => output = ScriptCsExe.Run(args, directory));
+                .x(() => output = ScriptCsExe.Run(args, directory));
 
             "Then the Env object is displayed"
-                .f(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
+                .x(() => output.ShouldContain("ScriptCs.ScriptEnvironment"));
         }
     }
 }

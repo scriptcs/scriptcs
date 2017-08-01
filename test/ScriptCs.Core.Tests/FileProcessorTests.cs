@@ -307,7 +307,8 @@ namespace ScriptCs.Tests
                 _fileSystem.Setup(x => x.ReadFileLines("A.csx")).Returns(a.ToArray());
                 _fileSystem.Setup(x => x.ReadFileLines("B.csx")).Returns(b.ToArray());
 
-                Assert.DoesNotThrow(() => GetFilePreProcessor().ProcessFile("A.csx"));
+                var ex = Record.Exception(() => GetFilePreProcessor().ProcessFile("A.csx"));
+                Assert.Null(ex);
             }
 
             [Fact]
@@ -660,9 +661,8 @@ namespace ScriptCs.Tests
                         "Console.WriteLine(\"Success\");"
                     };
 
-                Assert.DoesNotThrow(
-                    ()=> filePreprocessor.ParseScript(lines, new FileParserContext())
-                );
+                var ex = Record.Exception(() => filePreprocessor.ParseScript(lines, new FileParserContext()));
+                Assert.Null(ex);
             }
 
             [Fact]

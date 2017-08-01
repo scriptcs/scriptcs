@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Versioning;
 using Should;
-using Xunit.Extensions;
+using Xunit;
 
 namespace ScriptCs.Tests
 {
