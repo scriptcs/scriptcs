@@ -12,5 +12,5 @@ mono ./.nuget/NuGet.exe restore ./ScriptCs.sln
 mkdir -p artifacts/Release/bin
 msbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
 cp src/ScriptCs/bin/Release/* artifacts/Release/bin/
-mono ./packages/xunit.runner.console.2.2.0/tools/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll /xml artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.xml /html artifacts/ScriptCs.Tests.Acceptance.dll.TestResult.html
+mono ./packages/xunit.runner.console.2.2.0/tools/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll
 
