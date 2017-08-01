@@ -1,12 +1,12 @@
 ﻿using System;
 using Moq;
-using Ploeh.AutoFixture.Xunit;
 using ScriptCs.Contracts;
 using Should;
-using Xunit.Extensions;
 using System.Linq;
 using Should.Core.Assertions;
 using ScriptCs.Contracts.Exceptions;
+using Xunit;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {
@@ -63,9 +63,9 @@ namespace ScriptCs.Tests
                 const string FullPath = "C:\\script.csx";
 
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
-                
+
                 // Act / Assert
-                Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessLine(parser, context, Line, false));
+                Xunit.Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessLine(parser, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]

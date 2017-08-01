@@ -15,7 +15,7 @@ namespace ScriptCs.Tests.Acceptance
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "When I execute scriptcs with an unknown option"
-                .f(() => exception = Record.Exception(() => ScriptCsExe.Run(
+                .x(() => exception = Record.Exception(() => ScriptCsExe.Run(
                     new[]
                     {
                         "-unknownoption"
@@ -23,10 +23,10 @@ namespace ScriptCs.Tests.Acceptance
                     ScenarioDirectory.Create(scenario))));
 
             "Then scriptcs errors"
-                .f(() => exception.ShouldBeType<ScriptCsException>());
+                .x(() => exception.ShouldBeType<ScriptCsException>());
 
             "And I see an error message regarding the unknown option"
-                .f(() =>
+                .x(() =>
                 {
                     Console.WriteLine(exception);
                     exception.Message.ShouldContain("unknownoption");

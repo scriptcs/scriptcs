@@ -1,6 +1,7 @@
 using Should;
 using Xunit.Extensions;
 using ScriptCs.Contracts;
+using Xunit;
 
 namespace ScriptCs.Tests
 {

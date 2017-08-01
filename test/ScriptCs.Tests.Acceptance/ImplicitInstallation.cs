@@ -14,11 +14,11 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script which uses ScriptCs.Adder to print the sum of 1234 and 5678"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(Require<Adder>().Add(1234, 5678));"));
 
             "And a legacy packages file declaring the ScriptCs.Adder dependency"
-                .f(() =>
+                .x(() =>
                 {
                     var nugetConfig =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -44,10 +44,10 @@
                 });
 
             "When execute the script"
-                .f(() => output = ScriptCsExe.Run("foo.csx", directory));
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
 
             "Then I see 6912"
-                .f(() => output.ShouldContain("6912"));
+                .x(() => output.ShouldContain("6912"));
         }
     }
 }

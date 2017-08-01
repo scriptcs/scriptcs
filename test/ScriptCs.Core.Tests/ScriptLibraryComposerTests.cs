@@ -5,9 +5,9 @@ using System.Text;
 using ScriptCs.Contracts;
 using Moq;
 using Moq.Protected;
-using Ploeh.AutoFixture.Xunit;
-using Xunit.Extensions;
 using Should;
+using Xunit;
+using Ploeh.AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

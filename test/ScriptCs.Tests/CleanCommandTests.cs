@@ -1,9 +1,9 @@
 ﻿using Moq;
-using Ploeh.AutoFixture.Xunit;
+using Ploeh.AutoFixture.Xunit2;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
-using Xunit.Extensions;
+using Xunit;
 
 namespace ScriptCs.Tests
 {   

@@ -14,7 +14,7 @@
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
             "Given a script directory with a full population of legacy artifacts including a hello world script"
-                .f(() => directory = ScenarioDirectory.Create(scenario)
+                .x(() => directory = ScenarioDirectory.Create(scenario)
                 .WriteLine("bin/foo.txt", null)
                 .WriteLine(".cache/foo.txt", null)
                 .WriteLine("packages/foo.txt", null)
@@ -23,10 +23,10 @@
                 .WriteLine("hello.csx", @"Console.WriteLine(""Hello, World!"");"));
 
             "When I execute the script"
-                .f(() => ScriptCsExe.Run("hello.csx", directory));
+                .x(() => ScriptCsExe.Run("hello.csx", directory));
 
             "Then the artifacts are migrated"
-                .f(() =>
+                .x(() =>
                 {
                     File.Exists(directory.Map("bin/foo.txt")).ShouldBeTrue("bin/ is unchanged");
                     File.Exists(directory.Map(".cache/foo.txt")).ShouldBeFalse(".cache/ is renamed to .scriptcs_cache/");
