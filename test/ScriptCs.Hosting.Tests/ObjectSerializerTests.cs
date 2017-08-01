@@ -80,7 +80,8 @@ namespace ScriptCs.Hosting.Tests
                 var obj = new Process();
 
                 string result = null;
-                Assert.DoesNotThrow(() => result = _serializer.Serialize(obj));
+                var exception = Record.Exception(() => result = _serializer.Serialize(obj));
+                exception.ShouldBeNull();
                 Assert.Equal("Couldn't serialize a returned instance of System.Diagnostics.Process", result);
             }
 
