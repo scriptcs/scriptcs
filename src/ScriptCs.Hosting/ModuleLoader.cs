@@ -74,7 +74,7 @@ namespace ScriptCs.Hosting
             if (modulePackagesPaths == null) return;
 
             // only CSharp module needed - use fast path
-            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0]) && (string.IsNullOrWhiteSpace(extension) || extension.Equals(DefaultCSharpExtension, StringComparison.InvariantCultureIgnoreCase))) 
+            if (moduleNames.Length == 1 && DefaultCSharpModules.ContainsKey(moduleNames[0]) && (string.IsNullOrWhiteSpace(extension) || extension.Equals(DefaultCSharpExtension, StringComparison.InvariantCultureIgnoreCase)))
             {
                 _logger.Debug("Only CSharp module is needed - will skip module lookup");
                 var csharpModuleAssembly = DefaultCSharpModules[moduleNames[0]];
@@ -120,14 +120,20 @@ namespace ScriptCs.Hosting
                 .Where(m => moduleNames.Contains(m.Metadata.Name) ||
                             (extension != null && m.Metadata.Extensions != null &&
                                 (m.Metadata.Extensions.Split(',').Contains(extension))) ||
-                            m.Metadata.Autoload)
-                .Select(m => m.Value);
+                            m.Metadata.Autoload);
+
+            var invalidModuleNames = moduleNames.Where(m => !modules.Select(n => n.Metadata.Name).Contains(m));
 
             _logger.Debug("Initializing modules");
 
-            foreach (var module in modules)
+            foreach (var moduleName in invalidModuleNames)
             {
-                _logger.Debug(String.Format("Initializing module: {0}", module.GetType().FullName));
+                _logger.ErrorFormat("Unable to load module: {0}", moduleName);
+            }
+
+            foreach (var module in modules.Select(m => m.Value))
+            {
+                _logger.DebugFormat("Initializing module: {0}", module.GetType().FullName);
                 module.Initialize(config);
             }
 
