@@ -9,6 +9,7 @@ using Should;
 using Xunit;
 using Xunit.Extensions;
 using Ploeh.AutoFixture.Xunit2;
+using System.Threading;
 
 namespace ScriptCs.Tests
 {
@@ -32,7 +33,7 @@ namespace ScriptCs.Tests
                 IAssemblyResolver assemblyResolver,
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock)
             {
-                bool called = false;
+                var autoResetEvent = new AutoResetEvent(false);
 
                 assemblyUtilityMock.Setup(a => a.IsManagedAssembly(It.IsAny<string>())).Returns(true);
                 var assemblyUtility = assemblyUtilityMock.Object;
@@ -41,11 +42,12 @@ namespace ScriptCs.Tests
                     assemblyUtility,
                     resolveHandler: (o, r) =>
                     {
-                        called = true;
+                        autoResetEvent.Set();
                         return Assembly.GetExecutingAssembly();
                     }
                 );
                 Assembly.Load("test");
+                var called = autoResetEvent.WaitOne(1000);
                 called.ShouldBeTrue();
             }
         }
