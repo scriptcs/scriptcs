@@ -79,7 +79,7 @@ namespace ScriptCs
             Guard.AgainstNullArgument("composer", composer);
             Guard.AgainstNullArgument("scriptInfo", scriptInfo);
 
-            References = new AssemblyReferences(DefaultReferences);
+            References = new AssemblyReferences(new[] { GetAssemblyFromName("System.Runtime") }, DefaultReferences);
             Namespaces = new ReadOnlyCollection<string>(DefaultNamespaces);
             FileSystem = fileSystem;
             FilePreProcessor = filePreProcessor;
@@ -165,7 +165,7 @@ namespace ScriptCs
 
             ScriptEngine.FileName = Path.GetFileName(path);
             ScriptInfo.ScriptPath = Path.GetFullPath(path);
-            
+
             return EngineExecute(Path.GetDirectoryName(path), scriptArgs, result);
         }
 
@@ -247,6 +247,18 @@ namespace ScriptCs
             }
 
             return null;
+        }
+
+        private static Assembly GetAssemblyFromName(string assemblyName)
+        {
+            try
+            {
+                return Assembly.Load(new AssemblyName(assemblyName));
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
