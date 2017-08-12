@@ -26,7 +26,7 @@ namespace ScriptCs.Tests
 
         public class TheConstructor
         {
-            [Theory, ScriptCsAutoData]
+            [Theory(Skip = "AppDomain events are flaky here - needs to be reviewed"), ScriptCsAutoData]
             public void ShouldSubscribeToTheResolveEvent(
                 TestLogProvider logProvider,
                 IFileSystem fileSystem,
