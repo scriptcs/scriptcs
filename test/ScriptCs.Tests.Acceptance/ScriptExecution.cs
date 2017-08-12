@@ -67,6 +67,22 @@ namespace ScriptCs.Tests.Acceptance
         }
 
         [Scenario]
+        public static void ScriptingEngineShouldSupportCSharp71(ScenarioDirectory directory, string output)
+        {
+            var scenario = MethodBase.GetCurrentMethod().GetFullName();
+
+            "Given a script which uses C# 7.1 language feature - named tuples"
+                .x(() => directory = ScenarioDirectory.Create(scenario)
+                    .WriteLine("foo.csx", @"var x = 1; var y = 2; var tuple = (x,y); Console.WriteLine(""Sum="" + (tuple.x + tuple.y))"));
+
+            "When I execute the script"
+                .x(() => output = ScriptCsExe.Run("foo.csx", directory));
+
+            "Then I see the output from the named tuples."
+                .x(() => output.ShouldContain("Sum=3"));
+        }
+
+        [Scenario]
         public static void ScriptCanAccessEnv(ScenarioDirectory directory, string output )
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();

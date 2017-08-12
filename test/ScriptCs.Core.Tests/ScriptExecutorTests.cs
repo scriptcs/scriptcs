@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -195,15 +195,8 @@ namespace ScriptCs.Tests
                 scriptExecutor.EngineExecute("", new string[] {}, new FilePreProcessorResult());
 
                 // assert
-                scriptEngine.Verify(
-                    e => e.Execute(
-                        It.IsAny<string>(),
-                        It.IsAny<string[]>(),
-                        It.Is<AssemblyReferences>(x => x.Paths
-                            .SequenceEqual(defaultReferences.Union(explicitReferences.Union(destPaths)))),
-                        It.IsAny<IEnumerable<string>>(),
-                        It.IsAny<ScriptPackSession>()),
-                    Times.Once());
+                var expectedReferencePaths = explicitReferences.Union(destPaths).Distinct();
+                expectedReferencePaths.All(path => scriptExecutor.References.Paths.Contains(path)).ShouldBeTrue();
             }
 
             [Theory, ScriptCsAutoData]
@@ -656,7 +649,6 @@ namespace ScriptCs.Tests
                 executor.References.Assemblies.ShouldContain(assembly1);
                 executor.References.Assemblies.ShouldContain(assembly2);
                 executor.References.Assemblies.ShouldContain(assembly3);
-                executor.References.Assemblies.Count().ShouldEqual(3);
             }
         }
 
@@ -678,7 +670,6 @@ namespace ScriptCs.Tests
                 executor.References.Assemblies.ShouldNotContain(assembly1);
                 executor.References.Assemblies.ShouldNotContain(assembly2);
                 executor.References.Assemblies.ShouldContain(assembly3);
-                executor.References.Assemblies.Count().ShouldEqual(1);
             }
         }
     }
