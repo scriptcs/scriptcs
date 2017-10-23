@@ -97,13 +97,13 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                ((SessionState<ScriptState>)scriptPackSession.State[CommonScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(1);
+                ((SessionState<ScriptState>)scriptPackSession.State[CommonScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(2);
             }
 
             [Theory, ScriptCsAutoData]
@@ -116,7 +116,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -135,7 +135,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -192,7 +192,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -211,7 +211,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -230,7 +230,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -248,7 +248,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -267,7 +267,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -286,7 +286,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
                 engine.FileName = "test.csx";
 
                 // Act
@@ -312,7 +312,7 @@ namespace ScriptCs.Tests
                 var engine = new CSharpScriptEngine(scriptHostFactory.Object, new TestLogProvider());
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
+                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -334,7 +334,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var theNumber = 42; //this should compile";
 
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns(new ScriptHost(manager.Object, null));
