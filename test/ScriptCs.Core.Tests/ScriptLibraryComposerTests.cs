@@ -46,8 +46,7 @@ namespace ScriptCs.Tests
                 [Frozen] TestLogProvider logProvider,
                 [Frozen] Mock<IPackageContainer> packageContainer,
                 ScriptLibraryComposer composer,
-                Mock<IPackageReference> reference,
-                Mock<IPackageObject> package)
+                Mock<IPackageReference> reference)
             {
                 packageContainer.Setup(c => c.FindPackage(It.IsAny<string>(), It.IsAny<IPackageReference>()))
                     .Returns((IPackageObject)null);

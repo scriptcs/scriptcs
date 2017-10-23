@@ -41,7 +41,6 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldReturnAssembliesFromBinFolder(
                 [Frozen] Mock<IFileSystem> fileSystemMock,
-                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock,
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
                 AssemblyResolver resolver
             )
@@ -67,7 +66,6 @@ namespace ScriptCs.Tests
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnNonManagedAssemblies(
                 [Frozen] Mock<IFileSystem> fileSystemMock,
-                [Frozen] Mock<IPackageAssemblyResolver> packageAssemblyResolverMock,
                 [Frozen] Mock<IAssemblyUtility> assemblyUtilityMock,
                 AssemblyResolver resolver
             )

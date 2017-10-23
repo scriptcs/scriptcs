@@ -89,7 +89,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddNewReferencesIfTheyAreProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -109,7 +108,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnAScriptResult(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -129,7 +127,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnCompileExceptionIfCodeDoesNotCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -147,10 +144,8 @@ namespace ScriptCs.Tests
                 result.CompileExceptionInfo.ShouldNotBeNull();
             }
 
-            //todo: filip: this feature is not supported in Roslyn 1.0.0-rc2: see https://github.com/dotnet/roslyn/issues/1012
-            //[Theory, ScriptCsAutoData]
+            [Theory(Skip = "this feature is not supported in Roslyn 1.0.0-rc2: see https://github.com/dotnet/roslyn/issues/1012"), ScriptCsAutoData]
             public void ShouldReturnInvalidNamespacesIfCS0241Encountered(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -189,7 +184,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnCompileExceptionIfCodeDoesCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -209,7 +203,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnExecuteExceptionIfCodeExecutionThrowsException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -229,7 +222,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnExecuteExceptionIfCodeExecutionDoesNotThrowAnException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -249,7 +241,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnReturnValueIfCodeExecutionReturnsValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -268,7 +259,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnReturnValueIfCodeExecutionDoesNotReturnValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -286,11 +276,8 @@ namespace ScriptCs.Tests
                 result.ReturnValue.ShouldBeNull();
             }
 
-
-
             [Theory, ScriptCsAutoData]
             public void ShouldNotMarkSubmissionsAsIncompleteWhenRunningScript(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
