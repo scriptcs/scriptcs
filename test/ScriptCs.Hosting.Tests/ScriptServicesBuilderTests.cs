@@ -110,7 +110,7 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldFindAllModulesInTheFileSystem([Frozen] Mock<ITypeResolver> typeResolver, [Frozen] Mock<IModuleLoader> moduleLoader, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IInitializationServices> initializationServices, ScriptServicesBuilder builder)
+            public void ShouldFindAllModulesInTheFileSystem([Frozen] Mock<ITypeResolver> typeResolver, [Frozen] Mock<IModuleLoader> moduleLoader, [Frozen] Mock<IFileSystem> fileSystem, [Frozen] Mock<IInitializationServices> initializationServices)
             {
                 typeResolver.Setup(r => r.ResolveType("Mono.Runtime")).Returns((Type)null);
                 fileSystem.SetupGet(fs => fs.GlobalFolder).Returns(@"c:\modules");

@@ -64,7 +64,7 @@ namespace ScriptCs.Tests
                 fileSystem.Setup(x => x.GetFullPath(RelativePath)).Returns(FullPath);
 
                 // Act / Assert
-                Xunit.Assert.Throws(typeof(InvalidDirectiveUseException), () => processor.ProcessLine(parser.Object, context, Line, false));
+                Xunit.Assert.Throws<InvalidDirectiveUseException>(() => processor.ProcessLine(parser.Object, context, Line, false));
             }
 
             [Theory, ScriptCsAutoData]

@@ -89,7 +89,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldAddNewReferencesIfTheyAreProvided(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -98,18 +97,17 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
 
                 // Assert
-                ((SessionState<ScriptState>)scriptPackSession.State[CommonScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(1);
+                ((SessionState<ScriptState>)scriptPackSession.State[CommonScriptEngine.SessionKey]).References.Paths.Count().ShouldEqual(2);
             }
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnAScriptResult(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpTestScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -118,7 +116,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -129,7 +127,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnCompileExceptionIfCodeDoesNotCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -138,7 +135,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -147,10 +144,8 @@ namespace ScriptCs.Tests
                 result.CompileExceptionInfo.ShouldNotBeNull();
             }
 
-            //todo: filip: this feature is not supported in Roslyn 1.0.0-rc2: see https://github.com/dotnet/roslyn/issues/1012
-            //[Theory, ScriptCsAutoData]
+            [Theory(Skip = "this feature is not supported in Roslyn 1.0.0-rc2: see https://github.com/dotnet/roslyn/issues/1012"), ScriptCsAutoData]
             public void ShouldReturnInvalidNamespacesIfCS0241Encountered(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -189,7 +184,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnCompileExceptionIfCodeDoesCompile(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -198,7 +192,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -209,7 +203,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnExecuteExceptionIfCodeExecutionThrowsException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -218,7 +211,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -229,7 +222,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnExecuteExceptionIfCodeExecutionDoesNotThrowAnException(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -238,7 +230,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -249,7 +241,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldReturnReturnValueIfCodeExecutionReturnsValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -257,7 +248,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -268,7 +259,6 @@ namespace ScriptCs.Tests
 
             [Theory, ScriptCsAutoData]
             public void ShouldNotReturnReturnValueIfCodeExecutionDoesNotReturnValue(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -277,7 +267,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -286,11 +276,8 @@ namespace ScriptCs.Tests
                 result.ReturnValue.ShouldBeNull();
             }
 
-
-
             [Theory, ScriptCsAutoData]
             public void ShouldNotMarkSubmissionsAsIncompleteWhenRunningScript(
-                [Frozen] Mock<IScriptHostFactory> scriptHostFactory,
                 [NoAutoProperties] CSharpScriptEngine engine,
                 ScriptPackSession scriptPackSession)
             {
@@ -299,7 +286,7 @@ namespace ScriptCs.Tests
 
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
                 engine.FileName = "test.csx";
 
                 // Act
@@ -325,7 +312,7 @@ namespace ScriptCs.Tests
                 var engine = new CSharpScriptEngine(scriptHostFactory.Object, new TestLogProvider());
                 var session = new SessionState<ScriptState> { Session = CSharpScript.RunAsync("").GetAwaiter().GetResult() };
                 scriptPackSession.State[CommonScriptEngine.SessionKey] = session;
-                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System" });
+                var refs = new AssemblyReferences(new[] { Assembly.GetExecutingAssembly() }, new[] { "System", "System.Runtime" });
 
                 // Act
                 var result = engine.Execute(Code, new string[0], refs, Enumerable.Empty<string>(), scriptPackSession);
@@ -347,7 +334,7 @@ namespace ScriptCs.Tests
                 // Arrange
                 const string Code = "var theNumber = 42; //this should compile";
 
-                var refs = new AssemblyReferences(new[] { "System" });
+                var refs = new AssemblyReferences(new[] { "System", "System.Runtime" });
 
                 scriptHostFactory.Setup(s => s.CreateScriptHost(It.IsAny<IScriptPackManager>(), It.IsAny<string[]>()))
                     .Returns(new ScriptHost(manager.Object, null));
