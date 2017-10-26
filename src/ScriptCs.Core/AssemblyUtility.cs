@@ -19,19 +19,10 @@ namespace ScriptCs
             }
         }
 
-        public Assembly LoadFile(string path)
-        {
-            return Assembly.LoadFile(path);
-        }
+        public Assembly LoadFile(string path) => Assembly.LoadFile(path);
 
-        public Assembly Load(AssemblyName assemblyRef)
-        {
-            return Assembly.Load(assemblyRef);
-        }
+        public Assembly Load(AssemblyName assemblyRef) => Assembly.Load(assemblyRef);
 
-        public AssemblyName GetAssemblyName(string path)
-        {
-            return AssemblyName.GetAssemblyName(path);
-        }
+        public AssemblyName GetAssemblyName(string path) => AssemblyName.GetAssemblyName(path);
     }
 }

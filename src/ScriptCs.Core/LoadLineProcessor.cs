@@ -19,15 +19,9 @@ namespace ScriptCs
             _fileSystem = fileSystem;
         }
 
-        protected override string DirectiveName
-        {
-            get { return "load"; }
-        }
+        protected override string DirectiveName => "load";
 
-        protected override BehaviorAfterCode BehaviorAfterCode
-        {
-            get { return BehaviorAfterCode.Throw; }
-        }
+        protected override BehaviorAfterCode BehaviorAfterCode => BehaviorAfterCode.Throw;
 
         protected override bool ProcessLine(IFileParser parser, FileParserContext context, string line)
         {

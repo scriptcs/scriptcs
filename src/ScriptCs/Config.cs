@@ -20,8 +20,8 @@ namespace ScriptCs
 
         public string[] Modules
         {   
-            get { return _modules ?? new string[0]; }
-            set { _modules = value; }
+            get => _modules ?? new string[0];
+            set => _modules = value;
         }
 
         public string OutputFile { get; set; }

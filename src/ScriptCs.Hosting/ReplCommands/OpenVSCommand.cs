@@ -38,19 +38,10 @@ namespace ScriptCs.Hosting.ReplCommands
             System.Diagnostics.Process.Start(launcher);
         }
 
-        protected internal virtual PlatformID PlatformID
-        {
-            get { return Environment.OSVersion.Platform; }
-        }
+        protected internal virtual PlatformID PlatformID => Environment.OSVersion.Platform;
 
-        public string Description
-        {
-            get { return "Opens a script to edit/debug in Visual Studio"; }
-        }
+        public string Description => "Opens a script to edit/debug in Visual Studio";
 
-        public string CommandName
-        {
-            get { return "openvs"; }
-        }
+        public string CommandName => "openvs";
     }
 }

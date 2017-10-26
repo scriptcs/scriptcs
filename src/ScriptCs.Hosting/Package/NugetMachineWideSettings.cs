@@ -14,12 +14,6 @@ namespace ScriptCs.Hosting.Package
             _settings = new Lazy<IEnumerable<NuGet.Settings>>(() => NuGet.Settings.LoadMachineWideSettings(new PhysicalFileSystem(baseDirectory)));
         }
 
-        public IEnumerable<Settings> Settings
-        {
-            get
-            {
-                return _settings.Value;
-            }
-        }
+        public IEnumerable<Settings> Settings => _settings.Value;
     }
 }

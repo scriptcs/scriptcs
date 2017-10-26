@@ -37,8 +37,8 @@ namespace ScriptCs.Engine.Roslyn
 
         public string BaseDirectory
         {
-            get { return ScriptMetadataResolver.BaseDirectory; }
-            set { ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value); }
+            get => ScriptMetadataResolver.BaseDirectory;
+            set => ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value);
         }
 
         public string CacheDirectory { get; set; }
@@ -51,12 +51,12 @@ namespace ScriptCs.Engine.Roslyn
         {
             if (scriptPackSession == null)
             {
-                throw new ArgumentNullException("scriptPackSession");
+                throw new ArgumentNullException(nameof(scriptPackSession));
             }
 
             if (references == null)
             {
-                throw new ArgumentNullException("references");
+                throw new ArgumentNullException(nameof(references));
             }
 
             Log.Debug("Starting to create execution components");

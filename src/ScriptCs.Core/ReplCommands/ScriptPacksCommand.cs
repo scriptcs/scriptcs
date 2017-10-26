@@ -17,15 +17,9 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
-        public string Description
-        {
-            get { return "Displays information about script packs available in the REPL session"; }
-        }
+        public string Description => "Displays information about script packs available in the REPL session";
 
-        public string CommandName
-        {
-            get { return "scriptpacks"; }
-        }
+        public string CommandName => "scriptpacks";
 
         public object Execute(IRepl repl, object[] args)
         {

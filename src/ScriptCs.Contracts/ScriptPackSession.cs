@@ -37,20 +37,11 @@ namespace ScriptCs.Contracts
             }
         }
 
-        public virtual IEnumerable<IScriptPackContext> Contexts
-        {
-            get { return _contexts; }
-        }
+        public virtual IEnumerable<IScriptPackContext> Contexts => _contexts;
 
-        public IEnumerable<string> References
-        {
-            get { return _references; }
-        }
+        public IEnumerable<string> References => _references;
 
-        public IEnumerable<string> Namespaces
-        {
-            get { return _namespaces; }
-        }
+        public IEnumerable<string> Namespaces => _namespaces;
 
         public void InitializePacks()
         {
@@ -68,15 +59,9 @@ namespace ScriptCs.Contracts
             }
         }
 
-        public IDictionary<string, object> State
-        {
-            get { return _state; }
-        }
+        public IDictionary<string, object> State => _state;
 
-        public string[] ScriptArgs
-        {
-            get { return _scriptArgs; }
-        }
+        public string[] ScriptArgs => _scriptArgs;
 
         void IScriptPackSession.AddReference(string assemblyDisplayNameOrPath)
         {

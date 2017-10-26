@@ -107,9 +107,6 @@ namespace ScriptCs.Command
             }
         }
 
-        public string[] ScriptArgs
-        {
-            get { return this._scriptArgs; }
-        }
+        public string[] ScriptArgs => this._scriptArgs;
     }
 }

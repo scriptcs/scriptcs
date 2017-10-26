@@ -89,14 +89,11 @@ namespace ScriptCs
 
         public virtual string CurrentDirectory
         {
-            get { return Environment.CurrentDirectory; }
-            set { Environment.CurrentDirectory = value; }
+            get => Environment.CurrentDirectory;
+            set => Environment.CurrentDirectory = value;
         }
 
-        public virtual string NewLine
-        {
-            get { return Environment.NewLine; }
-        }
+        public virtual string NewLine => Environment.NewLine;
 
         public virtual DateTime GetLastWriteTime(string file)
         {
@@ -145,14 +142,8 @@ namespace ScriptCs
             File.WriteAllBytes(filePath, bytes);
         }
 
-        public virtual string GlobalFolder
-        {
-            get
-            {
-                return Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
-            }
-        }
+        public virtual string GlobalFolder => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "scriptcs");
 
         public virtual string GetWorkingDirectory(string path)
         {
@@ -182,47 +173,20 @@ namespace ScriptCs
         }
 
 
-        public virtual string TempPath
-        {
-            get
-            {
-                return Path.GetTempPath();
-            }
-        }
+        public virtual string TempPath => Path.GetTempPath();
 
-        public virtual string HostBin
-        {
-            get { return AppDomain.CurrentDomain.BaseDirectory; }
-        }
+        public virtual string HostBin => AppDomain.CurrentDomain.BaseDirectory;
 
-        public virtual string BinFolder
-        {
-            get { return "scriptcs_bin"; }
-        }
+        public virtual string BinFolder => "scriptcs_bin";
 
-        public virtual string DllCacheFolder
-        {
-            get { return ".scriptcs_cache"; }
-        }
+        public virtual string DllCacheFolder => ".scriptcs_cache";
 
-        public virtual string PackagesFile
-        {
-            get { return "scriptcs_packages.config"; }
-        }
+        public virtual string PackagesFile => "scriptcs_packages.config";
 
-        public virtual string PackagesFolder
-        {
-            get { return "scriptcs_packages"; }
-        }
+        public virtual string PackagesFolder => "scriptcs_packages";
 
-        public virtual string NugetFile
-        {
-            get { return "scriptcs_nuget.config"; }
-        }
+        public virtual string NugetFile => "scriptcs_nuget.config";
 
-        public virtual string GlobalOptsFile
-        {
-            get { return Path.Combine(GlobalFolder, Constants.ConfigFilename); }
-        }
+        public virtual string GlobalOptsFile => Path.Combine(GlobalFolder, Constants.ConfigFilename);
     }
 }

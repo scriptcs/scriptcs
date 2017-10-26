@@ -61,15 +61,9 @@
             }
         }
 
-        public IEnumerable<Assembly> Assemblies
-        {
-            get { return _assemblies.Values.ToArray(); }
-        }
+        public IEnumerable<Assembly> Assemblies => _assemblies.Values.ToArray();
 
-        public IEnumerable<string> Paths
-        {
-            get { return _paths.Values.ToArray(); }
-        }
+        public IEnumerable<string> Paths => _paths.Values.ToArray();
 
         public AssemblyReferences Union(AssemblyReferences references)
         {

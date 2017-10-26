@@ -12,10 +12,7 @@ namespace ScriptCs.Hosting
         private readonly ILog _log;
         private readonly IDictionary<Type, object> _overrides;
 
-        public ILogProvider LogProvider
-        {
-            get { return _logProvider; }
-        }
+        public ILogProvider LogProvider => _logProvider;
 
         protected ScriptServicesRegistration(ILogProvider logProvider, IDictionary<Type, object> overrides)
         {
@@ -81,15 +78,9 @@ namespace ScriptCs.Hosting
 
         private IContainer _container;
 
-        public IContainer Container
-        {
-            get { return _container ?? (_container = CreateContainer()); }
-        }
+        public IContainer Container => _container ?? (_container = CreateContainer());
 
-        protected IDictionary<Type, object> Overrides
-        {
-            get { return _overrides; }
-        }
+        protected IDictionary<Type, object> Overrides => _overrides;
 
         protected abstract IContainer CreateContainer();
     }

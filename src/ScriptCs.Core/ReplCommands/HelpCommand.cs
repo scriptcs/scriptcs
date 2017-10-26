@@ -15,15 +15,9 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
-        public string Description
-        {
-            get { return "Shows this help."; }
-        }
+        public string Description => "Shows this help.";
 
-        public string CommandName
-        {
-            get { return "help"; }
-        }
+        public string CommandName => "help";
 
         public object Execute(IRepl repl, object[] args)
         {

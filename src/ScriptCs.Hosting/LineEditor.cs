@@ -306,17 +306,11 @@ namespace Mono.Terminal
 
         string Prompt
         {
-            get { return prompt; }
-            set { prompt = value; }
+            get => prompt;
+            set => prompt = value;
         }
 
-        int LineCount
-        {
-            get
-            {
-                return (shown_prompt.Length + rendered_text.Length) / Console.WindowWidth;
-            }
-        }
+        int LineCount => (shown_prompt.Length + rendered_text.Length) / Console.WindowWidth;
 
         void ForceCursor(int newpos)
         {

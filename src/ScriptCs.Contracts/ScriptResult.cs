@@ -57,13 +57,7 @@ namespace ScriptCs.Contracts
 
         public ExceptionDispatchInfo CompileExceptionInfo { get; private set; }
 
-        public IEnumerable<string> InvalidNamespaces
-        {
-            get
-            {
-                return _invalidNamespaces.ToArray();
-            }
-        }
+        public IEnumerable<string> InvalidNamespaces => _invalidNamespaces.ToArray();
 
         public bool IsCompleteSubmission { get; private set; }
     }
