@@ -23,7 +23,7 @@ namespace ScriptCs.Contracts
                 {
                     throw new InvalidDirectiveUseException(string.Format("Encountered directive '{0}' after the start of code. Please move this directive to the beginning of the file.", DirectiveString));
                 }
-                else if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Ignore)
+                if (BehaviorAfterCode == Contracts.BehaviorAfterCode.Ignore)
                 {
                     return true;
                 }

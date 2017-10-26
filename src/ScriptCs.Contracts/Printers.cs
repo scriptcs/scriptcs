@@ -24,9 +24,7 @@ namespace ScriptCs.Contracts
             {
                 return printer(obj);
             }
-            else {
-                return _serializer.Serialize(obj);
-            }
+            return _serializer.Serialize(obj);
         }
 
         public string GetStringFor(object obj)
