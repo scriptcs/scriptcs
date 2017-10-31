@@ -5,15 +5,9 @@ namespace ScriptCs.ReplCommands
 {
     public class ReferencesCommand : IReplCommand
     {
-        public string CommandName
-        {
-            get { return "references"; }
-        }
+        public string CommandName => "references";
 
-        public string Description
-        {
-            get { return "Displays a list of assemblies referenced from the REPL context."; }
-        }
+        public string Description => "Displays a list of assemblies referenced from the REPL context.";
 
         public object Execute(IRepl repl, object[] args)
         {

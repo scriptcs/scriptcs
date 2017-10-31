@@ -17,15 +17,9 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
-        public string Description
-        {
-            get { return "Allows you to alias a command with a custom name"; }
-        }
+        public string Description => "Allows you to alias a command with a custom name";
 
-        public string CommandName
-        {
-            get { return "alias"; }
-        }
+        public string CommandName => "alias";
 
         public object Execute(IRepl repl, object[] args)
         {
@@ -51,8 +45,8 @@ namespace ScriptCs.ReplCommands
                 return null;
             }
 
-            IReplCommand command;
-            if (!repl.Commands.TryGetValue(commandName, out command))
+   
+            if (!repl.Commands.TryGetValue(commandName, out var command))
             {
                 var message = string.Format(
                     CultureInfo.InvariantCulture, "There is no command named or aliased \"{0}\".", alias);

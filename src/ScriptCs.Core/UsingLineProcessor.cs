@@ -34,10 +34,7 @@ namespace ScriptCs
             return true;
         }
 
-        private static bool IsUsingLine(string line)
-        {
-            return line.Trim(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";") && !line.Contains("=");
-        }
+        private static bool IsUsingLine(string line) => line.Trim(' ').StartsWith(UsingString) && !line.Contains("{") && line.Contains(";") && !line.Contains("=");
 
         private static string GetNamespace(string line)
         {

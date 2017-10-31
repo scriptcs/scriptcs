@@ -42,7 +42,7 @@ namespace ScriptCs
             {
                 script = content[0];
             }
-            else if (content.Count() > 1)
+            else if (content.Length > 1)
             {
                 _logger.WarnFormat("Script Libraries in '{0}' ignored due to multiple Main files being present", package.FullName);
                 return null;
@@ -56,10 +56,7 @@ namespace ScriptCs
             return script;
         }
 
-        public virtual string ScriptLibrariesFile
-        {
-            get { return "ScriptLibraries.csx"; }
-        }
+        public virtual string ScriptLibrariesFile => "ScriptLibraries.csx";
 
         public void Compose(string workingDirectory, StringBuilder builder = null)
         {

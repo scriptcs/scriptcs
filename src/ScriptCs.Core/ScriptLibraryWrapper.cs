@@ -11,13 +11,7 @@ namespace ScriptCs
     {
         private static IScriptHost _scriptHost;
 
-        internal static IScriptHost ScriptHost
-        {
-            get
-            {
-                return _scriptHost;
-            }
-        }
+        internal static IScriptHost ScriptHost => _scriptHost;
 
         public static void SetHost(IScriptHost scriptHost)
         {
@@ -29,9 +23,6 @@ namespace ScriptCs
             return _scriptHost.Require<T>();
         }
 
-        public static IScriptEnvironment Env
-        {
-            get { return _scriptHost.Env; }
-        }
+        public static IScriptEnvironment Env => _scriptHost.Env;
     }
 }

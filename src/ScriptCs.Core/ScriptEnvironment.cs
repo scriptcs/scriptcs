@@ -38,15 +38,9 @@ namespace ScriptCs
             _console.WriteLine(_printers.GetStringFor<T>(o));
         }
 
-        public string ScriptPath
-        {
-            get { return _scriptInfo.ScriptPath; }
-        }
+        public string ScriptPath => _scriptInfo.ScriptPath;
 
-        public string[] LoadedScripts
-        {
-            get { return _scriptInfo.LoadedScripts.ToArray(); }
-        }
+        public string[] LoadedScripts => _scriptInfo.LoadedScripts.ToArray();
 
         public Assembly ScriptAssembly { get; private set; }
 

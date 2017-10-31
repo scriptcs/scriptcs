@@ -51,13 +51,10 @@ namespace ScriptCs.Hosting
 
         public ConsoleColor ForegroundColor
         {
-            get { return Console.ForegroundColor; }
-            set { Console.ForegroundColor = value; }
+            get => Console.ForegroundColor;
+            set => Console.ForegroundColor = value;
         }
 
-        public int Width
-        {
-            get { return Console.BufferWidth; }
-        }
+        public int Width => Console.BufferWidth;
     }
 }

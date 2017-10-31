@@ -29,15 +29,9 @@ namespace ScriptCs.ReplCommands
             _installationProvider = installationProvider;
         }
 
-        public string Description
-        {
-            get { return "Installs a Nuget package. I.e. :install <package> <version>"; }
-        }
+        public string Description => "Installs a Nuget package. I.e. :install <package> <version>";
 
-        public string CommandName
-        {
-            get { return "install"; }
-        }
+        public string CommandName => "install";
 
         public object Execute(IRepl repl, object[] args)
         {

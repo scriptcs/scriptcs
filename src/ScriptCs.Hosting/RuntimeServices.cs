@@ -45,10 +45,7 @@ namespace ScriptCs.Hosting
             _scriptName = scriptName;
         }
 
-        internal bool InitDirectoryCatalog
-        {
-            get { return _initDirectoryCatalog; }
-        }
+        internal bool InitDirectoryCatalog => _initDirectoryCatalog;
 
         protected override IContainer CreateContainer()
         {

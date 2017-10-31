@@ -36,15 +36,9 @@ namespace ScriptCs.Hosting
                 Log(name, logLevel, messageFunc, exception, formatParameters);
         }
 
-        public IDisposable OpenNestedContext(string message)
-        {
-            return disposable;
-        }
+        public IDisposable OpenNestedContext(string message) => disposable;
 
-        public IDisposable OpenMappedContext(string key, string value)
-        {
-            return disposable;
-        }
+        public IDisposable OpenMappedContext(string key, string value) => disposable;
 
         public bool Log(
             string name, LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)

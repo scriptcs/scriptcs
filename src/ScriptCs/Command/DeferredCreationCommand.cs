@@ -13,9 +13,6 @@ namespace ScriptCs.Command
             _factory = factory;
         }
 
-        public CommandResult Execute()
-        {
-            return _factory().Execute();
-        }
+        public CommandResult Execute() => _factory().Execute();
     }
 }

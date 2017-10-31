@@ -14,15 +14,9 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
-        public string Description
-        {
-            get { return "Displays the current working directory."; }
-        }
+        public string Description => "Displays the current working directory.";
 
-        public string CommandName
-        {
-            get { return "cwd"; }
-        }
+        public string CommandName => "cwd";
 
         public object Execute(IRepl repl, object[] args)
         {

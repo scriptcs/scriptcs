@@ -6,15 +6,9 @@ namespace ScriptCs.ReplCommands
     {
         private readonly IConsole _console;
 
-        public string Description
-        {
-            get { return "Exits the REPL"; }
-        }
+        public string Description => "Exits the REPL";
 
-        public string CommandName
-        {
-            get { return "exit"; }
-        }
+        public string CommandName => "exit";
 
         public ExitCommand(IConsole console)
         {

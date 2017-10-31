@@ -9,9 +9,6 @@ namespace ScriptCs
         {
         }
 
-        public string ScriptLibrariesFile
-        {
-            get { return string.Empty; }
-        }
+        public string ScriptLibrariesFile => string.Empty;
     }
 }

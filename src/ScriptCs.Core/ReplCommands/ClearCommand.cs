@@ -6,10 +6,7 @@ namespace ScriptCs.ReplCommands
     {
         private readonly IConsole _console;
 
-        public string Description
-        {
-            get { return "Clears the console window."; }
-        }
+        public string Description => "Clears the console window.";
 
         public ClearCommand(IConsole console)
         {
@@ -18,10 +15,7 @@ namespace ScriptCs.ReplCommands
             _console = console;
         }
 
-        public string CommandName
-        {
-            get { return "clear"; }
-        }
+        public string CommandName => "clear";
 
         public object Execute(IRepl repl, object[] args)
         {

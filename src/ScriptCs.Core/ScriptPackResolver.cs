@@ -12,9 +12,6 @@ namespace ScriptCs
             _scriptPacks = scriptPacks;
         }
 
-        public IEnumerable<IScriptPack> GetPacks()
-        {
-            return _scriptPacks;
-        }
+        public IEnumerable<IScriptPack> GetPacks() => _scriptPacks;
     }
 }

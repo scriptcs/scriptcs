@@ -49,10 +49,7 @@ namespace ScriptCs.Command
             _composer = composer;
         }
 
-        public string[] ScriptArgs
-        {
-            get { return _scriptArgs; }
-        }
+        public string[] ScriptArgs => _scriptArgs;
 
         public CommandResult Execute()
         {

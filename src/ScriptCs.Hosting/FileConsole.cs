@@ -59,14 +59,11 @@ namespace ScriptCs.Hosting
 
         public ConsoleColor ForegroundColor
         {
-            get { return _innerConsole.ForegroundColor; }
-            set { _innerConsole.ForegroundColor = value; }
+            get => _innerConsole.ForegroundColor;
+            set => _innerConsole.ForegroundColor = value;
         }
 
-        public int Width
-        {
-            get { return int.MaxValue; }
-        }
+        public int Width => int.MaxValue;
 
         private void Append(string text)
         {

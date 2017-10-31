@@ -138,9 +138,6 @@ namespace ScriptCs.Hosting
 
         public IConsole ConsoleInstance { get; private set; }
 
-        internal IRuntimeServices RuntimeServices
-        {
-            get { return _runtimeServices; }
-        }
+        internal IRuntimeServices RuntimeServices => _runtimeServices;
     }
 }
