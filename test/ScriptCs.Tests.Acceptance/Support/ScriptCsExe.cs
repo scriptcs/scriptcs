@@ -133,7 +133,7 @@
 #endif
 
             var exe = Path.GetFullPath(
-                Path.Combine("..", "..", "..", "..", "src", "ScriptCs", "bin", config, "scriptcs.exe"));
+                Path.Combine("..", "..", "..", "..", "..", "src", "ScriptCs", "bin", config, "net461", "scriptcs.exe"));
 
             var info = new ProcessStartInfo
             {
