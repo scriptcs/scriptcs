@@ -1,132 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6049E205-8B5F-4080-B023-70600E51FD64}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ScriptCs.Contracts</RootNamespace>
-    <AssemblyName>ScriptCs.Contracts</AssemblyName>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <WarningsNotAsErrors>414</WarningsNotAsErrors>
-    <LangVersion>7</LangVersion>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;LIBLOG_PROVIDERS_ONLY</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;LIBLOG_PROVIDERS_ONLY</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\..\ScriptCs.ruleset</CodeAnalysisRuleSet>
+    <TargetFramework>net461</TargetFramework>
+    <Title>ScriptCs.Contracts</Title>
+    <Description>This assembly contains the components necessary to create script packs for scriptcs.</Description>
+    <DefineConstants>LIBLOG_PROVIDERS_ONLY</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
-    </Compile>
-    <Compile Include="AssemblyReferences.cs" />
-    <Compile Include="BehaviorAfterCode.cs" />
-    <Compile Include="..\ScriptCs.Core\Guard.cs">
-      <Link>Guard.cs</Link>
-    </Compile>
-    <Compile Include="DefaultLogProvider.cs" />
-    <Compile Include="FileSystemExtensions.cs" />
-    <Compile Include="IAppDomainAssemblyResolver.cs" />
-    <Compile Include="IDirectiveLineProcessor.cs" />
-    <Compile Include="DirectiveLineProcessor.cs" />
-    <Compile Include="Exceptions\InvalidDirectiveUseException.cs" />
-    <Compile Include="FileParserContext.cs" />
-    <Compile Include="FilePreProcessorResult.cs" />
-    <Compile Include="IAssemblyResolver.cs" />
-    <Compile Include="IAssemblyUtility.cs" />
-    <Compile Include="IConsole.cs" />
-    <Compile Include="IFileParser.cs" />
-    <Compile Include="IFilePreProcessor.cs" />
-    <Compile Include="IFileSystem.cs" />
-    <Compile Include="IFileSystemMigrator.cs" />
-    <Compile Include="IInstallationProvider.cs" />
-    <Compile Include="ILineProcessor.cs" />
-    <Compile Include="IModule.cs" />
-    <Compile Include="IModuleConfiguration.cs" />
-    <Compile Include="IModuleMetadata.cs" />
-    <Compile Include="IObjectSerializer.cs" />
-    <Compile Include="IPackageAssemblyResolver.cs" />
-    <Compile Include="IPackageContainer.cs" />
-    <Compile Include="IPackageInstaller.cs" />
-    <Compile Include="IPackageObject.cs" />
-    <Compile Include="IPackageReference.cs" />
-    <Compile Include="IRepl.cs" />
-    <Compile Include="IScriptEnvironment.cs" />
-    <Compile Include="IScriptInfo.cs" />
-    <Compile Include="IScriptLibraryComposer.cs" />
-    <Compile Include="IReplCommand.cs" />
-    <Compile Include="IReplEngine.cs" />
-    <Compile Include="IScriptEngine.cs" />
-    <Compile Include="IScriptExecutor.cs" />
-    <Compile Include="IScriptHost.cs" />
-    <Compile Include="IScriptHostFactory.cs" />
-    <Compile Include="IScriptPack.cs" />
-    <Compile Include="IScriptPackContext.cs" />
-    <Compile Include="IScriptPackManager.cs" />
-    <Compile Include="IScriptPackResolver.cs" />
-    <Compile Include="IScriptPackSession.cs" />
-    <Compile Include="..\..\common\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\common\CommonVersionInfo.cs">
-      <Link>Properties\CommonVersionInfo.cs</Link>
-    </Compile>
-    <Compile Include="IServiceOverrides.cs" />
-    <Compile Include="ILog.cs" />
-    <Compile Include="ILogProvider.cs" />
-    <Compile Include="LogExtensions.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="LogLevel.cs" />
-    <Compile Include="LogProviderExtensions.cs" />
-    <Compile Include="ModuleAttribute.cs" />
-    <Compile Include="Printers.cs" />
-    <Compile Include="ProjectItem.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptPack.cs" />
-    <Compile Include="ScriptPackSession.cs" />
-    <Compile Include="ScriptResult.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Properties\ScriptCs.Contracts.nuspec" />
-  </ItemGroup>
-  <Import Project="..\..\build\ScriptCs.Common.props" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets'))" />
-  </Target>
 </Project>
