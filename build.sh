@@ -5,12 +5,11 @@ set -x
 
 # install
 mozroots --import --sync --quiet
-mono ./.nuget/NuGet.exe restore ./.nuget/packages.config -PackagesDirectory ./packages
-mono ./.nuget/NuGet.exe restore ./ScriptCs.sln
+dotnet restore
 
 # script
 mkdir -p artifacts/Release/bin
 msbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
-cp src/ScriptCs/bin/Release/* artifacts/Release/bin/
-mono ./packages/xunit.runner.console.2.2.0/tools/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll
+cp src/ScriptCs/bin/Release/net461/* artifacts/Release/bin/
+mono ./tools/xunit.runner.console.2.2.0/tools/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/net461/ScriptCs.Tests.Acceptance.dll
 
