@@ -14,4 +14,27 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ScriptCs.Core\ScriptCs.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Support\Gallery\Duplicate.A.1.0.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\Duplicate.B.1.0.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\FrameworkAssemblyReferencer.1.0.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\ScriptCs.Adder.Local.0.1.1.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\ScriptCs.Calculator.0.1.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\ScriptCs.Contracts.0.9.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Support\Gallery\ScriptCs.Logger.ScriptPack.0.1.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
