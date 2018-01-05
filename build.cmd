@@ -1,11 +1,22 @@
-@echo Off
-setlocal
+@if not defined _echo echo off
+setlocal enabledelayedexpansion
 
+@REM Determine if MSBuild is already in the PATH
+for /f "usebackq delims=" %%I in (`where msbuild.exe 2^>nul`) do (
+    goto Start
+)
+
+echo.
+echo MSBuild is not found in your PATH
+echo Run build.cmd from Visual Studio Command Prompt or Developer Command Prompt
+goto end
+
+:Start
 if exist artifacts goto Build
 mkdir artifacts
 
 :Build
-"%ProgramFiles(x86)%\MSBuild\15.0\Bin\msbuild" Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Diagnostic;DetailedSummary /nr:false 
+msbuild Build\Build.proj /nologo /m /v:M %* /fl /flp:LogFile=artifacts\msbuild.log;Verbosity=Diagnostic;DetailedSummary /nr:false 
 
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
