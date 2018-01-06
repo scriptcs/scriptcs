@@ -33,8 +33,8 @@ namespace ScriptCs
         public virtual void CopyDirectory(string source, string dest, bool overwrite)
         {
             // NOTE: adding guards since the exceptions thrown by System.IO would be confusing
-            Guard.AgainstNullArgument("source", source);
-            Guard.AgainstNullArgument("dest", dest);
+            Guard.AgainstNullArgument(nameof(source), source);
+            Guard.AgainstNullArgument(nameof(dest), dest);
 
             if (!Directory.Exists(dest))
             {
@@ -48,7 +48,9 @@ namespace ScriptCs
 
             foreach (var directory in Directory.GetDirectories(source))
             {
-                CopyDirectory(directory, Path.Combine(dest, Path.GetFileName(directory)), overwrite);
+                var folderName = Path.GetFileName(directory);
+                if (folderName == null) continue;
+                CopyDirectory(directory, Path.Combine(dest, folderName), overwrite);
             }
         }
 
@@ -89,8 +91,8 @@ namespace ScriptCs
 
         public virtual string CurrentDirectory
         {
-            get => Environment.CurrentDirectory;
-            set => Environment.CurrentDirectory = value;
+            get { return Environment.CurrentDirectory; }
+            set { Environment.CurrentDirectory = value; }
         }
 
         public virtual string NewLine => Environment.NewLine;
