@@ -37,8 +37,8 @@ namespace ScriptCs.Engine.Roslyn
 
         public string BaseDirectory
         {
-            get => ScriptMetadataResolver.BaseDirectory;
-            set => ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value);
+            get { return ScriptMetadataResolver.BaseDirectory; }
+            set { ScriptMetadataResolver = ScriptMetadataResolver.WithBaseDirectory(value); }
         }
 
         public string CacheDirectory { get; set; }

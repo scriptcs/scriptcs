@@ -19,9 +19,9 @@ namespace ScriptCs
         public LogLevel LogLevel { get; set; }
 
         public string[] Modules
-        {   
-            get => _modules ?? new string[0];
-            set => _modules = value;
+        {
+            get { return _modules ?? new string[0]; }
+            set { _modules = value; }
         }
 
         public string OutputFile { get; set; }

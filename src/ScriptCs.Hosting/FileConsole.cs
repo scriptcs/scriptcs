@@ -20,25 +20,25 @@ namespace ScriptCs.Hosting
         public void Write(string value)
         {
             _innerConsole.Write(value);
-            this.Append(value);
+            Append(value);
         }
 
         public void WriteLine()
         {
             _innerConsole.WriteLine();
-            this.AppendLine(string.Empty);
+            AppendLine(string.Empty);
         }
 
         public void WriteLine(string value)
         {
             _innerConsole.WriteLine(value);
-            this.AppendLine(value);
+            AppendLine(value);
         }
 
         public string ReadLine(string prompt)
         {
             var line = _innerConsole.ReadLine("");
-            this.AppendLine(line);
+            AppendLine(line);
             return line;
         }
 
@@ -59,8 +59,8 @@ namespace ScriptCs.Hosting
 
         public ConsoleColor ForegroundColor
         {
-            get => _innerConsole.ForegroundColor;
-            set => _innerConsole.ForegroundColor = value;
+            get { return _innerConsole.ForegroundColor; }
+            set { _innerConsole.ForegroundColor = value; }
         }
 
         public int Width => int.MaxValue;
@@ -76,7 +76,7 @@ namespace ScriptCs.Hosting
 
         private void AppendLine(string text)
         {
-            this.Append(text + Environment.NewLine);
+            Append(text + Environment.NewLine);
         }
     }
 }

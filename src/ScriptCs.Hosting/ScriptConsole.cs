@@ -6,7 +6,7 @@ namespace ScriptCs.Hosting
 {
     public class ScriptConsole : IConsole
     {
-        private LineEditor _editor;
+        private readonly LineEditor _editor;
 
         public ScriptConsole()
         {
@@ -51,8 +51,8 @@ namespace ScriptCs.Hosting
 
         public ConsoleColor ForegroundColor
         {
-            get => Console.ForegroundColor;
-            set => Console.ForegroundColor = value;
+            get { return Console.ForegroundColor; }
+            set { Console.ForegroundColor = value; }
         }
 
         public int Width => Console.BufferWidth;

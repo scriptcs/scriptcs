@@ -306,8 +306,8 @@ namespace Mono.Terminal
 
         string Prompt
         {
-            get => prompt;
-            set => prompt = value;
+            get { return prompt; }
+            set { prompt = value; }
         }
 
         int LineCount => (shown_prompt.Length + rendered_text.Length) / Console.WindowWidth;
