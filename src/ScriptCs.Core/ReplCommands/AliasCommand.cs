@@ -23,11 +23,11 @@ namespace ScriptCs.ReplCommands
 
         public object Execute(IRepl repl, object[] args)
         {
-            Guard.AgainstNullArgument("repl", repl);
+            Guard.AgainstNullArgument(nameof(repl), repl);
 
             if (args == null || args.Length != 2)
             {
-                _console.WriteLine("You must specifiy the command name and alias, e.g. :alias \"clear\" \"cls\"");
+                _console.WriteLine("You must specify the command name and alias, e.g. :alias \"clear\" \"cls\"");
                 return null;
             }
 
@@ -45,8 +45,8 @@ namespace ScriptCs.ReplCommands
                 return null;
             }
 
-   
-            if (!repl.Commands.TryGetValue(commandName, out var command))
+            IReplCommand command;
+            if (!repl.Commands.TryGetValue(commandName, out command))
             {
                 var message = string.Format(
                     CultureInfo.InvariantCulture, "There is no command named or aliased \"{0}\".", alias);
