@@ -4,7 +4,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 @echo Start pre-build setup
 @echo    Restoring global NuGet packages...
 @echo.
-.nuget\NuGet.exe restore .nuget\packages.config -ConfigFile .nuget\NuGet.Config 
+.nuget\NuGet.exe restore .nuget\packages.config -PackagesDirectory .\packages
 echo.
 
 REM Find the Visual Studio Locator utility
