@@ -482,14 +482,19 @@ namespace ScriptCs.Tests
             }
 
             [Fact]
-            public void ShouldSetBufferIFLineIsFirstOfMultilineConstruct()
+            public void ShouldSetBufferIfLineIsFirstOfMultilineConstruct()
             {
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
                     x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
-                     .Returns<ScriptResult>(x => ScriptResult.Incomplete);
+                    x.Execute(
+                        It.IsAny<string>(), 
+                        It.IsAny<string[]>(), 
+                        It.IsAny<AssemblyReferences>(),
+                        It.IsAny<IEnumerable<string>>(), 
+                        It.IsAny<ScriptPackSession>()))
+                     .Returns(ScriptResult.Incomplete);
+
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "var x = 1;" });
                 mocks.FileSystem.Setup(i => i.CurrentDirectory).Returns("C:/");
@@ -506,8 +511,12 @@ namespace ScriptCs.Tests
                 var mocks = new Mocks();
                 mocks.ScriptEngine.Setup(
                     x =>
-                    x.Execute(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<AssemblyReferences>(),
-                              It.IsAny<IEnumerable<string>>(), It.IsAny<ScriptPackSession>()))
+                    x.Execute(
+                        It.IsAny<string>(), 
+                        It.IsAny<string[]>(), 
+                        It.IsAny<AssemblyReferences>(),
+                        It.IsAny<IEnumerable<string>>(),
+                        It.IsAny<ScriptPackSession>()))
                      .Returns(ScriptResult.Empty);
                 mocks.FilePreProcessor.Setup(x => x.ProcessScript(It.IsAny<string>()))
                     .Returns(new FilePreProcessorResult { Code = "}" });

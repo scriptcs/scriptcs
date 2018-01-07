@@ -1,4 +1,6 @@
-﻿namespace ScriptCs.Tests.Acceptance.Support
+﻿using System.Diagnostics;
+
+namespace ScriptCs.Tests.Acceptance.Support
 {
     using System;
     using System.Globalization;
@@ -10,6 +12,8 @@
     {
         public static void EnsureDirectoryCreated(string path)
         {
+            Debug.WriteLine($"Current Directory [{Environment.CurrentDirectory.Length}]: {Environment.CurrentDirectory}");
+
             if (Directory.Exists(path))
             {
                 return;
