@@ -35,7 +35,6 @@ namespace ScriptCs.Tests
 
         public class TheConstructor
         {
-
             private readonly Mock<IConsole> _mockConsole = new Mock<IConsole>();
             private readonly Mock<IObjectSerializer> _mockSerializer = new Mock<IObjectSerializer>();
 
