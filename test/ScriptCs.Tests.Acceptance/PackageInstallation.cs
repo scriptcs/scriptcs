@@ -9,7 +9,7 @@
     public static class PackageInstallation
     {
         [Scenario]
-        public static void InstallingAPackage(ScenarioDirectory directory, string output)
+        public static void InstallingAPackage(ScenarioDirectory directory)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
@@ -24,11 +24,15 @@
                     .ShouldBeTrue());
 
             "And the ScriptCs.Adder assembly is extracted"
-                .x(() => File.Exists(
-                        Path.Combine(
-                            directory.Map(ScriptCsExe.PackagesFolder),
-                            "ScriptCs.Adder.Local.0.1.1/lib/net45/ScriptCs.Adder.dll"))
-                    .ShouldBeTrue());
+                .x(() =>
+                
+
+                    File.Exists(
+                            Path.Combine(
+                                directory.Map(ScriptCsExe.PackagesFolder),
+                                "ScriptCs.Adder.Local.0.1.1/lib/net45/ScriptCs.Adder.dll"))
+                        .ShouldBeTrue()
+                );
 
             "And ScriptCs.Adder is added to the packages file"
                 .x(() => File.ReadAllText(directory.Map(ScriptCsExe.PackagesFile)).ShouldContain(

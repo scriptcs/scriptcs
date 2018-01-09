@@ -1,5 +1,8 @@
-﻿namespace ScriptCs.Tests.Acceptance.Support
+﻿using System;
+
+namespace ScriptCs.Tests.Acceptance.Support
 {
+    using System.Diagnostics;
     using System.IO;
 
     public sealed class ScenarioDirectory
@@ -11,6 +14,8 @@
         public static ScenarioDirectory Create(string scenario)
         {
             var name = Path.Combine(rootDirectory, scenario);
+            if (name == null) throw new Exception("Invalid directory");
+            Debug.WriteLine($"Scenarios Dir [{name.Length}]: {name}");
             FileSystem.EnsureDirectoryDeleted(name);
             FileSystem.EnsureDirectoryCreated(name);
             return new ScenarioDirectory(name);
@@ -47,7 +52,9 @@
 
         public string Map(string path)
         {
-            return Path.Combine(_name, path);
+            var mapPath = Path.Combine(_name, path);
+            Debug.WriteLine($"Map [{mapPath.Length}]: {mapPath}");
+            return mapPath;
         }
     }
 }
