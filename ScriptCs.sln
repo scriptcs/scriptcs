@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs", "src\ScriptCs\ScriptCs.csproj", "{25080671-1A80-4041-B9C7-260578FF4849}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Contracts", "src\ScriptCs.Contracts\ScriptCs.Contracts.csproj", "{6049E205-8B5F-4080-B023-70600E51FD64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Contracts", "src\ScriptCs.Contracts\ScriptCs.Contracts.csproj", "{6049E205-8B5F-4080-B023-70600E51FD64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests", "test\ScriptCs.Tests\ScriptCs.Tests.csproj", "{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Tests", "test\ScriptCs.Tests\ScriptCs.Tests.csproj", "{4D6A2A55-BB17-40CB-9567-EAFF80BEFDCE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A59C6538-62EA-4BF6-AA00-E0E9A2892D47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core", "src\ScriptCs.Core\ScriptCs.Core.csproj", "{E590E710-E159-48E6-A3E6-1A83D3FE732C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Core", "src\ScriptCs.Core\ScriptCs.Core.csproj", "{E590E710-E159-48E6-A3E6-1A83D3FE732C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,20 +24,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354
 		build\ScriptCs.Version.props = build\ScriptCs.Version.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting", "src\ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Hosting", "src\ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Hosting.Tests", "test\ScriptCs.Hosting.Tests\ScriptCs.Hosting.Tests.csproj", "{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Hosting.Tests", "test\ScriptCs.Hosting.Tests\ScriptCs.Hosting.Tests.csproj", "{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B138045D-DC04-4A04-A2BA-F771173BCC32}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Engine.Roslyn", "src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Engine.Roslyn", "src\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj", "{E79EC231-E27D-4057-91C9-2D001A3A8C3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCs.Tests.Acceptance", "test\ScriptCs.Tests.Acceptance\ScriptCs.Tests.Acceptance.csproj", "{10684649-2922-41F5-AB9B-20B127CBF92C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Tests.Acceptance", "test\ScriptCs.Tests.Acceptance\ScriptCs.Tests.Acceptance.csproj", "{10684649-2922-41F5-AB9B-20B127CBF92C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,5 +95,8 @@ Global
 		{28D11DE5-9F98-4E0A-8CCC-9CDC19110451} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{EC03EAA0-94FD-4145-8F78-5F2E30E3FF9A} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
 		{10684649-2922-41F5-AB9B-20B127CBF92C} = {A59C6538-62EA-4BF6-AA00-E0E9A2892D47}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD80B19D-7299-4CBD-B59F-6DB868FF6A9C}
 	EndGlobalSection
 EndGlobal
