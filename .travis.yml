@@ -27,7 +27,7 @@ install:
 script:
   - mkdir artifacts --parents
   - msbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
-  - mono ./packages/xunit.runner.console.2.2.0/tools/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll
+  - mono ./packages/xunit.runner.console.2.3.1/tools/net452/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll
 
 addons:
   apt:

@@ -15,10 +15,10 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="Properties\chocolateyInstall.ps1" target="tools" />
-    <file src="bin\$configuration$\scriptcs.exe" target="tools" />
-    <file src="bin\$configuration$\scriptcs.exe.config" target="tools" />
-    <file src="bin\$configuration$\*.dll" target="tools" />
-    <file src="bin\$configuration$\*.pdb" target="tools" />
+    <file src="chocolateyInstall.ps1" target="tools" />
+    <file src="..\bin\$configuration$\scriptcs.exe" target="tools" />
+    <file src="..\bin\$configuration$\scriptcs.exe.config" target="tools" />
+    <file src="..\bin\$configuration$\*.dll" target="tools" />
+    <file src="..\bin\$configuration$\*.pdb" target="tools" />
   </files>
 </package>
