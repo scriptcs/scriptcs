@@ -6,7 +6,7 @@ using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
 using Xunit;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

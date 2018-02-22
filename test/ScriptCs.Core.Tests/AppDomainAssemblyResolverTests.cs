@@ -8,7 +8,7 @@ using ScriptCs.Contracts;
 using Should;
 using Xunit;
 using Xunit.Extensions;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 using System.Threading;
 
 namespace ScriptCs.Tests

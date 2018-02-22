@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;

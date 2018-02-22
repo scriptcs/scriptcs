@@ -1,6 +1,6 @@
 ﻿using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;

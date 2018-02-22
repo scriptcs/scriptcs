@@ -6,7 +6,7 @@ using ScriptCs.Contracts;
 using ScriptCs.Tests;
 using Should;
 using Xunit;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 
 namespace ScriptCs.Hosting.Tests
 {
@@ -23,10 +23,10 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldLoadScriptPacksIfReplIsTrue(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
+            public void ShouldLoadScriptPacksIfReplIsTrue(IConsole console, TestLogProvider logProvider)
             {
                 var builder = new ScriptServicesBuilder(console, logProvider);
-                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Overrides[typeof(IScriptEngine)] = typeof(MockScriptEngine);
                 builder.Repl();
                 builder.Build();
                 var runtimeServices = (RuntimeServices) builder.RuntimeServices;
@@ -34,10 +34,10 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldLoadScriptPacksIfScriptNameIsSet(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
+            public void ShouldLoadScriptPacksIfScriptNameIsSet(IConsole console, TestLogProvider logProvider)
             {
                 var builder = new ScriptServicesBuilder(console, logProvider);
-                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Overrides[typeof(IScriptEngine)] = typeof(MockScriptEngine);
                 builder.ScriptName("");
                 builder.Build();
                 var runtimeServices = (RuntimeServices)builder.RuntimeServices;
@@ -45,10 +45,10 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShoulLoadScriptPacksIfLoadScriptPacksIsTrue(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
+            public void ShoulLoadScriptPacksIfLoadScriptPacksIsTrue(IConsole console, TestLogProvider logProvider)
             {
                 var builder = new ScriptServicesBuilder(console, logProvider);
-                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Overrides[typeof(IScriptEngine)] = typeof(MockScriptEngine);
                 builder.LoadScriptPacks();
                 builder.Build();
                 var runtimeServices = (RuntimeServices)builder.RuntimeServices;
@@ -56,14 +56,26 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Theory, ScriptCsAutoData]
-            public void ShouldNotLoadScriptPacksIfLoadScriptPacksIsFalse(IConsole console, TestLogProvider logProvider, IScriptEngine engine)
+            public void ShouldNotLoadScriptPacksIfLoadScriptPacksIsFalse(IConsole console, TestLogProvider logProvider)
             {
                 var builder = new ScriptServicesBuilder(console, logProvider);
-                builder.Overrides[typeof(IScriptEngine)] = engine.GetType();
+                builder.Overrides[typeof(IScriptEngine)] = typeof(MockScriptEngine);
                 builder.LoadScriptPacks(false);
                 builder.Build();
                 var runtimeServices = (RuntimeServices)builder.RuntimeServices;
                 runtimeServices.InitDirectoryCatalog.ShouldBeFalse();
+            }
+
+            private class MockScriptEngine : IScriptEngine
+            {
+                public string BaseDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                public string CacheDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                public string FileName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+                public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 

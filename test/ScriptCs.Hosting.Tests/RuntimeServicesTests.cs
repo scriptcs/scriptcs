@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using Moq;
 using ScriptCs.Contracts;
@@ -26,14 +27,14 @@ namespace ScriptCs.Hosting.Tests
             public TheContainerProperty()
             {
                 _overrides[typeof(ILineProcessor)] = new List<Type>();
-                var mockScriptExecutorType = new Mock<IScriptExecutor>();
-                _scriptExecutorType = mockScriptExecutorType.Object.GetType();
+                var mockScriptExecutor = new MockScriptExecutor();
+                _scriptExecutorType = mockScriptExecutor.GetType();
 
                 var mockReplType = new Mock<IRepl>();
                 _replType = mockReplType.Object.GetType();
 
-                var mockScriptEngineType = new Mock<IScriptEngine>();
-                _scriptEngineType = mockScriptEngineType.Object.GetType();
+                var mockScriptEngine = new MockScriptEngine();
+                _scriptEngineType = mockScriptEngine.GetType();
 
                 var initializationServices = new InitializationServices(_logProvider, _overrides);
                 _runtimeServices = new RuntimeServices(
@@ -72,85 +73,85 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldRegisterTheConsoleInstance()
             {
-                _runtimeServices.Container.Resolve<IConsole>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IConsole>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheScriptServices()
             {
-                _runtimeServices.Container.Resolve<ScriptServices>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<ScriptServices>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptHostFactoryIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IScriptHostFactory>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFilePreProcessorIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IFilePreProcessor>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IFilePreProcessor>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptPackResolverIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IScriptPackResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IScriptPackResolver>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultInstallationProviderIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IInstallationProvider>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IInstallationProvider>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageInstallerIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IPackageInstaller>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IPackageInstaller>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultScriptServiceRootIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<ScriptServices>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<ScriptServices>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultFileSystemIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IFileSystem>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IFileSystem>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyUtilityIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IAssemblyUtility>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IAssemblyUtility>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageContainerIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IPackageContainer>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IPackageContainer>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultPackageAssemblyResolverIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IPackageAssemblyResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IPackageAssemblyResolver>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultAssemblyResolverIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IAssemblyResolver>().ShouldBeTrue();
             }
 
             [Fact]
             public void ShouldRegisterTheDefaultVisualStudioSolutionWriterIfNoOverride()
             {
-                _runtimeServices.Container.Resolve<IVisualStudioSolutionWriter>().ShouldNotBeNull();
+                _runtimeServices.Container.IsRegistered<IVisualStudioSolutionWriter>().ShouldBeTrue();
             }
 
             [Fact]
@@ -168,118 +169,106 @@ namespace ScriptCs.Hosting.Tests
             [Fact]
             public void ShouldRegisterACustomLineProcessor()
             {
-                var mock = new Mock<ILineProcessor>();
                 var processorList = _overrides[typeof(ILineProcessor)] as List<Type>;
                 processorList.ShouldNotBeNull();
-                processorList.Add(mock.Object.GetType());
+                processorList.Add(typeof(MockLineProcessor));
 
                 var processors = _runtimeServices.Container.Resolve<IEnumerable<ILineProcessor>>();
                 processors.ShouldNotBeNull();
-                processors.Where(p => p.GetType() == mock.Object.GetType()).ShouldNotBeEmpty();
+                processors.Where(p => p.GetType() == typeof(MockLineProcessor)).ShouldNotBeEmpty();
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenScriptHostFactory()
             {
-                var mock = new Mock<IScriptHostFactory>();
-                _overrides[typeof(IScriptHostFactory)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IScriptHostFactory)] = typeof(MockScriptHostFactory);
+                _runtimeServices.Container.Resolve<IScriptHostFactory>().ShouldBeType(typeof(MockScriptHostFactory));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenFilePreProcessor()
             {
                 var mock = new Mock<IFilePreProcessor>();
-                _overrides[typeof(IFilePreProcessor)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IFilePreProcessor>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IFilePreProcessor)] = typeof(MockFilePreProcessor);
+                _runtimeServices.Container.Resolve<IFilePreProcessor>().ShouldBeType(typeof(MockFilePreProcessor));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenScriptPackResolver()
             {
-                var mock = new Mock<IScriptPackResolver>();
-                _overrides[typeof(IScriptPackResolver)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IScriptPackResolver>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IScriptPackResolver)] = typeof(MockScriptPackResolver);
+                _runtimeServices.Container.Resolve<IScriptPackResolver>().ShouldBeType(typeof(MockScriptPackResolver));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenInstallationProvider()
             {
-                var mock = new Mock<IInstallationProvider>();
-                _overrides[typeof(IInstallationProvider)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IInstallationProvider>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IInstallationProvider)] = typeof(MockInstallationProvider);
+                _runtimeServices.Container.Resolve<IInstallationProvider>().ShouldBeType(typeof(MockInstallationProvider));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenPackageInstaller()
             {
-                var mock = new Mock<IPackageInstaller>();
-                _overrides[typeof(IPackageInstaller)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IPackageInstaller>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IPackageInstaller)] = typeof(MockPackageInstaller);
+                _runtimeServices.Container.Resolve<IPackageInstaller>().ShouldBeType(typeof(MockPackageInstaller));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenFileSystem()
             {
-                var mock = new MockFileSystem();
-                _overrides[typeof(IFileSystem)] = mock.GetType();
-                _runtimeServices.Container.Resolve<IFileSystem>().ShouldBeType(mock.GetType());
+                _overrides[typeof(IFileSystem)] = typeof(MockFileSystem);
+                _runtimeServices.Container.Resolve<IFileSystem>().ShouldBeType(typeof(MockFileSystem));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenAssemblyUtility()
             {
-                var mock = new Mock<IAssemblyUtility>();
-                _overrides[typeof(IAssemblyUtility)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IAssemblyUtility>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IAssemblyUtility)] = typeof(MockAssemblyUtility);
+                _runtimeServices.Container.Resolve<IAssemblyUtility>().ShouldBeType(typeof(MockAssemblyUtility));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenConsole()
             {
-                var mock = new Mock<IConsole>();
-                _overrides[typeof(IConsole)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IConsole>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IConsole)] = typeof(MockConsole);
+                _runtimeServices.Container.Resolve<IConsole>().ShouldBeType(typeof(MockConsole));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenPackageContainer()
             {
-                var mock = new Mock<IPackageContainer>();
-                _overrides[typeof(IPackageContainer)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IPackageContainer>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IPackageContainer)] = typeof(MockPackageContainer);
+                _runtimeServices.Container.Resolve<IPackageContainer>().ShouldBeType(typeof(MockPackageContainer));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenPackageAssemblyResolver()
             {
-                var mock = new Mock<IPackageAssemblyResolver>();
-                _overrides[typeof(IPackageAssemblyResolver)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IPackageAssemblyResolver>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IPackageAssemblyResolver)] = typeof(MockPackageAssemblyResolver);
+                _runtimeServices.Container.Resolve<IPackageAssemblyResolver>().ShouldBeType(typeof(MockPackageAssemblyResolver));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenAssemblyResolver()
             {
-                var mock = new Mock<IAssemblyResolver>();
-                _overrides[typeof(IAssemblyResolver)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IAssemblyResolver)] = typeof(MockAssemblyResolver);
+                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldBeType(typeof(MockAssemblyResolver));
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenAssemblyResolverInstance()
             {
-                var mock = new Mock<IAssemblyResolver>();
-                _overrides[typeof(IAssemblyResolver)] = mock.Object;
-                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldEqual(mock.Object);
+                var mock = new MockAssemblyResolver();
+                _overrides[typeof(IAssemblyResolver)] = mock;
+                _runtimeServices.Container.Resolve<IAssemblyResolver>().ShouldEqual(mock);
             }
 
             [Fact]
             public void ShouldRegisterTheOverriddenVisualStudioSolutionWriter()
             {
-                var mock = new Mock<IVisualStudioSolutionWriter>();
-                _overrides[typeof (IVisualStudioSolutionWriter)] = mock.Object.GetType();
-                _runtimeServices.Container.Resolve<IVisualStudioSolutionWriter>().ShouldBeType(mock.Object.GetType());
+                _overrides[typeof(IVisualStudioSolutionWriter)] = typeof(MockVisualStudioSolutionWriter);
+                _runtimeServices.Container.Resolve<IVisualStudioSolutionWriter>().ShouldBeType(typeof(MockVisualStudioSolutionWriter));
             }
 
             [Fact]
@@ -407,6 +396,86 @@ namespace ScriptCs.Hosting.Tests
 
                 // assert
                 resolvermock.Verify(x => x.GetAssemblyPaths("c:/scripts", false), Times.Exactly(1));
+            }
+
+            private class MockScriptEngine : IScriptEngine
+            {
+                public string BaseDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                public string CacheDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                public string FileName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+                public ScriptResult Execute(string code, string[] scriptArgs, AssemblyReferences references, IEnumerable<string> namespaces, ScriptPackSession scriptPackSession)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockScriptExecutor : IScriptExecutor
+            {
+                public AssemblyReferences References => throw new NotImplementedException();
+
+                public IReadOnlyCollection<string> Namespaces => throw new NotImplementedException();
+
+                public IScriptEngine ScriptEngine => throw new NotImplementedException();
+
+                public IFileSystem FileSystem => throw new NotImplementedException();
+
+                public ScriptPackSession ScriptPackSession => throw new NotImplementedException();
+
+                public void AddReferences(params Assembly[] references)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void AddReferences(params string[] references)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public ScriptResult Execute(string script, params string[] scriptArgs)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public ScriptResult ExecuteScript(string script, params string[] scriptArgs)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void ImportNamespaces(params string[] namespaces)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Initialize(IEnumerable<string> paths, IEnumerable<IScriptPack> scriptPacks, params string[] scriptArgs)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void RemoveNamespaces(params string[] namespaces)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void RemoveReferences(params Assembly[] references)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void RemoveReferences(params string[] references)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Reset()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Terminate()
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             private class MockFileSystem : IFileSystem
@@ -580,6 +649,200 @@ namespace ScriptCs.Hosting.Tests
                 public string PackageScriptsFile
                 {
                     get { throw new NotImplementedException(); }
+                }
+            }
+
+            private class MockLineProcessor : ILineProcessor
+            {
+                public bool ProcessLine(IFileParser parser, FileParserContext context, string line, bool isBeforeCode)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockScriptHostFactory : IScriptHostFactory
+            {
+                public IScriptHost CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockFilePreProcessor : IFilePreProcessor
+            {
+                public void ParseFile(string path, FileParserContext context)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void ParseScript(List<string> scriptLines, FileParserContext context)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public FilePreProcessorResult ProcessFile(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public FilePreProcessorResult ProcessScript(string script)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockScriptPackResolver : IScriptPackResolver
+            {
+                public IEnumerable<IScriptPack> GetPacks()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockInstallationProvider : IInstallationProvider
+            {
+                public IEnumerable<string> GetRepositorySources(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Initialize()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void InstallPackage(IPackageReference packageId, bool allowPreRelease = false)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public bool IsInstalled(IPackageReference packageId, bool allowPreRelease = false)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockPackageInstaller : IPackageInstaller
+            {
+                public void InstallPackages(IEnumerable<IPackageReference> packageIds, bool allowPreRelease = false)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockAssemblyUtility : IAssemblyUtility
+            {
+                public AssemblyName GetAssemblyName(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public bool IsManagedAssembly(string path)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public Assembly Load(AssemblyName assemblyRef)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public Assembly LoadFile(string path)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockConsole : IConsole
+            {
+                public ConsoleColor ForegroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+                public int Width => throw new NotImplementedException();
+
+                public void Clear()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Exit()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public string ReadLine(string prompt)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void ResetColor()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void Write(string value)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void WriteLine()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void WriteLine(string value)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockPackageContainer : IPackageContainer
+            {
+                public void CreatePackageFile()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IPackageObject FindPackage(string path, IPackageReference packageReference)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IEnumerable<IPackageReference> FindReferences(string path)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockPackageAssemblyResolver : IPackageAssemblyResolver
+            {
+                public IEnumerable<string> GetAssemblyNames(string workingDirectory)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public IEnumerable<IPackageReference> GetPackages(string workingDirectory)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void SavePackages()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            private class MockAssemblyResolver : IAssemblyResolver
+            {
+                public IEnumerable<string> GetAssemblyPaths(string path, bool binariesOnly = false)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            private class MockVisualStudioSolutionWriter : IVisualStudioSolutionWriter
+            {
+                public string WriteSolution(IFileSystem fs, string script, IVisualStudioSolution solution, IList<ProjectItem> nestedItems = null)
+                {
+                    throw new NotImplementedException();
                 }
             }
         }

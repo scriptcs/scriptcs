@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using ScriptCs.Command;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting;
 using Xunit;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

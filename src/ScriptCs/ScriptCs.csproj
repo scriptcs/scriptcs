@@ -9,7 +9,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="PowerArgs" Version="2.0.5" />
+    <PackageReference Include="PowerArgs" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj" />

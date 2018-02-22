@@ -5,7 +5,7 @@ using Should;
 using Should.Core.Assertions;
 using ScriptCs.Contracts.Exceptions;
 using Xunit;
-using Ploeh.AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 
 namespace ScriptCs.Tests
 {

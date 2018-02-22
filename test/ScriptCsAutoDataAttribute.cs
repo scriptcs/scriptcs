@@ -1,6 +1,6 @@
-﻿using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Xunit2;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
 using Xunit;
 
 namespace ScriptCs.Tests
@@ -10,9 +10,15 @@ namespace ScriptCs.Tests
         public ScriptCsAutoDataAttribute(params object[] values)
             : base(
             new InlineDataAttribute(values),
-            new AutoDataAttribute(
-                new Fixture().Customize(new ScriptCsMoqCustomization()))
+            new InternalScriptCsAutoDataAttribute()
             )
+        {
+        }
+    }
+
+    public class InternalScriptCsAutoDataAttribute : AutoDataAttribute
+    {
+        public InternalScriptCsAutoDataAttribute() : base(() => new Fixture().Customize(new ScriptCsMoqCustomization()))
         {
         }
     }

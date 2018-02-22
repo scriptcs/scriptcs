@@ -8,9 +8,9 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="3.3.1" />
-    <PackageReference Include="Autofac.Mef" Version="3.0.3" />
-    <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.1" />
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Autofac.Mef" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="NuGet.Core" Version="2.14.0" />
   </ItemGroup>
