@@ -4,6 +4,7 @@
     <TargetFramework>net461</TargetFramework>
     <Title>scriptcs</Title>
     <Description>scriptcs command line tool.</Description>
+    <AssemblyName>scriptcs</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
