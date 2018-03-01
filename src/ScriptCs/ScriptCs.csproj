@@ -11,6 +11,8 @@
     <PackageId>scriptcs</PackageId>
     <Description>Write .Net apps with a text editor, NuGet, and the power of Roslyn!</Description>
     <PackageTags>roslyn csx script scriptcs</PackageTags>
+    <Description>scriptcs command line tool.</Description>
+    <AssemblyName>scriptcs</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
