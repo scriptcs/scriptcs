@@ -2,9 +2,11 @@
 
 open Fake
 open Fake.DotNetCli
+open Fake.Testing
+open System.IO
 
 Target "Clean" (fun _ ->
-    !! "artifacts" ++ "src/*/bin" ++ "test/*/bin"
+    !! "artifacts" ++ "src/*/bin" ++ "test/*/bin" ++ "src/*/obj" ++ "test/*/obj"
         |> DeleteDirs
 )
 
@@ -26,10 +28,22 @@ Target "Build" (fun _ ->
 )
 
 Target "Test" (fun _ ->
-    DotNetCli.Test
-       (fun p -> 
-          { p with 
-              Configuration = "Release" })
+#if MONO
+    !! "test/**/bin/**/*Tests.Acceptance.dll"
+    |> xUnit2 (fun c -> 
+         {c with 
+             MaxThreads = CollectionConcurrencyMode.MaxThreads 1
+         })
+#else
+    !! "test/**/*Tests*.csproj"
+    |> Seq.iter (fun p -> 
+         DotNetCli.Test (fun c -> 
+            {c with 
+                WorkingDir = Path.GetDirectoryName p
+                AdditionalArgs = ["--no-build"]
+            })
+    )
+#endif
 )
 
 Target "Pack" (fun _ ->
@@ -50,6 +64,7 @@ Target "Pack" (fun _ ->
 
 "Clean"
       ==> "Build"
+      ==> "Test"
       ==> "Pack"
 
 RunTargetOrDefault "Pack"
