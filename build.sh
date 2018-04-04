@@ -1,16 +1,33 @@
-#!/usr/bin/env bash
-set -e
-set -o pipefail
-set -x
+#!/bin/bash
+if test "$OS" = "Windows_NT"
+then
+  # use .Net
 
-# install
-mozroots --import --sync --quiet
-mono ./.nuget/NuGet.exe restore ./.nuget/packages.config -PackagesDirectory ./packages
-mono ./.nuget/NuGet.exe restore ./ScriptCs.sln
+  .paket/paket.bootstrapper.exe prerelease
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
 
-# script
-mkdir -p artifacts/Release/bin
-msbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
-cp src/ScriptCs/bin/Release/* artifacts/Release/bin/
-mono ./packages/xunit.runner.console.2.3.1/tools/net452/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/ScriptCs.Tests.Acceptance.dll
+  .paket/paket.exe restore
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
 
+  packages/FAKE/tools/FAKE.exe $@ --nocache --fsiargs build.fsx 
+else
+  # use mono
+  mono .paket/paket.bootstrapper.exe prerelease
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
+
+  mono .paket/paket.exe restore
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
+  mono packages/FAKE/tools/FAKE.exe $@ --nocache --fsiargs -d:MONO build.fsx
+fi

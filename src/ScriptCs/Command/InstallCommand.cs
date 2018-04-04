@@ -63,6 +63,10 @@ namespace ScriptCs.Command
             }
             catch (Exception ex)
             {
+                if (ex is AggregateException agrEx)
+                {
+                    ex = agrEx.Flatten().InnerException;
+                }
                 _logger.ErrorException("Package installation failed.", ex);
                 return CommandResult.Error;
             }

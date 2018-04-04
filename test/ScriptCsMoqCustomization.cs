@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using ScriptCs.Contracts;
 
 namespace ScriptCs.Tests
