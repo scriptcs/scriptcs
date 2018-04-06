@@ -20,14 +20,8 @@ before_install:
       sudo apt-get install msbuild
     fi
 
-install:
-  - mono .nuget/NuGet.exe restore ./.nuget/packages.config -PackagesDirectory ./packages
-  - mono .nuget/NuGet.exe restore ./ScriptCs.sln
-
 script:
-  - mkdir artifacts --parents
-  - msbuild ./ScriptCs.sln /property:Configuration=Release /nologo /verbosity:normal
-  - mono ./packages/xunit.runner.console.2.3.1/tools/net452/xunit.console.exe test/ScriptCs.Tests.Acceptance/bin/Release/net461/ScriptCs.Tests.Acceptance.dll
+  - build.sh
 
 addons:
   apt:
