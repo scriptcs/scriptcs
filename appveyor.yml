@@ -2,6 +2,9 @@ version: 1.0.{build}
 
 image: Visual Studio 2017
 
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
 init:
 - git config --global core.autocrlf false
 
