@@ -4,24 +4,16 @@ sudo: required
 dist: trusty
 env:
   global:
-    secure: m2PtYwYOhaK0uFMZ19ZxApZwWZeAIq1dS//jx/5I3txpIWD+TfycQMAWYxycFJ/GJkeVF29P4Zz1uyS2XKKjPJpp2Pds98FNQyDv3OftpLAVa0drsjfhurVlBmSdrV7GH6ncKfvhd+h7KVK5vbZc+NeR4dH7eNvN/jraS//AMJg=
+    - secure: m2PtYwYOhaK0uFMZ19ZxApZwWZeAIq1dS//jx/5I3txpIWD+TfycQMAWYxycFJ/GJkeVF29P4Zz1uyS2XKKjPJpp2Pds98FNQyDv3OftpLAVa0drsjfhurVlBmSdrV7GH6ncKfvhd+h7KVK5vbZc+NeR4dH7eNvN/jraS//AMJg=
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 mono:
-  - latest
+  - 5.8.0
+  
 os:
   - linux
+  - osx
 
 script:
   - ulimit -n8192  
   - chmod +x build.sh
   - ./build.sh
-
-addons:
-  apt:
-    packages:
-      - gettext
-      - libcurl4-openssl-dev
-      - libicu-dev
-      - libssl-dev
-      - libunwind8
-      - zlib1g
-      - curl
