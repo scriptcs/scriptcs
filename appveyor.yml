@@ -4,6 +4,7 @@ image: Visual Studio 2017
 
 environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 init:
 - git config --global core.autocrlf false

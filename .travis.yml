@@ -6,6 +6,7 @@ env:
   global:
     - secure: m2PtYwYOhaK0uFMZ19ZxApZwWZeAIq1dS//jx/5I3txpIWD+TfycQMAWYxycFJ/GJkeVF29P4Zz1uyS2XKKjPJpp2Pds98FNQyDv3OftpLAVa0drsjfhurVlBmSdrV7GH6ncKfvhd+h7KVK5vbZc+NeR4dH7eNvN/jraS//AMJg=
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+    - DOTNET_CLI_TELEMETRY_OPTOUT=true
 mono:
   - 5.8.0
   
