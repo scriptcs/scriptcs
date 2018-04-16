@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ScriptCs.Contracts;
+﻿using ScriptCs.Contracts;
+using System;
 
 namespace ScriptCs.Hosting.ReplCommands
 {
@@ -27,7 +22,8 @@ namespace ScriptCs.Hosting.ReplCommands
                 return null;
             }
             var fs = repl.FileSystem;
-            var launcher = _writer.WriteSolution(fs, (string) args[0], new VisualStudioSolution());
+            string arg = args.Length > 0 ? (string)args[0] : null;
+            var launcher = _writer.WriteSolution(fs, arg, new VisualStudioSolution());
             _console.WriteLine("Opening Visual Studio");
             LaunchSolution(launcher);
             return null;

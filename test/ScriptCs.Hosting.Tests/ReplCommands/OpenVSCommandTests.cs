@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using ScriptCs.Contracts;
 using ScriptCs.Hosting.ReplCommands;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ScriptCs.Hosting.Tests.ReplCommands
@@ -38,14 +35,14 @@ namespace ScriptCs.Hosting.Tests.ReplCommands
             public void OutputsAMessageIfNotWindows8()
             {
                 _mockCommand.Setup(c => c.PlatformID).Returns(PlatformID.MacOSX);
-                _command.Execute(_mockRepl.Object, new object[] {"test.csx"});
-                _mockConsole.Verify(c=>c.WriteLine("Requires Windows 8 or later to run"));
+                _command.Execute(_mockRepl.Object, new object[] { "test.csx" });
+                _mockConsole.Verify(c => c.WriteLine("Requires Windows 8 or later to run"));
             }
 
             [Fact]
             public void CreatesTheSolution()
             {
-                _command.Execute(_mockRepl.Object, new object[] {"test.csx"});
+                _command.Execute(_mockRepl.Object, new object[] { "test.csx" });
                 _mockWriter.Verify(
                     w =>
                         w.WriteSolution(It.IsAny<IFileSystem>(), It.IsAny<string>(), It.IsAny<IVisualStudioSolution>(),
@@ -56,9 +53,15 @@ namespace ScriptCs.Hosting.Tests.ReplCommands
             public void LaunchesTheSolution()
             {
                 _command.Execute(_mockRepl.Object, new object[] { "test.csx" });
-                _mockCommand.Verify(c=>c.LaunchSolution(It.IsAny<string>()));
+                _mockCommand.Verify(c => c.LaunchSolution(It.IsAny<string>()));
             }
 
+            [Fact]
+            public void LaunchesTheSolutionEmptyParameter()
+            {
+                _command.Execute(_mockRepl.Object, new object[] { });
+                _mockCommand.Verify(c => c.LaunchSolution(It.IsAny<string>()));
+            }
         }
     }
 }
