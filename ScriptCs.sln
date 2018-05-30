@@ -15,15 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Core", "src\Script
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Core.Tests", "test\ScriptCs.Core.Tests\ScriptCs.Core.Tests.csproj", "{AC228213-7356-4F0D-BA48-EBA5FB8A7506}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9659F354-CF48-4FD6-8E0C-E9EB3C2BDA32}"
-	ProjectSection(SolutionItems) = preProject
-		build\Build.proj = build\Build.proj
-		build\ScriptCs.Common.props = build\ScriptCs.Common.props
-		ScriptCs.ruleset = ScriptCs.ruleset
-		build\ScriptCs.Tasks.targets = build\ScriptCs.Tasks.targets
-		build\ScriptCs.Version.props = build\ScriptCs.Version.props
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Engine.Roslyn.Tests", "test\ScriptCs.Engine.Roslyn.Tests\ScriptCs.Engine.Roslyn.Tests.csproj", "{28D11DE5-9F98-4E0A-8CCC-9CDC19110451}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptCs.Hosting", "src\ScriptCs.Hosting\ScriptCs.Hosting.csproj", "{9AEF2D95-87FB-4829-B384-34BFE076D531}"

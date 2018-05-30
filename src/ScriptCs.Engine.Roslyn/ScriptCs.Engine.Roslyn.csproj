@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Title>ScriptCs.Engine.Roslyn</Title>
     <Authors>Glenn Block, Filip Wojcieszyn, Justin Rusbatch</Authors>
     <PackageLicenseUrl>https://github.com/scriptcs/scriptcs/blob/master/LICENSE.md</PackageLicenseUrl>
@@ -15,7 +15,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.8.2" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
