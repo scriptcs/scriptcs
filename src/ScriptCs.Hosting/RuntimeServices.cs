@@ -102,9 +102,6 @@ namespace ScriptCs.Hosting
             RegisterOverrideOrDefault<IConsole>(
                 builder, b => b.RegisterInstance(_console));
 
-            RegisterOverrideOrDefault<IFileSystemMigrator>(
-                builder, b => b.RegisterType<FileSystemMigrator>().As<IFileSystemMigrator>().SingleInstance());
-
             RegisterOverrideOrDefault<IScriptLibraryComposer>(
                 builder, b => b.RegisterType<ScriptLibraryComposer>().As<IScriptLibraryComposer>().SingleInstance());
 

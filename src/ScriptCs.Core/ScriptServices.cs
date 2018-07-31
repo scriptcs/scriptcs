@@ -19,7 +19,6 @@ namespace ScriptCs
             ILogProvider logProvider,
             IAssemblyResolver assemblyResolver,
             IEnumerable<IReplCommand> replCommands,
-            IFileSystemMigrator fileSystemMigrator,
             IConsole console = null,
             IInstallationProvider installationProvider = null,
             IScriptLibraryComposer scriptLibraryComposer = null
@@ -39,7 +38,6 @@ namespace ScriptCs
             AssemblyResolver = assemblyResolver;
             InstallationProvider = installationProvider;
             ReplCommands = replCommands;
-            FileSystemMigrator = fileSystemMigrator;
             ScriptLibraryComposer = scriptLibraryComposer;
         }
 
@@ -51,14 +49,12 @@ namespace ScriptCs
         public IPackageInstaller PackageInstaller { get; private set; }
         public IObjectSerializer ObjectSerializer { get; private set; }
         public ILogProvider LogProvider { get; private set; }
-        
         public IScriptEngine Engine { get; private set; }
         public IFilePreProcessor FilePreProcessor { get; private set; }
         public IConsole Console { get; private set; }
         public IAssemblyResolver AssemblyResolver { get; private set; }
         public IInstallationProvider InstallationProvider { get; private set; }
         public IEnumerable<IReplCommand> ReplCommands { get; private set; }
-        public IFileSystemMigrator FileSystemMigrator { get; private set; }
         public IScriptLibraryComposer ScriptLibraryComposer { get; private set; }
     }
 }
