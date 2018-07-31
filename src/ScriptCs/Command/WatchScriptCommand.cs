@@ -16,7 +16,6 @@ namespace ScriptCs.Command
         private readonly IConsole _console;
         private readonly IFileSystem _fileSystem;
         private readonly ILog _logger;
-        private readonly IFileSystemMigrator _fileSystemMigrator;
         private readonly CrossAppDomainExecuteScriptCommand _executeScriptCommand;
 
         public WatchScriptCommand(
@@ -24,22 +23,19 @@ namespace ScriptCs.Command
             string[] scriptArgs,
             IConsole console,
             IFileSystem fileSystem,
-            ILogProvider logProvider,
-            IFileSystemMigrator fileSystemMigrator)
+            ILogProvider logProvider)
         {
             Guard.AgainstNullArgument("config", config);
             Guard.AgainstNullArgument("scriptArgs", scriptArgs);
             Guard.AgainstNullArgument("console", console);
             Guard.AgainstNullArgument("fileSystem", fileSystem);
             Guard.AgainstNullArgument("logProvider", logProvider);
-            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
 
             _config = config;
             _scriptArgs = scriptArgs;
             _console = console;
             _fileSystem = fileSystem;
             _logger = logProvider.ForCurrentType();
-            _fileSystemMigrator = fileSystemMigrator;
 
             _executeScriptCommand = new CrossAppDomainExecuteScriptCommand
             {
@@ -50,8 +46,6 @@ namespace ScriptCs.Command
 
         public CommandResult Execute()
         {
-            _fileSystemMigrator.Migrate();
-
             _console.WriteLine("scriptcs (ctrl-c to exit)");
             _logger.InfoFormat("Running script '{0}' and watching for changes...", _config.ScriptName);
 

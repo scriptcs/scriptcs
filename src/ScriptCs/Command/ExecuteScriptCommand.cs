@@ -13,9 +13,8 @@ namespace ScriptCs.Command
             IScriptPackResolver scriptPackResolver, 
             ILogProvider logProvider, 
             IAssemblyResolver assemblyResolver, 
-            IFileSystemMigrator fileSystemMigrator, 
             IScriptLibraryComposer composer) : 
-                base(script, scriptArgs, fileSystem, scriptExecutor, scriptPackResolver, logProvider, assemblyResolver, fileSystemMigrator, composer)
+                base(script, scriptArgs, fileSystem, scriptExecutor, scriptPackResolver, logProvider, assemblyResolver, composer)
         {
         }
 
@@ -23,8 +22,6 @@ namespace ScriptCs.Command
         {
             try
             {
-                FileSystemMigrator.Migrate();
-
                 var assemblyPaths = Enumerable.Empty<string>();
                 var workingDirectory = FileSystem.GetWorkingDirectory(Script);
                 if (workingDirectory != null)

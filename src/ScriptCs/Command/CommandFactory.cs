@@ -38,11 +38,6 @@ namespace ScriptCs.Command
 
             var scriptServices = _scriptServicesBuilder.Build();
 
-            // HACK (Adam): This should not be the responsbility of the command factory
-            // but now is not the time to fix this.
-            // This should be addressed by a wider refactoring, i.e. https://github.com/scriptcs/scriptcs/issues/897
-            scriptServices.FileSystemMigrator.Migrate();
-
             if (config.Global)
             {
                 var currentDir = _fileSystem.GlobalFolder;
@@ -67,7 +62,6 @@ namespace ScriptCs.Command
                     scriptServices.LogProvider,
                     scriptServices.Console,
                     scriptServices.AssemblyResolver,
-                    scriptServices.FileSystemMigrator,
                     scriptServices.ScriptLibraryComposer);
 
                 return explicitReplCommand;
@@ -83,7 +77,6 @@ namespace ScriptCs.Command
                     scriptServices.ScriptPackResolver,
                     scriptServices.LogProvider,
                     scriptServices.AssemblyResolver,
-                    scriptServices.FileSystemMigrator,
                     scriptServices.ScriptLibraryComposer);
 
                 return executeLooseScriptCommand;
@@ -178,7 +171,6 @@ namespace ScriptCs.Command
                 scriptServices.LogProvider,
                 scriptServices.Console,
                 scriptServices.AssemblyResolver,
-                scriptServices.FileSystemMigrator,
                 scriptServices.ScriptLibraryComposer);
 
             return replCommand;
@@ -193,8 +185,7 @@ namespace ScriptCs.Command
                     scriptArgs,
                     scriptServices.Console,
                     scriptServices.FileSystem,
-                    scriptServices.LogProvider,
-                    scriptServices.FileSystemMigrator)
+                    scriptServices.LogProvider)
                 : new ExecuteScriptCommand(
                     config.ScriptName,
                     scriptArgs,
@@ -203,7 +194,6 @@ namespace ScriptCs.Command
                     scriptServices.ScriptPackResolver,
                     scriptServices.LogProvider,
                     scriptServices.AssemblyResolver,
-                    scriptServices.FileSystemMigrator,
                     scriptServices.ScriptLibraryComposer);
         }
     }

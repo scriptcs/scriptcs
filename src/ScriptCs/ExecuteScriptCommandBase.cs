@@ -17,7 +17,6 @@ namespace ScriptCs
         protected IScriptPackResolver _scriptPackResolver { get; private set; }
         protected ILog Logger { get; private set; }
         protected IAssemblyResolver AssemblyResolver { get; private set; }
-        protected IFileSystemMigrator FileSystemMigrator { get; private set; }
         protected IScriptLibraryComposer Composer { get; private set; }
 
         public ExecuteScriptCommandBase(
@@ -28,7 +27,6 @@ namespace ScriptCs
             IScriptPackResolver scriptPackResolver,
             ILogProvider logProvider,
             IAssemblyResolver assemblyResolver,
-            IFileSystemMigrator fileSystemMigrator,
             IScriptLibraryComposer composer
             )
         {
@@ -37,7 +35,6 @@ namespace ScriptCs
             Guard.AgainstNullArgument("scriptPackResolver", scriptPackResolver);
             Guard.AgainstNullArgument("logProvider", logProvider);
             Guard.AgainstNullArgument("assemblyResolver", assemblyResolver);
-            Guard.AgainstNullArgument("fileSystemMigrator", fileSystemMigrator);
             Guard.AgainstNullArgument("composer", composer);
 
             Script = script;
@@ -47,7 +44,6 @@ namespace ScriptCs
             _scriptPackResolver = scriptPackResolver;
             Logger = logProvider.ForCurrentType();
             AssemblyResolver = assemblyResolver;
-            FileSystemMigrator = fileSystemMigrator;
             Composer = composer;
         }
 

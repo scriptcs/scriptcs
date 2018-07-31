@@ -66,7 +66,6 @@ namespace ScriptCs.Tests
                 fixture.Create<ILogProvider>(),
                 fixture.Create<IAssemblyResolver>(),
                 fixture.Create<IEnumerable<IReplCommand>>(),
-                fixture.Create<IFileSystemMigrator>(),
                 fixture.Create<IConsole>(),
                 fixture.Create<IInstallationProvider>(),
                 fixture.Create<IScriptLibraryComposer>()));
