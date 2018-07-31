@@ -9,7 +9,7 @@
     public static class ImplicitInstallation
     {
         [Scenario]
-        public static void LegacyFileSystem(ScenarioDirectory directory, string output)
+        public static void Execute(ScenarioDirectory directory, string output)
         {
             var scenario = MethodBase.GetCurrentMethod().GetFullName();
 
@@ -17,7 +17,7 @@
                 .x(() => directory = ScenarioDirectory.Create(scenario)
                     .WriteLine("foo.csx", @"Console.WriteLine(Require<Adder>().Add(1234, 5678));"));
 
-            "And a legacy packages file declaring the ScriptCs.Adder dependency"
+            "And a packages file declaring the ScriptCs.Adder dependency"
                 .x(() =>
                 {
                     var nugetConfig =
@@ -39,8 +39,8 @@
 </packages>
 ";
 
-                    directory.WriteLine("nuget.config", nugetConfig);
-                    directory.WriteLine("packages.config", packagesConfig);
+                    directory.WriteLine("scriptcs_nuget.config", nugetConfig);
+                    directory.WriteLine("scriptcs_packages.config", packagesConfig);
                 });
 
             "When execute the script"
