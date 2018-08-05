@@ -60,23 +60,17 @@ Nightly builds are hosted on [MyGet](https://www.myget.org/), and can also be in
 
 #### Windows
 
-1. Ensure you have .NET Framework 4.5 installed.
+1. Ensure you have .NET Framework 4.6.1 installed.
 
-1. Execute the build script.
+2. Execute the build script.
 
     `build.cmd`
 
 #### Linux
 
-1. Ensure you have Mono development tools 3.0 or later installed.
-
-    `sudo apt-get install mono-devel`
-
-1. Ensure your mono instance has root SSL certificates
-
-    `mozroots --import --sync`
+1. Ensure you have [Mono 5.12](https://www.mono-project.com/download/stable/) or later installed.
     
-1. Execute the build script
+2. Execute the build script
 
     `./build.sh`
 
