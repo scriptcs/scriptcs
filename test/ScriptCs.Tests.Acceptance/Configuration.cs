@@ -41,7 +41,7 @@
             "When I execute the script without the log level option but specifying the custom config"
                 .x(() =>
                 {
-                    var args = new[] { "-config", "custom.opts", };
+                    var args = new[] { "--config", "custom.opts", };
                     output = ScriptCsExe.Run("foo.csx", false, args, directory);
                 });
 

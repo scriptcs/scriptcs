@@ -17,7 +17,7 @@ namespace ScriptCs
                 if (_frameworkName == null)
                 {
                     //Thanks to Dave Glick for this code contribution
-                    var frameworkName = Assembly.GetExecutingAssembly().GetCustomAttributes(true)
+                    var frameworkName = Assembly.GetEntryAssembly().GetCustomAttributes(true)
                        .OfType<System.Runtime.Versioning.TargetFrameworkAttribute>()
                        .Select(x => x.FrameworkName)
                        .FirstOrDefault();

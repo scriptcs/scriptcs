@@ -150,7 +150,7 @@ namespace ScriptCs.Hosting.Package
 
         private static bool IsValidProfile(string profile)
         {
-            return profile == "net40" || profile == "net45";
+            return profile == "net40" || profile == "net45" || profile == "net461" || profile == "netstandard20";
         }
     }
 }

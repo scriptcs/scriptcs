@@ -18,6 +18,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="PowerArgs" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -25,5 +26,10 @@
     <ProjectReference Include="..\ScriptCs.Core\ScriptCs.Core.csproj" />
     <ProjectReference Include="..\ScriptCs.Engine.Roslyn\ScriptCs.Engine.Roslyn.csproj" />
     <ProjectReference Include="..\ScriptCs.Hosting\ScriptCs.Hosting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+    </None>
   </ItemGroup>
 </Project>
