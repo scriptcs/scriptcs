@@ -54,16 +54,6 @@ namespace ScriptCs
 
         public string Eval { get; set; }
 
-        public static Config Create(ScriptCsArgs commandArgs)
-        {
-            Guard.AgainstNullArgument("commandArgs", commandArgs);
-
-            return new Config()
-                .Apply(ConfigMask.ReadGlobalOrDefault())
-                .Apply(commandArgs.Config == null ? ConfigMask.ReadLocalOrDefault() : ConfigMask.Read(commandArgs.Config))
-                .Apply(ConfigMask.Create(commandArgs));
-        }
-
         public static Config Create(string maskFile, ConfigMask configMask)
         {
             Guard.AgainstNullArgument("configMask", configMask);
