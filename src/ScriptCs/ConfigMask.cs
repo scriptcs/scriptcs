@@ -39,30 +39,6 @@ namespace ScriptCs
 
         public bool? Watch { get; set; }
 
-        public static ConfigMask Create(ScriptCsArgs args)
-        {
-            Guard.AgainstNullArgument("args", args);
-
-            return new ConfigMask
-            {
-                AllowPreRelease = args.AllowPreRelease ? (bool?)true : null,
-                Cache = args.Cache ? (bool?)true : null,
-                Clean = args.Clean ? (bool?)true : null,
-                Debug = args.Debug ? (bool?)true : null,
-                Global = args.Global ? (bool?)true : null,
-                Install = args.Install,
-                LogLevel = args.LogLevel,
-                Modules = args.Modules,
-                Output = args.Output,
-                PackageVersion = args.PackageVersion,
-                Repl = args.Repl ? (bool?)true : null,
-                Save = args.Save ? (bool?)true : null,
-                ScriptName = args.ScriptName,
-                Eval = args.Eval,
-                Watch = args.Watch ? (bool?)true : null,
-            };
-        }
-
         public static ConfigMask ReadGlobalOrDefault() => Read(new FileSystem().GlobalOptsFile, true);
 
         public static ConfigMask ReadLocalOrDefault() => Read(Constants.ConfigFilename, true);
