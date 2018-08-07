@@ -29,7 +29,7 @@ namespace ScriptCs.Tests.Acceptance
                 .x(() =>
                 {
                     Console.WriteLine(exception);
-                    exception.Message.ShouldContain("unknownoption");
+                    exception.Message.ShouldContain("Usage: scriptcs options");
                 });
         }
     }

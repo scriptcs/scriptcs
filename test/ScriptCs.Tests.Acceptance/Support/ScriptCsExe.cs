@@ -73,7 +73,7 @@
                     debug &&
                     !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-DEBUG") &&
                     !args.Select(arg => arg.Trim().ToUpperInvariant()).Contains("-D")
-                ? new[] { "-debug" }
+                ? new[] { "--debug" }
                 : new string[0];
 
             return Execute(
@@ -102,17 +102,17 @@
                 writer.Flush();
             }
 
-            return Execute(new[] { "-install", package }, Enumerable.Empty<string>(), directory);
+            return Execute(new[] { "install", package }, Enumerable.Empty<string>(), directory);
         }
 
         public static string Save(ScenarioDirectory directory)
         {
-            return Execute(new[] { "-save" }, Enumerable.Empty<string>(), directory);
+            return Execute(new[] { "install", "--save" }, Enumerable.Empty<string>(), directory);
         }
 
         public static string Clean(ScenarioDirectory directory)
         {
-            return Execute(new[] { "-clean" }, Enumerable.Empty<string>(), directory);
+            return Execute(new[] { "install", "--clean" }, Enumerable.Empty<string>(), directory);
         }
 
         private static string Execute(

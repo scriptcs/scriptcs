@@ -55,7 +55,7 @@ namespace ScriptCs.ReplCommands
             _installationProvider.Initialize();
 
             var packageRef = new PackageReference(
-                args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.0"), version);
+                args[0].ToString(), new FrameworkName(".NETFramework,Version=v4.6.1"), version);
 
             _packageInstaller.InstallPackages(new[] { packageRef }, allowPre);
             _packageAssemblyResolver.SavePackages();
