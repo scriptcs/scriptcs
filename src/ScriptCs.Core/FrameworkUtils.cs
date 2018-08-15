@@ -17,7 +17,7 @@ namespace ScriptCs
                 if (_frameworkName == null)
                 {
                     // in order to handle the weird behavior of old nuget packages
-                    // with NET Standard 2.0, we'll use the entry assemblie if possible
+                    // with NET Standard 2.0, we'll use the entry assembly if possible
                     var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
                     //Thanks to Dave Glick for this code contribution
