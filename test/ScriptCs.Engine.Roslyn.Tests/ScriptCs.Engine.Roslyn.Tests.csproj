@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.1.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.8.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.9.0" />
     <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="Should" Version="1.1.20" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
