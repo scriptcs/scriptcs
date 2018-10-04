@@ -15,11 +15,11 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="Autofac.Mef" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NuGet.Core" Version="2.14.0" />
+    <PackageReference Include="Autofac" />
+    <PackageReference Include="Autofac.Mef" />
+    <PackageReference Include="Microsoft.Web.Xdt" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NuGet.Core" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj" />
