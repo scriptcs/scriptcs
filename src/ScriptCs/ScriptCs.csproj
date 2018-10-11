@@ -18,7 +18,7 @@
     <Compile Include="..\ScriptCs.Core\Guard.cs" Link="Guard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptCs.Contracts\ScriptCs.Contracts.csproj" />
