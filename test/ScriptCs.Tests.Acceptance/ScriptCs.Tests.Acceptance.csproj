@@ -36,5 +36,8 @@
     <None Update="Support\Gallery\ScriptCs.Logger.ScriptPack.0.1.0.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
