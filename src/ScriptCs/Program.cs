@@ -52,18 +52,19 @@ namespace ScriptCs
 
                 c.OnExecute(() =>
                 {
-                    var configMask = new ConfigMask();
-                    configMask.Repl = false;
-                    configMask.Global = global.HasValue() ? true : (bool?)null;
-                    configMask.Install = package.Value ?? string.Empty; // needed to trigger install of all packages!
-                    configMask.PackageVersion = packageVersion.Value();
-                    configMask.AllowPreRelease = allowPrerelease.HasValue() ? true : (bool?)null;
-                    configMask.Save = save.HasValue() ? true : (bool?)null;
-                    configMask.Global = global.HasValue() ? true : (bool?)null;
-                    configMask.Clean = clean.HasValue() ? true : (bool?)null;
-                    configMask.Output = output.Value();
-                    configMask.Debug = debug.HasValue() ? true : (bool?)null;
-                    configMask.LogLevel = logLevel.ParsedValue;
+                    var configMask = new ConfigMask
+                    {
+                        Repl = false,
+                        Global = global.HasValue() ? true : (bool?)null,
+                        Install = package.Value ?? string.Empty, // needed to trigger install of all packages!
+                        PackageVersion = packageVersion.Value(),
+                        AllowPreRelease = allowPrerelease.HasValue() ? true : (bool?)null,
+                        Save = save.HasValue() ? true : (bool?)null,
+                        Clean = clean.HasValue() ? true : (bool?)null,
+                        Output = output.Value(),
+                        Debug = debug.HasValue() ? true : (bool?)null,
+                        LogLevel = logLevel.ParsedValue
+                    };
 
                     return Application.Run(Config.Create(configFile.Value(), configMask), scriptArgs);
                 });
@@ -83,16 +84,18 @@ namespace ScriptCs
                     return 0;
                 }
 
-                var configMask = new ConfigMask();
-                configMask.Repl = repl.HasValue() ? true : (bool?)null;
-                configMask.ScriptName = scriptNameFallback.HasValue() ? scriptNameFallback.Value() : script.Value;
-                configMask.Debug = debug.HasValue() ? true : (bool?)null;
-                configMask.Eval = eval.Value();
-                configMask.Cache = cache.HasValue() ? true : (bool?)null;
-                configMask.Watch = watch.HasValue() ? true : (bool?)null;
-                configMask.LogLevel = logLevel.ParsedValue;
-                configMask.Modules = modules.Value();
-                configMask.Output = output.Value();
+                var configMask = new ConfigMask
+                {
+                    Repl = repl.HasValue() ? true : (bool?)null,
+                    ScriptName = scriptNameFallback.HasValue() ? scriptNameFallback.Value() : script.Value,
+                    Debug = debug.HasValue() ? true : (bool?)null,
+                    Eval = eval.Value(),
+                    Cache = cache.HasValue() ? true : (bool?)null,
+                    Watch = watch.HasValue() ? true : (bool?)null,
+                    LogLevel = logLevel.ParsedValue,
+                    Modules = modules.Value(),
+                    Output = output.Value()
+                };
 
                 return Application.Run(Config.Create(configFile.Value(), configMask), scriptArgs);
             });
@@ -101,7 +104,7 @@ namespace ScriptCs
             {
                 return app.Execute(nonScriptArgs);
             }
-            catch (CommandParsingException e)
+            catch (CommandParsingException)
             {
                 app.ShowHelp();
                 return 1;
