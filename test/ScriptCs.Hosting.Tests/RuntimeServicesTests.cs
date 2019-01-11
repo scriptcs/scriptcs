@@ -272,6 +272,14 @@ namespace ScriptCs.Hosting.Tests
             }
 
             [Fact]
+            public void ShouldRegisterTheOverriddenRepl()
+            {
+                var mock = new Mock<IRepl>();
+                _overrides[ typeof( IRepl ) ] = mock.Object.GetType();
+                _runtimeServices.Container.Resolve<IRepl>().ShouldBeType( mock.Object.GetType() );
+            }
+
+            [Fact]
             public void ShouldLogOnDebugAnAssemblyLoadFailure()
             {
                 // arrange
