@@ -1,5 +1,5 @@
 language: csharp
-dotnet: 2.0.0
+dotnet: 2.2.105
 sudo: required
 dist: trusty
 env:
