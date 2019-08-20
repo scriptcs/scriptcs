@@ -23,8 +23,9 @@ script:
   - ./build.sh
 
 matrix:
-  - os: linux
-      dist: xenial
-      dotnet: 2.2
-  - os: osx
-      dotnet: 2.2.401 # For OSX, we need absolute dotnet version
+  include:
+    - os: linux
+        dist: xenial
+        dotnet: 2.2
+    - os: osx
+        dotnet: 2.2.401 # For OSX, we need absolute dotnet version
