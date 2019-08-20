@@ -29,10 +29,10 @@ namespace ScriptCs.Engine.Roslyn
             ScriptMetadataResolver = ScriptMetadataResolver.Default;
             ScriptOptions = ScriptOptions.Default.
                 WithReferences(typeof(object).Assembly, typeof(TupleElementNamesAttribute).Assembly). // System.ValueTuple
-                WithMetadataResolver(ScriptMetadataResolver);
+                WithMetadataResolver(ScriptMetadataResolver).
+                WithLanguageVersion(LanguageVersion.Preview);
             _scriptHostFactory = scriptHostFactory;
             Log = logProvider.ForCurrentType();
-            SetCSharpVersionToLatest();
         }
 
         public string BaseDirectory
@@ -186,21 +186,5 @@ namespace ScriptCs.Engine.Roslyn
         }
 
         protected abstract ScriptState GetScriptState(string code, object globals);
-
-        private void SetCSharpVersionToLatest()
-        {
-            try
-            {
-                // reset default scripting mode to latest language version to enable C# 7.1 features
-                // this is not needed once https://github.com/dotnet/roslyn/pull/21331 ships
-                var csharpScriptCompilerType = typeof(CSharpScript).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.CSharp.Scripting.CSharpScriptCompiler");
-                var parseOptionsField = csharpScriptCompilerType?.GetField("s_defaultOptions", BindingFlags.Static | BindingFlags.NonPublic);
-                parseOptionsField?.SetValue(null, new CSharpParseOptions(LanguageVersion.Latest, kind: SourceCodeKind.Script));
-            }
-            catch (Exception)
-            {
-                Log.Warn("Unable to set C# language version to latest, will use the default version.");
-            }
-        }
     }
 }
