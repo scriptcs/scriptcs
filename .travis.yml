@@ -1,6 +1,5 @@
 language: csharp
 sudo: required
-dotnet: 2.2
 
 env:
   global:
@@ -8,12 +7,7 @@ env:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
     - DOTNET_CLI_TELEMETRY_OPTOUT=true
 mono:
-  - 5.8.0
-
-script:
-  - ulimit -n8192  
-  - chmod +x build.sh
-  - ./build.sh
+  - 5.18.1
 
 matrix:
   include:
@@ -21,4 +15,10 @@ matrix:
         dist: xenial
         dotnet: 2.2
     - os: osx
-        dotnet: 2.2.401 # For OSX, we need absolute dotnet version
+        osx_image: xcode11
+        dotnet: 2.2.401
+
+script:
+  - ulimit -n8192  
+  - chmod +x build.sh
+  - ./build.sh
