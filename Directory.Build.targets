@@ -3,7 +3,7 @@
     <PackageReference Update="Autofac" Version="4.6.2" />
     <PackageReference Update="Autofac.Mef" Version="4.0.0" />
     <PackageReference Update="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Scripting" Version="2.10.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Scripting" Version="3.6.0" />
     <PackageReference Update="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Update="Microsoft.Web.Xdt" Version="2.1.2" />
     <PackageReference Update="Newtonsoft.Json" Version="11.0.2" />
