@@ -55,9 +55,8 @@ namespace ScriptCs.Hosting
             builder.RegisterInstance(this.LogProvider).Exported(x => x.As<ILogProvider>());
             builder.RegisterType(_scriptEngineType).As<IScriptEngine>().SingleInstance();
             builder.RegisterType(_scriptExecutorType).As<IScriptExecutor>().SingleInstance();
-            builder.RegisterType(_replType).As<IRepl>().SingleInstance();
+            builder.RegisterType(_replType ?? typeof(Repl)).As<IRepl>().SingleInstance();
             builder.RegisterType<ScriptServices>().SingleInstance();
-            builder.RegisterType<Repl>().As<IRepl>().SingleInstance();
             builder.RegisterType<Printers>().SingleInstance();
 
             RegisterLineProcessors(builder);
