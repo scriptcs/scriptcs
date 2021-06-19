@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ScriptCs.Contracts;
 
 namespace ScriptCs
@@ -129,7 +130,7 @@ namespace ScriptCs
 
         public virtual void WriteToFile(string path, string text)
         {
-            File.WriteAllText(path, text);
+            File.WriteAllText(path, text,Encoding.UTF8);
         }
 
         public virtual Stream CreateFileStream(string filePath, FileMode mode)
