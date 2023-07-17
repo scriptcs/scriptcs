@@ -1,4 +1,4 @@
-﻿try {
+try {
     $tools = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
 
     if (Test-Path "$tools\..\lib") {
@@ -36,8 +36,8 @@
     Update-SessionEnvironment
     # End upgrade handling.
 
-    Write-ChocolateySuccess 'scriptcs'
+    Write-Host "Success!"
 } catch {
-    Write-ChocolateyFailure 'scriptcs' "$($_.Exception.Message)"
+    Write-Warning "$($_.Exception.Message)"
     throw
 }
